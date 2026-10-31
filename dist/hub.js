@@ -37,12 +37,25 @@
   const level = () => Number.isSafeInteger(hero?.level) && hero.level > 0 ? hero.level : 1;
   const profession = () => (PROFESSIONS[hero?.classId] || []).find(p=>!p.pending && p.id === hero.profession);
   function updateProfile() {
+    const resources = window.BeerService.status(hero);
+    $('#gold-balance').textContent = resources.gold;
+    $('#energy-balance').textContent = resources.energy;
     $('#shard-balance').textContent = Number.isSafeInteger(hero.shards) && hero.shards >= 0 ? hero.shards : 0;
     $('.avatar .level').textContent = level();
     $('.profile-text small').textContent = `Poziom ${level()}`;
     $('.map-caption small').textContent = `Poziom ${level()}`;
     $('#hero-profession').textContent = profession()?.name || '';
     $('#hero-profession').hidden = !profession();
+  }
+  function readCurrentHero() {
+    const saved=JSON.parse(localStorage.getItem(HERO_KEY));
+    if(!saved || saved.version!==2 || saved.name!==hero.name || saved.classId!==hero.classId || saved.gender!==hero.gender)throw new Error('Zapis postaci zmienił się. Odśwież grę.');
+    hero=saved;updateProfile();return saved;
+  }
+  function updateCurrentHero(change) {
+    const updated=change(readCurrentHero());
+    localStorage.setItem(HERO_KEY,JSON.stringify(updated));
+    hero=updated;updateProfile();return updated;
   }
   function barracksPanel() {
     const unlocked = level() >= 10;
@@ -84,7 +97,7 @@
     } else if (id === 'mount') {
       content = '';
     } else if (id === 'inventory') {
-      content = `<div class="equipment-grid">${gear[hero.classId].map((name,i)=>`<div class="equipment-slot">${icon(i ? 'hero':'arena')}<h3>${name}</h3><span>Przedmiot startowy</span></div>`).join('')}</div><p class="panel-note">Złoto: 25 · Odłamki: 0</p>`;
+      content = `<div class="equipment-grid">${gear[hero.classId].map((name,i)=>`<div class="equipment-slot">${icon(i ? 'hero':'arena')}<h3>${name}</h3><span>Przedmiot startowy</span></div>`).join('')}</div><p class="panel-note">Złoto: ${window.BeerService.status(hero).gold} · Odłamki: ${Number.isSafeInteger(hero.shards) && hero.shards >= 0 ? hero.shards : 0}</p>`;
     } else if (id === 'journal') {
       content = `<div class="journal-entry">${icon('journal')}<div><h3>Przybycie do zamku</h3><p>Twoja postać dotarła do Zamku Czarnej Stali.</p><span class="state-badge">Zapisane</span></div></div>`;
     } else if (id === 'help') {
@@ -95,7 +108,7 @@
     $('#place-content').innerHTML = content;
     if (id === 'hero') $('#sheet-name').textContent = hero.name;
     if (id === 'wheel') window.FateWheel.mount($('#place-content'));
-    if (id === 'tavern') window.TavernPanel.mount($('#place-content'));
+    if (id === 'tavern') window.TavernPanel.mount($('#place-content'),{read:readCurrentHero,update:updateCurrentHero});
     const dialog = $('#place-dialog');
     if (!dialog.open) dialog.showModal();
   }

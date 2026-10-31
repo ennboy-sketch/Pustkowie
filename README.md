@@ -49,3 +49,11 @@ Karczma ma szeroki widok sali i schodów po prawej, przewijany swobodnie w obu o
 Karczma wypełnia panel aż do dolnej krawędzi: paski przewijania oraz stałe pole instrukcji i rozmów są ukryte. Rozmowa z NPC otwiera osobne okno tylko po kliknięciu postaci. Rozmiar panoramy dopasowuje się do wysokości okna.
 
 Sala i schody korzystają teraz z jednej spójnej ilustracji `tavern-panorama.webp`. Panorama jest skalowana z zachowaniem proporcji pliku; w przesuwanym widoku nie są łączone dwa oddzielne obrazy.
+
+## Piwo u Tobiasza
+
+Kliknięcie Tobiasza otwiera zakup piwa: koszt 25 złota, regeneracja do 20 energii (maksymalnie 100 energii). Przy pełnej energii, braku złota lub wykorzystanym limicie zakup jest zablokowany. Panel pokazuje faktyczną regenerację, środki, pozostałe piwa i licznik czasu.
+
+Limit to 3 zakupy w ruchomym oknie ostatnich 8 godzin. Każdy wpis w `hero.beerDrinks` zwalnia miejsce dokładnie po 8 godzinach. Limitu nie resetuje zamknięcie karczmy ani odświeżenie strony. Nowe postacie mają `gold: 25`, `energy: 100`, `beerDrinks: []`; starsze zapisy przyjmują te wartości domyślne bez automatycznego nadpisywania.
+
+Zakup sprawdza najnowszy zapis i zapisuje złoto, energię i czas piwa w jednej operacji localStorage. Przy nieudanym zapisie nie następuje pobranie waluty. Web Locks zabezpiecza zakupy równoległe w kartach wspierających tę funkcję. Panel główny i ekwipunek odczytują aktualne zasoby. Reguły znajdują się w `beer.js`. Gra nadal zapisuje dane wyłącznie lokalnie, a czas odnowienia opiera się na zegarze urządzenia.
