@@ -45,3 +45,5 @@ Kliknięcie Karczmy na mapie lub w menu otwiera autorską ilustrację wnętrza: 
 ### Swobodne przesuwanie i schody
 
 Karczma ma szeroki widok sali i schodów po prawej, przewijany swobodnie w obu osiach jak mapa zamku. Można przesuwać go palcem, gładzikiem, paskiem przewijania lub przeciągnięciem myszy; nie ma stron ani przyciągania do kadrów. Kliknięcie schodów otwiera osobne okno z informacją o wymaganej misji Tauriel. Przeciąganie przez schody nie otwiera komunikatu. Wejście na piętro pozostaje zablokowane, bez dodanej misji i bez zmiany zapisu postaci.
+
+Karczma wypełnia panel aż do dolnej krawędzi: paski przewijania oraz stałe pole instrukcji i rozmów są ukryte. Rozmowa z NPC otwiera osobne okno tylko po kliknięciu postaci. Rozmiar panoramy dopasowuje się do wysokości okna.

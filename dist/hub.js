@@ -64,6 +64,7 @@
   function openPlace(id) {
     if (!places[id] || !hero) return;
     window.FateWheel.cancel();
+    window.TavernPanel.cancel();
     toggleMenu(false);
     requestAnimationFrame(() => { const view = $('.world-viewport'); view.scrollLeft = Math.max(0,(view.scrollWidth-view.clientWidth)/2); });
     document.querySelectorAll('.nav-tile').forEach(el => el.setAttribute('aria-current',el.dataset.place === id ? 'page' : 'false'));
@@ -128,7 +129,7 @@
     openPlace('barracks');
     $('#profession-status').textContent = `Wybrano profesję: ${profession().name}.`;
   });
-  $('#place-dialog').addEventListener('close', () => window.FateWheel.cancel());
+  $('#place-dialog').addEventListener('close', () => {window.FateWheel.cancel();window.TavernPanel.cancel();});
   $('#close-place').addEventListener('click',()=>$('#place-dialog').close());
   $('#place-dialog').addEventListener('click',e=>{if(e.target===$('#place-dialog')){const r=e.target.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)e.target.close();}});
   $('#menu-toggle').addEventListener('click',()=>toggleMenu(!$('#sidebar').classList.contains('is-open')));
