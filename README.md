@@ -33,3 +33,7 @@ Wymagany poziom to 10. Dopóki profesje mają pending: true, wybór jest niedost
 ## Ikony interfejsu
 
 Menu, znaczniki mapy i panele korzystają z lokalnego atlasu `dist/rpg-icons.webp` (4 × 4). Kolejność: zamek, karczma, koszary, arena / lochy, kuźnia, alchemik, targ / bohater, ekwipunek, dziennik, gildia / złoto, odłamki, energia, pomoc. `dist/icons.css` ustawia kadry i rozmiary. Ikony są dekoracyjne; nazwy przycisków pozostają dostępne dla czytników ekranu.
+
+## Koło Losu przy fontannie
+
+Centralna fontanna ma znacznik Koło Losu. Panel zawiera 12 nieodkrytych pól, animowany obrót podglądowy i roboczy koszt 10 odłamków. Nagrody nie są jeszcze zdefiniowane, dlatego płatny obrót pozostaje zablokowany. Darmowy podgląd nie pobiera waluty, nie przyznaje nagród i nie zmienia zapisu postaci. Zamknięcie panelu przerywa animację. Koszt w `wheel.js` można zmienić po ustaleniu zasad; pole `hero.shards` (nieujemna liczba całkowita) określa saldo wyświetlane w kole, starsze zapisy domyślnie mają 0.
