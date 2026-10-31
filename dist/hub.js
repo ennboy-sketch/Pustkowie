@@ -34,9 +34,17 @@
     ])
   );
   let hero = null;
-  const level = () => Number.isSafeInteger(hero?.level) && hero.level > 0 ? hero.level : 1;
+  const level = () => window.Progression.level(hero);
   const profession = () => (PROFESSIONS[hero?.classId] || []).find(p=>!p.pending && p.id === hero.profession);
   function updateProfile() {
+    const progression=window.Progression.info(hero);
+    $('.small-xp i').style.width=`${progression.percent}%`;
+    $('.small-xp').setAttribute('role','progressbar');
+    $('.small-xp').setAttribute('aria-label',progression.label);
+    $('.small-xp').setAttribute('aria-valuemin','0');
+    $('.small-xp').setAttribute('aria-valuemax',String(progression.required||1));
+    $('.small-xp').setAttribute('aria-valuenow',String(Math.min(progression.xp,progression.required||0)));
+    $('.small-xp').title=progression.label;
     const resources = window.BeerService.status(hero);
     $('#gold-balance').textContent = resources.gold;
     const energy=window.EnergyCycle.info(hero);
@@ -111,7 +119,7 @@
     $('#place-category').textContent = place.category;
     let content;
     if (id === 'hero') {
-      content = `<div class="hero-sheet"><div class="sheet-art"><div id="ready-art" class="character ${hero.gender} ${hero.classId}" role="img" aria-label="Twoja postać"></div></div><div class="sheet-stats"><h3 id="sheet-name"></h3><p>Poziom ${level()}</p><p class="sheet-profession">${profession()?.name || 'Bez profesji'}</p><div class="health-label">Życie <b>${50+stats[hero.classId][3]*10} / ${50+stats[hero.classId][3]*10}</b></div><div class="health-bar"></div>${labels.map((name,i)=>`<div class="stat-row"><span>${name}</span><strong>${stats[hero.classId][i]}</strong></div>`).join('')}<div class="xp-info">Doświadczenie <span>0 / 100</span></div></div></div>`;
+      content = `<div class="hero-sheet"><div class="sheet-art"><div id="ready-art" class="character ${hero.gender} ${hero.classId}" role="img" aria-label="Twoja postać"></div></div><div class="sheet-stats"><h3 id="sheet-name"></h3><p>Poziom ${level()}</p><p class="sheet-profession">${profession()?.name || 'Bez profesji'}</p><div class="health-label">Życie <b>${50+stats[hero.classId][3]*10} / ${50+stats[hero.classId][3]*10}</b></div><div class="health-bar"></div>${labels.map((name,i)=>`<div class="stat-row"><span>${name}</span><strong>${stats[hero.classId][i]}</strong></div>`).join('')}<div class="xp-info">Doświadczenie <span>${window.Progression.info(hero).label}</span></div><p class="panel-note">Maksymalny poziom: 250</p></div></div>`;
     } else if (id === 'tavern') {
       content = window.TavernPanel.markup();
     } else if (id === 'barracks') {
