@@ -8,7 +8,7 @@
   let resizeObserver = null;
   function cancel() { if(resizeObserver){resizeObserver.disconnect();resizeObserver=null;} }
   function markup() {
-    return `<section class="tavern-panel" aria-label="Wnętrze karczmy"><div class="tavern-viewport" tabindex="0" role="region" aria-label="Swobodnie przesuwany widok karczmy" aria-describedby="tavern-pan-hint"><div class="tavern-panorama"><div class="tavern-scene tavern-main" aria-label="Sala główna"><img class="tavern-art" src="tavern.webp" alt="Mroczna karczma: Tobiasz za ladą po lewej, Dowódca Brand przy stole i elfka Tauriel po prawej." draggable="false"><div class="tavern-vignette" aria-hidden="true"></div>${Object.entries(people).map(([id,p])=>`<button type="button" class="npc-marker npc-${id}" data-npc="${id}" aria-label="Porozmawiaj: ${p.name}" aria-pressed="false"><span>${p.name}</span><small>${p.role}</small></button>`).join('')}</div><div class="tavern-scene tavern-stairs" aria-label="Schody na piętro"><img class="tavern-art" src="tavern-stairs.webp" alt="Drewniane schody prowadzące do drzwi na piętrze karczmy." draggable="false"><div class="tavern-vignette" aria-hidden="true"></div><button type="button" class="stairs-hotspot" aria-label="Wejście na piętro"><span>Schody na piętro</span></button></div></div></div><p class="sr-only" id="tavern-pan-hint">Przesuń widok palcem lub przeciągnij myszą, aby rozejrzeć się po karczmie.</p><dialog class="tavern-npc-dialog" aria-labelledby="tavern-speaker"><h2 class="tavern-dialogue-name" id="tavern-speaker"></h2><p class="tavern-dialogue-line"></p><button type="button" class="secondary" data-close-npc autofocus>Wróć do karczmy</button></dialog><dialog class="tavern-lock-dialog" aria-labelledby="stairs-lock-title"><h2 id="stairs-lock-title">Wejście zablokowane</h2><p>Wejście na piętro odblokujesz po wykonaniu misji od Tauriel.</p><p class="panel-note">Misja jeszcze niedostępna.</p><button type="button" class="secondary" data-close-stairs autofocus>Wróć do karczmy</button></dialog></section>`;
+    return `<section class="tavern-panel" aria-label="Wnętrze karczmy"><div class="tavern-viewport" tabindex="0" role="region" aria-label="Swobodnie przesuwany widok karczmy" aria-describedby="tavern-pan-hint"><div class="tavern-panorama"><img class="tavern-art" src="tavern-panorama.webp" alt="Jedno wnętrze karczmy: Tobiasz za ladą po lewej, Dowódca Brand przy stole, Tauriel pośrodku i schody po prawej." draggable="false"><div class="tavern-vignette" aria-hidden="true"></div>${Object.entries(people).map(([id,p])=>`<button type="button" class="npc-marker npc-${id}" data-npc="${id}" aria-label="Porozmawiaj: ${p.name}" aria-pressed="false"><span>${p.name}</span><small>${p.role}</small></button>`).join('')}<button type="button" class="stairs-hotspot" aria-label="Wejście na piętro"><span>Schody na piętro</span></button></div></div><p class="sr-only" id="tavern-pan-hint">Przesuń widok palcem lub przeciągnij myszą, aby rozejrzeć się po karczmie.</p><dialog class="tavern-npc-dialog" aria-labelledby="tavern-speaker"><h2 class="tavern-dialogue-name" id="tavern-speaker"></h2><p class="tavern-dialogue-line"></p><button type="button" class="secondary" data-close-npc autofocus>Wróć do karczmy</button></dialog><dialog class="tavern-lock-dialog" aria-labelledby="stairs-lock-title"><h2 id="stairs-lock-title">Wejście zablokowane</h2><p>Wejście na piętro odblokujesz po wykonaniu misji od Tauriel.</p><p class="panel-note">Misja jeszcze niedostępna.</p><button type="button" class="secondary" data-close-stairs autofocus>Wróć do karczmy</button></dialog></section>`;
   }
   function mount(root) {
     cancel();
@@ -17,11 +17,16 @@
     const lock = panel.querySelector('.tavern-lock-dialog');
     const conversation = panel.querySelector('.tavern-npc-dialog');
     const panorama = panel.querySelector('.tavern-panorama');
-    resizeObserver = new ResizeObserver(() => {
+    const art = panel.querySelector('.tavern-art');
+    function fitPanorama() {
+      if(!view.isConnected)return;
       const height = Math.max(625,view.clientHeight);
+      const ratio = art.naturalWidth && art.naturalHeight ? art.naturalWidth/art.naturalHeight : 1.6;
       panorama.style.height = `${height}px`;
-      panorama.style.width = `${height*1.6}px`;
-    });
+      panorama.style.width = `${height*ratio}px`;
+    }
+    art.addEventListener('load',fitPanorama);
+    resizeObserver = new ResizeObserver(fitPanorama);
     resizeObserver.observe(view);
     let drag = null;
     let suppressClick = false;
