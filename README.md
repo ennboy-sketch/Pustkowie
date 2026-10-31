@@ -57,3 +57,11 @@ Kliknięcie Tobiasza otwiera zakup piwa: koszt 25 złota, regeneracja do 20 ener
 Limit to 3 zakupy w ruchomym oknie ostatnich 8 godzin. Każdy wpis w `hero.beerDrinks` zwalnia miejsce dokładnie po 8 godzinach. Limitu nie resetuje zamknięcie karczmy ani odświeżenie strony. Nowe postacie mają `gold: 25`, `energy: 100`, `beerDrinks: []`; starsze zapisy przyjmują te wartości domyślne bez automatycznego nadpisywania.
 
 Zakup sprawdza najnowszy zapis i zapisuje złoto, energię i czas piwa w jednej operacji localStorage. Przy nieudanym zapisie nie następuje pobranie waluty. Web Locks zabezpiecza zakupy równoległe w kartach wspierających tę funkcję. Panel główny i ekwipunek odczytują aktualne zasoby. Reguły znajdują się w `beer.js`. Gra nadal zapisuje dane wyłącznie lokalnie, a czas odnowienia opiera się na zegarze urządzenia.
+
+## Misje Dowódcy Branda
+
+Brand ma dwie zakładki: Zwiad czasowy i Walka z potworami. Zwiad można rozpocząć, a po upływie czasu zgłosić powrót. Jedna postać ma jeden aktywny zwiad; zapis obejmuje czas rozpoczęcia, zakończenia i poziom przy przyjęciu. Zamknięcie panelu, opuszczenie gry i odświeżenie nie resetują czasu. Ostatni ukończony zwiad jest zapisywany jako `lastScout`.
+
+Przedziały z nakładającymi się granicami zostały zinterpretowane jako zmiana czasu od poziomu 3, 8 i 15: poziomy 1–2 → 1 minuta, 3–7 → 5 minut, 8–14 → 10 minut, 15–25 → 15 minut. Czas powyżej poziomu 25 pozostaje do ustalenia. Zmiana poziomu podczas aktywnej misji nie zmienia jej czasu.
+
+Potwory, walka, koszt energii, nagrody i szczegóły misji nie są jeszcze dodane. Sam zwiad nie zmienia złota, energii ani doświadczenia. Reguły i panel znajdują się w `missions.js` oraz `missions.css`; zapis korzysta z tej samej transakcji localStorage i blokady Web Locks co zakupy piwa. Ukończenie zwiadu Branda nie odblokowuje schodów związanych z przyszłą misją Tauriel.

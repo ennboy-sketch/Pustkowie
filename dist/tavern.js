@@ -7,10 +7,11 @@
   };
   let resizeObserver = null;
   let beerTimer = null;
+  let stopMissions = () => {};
   function stopBeerTimer(){if(beerTimer){clearInterval(beerTimer);beerTimer=null;}}
-  function cancel() { stopBeerTimer(); if(resizeObserver){resizeObserver.disconnect();resizeObserver=null;} }
+  function cancel() { stopBeerTimer(); stopMissions(); if(resizeObserver){resizeObserver.disconnect();resizeObserver=null;} }
   function markup() {
-    return `<section class="tavern-panel" aria-label="Wnętrze karczmy"><div class="tavern-viewport" tabindex="0" role="region" aria-label="Swobodnie przesuwany widok karczmy" aria-describedby="tavern-pan-hint"><div class="tavern-panorama"><img class="tavern-art" src="tavern-panorama.webp" alt="Jedno wnętrze karczmy: Tobiasz za ladą po lewej, Dowódca Brand przy stole, Tauriel pośrodku i schody po prawej." draggable="false"><div class="tavern-vignette" aria-hidden="true"></div>${Object.entries(people).map(([id,p])=>`<button type="button" class="npc-marker npc-${id}" data-npc="${id}" aria-label="Porozmawiaj: ${p.name}" aria-pressed="false"><span>${p.name}</span><small>${p.role}</small></button>`).join('')}<button type="button" class="stairs-hotspot" aria-label="Wejście na piętro"><span>Schody na piętro</span></button></div></div><p class="sr-only" id="tavern-pan-hint">Przesuń widok palcem lub przeciągnij myszą, aby rozejrzeć się po karczmie.</p><dialog class="tavern-npc-dialog" aria-labelledby="tavern-speaker"><h2 class="tavern-dialogue-name" id="tavern-speaker"></h2><p class="tavern-dialogue-line"></p><div class="beer-service" hidden></div><button type="button" class="secondary" data-close-npc autofocus>Wróć do karczmy</button></dialog><dialog class="tavern-lock-dialog" aria-labelledby="stairs-lock-title"><h2 id="stairs-lock-title">Wejście zablokowane</h2><p>Wejście na piętro odblokujesz po wykonaniu misji od Tauriel.</p><p class="panel-note">Misja jeszcze niedostępna.</p><button type="button" class="secondary" data-close-stairs autofocus>Wróć do karczmy</button></dialog></section>`;
+    return `<section class="tavern-panel" aria-label="Wnętrze karczmy"><div class="tavern-viewport" tabindex="0" role="region" aria-label="Swobodnie przesuwany widok karczmy" aria-describedby="tavern-pan-hint"><div class="tavern-panorama"><img class="tavern-art" src="tavern-panorama.webp" alt="Jedno wnętrze karczmy: Tobiasz za ladą po lewej, Dowódca Brand przy stole, Tauriel pośrodku i schody po prawej." draggable="false"><div class="tavern-vignette" aria-hidden="true"></div>${Object.entries(people).map(([id,p])=>`<button type="button" class="npc-marker npc-${id}" data-npc="${id}" aria-label="Porozmawiaj: ${p.name}" aria-pressed="false"><span>${p.name}</span><small>${p.role}</small></button>`).join('')}<button type="button" class="stairs-hotspot" aria-label="Wejście na piętro"><span>Schody na piętro</span></button></div></div><p class="sr-only" id="tavern-pan-hint">Przesuń widok palcem lub przeciągnij myszą, aby rozejrzeć się po karczmie.</p><dialog class="tavern-npc-dialog" aria-labelledby="tavern-speaker"><h2 class="tavern-dialogue-name" id="tavern-speaker"></h2><p class="tavern-dialogue-line"></p><div class="beer-service" hidden></div><div class="brand-service" hidden></div><button type="button" class="secondary" data-close-npc autofocus>Wróć do karczmy</button></dialog><dialog class="tavern-lock-dialog" aria-labelledby="stairs-lock-title"><h2 id="stairs-lock-title">Wejście zablokowane</h2><p>Wejście na piętro odblokujesz po wykonaniu misji od Tauriel.</p><p class="panel-note">Misja jeszcze niedostępna.</p><button type="button" class="secondary" data-close-stairs autofocus>Wróć do karczmy</button></dialog></section>`;
   }
   function mount(root,state) {
     cancel();
@@ -63,7 +64,7 @@
       } catch(error) {beerMessage=error.name==='QuotaExceededError'||error.name==='SecurityError'?'Nie udało się zapisać zakupu. Nie pobrano złota.':error.message;}
       finally{buying=false;renderBeer();}
     }
-    conversation.addEventListener('close',stopBeerTimer);
+    conversation.addEventListener('close',()=>{stopBeerTimer();stopMissions();});
     let drag = null;
     let suppressClick = false;
     view.addEventListener('pointerdown',e=>{
@@ -95,6 +96,10 @@
       const button=e.target.closest('[data-npc]');
       if(!button || !people[button.dataset.npc])return;
       const person=people[button.dataset.npc];
+      stopMissions();
+      const brandPanel=panel.querySelector('.brand-service');
+      brandPanel.hidden=button.dataset.npc!=='brand';
+      if(!brandPanel.hidden)stopMissions=window.BrandMissions.mount(brandPanel,state);
       stopBeerTimer();beerMessage='';beerPanel.hidden=button.dataset.npc!=='tobiasz';
       if(!beerPanel.hidden){renderBeer();beerTimer=setInterval(renderBeer,1000);}
       panel.querySelectorAll('[data-npc]').forEach(el=>el.setAttribute('aria-pressed',String(el===button)));
