@@ -1,18 +1,18 @@
 # Pustkowie
 
-Przeglądarkowe RPG w autorskim świecie mrocznego fantasy.
+Nowy ekran tworzenia postaci w mrocznym klimacie fantasy.
 
-## Etap 1: bohater
+1. Wybór jednej z czterech klas: wojownik, mag, elf, krasnolud.
+2. Wybór płci: męska lub żeńska. Każda z ośmiu kombinacji ma własną ilustrację.
+3. Przejście przyciskiem „Dalej” do osobnego ekranu nazwy.
+4. Utworzenie postaci i zapis w localStorage.
 
-- Wybór wojownika, maga lub zwiadowcy, każda klasa z innymi atrybutami.
-- Imię bohatera, ekran statystyk i wyposażenie startowe.
-- Zapis w localStorage oraz tworzenie nowej postaci po potwierdzeniu usunięcia poprzedniej.
-- Interfejs po polsku, dostosowany do telefonów i komputerów.
+Strzałki pozwalają również przełączać klasy. Powrót z ekranu nazwy zachowuje wybór. Usunięcie zapisanej postaci wymaga potwierdzenia. Nowy zapis v2 jest niezależny od starego prototypu v1.
 
-Uruchomienie: otwórz `dist/index.html` w przeglądarce. Zalecany stabilny adres lokalny: `python3 -m http.server 8000 --directory dist`, następnie `http://localhost:8000`.
+## Uruchomienie
 
-Gra nie wymaga instalowania zależności. Fonty Google są opcjonalne; przy braku sieci używane są fonty systemowe. Zapis jest przypisany do przeglądarki i adresu strony. Nie ma jeszcze kont, serwera, walk, wypraw ani synchronizacji między urządzeniami. Atrybuty i wyposażenie są fundamentem kolejnego etapu; nie wpływają jeszcze na walkę.
+Otwórz `dist/index.html` lub uruchom `python3 -m http.server 8000 --directory dist` i przejdź do `http://localhost:8000`.
 
-## Kolejny etap
+Brak zależności i etapu budowania. Fonty Google są opcjonalne. Ilustracje postaci są oryginalną grafiką wygenerowaną dla Pustkowia; tło i ikony są lokalnymi SVG. Atlas ma 4 kolumny i 2 wiersze: wojownik, mag, elf, krasnolud; najpierw mężczyźni, potem kobiety. Obraz wyświetlany przez CSS bez zewnętrznego serwera.
 
-Karczma Pod Zgasłą Latarnią: pierwsza wyprawa, doświadczenie i złoto.
+Zapis jest lokalny dla przeglądarki i adresu strony. Nie ma jeszcze kont, rozgrywki ani synchronizacji między urządzeniami.
