@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="pl">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#101916"><title>Pustkowie</title><link rel="stylesheet" href="style.css?v=castle-1"><link rel="stylesheet" href="hub.css?v=castle-1"><script src="hub.js?v=castle-1" defer></script><script src="game.js?v=castle-1" defer></script></head>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#101916"><title>Pustkowie</title><link rel="stylesheet" href="style.css?v=ui-icons-1"><link rel="stylesheet" href="hub.css?v=ui-icons-1"><link rel="stylesheet" href="icons.css?v=ui-icons-1"><script src="hub.js?v=ui-icons-1" defer></script><script src="game.js?v=ui-icons-1" defer></script></head>
 <body>
 <main class="game">
 <header><a class="logo" href="./" aria-label="Pustkowie"><span class="crest" aria-hidden="true">✦</span><span>PUSTKOWIE</span><span class="logo-line" aria-hidden="true"></span></a></header>
@@ -15,13 +15,13 @@
 <aside class="sidebar" id="sidebar" aria-label="Menu gry">
 <div class="hub-brand">✦ PUSTKOWIE <button id="close-menu" type="button" aria-label="Zamknij menu">×</button></div>
 <button class="profile" type="button" data-place="hero" aria-label="Otwórz kartę bohatera"><span class="avatar"><span id="avatar-art" class="character"></span><span class="level">1</span></span><span class="profile-text"><strong id="ready-name" tabindex="-1"></strong><span id="identity"></span><span id="hero-profession" hidden></span><span class="small-xp"><i></i></span><small>Poziom 1</small></span></button>
-<div class="resources" aria-label="Zasoby"><span title="Złoto"><b class="coin">◈</b> 25 <small>Złoto</small></span><span title="Odłamki"><b class="shard">◆</b> 0 <small>Odłamki</small></span><span title="Energia"><b class="energy">ϟ</b> 100 <small>Energia</small></span></div>
+<div class="resources" aria-label="Zasoby"><span title="Złoto"><span class="rpg-icon icon-coin" aria-hidden="true"></span> 25 <small>Złoto</small></span><span title="Odłamki"><span class="rpg-icon icon-shard" aria-hidden="true"></span> 0 <small>Odłamki</small></span><span title="Energia"><span class="rpg-icon icon-energy" aria-hidden="true"></span> 100 <small>Energia</small></span></div>
 <nav id="hub-navigation" aria-label="Miejsca i postać"></nav>
-<div class="sidebar-bottom"><button type="button" data-place="help" aria-label="Pomoc">?</button><span>ZAMEK CZARNEJ STALI</span><button type="button" id="restart" aria-label="Zmień postać" title="Zmień postać">⟳</button></div>
+<div class="sidebar-bottom"><button type="button" data-place="help" aria-label="Pomoc"><span class="rpg-icon icon-help" aria-hidden="true"></span></button><span>ZAMEK CZARNEJ STALI</span><button type="button" id="restart" aria-label="Zmień postać" title="Zmień postać">⟳</button></div>
 </aside>
 <div class="sidebar-scrim" id="sidebar-scrim" hidden></div>
 <section class="world" aria-label="Mapa zamku">
-<div class="world-topbar"><button type="button" id="menu-toggle" aria-label="Otwórz menu" aria-expanded="false" aria-controls="sidebar">☰</button><div><span class="world-kicker">OSTATNIE SCHRONIENIE</span><h1 id="settlement-title" tabindex="-1">Zamek Czarnej Stali</h1></div><button class="map-button" type="button" data-place="hero" aria-label="Moja postać">♜ <span>Moja postać</span></button></div>
+<div class="world-topbar"><button type="button" id="menu-toggle" aria-label="Otwórz menu" aria-expanded="false" aria-controls="sidebar">☰</button><div><span class="world-kicker">OSTATNIE SCHRONIENIE</span><h1 id="settlement-title" tabindex="-1">Zamek Czarnej Stali</h1></div><button class="map-button" type="button" data-place="hero" aria-label="Moja postać"><span class="rpg-icon icon-hero" aria-hidden="true"></span> <span>Moja postać</span></button></div>
 <div class="world-viewport"><div class="town-map" id="town-map"><div class="map-shade" aria-hidden="true"></div><div id="map-pins"></div><div class="map-caption"><span>✦</span> Zamek Czarnej Stali <small>Poziom 1</small></div></div></div>
 <div class="world-bottom"><span><i></i> W bezpiecznym zamku</span><button type="button" data-place="journal">Dziennik <span aria-hidden="true">↗</span></button></div>
 </section>

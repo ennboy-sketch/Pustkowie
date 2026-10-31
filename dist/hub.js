@@ -1,22 +1,8 @@
 'use strict';
 (() => {
   const $ = s => document.querySelector(s);
-  const glyphs = {
-    barracks:'<path d="M3 22V7h4V3h4v4h2V3h4v4h4v15M3 12h18M7 16v2M17 16v2M10 22v-6h4v6M1 22h22"/>',
-    map:'<path d="M3 6l6-3 6 3 6-3v15l-6 3-6-3-6 3zM9 3v15M15 6v15"/>',
-    hero:'<circle cx="12" cy="7" r="4"/><path d="M4 22v-4a8 8 0 0116 0v4M7 15l5 4 5-4"/>',
-    tavern:'<path d="M5 7h12v14H5zM17 9h3a2 2 0 012 2v4a2 2 0 01-2 2h-3M8 10v7M13 10v7M7 3v1M12 2v2M17 3v1"/>',
-    arena:'<path d="M4 3l17 18M20 3L3 20M3 3l2 6 4-4zM21 3l-2 6-4-4M14 18l4-4M6 14l4 4"/>',
-    dungeon:'<path d="M4 22V11a8 8 0 0116 0v11M8 22V11a4 4 0 018 0v11M12 7V3M4 11H1M20 11h3M2 17h3M19 17h3"/>',
-    forge:'<path d="M3 10h18l-5 5H8zM8 15l-2 6h13M10 7V2h8v5zM4 4l5 3"/>',
-    alchemy:'<path d="M9 2h6M10 2v7L4 19a2 2 0 002 3h12a2 2 0 002-3L14 9V2M7 15h10M10 18h.1M14 19h.1"/>',
-    market:'<path d="M3 10l2-7h14l2 7M3 10q3 5 6 0 3 5 6 0 3 5 6 0M4 13v9h16v-9M9 22v-7h6v7"/>',
-    guild:'<path d="M12 2l9 4v7c0 5-9 9-9 9s-9-4-9-9V6zM8 9h8M12 5v12M8 13h8"/>',
-    inventory:'<path d="M4 8h16v14H4zM8 8V4h8v4M4 13h16M10 12v4h4v-4"/>',
-    journal:'<path d="M4 3h15v19H4zM7 3v19M10 8h6M10 12h6M10 16h4"/>',
-    help:'<circle cx="12" cy="12" r="10"/><path d="M9 8a3 3 0 116 0c0 3-3 2-3 6M12 18h.1"/>'
-  };
-  const icon = id => `<svg viewBox="0 0 24 24" aria-hidden="true">${glyphs[id] || glyphs.map}</svg>`;
+  const ICONS = ['map','tavern','barracks','arena','dungeon','forge','alchemy','market','hero','inventory','journal','guild','coin','shard','energy','help'];
+  const icon = id => `<span class="rpg-icon icon-${ICONS.includes(id) ? id : 'map'}" aria-hidden="true"></span>`;
   const places = {
     map:{name:'Zamek',category:'Świat',icon:'map'},
     hero:{name:'Bohater',category:'Postać',icon:'hero'},

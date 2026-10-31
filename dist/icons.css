@@ -1,0 +1,23 @@
+/* Wspólny atlas 4 × 4: malowane medaliony z czarnej stali. */
+.rpg-icon{display:inline-block;flex-shrink:0;width:36px;height:36px;background-image:url('rpg-icons.webp');background-size:400% 400%;background-repeat:no-repeat;vertical-align:middle;border-radius:50%;filter:drop-shadow(0 2px 3px #0008)}
+.icon-map{background-position:0 0}
+.icon-tavern{background-position:33.333333% 0}
+.icon-barracks{background-position:66.666667% 0}
+.icon-arena{background-position:100% 0}
+.icon-dungeon{background-position:0 33.333333%}
+.icon-forge{background-position:33.333333% 33.333333%}
+.icon-alchemy{background-position:66.666667% 33.333333%}
+.icon-market{background-position:100% 33.333333%}
+.icon-hero{background-position:0 66.666667%}
+.icon-inventory{background-position:33.333333% 66.666667%}
+.icon-journal{background-position:66.666667% 66.666667%}
+.icon-guild{background-position:100% 66.666667%}
+.icon-coin{background-position:0 100%}
+.icon-shard{background-position:33.333333% 100%}
+.icon-energy{background-position:66.666667% 100%}
+.icon-help{background-position:100% 100%}
+.nav-tile{padding:7px 1px 6px;min-height:72px;gap:4px}.nav-tile>.rpg-icon{width:40px;height:40px}.nav-tile[aria-current=page]>.rpg-icon,.nav-tile:hover>.rpg-icon{filter:brightness(1.2) drop-shadow(0 0 5px #b2954b55)}
+.pin-medallion>.rpg-icon{width:37px;height:37px;z-index:1}.place-emblem>.rpg-icon{width:96px;height:96px}.barracks-banner>.rpg-icon{width:60px;height:60px}.profession-symbol>.rpg-icon{width:48px;height:48px;margin-bottom:12px}.equipment-slot>.rpg-icon{width:66px;height:66px;margin-bottom:18px}.journal-entry>.rpg-icon{width:42px;height:42px}.resources .rpg-icon{width:25px;height:25px;margin-right:3px;vertical-align:middle}.sidebar-bottom button:has(.rpg-icon){padding:0;display:grid;place-items:center}.sidebar-bottom .rpg-icon{width:24px;height:24px}.map-button{display:flex;align-items:center;gap:5px}.map-button>.rpg-icon{display:inline-block;width:28px;height:28px;margin:0}.map-button>span:not(.rpg-icon){margin:0}.pin-medallion{background:#17271b}.barracks-banner{align-items:center}
+@media(max-width:1000px){.nav-tile>.rpg-icon{width:37px;height:37px}.nav-tile{min-height:69px}}
+@media(max-width:700px){.map-button{padding:4px 7px}.nav-tile>.rpg-icon{width:40px;height:40px}.nav-tile{min-height:72px}}
+@media(max-width:420px){.barracks-banner>.rpg-icon{width:48px;height:48px}}

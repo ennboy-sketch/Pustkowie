@@ -13,7 +13,7 @@ Strzałki pozwalają również przełączać klasy. Powrót z ekranu nazwy zacho
 
 Otwórz `dist/index.html` lub uruchom `python3 -m http.server 8000 --directory dist` i przejdź do `http://localhost:8000`.
 
-Brak zależności i etapu budowania. Fonty Google są opcjonalne. Ilustracje postaci są oryginalną grafiką wygenerowaną dla Pustkowia; tło i ikony są lokalnymi SVG. Atlas ma 4 kolumny i 2 wiersze: wojownik, mag, elf, krasnolud; najpierw mężczyźni, potem kobiety. Obraz wyświetlany przez CSS bez zewnętrznego serwera.
+Brak zależności i etapu budowania. Fonty Google są opcjonalne. Ilustracje postaci i ikony są oryginalnymi grafikami wygenerowanymi dla Pustkowia; tło kreatora jest lokalnym SVG. Atlas ma 4 kolumny i 2 wiersze: wojownik, mag, elf, krasnolud; najpierw mężczyźni, potem kobiety. Obraz wyświetlany przez CSS bez zewnętrznego serwera.
 
 Zapis jest lokalny dla przeglądarki i adresu strony. Nie ma jeszcze kont, rozgrywki ani synchronizacji między urządzeniami.
 
@@ -34,3 +34,8 @@ Koszary Żelaznej Przysięgi znajdują się przy placu treningowym (znacznik na 
 - Krasnolud: Runiczny Strażnik / Mistrz Żelaza.
 
 Profesja zapisuje się w istniejącym zapisie v2, pojawia się w panelu i karcie bohatera. Można ją zmienić w koszarach. Stare zapisy bez pola level mają poziom 1. Nowe postacie zaczynają z level: 1 i profession: null. System zdobywania poziomów oraz umiejętności profesji nie jest jeszcze zaimplementowany; odblokowanie poziomu 10 jest fundamentem przyszłej progresji. Nie ma serwera i poziomy nie są autoryzowane po stronie serwera.
+
+
+## Ikony interfejsu
+
+Menu, znaczniki mapy i panele korzystają z lokalnego atlasu `dist/rpg-icons.webp` (4 × 4). Kolejność: zamek, karczma, koszary, arena / lochy, kuźnia, alchemik, targ / bohater, ekwipunek, dziennik, gildia / złoto, odłamki, energia, pomoc. `dist/icons.css` ustawia kadry i rozmiary. Ikony są dekoracyjne; nazwy przycisków pozostają dostępne dla czytników ekranu.
