@@ -21,3 +21,7 @@
 @media(max-width:1000px){.nav-tile>.rpg-icon{width:37px;height:37px}.nav-tile{min-height:69px}}
 @media(max-width:700px){.map-button{padding:4px 7px}.nav-tile>.rpg-icon{width:40px;height:40px}.nav-tile{min-height:72px}}
 @media(max-width:420px){.barracks-banner>.rpg-icon{width:48px;height:48px}}
+
+.icon-mount{background-image:url('mount.webp');background-size:100% 100%;background-position:center}
+
+.place-dialog:has(#place-content:empty){min-height:220px}

@@ -1,7 +1,7 @@
 'use strict';
 (() => {
   const $ = s => document.querySelector(s);
-  const ICONS = ['map','tavern','barracks','arena','dungeon','forge','alchemy','market','hero','inventory','journal','guild','coin','shard','energy','help'];
+  const ICONS = ['map','tavern','barracks','arena','dungeon','forge','alchemy','market','hero','inventory','journal','guild','coin','shard','energy','help','mount'];
   const icon = id => `<span class="rpg-icon icon-${ICONS.includes(id) ? id : 'map'}" aria-hidden="true"></span>`;
   const places = {
     map:{name:'Zamek',category:'Świat',icon:'map'},
@@ -16,6 +16,7 @@
     alchemy:{name:'Alchemik',title:'Wieża Zielonego Płomienia',category:'Handel',icon:'alchemy',x:87,y:64,text:'Za zielonymi szybami coś nigdy nie zasypia.',future:'Mikstury'},
     market:{name:'Targ',title:'Targ Popiołów',category:'Handel',icon:'market',x:48,y:76,text:'Każda rzecz ma tu cenę. Każda moneta swoją historię.',future:'Kupno i sprzedaż'},
     guild:{name:'Gildia',title:'Bastion Przysięgi',category:'Społeczność',icon:'guild',x:77,y:12,text:'Przysięgi złożone w cieniu cytadeli wiążą mocniej niż stal.',future:'Gildie graczy'},
+    mount:{name:'Wierzchowiec',category:'Bohater',icon:'mount'},
     help:{name:'Pomoc',category:'Pustkowie',icon:'help'}
   };
   const HERO_KEY = 'pustkowie.hero.v2';
@@ -72,6 +73,8 @@
       content = `<div class="hero-sheet"><div class="sheet-art"><div id="ready-art" class="character ${hero.gender} ${hero.classId}" role="img" aria-label="Twoja postać"></div></div><div class="sheet-stats"><h3 id="sheet-name"></h3><p>Poziom ${level()}</p><p class="sheet-profession">${profession()?.name || 'Bez profesji'}</p><div class="health-label">Życie <b>${50+stats[hero.classId][3]*10} / ${50+stats[hero.classId][3]*10}</b></div><div class="health-bar"></div>${labels.map((name,i)=>`<div class="stat-row"><span>${name}</span><strong>${stats[hero.classId][i]}</strong></div>`).join('')}<div class="xp-info">Doświadczenie <span>0 / 100</span></div></div></div>`;
     } else if (id === 'barracks') {
       content = barracksPanel();
+    } else if (id === 'mount') {
+      content = '';
     } else if (id === 'inventory') {
       content = `<div class="equipment-grid">${gear[hero.classId].map((name,i)=>`<div class="equipment-slot">${icon(i ? 'hero':'arena')}<h3>${name}</h3><span>Przedmiot startowy</span></div>`).join('')}</div><p class="panel-note">Złoto: 25 · Odłamki: 0</p>`;
     } else if (id === 'journal') {
@@ -89,7 +92,7 @@
   $('#hub-navigation').innerHTML = [
     ['ŚWIAT',['map','tavern','barracks','arena','dungeon']],
     ['HANDEL',['forge','alchemy','market']],
-    ['BOHATER',['hero','inventory','journal','guild']]
+    ['BOHATER',['hero','inventory','journal','guild','mount']]
   ].map(([name,ids])=>`<div class="nav-group"><h2>${name}</h2><div class="nav-grid">${ids.map(id=>`<button type="button" class="nav-tile" data-place="${id}" aria-current="${id==='map'?'page':'false'}" title="${places[id].name}">${icon(places[id].icon)}<span>${places[id].name}</span></button>`).join('')}</div></div>`).join('');
   $('#map-pins').innerHTML = Object.entries(places).filter(([,p])=>p.x).map(([id,p])=>`<button type="button" class="map-pin pin-${id}" data-place="${id}" style="--x:${p.x}%;--y:${p.y}%" aria-label="${p.name}"><span class="pin-medallion">${icon(p.icon)}</span><span class="pin-label">${p.name}</span></button>`).join('');
   $('#ready').addEventListener('click',e=>{const button=e.target.closest('[data-place]');if(button)openPlace(button.dataset.place);});
