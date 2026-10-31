@@ -23,3 +23,14 @@ Zapis jest lokalny dla przeglądarki i adresu strony. Nie ma jeszcze kont, rozgr
 Utworzona lub zapisana postać otwiera bezpośrednio Osadę Popiołów. Autorska mapa ma siedem interaktywnych miejsc, panel zasobów i boczne menu. Na telefonie menu otwiera przycisk w lewym górnym rogu; mapę można przesuwać palcem. Działają karta bohatera, podgląd wyposażenia i dziennik przybycia. Statystyki i zasoby są startowe; walka, handel, gildie i wyprawy mają oznaczenie „W przygotowaniu”.
 
 Żeńskie postacie używają szerszego kadru drugiego rzędu atlasu, aby zachować pełną sylwetkę i głowę. Zapis v2 pozostaje zgodny z poprzednią wersją.
+
+## Koszary i profesje
+
+Koszary Żelaznej Przysięgi znajdują się przy placu treningowym (znacznik na mapie i menu ŚWIAT). Profesję można wybrać od poziomu 10; niższe poziomy widzą zablokowane ścieżki. Blokada obowiązuje także w obsłudze formularza. Każda klasa ma dwie profesje:
+
+- Wojownik: Rycerz Popiołu / Berserker.
+- Mag: Piromanta / Czarnoksiężnik.
+- Elf: Łowca Cieni / Strażnik Lasu.
+- Krasnolud: Runiczny Strażnik / Mistrz Żelaza.
+
+Profesja zapisuje się w istniejącym zapisie v2, pojawia się w panelu i karcie bohatera. Można ją zmienić w koszarach. Stare zapisy bez pola level mają poziom 1. Nowe postacie zaczynają z level: 1 i profession: null. System zdobywania poziomów oraz umiejętności profesji nie jest jeszcze zaimplementowany; odblokowanie poziomu 10 jest fundamentem przyszłej progresji. Nie ma serwera i poziomy nie są autoryzowane po stronie serwera.
