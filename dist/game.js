@@ -1,9 +1,9 @@
 'use strict';
 const CLASSES = {
-  warrior: { name: 'Wojownik', female: 'Wojowniczka', icon: '<path d="M12 4l4 4-14 14-4-4z" transform="translate(9 0)"/><path d="M10 18l8 8M8 25l4 4M10 27l5-5"/>' },
-  mage: { name: 'Mag', female: 'Magini', icon: '<path d="M10 29L24 8M20 4l7-1 4 6-6 5-6-4zM6 8v6M3 11h6M28 23v6M25 26h6"/>' },
-  elf: { name: 'Elf', female: 'Elfka', icon: '<path d="M12 3q23 14 0 28M12 3v28M5 17h26M25 12l6 5-6 5"/>' },
-  dwarf: { name: 'Krasnolud', female: 'Krasnoludka', icon: '<path d="M17 5v27M7 5q10 5 20 0l4 12q-9 1-14-4-5 5-14 4zM13 30h8"/>' }
+  warrior: { name: 'Wojownik', female: 'Wojowniczka' },
+  mage: { name: 'Mag', female: 'Magini' },
+  elf: { name: 'Elf', female: 'Elfka' },
+  dwarf: { name: 'Krasnolud', female: 'Krasnoludka' }
 };
 const IDS = Object.keys(CLASSES);
 const KEY = 'pustkowie.hero.v2';
@@ -34,7 +34,7 @@ function showSaved(hero) {
   $('#ready-name').textContent = hero.name;
   $('#identity').textContent = `${CLASSES[classId].name} · ${gender === 'male' ? 'Męska' : 'Żeńska'}`;
 }
-$('#classes').innerHTML = IDS.map(id => `<button type="button" class="class-option" data-class="${id}" aria-pressed="${id === classId}"><span class="medallion"><svg viewBox="0 0 36 36" aria-hidden="true">${CLASSES[id].icon}</svg></span>${CLASSES[id].name}</button>`).join('');
+$('#classes').innerHTML = IDS.map(id => `<button type="button" class="class-option" data-class="${id}" aria-pressed="${id === classId}"><span class="medallion" aria-hidden="true"></span>${CLASSES[id].name}</button>`).join('');
 $('#classes').addEventListener('click', e => { const button = e.target.closest('[data-class]'); if (button) { classId = button.dataset.class; render(); } });
 $('.gender').addEventListener('click', e => { const button = e.target.closest('[data-gender]'); if (button) { gender = button.dataset.gender; render(); } });
 function cycle(direction) { classId = IDS[(IDS.indexOf(classId) + direction + IDS.length) % IDS.length]; render(); }
