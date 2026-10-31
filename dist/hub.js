@@ -18,7 +18,7 @@
   };
   const icon = id => `<svg viewBox="0 0 24 24" aria-hidden="true">${glyphs[id] || glyphs.map}</svg>`;
   const places = {
-    map:{name:'Osada',category:'Świat',icon:'map'},
+    map:{name:'Zamek',category:'Świat',icon:'map'},
     hero:{name:'Bohater',category:'Postać',icon:'hero'},
     inventory:{name:'Ekwipunek',category:'Postać',icon:'inventory'},
     journal:{name:'Dziennik',category:'Postać',icon:'journal'},
@@ -26,7 +26,7 @@
     arena:{name:'Arena',title:'Krąg Żelaza',category:'Walka',icon:'arena',x:81,y:33,text:'Stary kamień pamięta imiona poległych.',future:'Pojedynki'},
     dungeon:{name:'Lochy',title:'Krypta Zapomnianych',category:'Walka',icon:'dungeon',x:14,y:14,text:'Za kamienną bramą nawet cisza ma swoją cenę.',future:'Walka z potworami'},
     barracks:{name:'Koszary',title:'Koszary Żelaznej Przysięgi',category:'Profesje',icon:'barracks',x:16,y:35},
-    forge:{name:'Kuźnia',title:'Kuźnia Czarnego Żaru',category:'Handel',icon:'forge',x:47,y:22,text:'Ostatni kowal osady wciąż podtrzymuje ogień.',future:'Broń i pancerze'},
+    forge:{name:'Kuźnia',title:'Kuźnia Czarnego Żaru',category:'Handel',icon:'forge',x:47,y:22,text:'Ostatni kowal zamku wciąż podtrzymuje ogień.',future:'Broń i pancerze'},
     alchemy:{name:'Alchemik',title:'Wieża Zielonego Płomienia',category:'Handel',icon:'alchemy',x:87,y:64,text:'Za zielonymi szybami coś nigdy nie zasypia.',future:'Mikstury'},
     market:{name:'Targ',title:'Targ Popiołów',category:'Handel',icon:'market',x:48,y:76,text:'Każda rzecz ma tu cenę. Każda moneta swoją historię.',future:'Kupno i sprzedaż'},
     guild:{name:'Gildia',title:'Bastion Przysięgi',category:'Społeczność',icon:'guild',x:77,y:12,text:'Przysięgi złożone w cieniu cytadeli wiążą mocniej niż stal.',future:'Gildie graczy'},
@@ -82,7 +82,7 @@
     } else if (id === 'inventory') {
       content = `<div class="equipment-grid">${gear[hero.classId].map((name,i)=>`<div class="equipment-slot">${icon(i ? 'hero':'arena')}<h3>${name}</h3><span>Przedmiot startowy</span></div>`).join('')}</div><p class="panel-note">Złoto: 25 · Odłamki: 0</p>`;
     } else if (id === 'journal') {
-      content = `<div class="journal-entry">${icon('journal')}<div><h3>Przybycie do osady</h3><p>Twoja postać dotarła do Osady Popiołów.</p><span class="state-badge">Zapisane</span></div></div>`;
+      content = `<div class="journal-entry">${icon('journal')}<div><h3>Przybycie do zamku</h3><p>Twoja postać dotarła do Zamku Czarnej Stali.</p><span class="state-badge">Zapisane</span></div></div>`;
     } else if (id === 'help') {
       content = '<p class="place-text">Wybierz miejsce na mapie lub w bocznym menu. Kliknij portret, aby zobaczyć statystyki bohatera.</p><p class="panel-note">Postać zapisuje się w tej przeglądarce. Wyprawy, handel i walka pojawią się w kolejnych etapach.</p>';
     } else {
