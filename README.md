@@ -64,4 +64,11 @@ Brand ma dwie zakładki: Zwiad czasowy i Walka z potworami. Zwiad można rozpocz
 
 Przedziały z nakładającymi się granicami zostały zinterpretowane jako zmiana czasu od poziomu 3, 8 i 15: poziomy 1–2 → 1 minuta, 3–7 → 5 minut, 8–14 → 10 minut, 15–25 → 15 minut. Czas powyżej poziomu 25 pozostaje do ustalenia. Zmiana poziomu podczas aktywnej misji nie zmienia jej czasu.
 
-Potwory, walka, koszt energii, nagrody i szczegóły misji nie są jeszcze dodane. Sam zwiad nie zmienia złota, energii ani doświadczenia. Reguły i panel znajdują się w `missions.js` oraz `missions.css`; zapis korzysta z tej samej transakcji localStorage i blokady Web Locks co zakupy piwa. Ukończenie zwiadu Branda nie odblokowuje schodów związanych z przyszłą misją Tauriel.
+Potwory, walka, nagrody i szczegóły misji nie są jeszcze dodane. Rozpoczęcie zwiadu kosztuje 5 energii, a zgłoszenie powrotu nie kosztuje dodatkowej energii. Zwiad nie zmienia złota ani doświadczenia. Reguły i panel znajdują się w `missions.js` oraz `missions.css`; zapis korzysta z tej samej transakcji localStorage i blokady Web Locks co zakupy piwa. Ukończenie zwiadu Branda nie odblokowuje schodów związanych z przyszłą misją Tauriel.
+
+
+## Dzienne odnowienie energii
+
+Energia odnawia się do 100 punktów w stałym cyklu co 24 godziny. Nowa postać ma termin `nextEnergyResetAt` liczony od utworzenia; stary zapis otrzymuje termin 24 godziny po pierwszym wczytaniu po aktualizacji, z zachowaniem obecnej energii. Powrót po dłuższej przerwie uzupełnia energię raz, bez sumowania ponad 100. Termin przesuwa się o pełne doby, zachowując cykl. Zakupy piwa i misje nie przesuwają odnowienia. Limit piwa pozostaje niezależny.
+
+Panel energii pokazuje czas do odnowienia. Gra sprawdza termin podczas działania, po powrocie do karty i przy operacjach na postaci. Aktualizacja energii korzysta z tej samej blokady zapisu co piwo i misje; przy błędzie zapisu surowe dane pozostają bez zmian. Czas pochodzi z zegara urządzenia. Reguły są w `energy.js`.

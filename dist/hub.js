@@ -39,7 +39,10 @@
   function updateProfile() {
     const resources = window.BeerService.status(hero);
     $('#gold-balance').textContent = resources.gold;
-    $('#energy-balance').textContent = resources.energy;
+    const energy=window.EnergyCycle.info(hero);
+    $('#energy-balance').textContent = energy.energy;
+    $('#energy-reset-clock').textContent = `↻ ${energy.text}`;
+    $('#energy-reset-clock').setAttribute('aria-label',`Odnowienie energii za ${energy.text}`);
     $('#shard-balance').textContent = Number.isSafeInteger(hero.shards) && hero.shards >= 0 ? hero.shards : 0;
     $('.avatar .level').textContent = level();
     $('.profile-text small').textContent = `Poziom ${level()}`;
@@ -47,16 +50,37 @@
     $('#hero-profession').textContent = profession()?.name || '';
     $('#hero-profession').hidden = !profession();
   }
-  function readCurrentHero() {
+  function readSavedHero() {
     const saved=JSON.parse(localStorage.getItem(HERO_KEY));
     if(!saved || saved.version!==2 || saved.name!==hero.name || saved.classId!==hero.classId || saved.gender!==hero.gender)throw new Error('Zapis postaci zmienił się. Odśwież grę.');
-    hero=saved;updateProfile();return saved;
+    return saved;
+  }
+  function readCurrentHero() {
+    hero=window.EnergyCycle.apply(readSavedHero());updateProfile();return hero;
   }
   function updateCurrentHero(change) {
     const updated=change(readCurrentHero());
     localStorage.setItem(HERO_KEY,JSON.stringify(updated));
     hero=updated;updateProfile();return updated;
   }
+  let energySyncBusy=false;
+  async function refreshEnergy() {
+    if(energySyncBusy||!hero||!document.body.classList.contains('playing')||document.hidden)return;
+    energySyncBusy=true;
+    try {
+      const sync=()=>{
+        const saved=readSavedHero(),updated=window.EnergyCycle.apply(saved);
+        if(updated!==saved)localStorage.setItem(HERO_KEY,JSON.stringify(updated));
+        hero=updated;updateProfile();
+      };
+      if(navigator.locks)await navigator.locks.request('pustkowie-hero-v2',sync);else sync();
+    } catch {$('#energy-reset-clock').textContent='Zapis niedostępny';}
+    finally {energySyncBusy=false;}
+  }
+  setInterval(refreshEnergy,1000);
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden)void refreshEnergy();});
+  window.addEventListener('focus',()=>void refreshEnergy());
+  window.addEventListener('storage',e=>{if(e.key===HERO_KEY)void refreshEnergy();});
   function barracksPanel() {
     const unlocked = level() >= 10;
     const current = profession();
@@ -150,8 +174,9 @@
   $('#sidebar-scrim').addEventListener('click',()=>toggleMenu(false));
   document.addEventListener('keydown',e=>{if(e.key==='Escape')toggleMenu(false);});
   window.mountHub = data => {
-    hero = data;
+    hero = window.EnergyCycle.apply(data);
     updateProfile();
+    void refreshEnergy();
     $('#avatar-art').className = `character ${data.gender} ${data.classId}`;
     toggleMenu(false);
     requestAnimationFrame(() => { const view = $('.world-viewport'); view.scrollLeft = Math.max(0,(view.scrollWidth-view.clientWidth)/2); });

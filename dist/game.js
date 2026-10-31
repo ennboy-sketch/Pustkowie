@@ -49,7 +49,7 @@ $('#name-form').addEventListener('submit', e => {
   e.preventDefault();
   const name = $('#hero-name').value.trim();
   if (name.length < 2 || name.length > 24) { $('#name-error').textContent = 'Nazwa musi mieć od 2 do 24 znaków.'; $('#hero-name').focus(); return; }
-  const hero = {version:2,classId,gender,name,level:1,profession:null,gold:25,energy:100,beerDrinks:[]};
+  const hero = {version:2,classId,gender,name,level:1,profession:null,gold:25,energy:100,beerDrinks:[],nextEnergyResetAt:Date.now()+window.EnergyCycle.DAY};
   try { localStorage.setItem(KEY,JSON.stringify(hero)); $('#status').textContent = ''; }
   catch { $('#status').textContent = 'Przeglądarka blokuje zapis. Postać zniknie po odświeżeniu.'; }
   showSaved(hero); $('#settlement-title').focus();
