@@ -41,3 +41,7 @@ Centralna fontanna ma znacznik Koło Losu. Panel zawiera 12 nieodkrytych pól, a
 ## Karczma
 
 Kliknięcie Karczmy na mapie lub w menu otwiera autorską ilustrację wnętrza: Tobiasz za ladą po lewej, Dowódca Brand przy stole, dorosła elfka Tauriel po prawej. Podpisy są przyciskami wyświetlającymi krótkie powitania. Panel nie uruchamia wypraw ani zakupów i nie zmienia zapisu postaci. Cała ilustracja pozostaje widoczna na telefonie i komputerze; obsługę panelu i styl określają `tavern.js` oraz `tavern.css`.
+
+### Schody na piętro
+
+Karczma ma dwa widoki w poziomo przewijanym panelu: sala główna i schody po prawej. Nawigacja działa gestem na ekranie dotykowym oraz przyciskami lewo/prawo. Wejście na piętro jest obecnie zablokowane; komunikat wskazuje wymóg przyszłej misji Tauriel. Misja, stan jej ukończenia i zawartość piętra nie są jeszcze dodane. Przeglądanie schodów nie zmienia zapisu. Ponowne otwarcie karczmy rozpoczyna się od sali głównej.
