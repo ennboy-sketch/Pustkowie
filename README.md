@@ -77,3 +77,9 @@ Panel energii pokazuje czas do odnowienia. Gra sprawdza termin podczas działani
 ## Poziomy i EXP
 
 Limit postaci wynosi 250 poziomów. W `progression.js` skonfigurowano podane wymagania na kolejny awans: poziom 1 — 100 EXP, 2 — 250 EXP, 3 — 500 EXP. Wzór i dalsze progi do poziomu 100 wymagają ustalenia. Powyżej nich wymagania pozostają nieokreślone; EXP jest zachowywane bez automatycznych awansów. Nagrody misji nadal nie przyznają EXP. Moduł obsługuje dodawanie EXP i nadwyżki przy awansie, z ograniczeniem do poziomu 250.
+
+### Trzy losowe miejsca zwiadu
+
+Nowy zwiad Branda losuje jedno z trzech miejsc: Mroczny Las (`forest`), Stara Kopalnia (`mine`) lub Podziemia Miasta (`undercity`). Każde ma własny tytuł, opis i oryginalną ilustrację `scout-*.webp`. Wybór jest losowany raz przy rozpoczęciu, zapisany jako `activeMission.sceneId` i kopiowany do `lastScout` po powrocie. Odświeżenie lub ponowne otwarcie panelu nie losuje miejsca ponownie. Przed przyjęciem panel pokazuje podgląd trzech kierunków. Starsza aktywna misja bez `sceneId` zachowuje dotychczasowy czas i neutralny widok.
+
+Koszt nadal wynosi 5 energii, czasy zależą od poziomu według poprzedniej tabeli. Nagrody nie są ustalone: zakończenie nie dodaje złota, EXP, przedmiotów ani innych zasobów.
