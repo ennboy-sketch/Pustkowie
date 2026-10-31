@@ -106,8 +106,11 @@
     $('#sidebar-scrim').hidden = !open;
     $('#menu-toggle').setAttribute('aria-expanded',String(open));
   }
+  let stopActiveScout=()=>{};
   function openPlace(id) {
     if (!places[id] || !hero) return;
+    if(id==='tavern'){try{readCurrentHero();}catch{}}
+    stopActiveScout();
     window.FateWheel.cancel();
     window.TavernPanel.cancel();
     toggleMenu(false);
@@ -117,11 +120,13 @@
     const place = places[id];
     $('#place-title').textContent = place.title || place.name;
     $('#place-category').textContent = place.category;
+    let scouting=false;
+    if(id==='tavern'){try{scouting=!!window.BrandMissions.status(hero).mission;}catch{}}
     let content;
     if (id === 'hero') {
       content = `<div class="hero-sheet"><div class="sheet-art"><div id="ready-art" class="character ${hero.gender} ${hero.classId}" role="img" aria-label="Twoja postać"></div></div><div class="sheet-stats"><h3 id="sheet-name"></h3><p>Poziom ${level()}</p><p class="sheet-profession">${profession()?.name || 'Bez profesji'}</p><div class="health-label">Życie <b>${50+stats[hero.classId][3]*10} / ${50+stats[hero.classId][3]*10}</b></div><div class="health-bar"></div>${labels.map((name,i)=>`<div class="stat-row"><span>${name}</span><strong>${stats[hero.classId][i]}</strong></div>`).join('')}<div class="xp-info">Doświadczenie <span>${window.Progression.info(hero).label}</span></div><p class="panel-note">Maksymalny poziom: 250</p></div></div>`;
     } else if (id === 'tavern') {
-      content = window.TavernPanel.markup();
+      content = scouting?'<div class="scout-active-view" aria-label="Aktywny zwiad"></div>':window.TavernPanel.markup();
     } else if (id === 'barracks') {
       content = barracksPanel();
     } else if (id === 'wheel') {
@@ -140,7 +145,13 @@
     $('#place-content').innerHTML = content;
     if (id === 'hero') $('#sheet-name').textContent = hero.name;
     if (id === 'wheel') window.FateWheel.mount($('#place-content'));
-    if (id === 'tavern') window.TavernPanel.mount($('#place-content'),{read:readCurrentHero,update:updateCurrentHero});
+    if(id==='tavern'){
+      if(scouting){
+        const scene=window.BrandMissions.SCENES[hero.activeMission.sceneId];
+        $('#place-title').textContent=scene?.name||'Zwiad';
+        stopActiveScout=window.BrandMissions.mount($('.scout-active-view'),{read:readCurrentHero,update:updateCurrentHero,onFinished:()=>openPlace('tavern')});
+      }else window.TavernPanel.mount($('#place-content'),{read:readCurrentHero,update:updateCurrentHero,onStarted:()=>{const npc=$('.tavern-npc-dialog');if(npc?.open)npc.close();openPlace('tavern');}});
+    }
     const dialog = $('#place-dialog');
     if (!dialog.open) dialog.showModal();
   }
@@ -174,7 +185,7 @@
     openPlace('barracks');
     $('#profession-status').textContent = `Wybrano profesję: ${profession().name}.`;
   });
-  $('#place-dialog').addEventListener('close', () => {window.FateWheel.cancel();window.TavernPanel.cancel();});
+  $('#place-dialog').addEventListener('close', () => {stopActiveScout();window.FateWheel.cancel();window.TavernPanel.cancel();});
   $('#close-place').addEventListener('click',()=>$('#place-dialog').close());
   $('#place-dialog').addEventListener('click',e=>{if(e.target===$('#place-dialog')){const r=e.target.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)e.target.close();}});
   $('#menu-toggle').addEventListener('click',()=>toggleMenu(!$('#sidebar').classList.contains('is-open')));

@@ -43,14 +43,16 @@
   function mount(container,state) {
     container.innerHTML=markup();
     const $=s=>container.querySelector(s);
-    let disposed=false,busy=false,message='';
+    let disposed=false,busy=false,message='',leaving=false;
     function refresh() {
       if(disposed)return;
       try {
         const hero=state.read(),s=status(hero),button=$('[data-scout-action]');
+        if(container.classList.contains('scout-active-view')&&!s.mission){if(!leaving){leaving=true;queueMicrotask(()=>{if(!disposed)state.onFinished?.();});}return;}
+        container.classList.toggle('scout-ready',s.ready);
         const location=s.mission?.sceneId,scene=location?SCENES[location]:null;
         const key=scene?location:s.mission?'legacy':'preview';
-        if($('.scout-scene').dataset.location!==key)$('.scout-scene').dataset.location=key;
+        if($('.scout-scene').dataset.location!==key){$('.scout-scene').dataset.location=key;$('.scout-scene').style.setProperty('--scout-art',`url("${scene?.image||'town.webp'}")`);}
         $('.scout-heading h3').textContent=scene?scene.name:s.mission?'Zwiad':'Losowy zwiad';
         $('.scout-narrative').textContent=scene?scene.description:s.mission?'Trwa wcześniej rozpoczęty zwiad. Zgłoś powrót po upływie czasu.':'Dowódca Brand wyznaczy jedno z trzech miejsc: Mroczny Las, Starą Kopalnię lub Podziemia Miasta.';
         $('.scout-offers').hidden=!!s.mission;
@@ -79,6 +81,7 @@
         });
         if(navigator.locks)await navigator.locks.request('pustkowie-hero-v2',change);else change();
         message=completed?'Powrót zgłoszony. Nagrody dodamy w późniejszym etapie.':'Zwiad rozpoczęty. Możesz zamknąć panel — czas nadal upływa.';
+        if(!disposed){if(completed)state.onFinished?.();else state.onStarted?.();}
       } catch(error){message=error.name==='QuotaExceededError'||error.name==='SecurityError'?'Nie udało się zapisać misji. Spróbuj ponownie.':error.message;}
       finally{busy=false;refresh();}
     }

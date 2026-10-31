@@ -83,3 +83,8 @@ Limit postaci wynosi 250 poziomów. W `progression.js` skonfigurowano podane wym
 Nowy zwiad Branda losuje jedno z trzech miejsc: Mroczny Las (`forest`), Stara Kopalnia (`mine`) lub Podziemia Miasta (`undercity`). Każde ma własny tytuł, opis i oryginalną ilustrację `scout-*.webp`. Wybór jest losowany raz przy rozpoczęciu, zapisany jako `activeMission.sceneId` i kopiowany do `lastScout` po powrocie. Odświeżenie lub ponowne otwarcie panelu nie losuje miejsca ponownie. Przed przyjęciem panel pokazuje podgląd trzech kierunków. Starsza aktywna misja bez `sceneId` zachowuje dotychczasowy czas i neutralny widok.
 
 Koszt nadal wynosi 5 energii, czasy zależą od poziomu według poprzedniej tabeli. Nagrody nie są ustalone: zakończenie nie dodaje złota, EXP, przedmiotów ani innych zasobów.
+
+
+### Pełnoekranowy aktywny zwiad
+
+Po przyjęciu misji oraz po kliknięciu Karczmy w czasie aktywnego zwiadu otwiera się sama lokacja na całe okno przeglądarki. Widoczne są mały tytuł, przycisk zamknięcia i zegar na środku u dołu. Brak opisów, kosztów, zakładek i przycisku powrotu do sali w trakcie misji. Zwiad można zamknąć do mapy i otworzyć ponownie bez zmiany czasu lub miejsca. Po upływie czasu pojawia się przycisk Zgłoś powrót; zapis zakończenia otwiera zwykłą karczmę, bez nagród i dodatkowego kosztu.
