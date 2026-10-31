@@ -8,7 +8,7 @@
     hero:{name:'Bohater',category:'Postać',icon:'hero'},
     inventory:{name:'Ekwipunek',category:'Postać',icon:'inventory'},
     journal:{name:'Dziennik',category:'Postać',icon:'journal'},
-    tavern:{name:'Karczma',title:'Pod Zgasłą Latarnią',category:'Wyprawy',icon:'tavern',x:19,y:61,text:'Przy palenisku zbierają się ci, którzy przetrwali noc.',future:'Wyprawy i zlecenia'},
+    tavern:{name:'Karczma',title:'Pod Zgasłą Latarnią',category:'Karczma',icon:'tavern',x:19,y:61,text:'Przy palenisku zbierają się ci, którzy przetrwali noc.',future:'Wyprawy i zlecenia'},
     arena:{name:'Arena',title:'Krąg Żelaza',category:'Walka',icon:'arena',x:81,y:33,text:'Stary kamień pamięta imiona poległych.',future:'Pojedynki'},
     dungeon:{name:'Lochy',title:'Krypta Zapomnianych',category:'Walka',icon:'dungeon',x:14,y:14,text:'Za kamienną bramą nawet cisza ma swoją cenę.',future:'Walka z potworami'},
     barracks:{name:'Koszary',title:'Koszary Żelaznej Przysięgi',category:'Profesje',icon:'barracks',x:16,y:35},
@@ -74,6 +74,8 @@
     let content;
     if (id === 'hero') {
       content = `<div class="hero-sheet"><div class="sheet-art"><div id="ready-art" class="character ${hero.gender} ${hero.classId}" role="img" aria-label="Twoja postać"></div></div><div class="sheet-stats"><h3 id="sheet-name"></h3><p>Poziom ${level()}</p><p class="sheet-profession">${profession()?.name || 'Bez profesji'}</p><div class="health-label">Życie <b>${50+stats[hero.classId][3]*10} / ${50+stats[hero.classId][3]*10}</b></div><div class="health-bar"></div>${labels.map((name,i)=>`<div class="stat-row"><span>${name}</span><strong>${stats[hero.classId][i]}</strong></div>`).join('')}<div class="xp-info">Doświadczenie <span>0 / 100</span></div></div></div>`;
+    } else if (id === 'tavern') {
+      content = window.TavernPanel.markup();
     } else if (id === 'barracks') {
       content = barracksPanel();
     } else if (id === 'wheel') {
@@ -92,6 +94,7 @@
     $('#place-content').innerHTML = content;
     if (id === 'hero') $('#sheet-name').textContent = hero.name;
     if (id === 'wheel') window.FateWheel.mount($('#place-content'));
+    if (id === 'tavern') window.TavernPanel.mount($('#place-content'));
     const dialog = $('#place-dialog');
     if (!dialog.open) dialog.showModal();
   }

@@ -37,3 +37,7 @@ Menu, znaczniki mapy i panele korzystają z lokalnego atlasu `dist/rpg-icons.web
 ## Koło Losu przy fontannie
 
 Centralna fontanna ma znacznik Koło Losu. Panel zawiera 12 nieodkrytych pól, animowany obrót podglądowy i roboczy koszt 10 odłamków. Nagrody nie są jeszcze zdefiniowane, dlatego płatny obrót pozostaje zablokowany. Darmowy podgląd nie pobiera waluty, nie przyznaje nagród i nie zmienia zapisu postaci. Zamknięcie panelu przerywa animację. Koszt w `wheel.js` można zmienić po ustaleniu zasad; pole `hero.shards` (nieujemna liczba całkowita) określa saldo wyświetlane w kole, starsze zapisy domyślnie mają 0.
+
+## Karczma
+
+Kliknięcie Karczmy na mapie lub w menu otwiera autorską ilustrację wnętrza: Tobiasz za ladą po lewej, Dowódca Brand przy stole, dorosła elfka Tauriel po prawej. Podpisy są przyciskami wyświetlającymi krótkie powitania. Panel nie uruchamia wypraw ani zakupów i nie zmienia zapisu postaci. Cała ilustracja pozostaje widoczna na telefonie i komputerze; obsługę panelu i styl określają `tavern.js` oraz `tavern.css`.
