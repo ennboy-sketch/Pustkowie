@@ -20,10 +20,11 @@ function render() {
   document.querySelectorAll('[data-class]').forEach(el => el.setAttribute('aria-pressed', String(el.dataset.class === classId)));
   document.querySelectorAll('[data-gender]').forEach(el => el.setAttribute('aria-pressed', String(el.dataset.gender === gender)));
   $('#class-name').textContent = gender === 'female' ? CLASSES[classId].female : CLASSES[classId].name;
-  art('#choice-art'); art('#name-art'); art('#ready-art');
+  art('#choice-art'); art('#name-art');
 }
 function show(next) {
   step = next;
+  document.body.classList.toggle('playing', next === 'ready');
   for (const id of ['choose', 'naming', 'ready']) $(`#${id}`).hidden = id !== next;
 }
 function validHero(hero) {
@@ -32,7 +33,8 @@ function validHero(hero) {
 function showSaved(hero) {
   classId = hero.classId; gender = hero.gender; render(); show('ready');
   $('#ready-name').textContent = hero.name;
-  $('#identity').textContent = `${CLASSES[classId].name} · ${gender === 'male' ? 'Męska' : 'Żeńska'}`;
+  $('#identity').textContent = gender === 'female' ? CLASSES[classId].female : CLASSES[classId].name;
+  window.mountHub(hero);
 }
 $('#classes').innerHTML = IDS.map(id => `<button type="button" class="class-option" data-class="${id}" aria-pressed="${id === classId}"><span class="medallion" aria-hidden="true"></span>${CLASSES[id].name}</button>`).join('');
 $('#classes').addEventListener('click', e => { const button = e.target.closest('[data-class]'); if (button) { classId = button.dataset.class; render(); } });
@@ -50,7 +52,7 @@ $('#name-form').addEventListener('submit', e => {
   const hero = {version:2,classId,gender,name};
   try { localStorage.setItem(KEY,JSON.stringify(hero)); $('#status').textContent = ''; }
   catch { $('#status').textContent = 'Przeglądarka blokuje zapis. Postać zniknie po odświeżeniu.'; }
-  showSaved(hero); $('#ready-name').focus();
+  showSaved(hero); $('#settlement-title').focus();
 });
 $('#restart').addEventListener('click', () => $('#reset-dialog').showModal());
 $('#cancel-reset').addEventListener('click', () => $('#reset-dialog').close());
