@@ -19,15 +19,21 @@
     help:{name:'Pomoc',category:'Pustkowie',icon:'help'}
   };
   const HERO_KEY = 'pustkowie.hero.v2';
-  const PROFESSIONS = {
-    warrior:[{id:'ash-knight',name:'Rycerz Popiołu',role:'Obrona i ochrona sojuszników'},{id:'berserker',name:'Berserker',role:'Walka w zwarciu i dziki impet'}],
-    mage:[{id:'pyromancer',name:'Piromanta',role:'Magia ognia'},{id:'warlock',name:'Czarnoksiężnik',role:'Klątwy i mroczna magia'}],
-    elf:[{id:'shadow-hunter',name:'Łowca Cieni',role:'Łucznictwo i zasadzki'},{id:'forest-warden',name:'Strażnik Lasu',role:'Natura i obrona'}],
-    dwarf:[{id:'rune-guardian',name:'Runiczny Strażnik',role:'Runy i ciężki pancerz'},{id:'iron-master',name:'Mistrz Żelaza',role:'Topory i walka w zwarciu'}]
-  };
+  // Nazwy i umiejętności trzech osobnych profesji każdej klasy ustalimy później.
+  const PROFESSIONS = Object.fromEntries(
+    Object.entries({warrior:'arena',mage:'alchemy',elf:'guild',dwarf:'forge'}).map(([classId,symbol]) => [
+      classId, [1,2,3].map(slot => ({
+        id:`${classId}-profession-${slot}`,
+        name:`Profesja ${slot}`,
+        role:'Nazwa i umiejętności do ustalenia',
+        icon:symbol,
+        pending:true
+      }))
+    ])
+  );
   let hero = null;
   const level = () => Number.isSafeInteger(hero?.level) && hero.level > 0 ? hero.level : 1;
-  const profession = () => (PROFESSIONS[hero?.classId] || []).find(p=>p.id === hero.profession);
+  const profession = () => (PROFESSIONS[hero?.classId] || []).find(p=>!p.pending && p.id === hero.profession);
   function updateProfile() {
     $('.avatar .level').textContent = level();
     $('.profile-text small').textContent = `Poziom ${level()}`;
@@ -38,10 +44,11 @@
   function barracksPanel() {
     const unlocked = level() >= 10;
     const current = profession();
-    return `<div class="barracks-banner">${icon('barracks')}<div><h3>Wybierz swoją profesję</h3><p>${unlocked ? 'Twój trening otwiera nową drogę.' : 'Wybór odblokuje się na 10. poziomie.'}</p></div></div>
-      <div class="profession-unlock"><div><span>${unlocked ? 'Profesje odblokowane' : 'Wymagany poziom 10'}</span><b>Twój poziom: ${level()}</b></div><progress max="10" value="${Math.min(level(),10)}" aria-label="Postęp do odblokowania profesji"></progress></div>
+    const canChoose = unlocked && PROFESSIONS[hero.classId].some(p=>!p.pending);
+    return `<div class="barracks-banner">${icon('barracks')}<div><h3>Wybierz swoją profesję</h3><p>${unlocked ? 'Poziom wymagany do wyboru został osiągnięty.' : 'Wybór odblokuje się na 10. poziomie.'}</p></div></div>
+      <div class="profession-unlock"><div><span>${unlocked ? 'Wymagany poziom osiągnięty' : 'Wymagany poziom 10'}</span><b>Twój poziom: ${level()}</b></div><progress max="10" value="${Math.min(level(),10)}" aria-label="Postęp do odblokowania profesji"></progress></div>
       ${current ? `<p class="current-profession">Obecna profesja: <strong>${current.name}</strong></p>` : ''}
-      <form id="profession-form"><fieldset ${unlocked ? '' : 'disabled'}><legend class="sr-only">Profesje dla twojej klasy</legend><div class="profession-grid">${PROFESSIONS[hero.classId].map(p=>`<label class="profession-card"><input type="radio" name="profession" value="${p.id}" ${current?.id===p.id ? 'checked' : ''} required><span class="profession-symbol">${icon(p.id==='ash-knight'||p.id==='rune-guardian'||p.id==='forest-warden'?'guild':hero.classId==='mage'?'alchemy':'arena')}</span><strong>${p.name}</strong><span class="profession-role">${p.role}</span><span class="profession-state">${unlocked ? 'Dostępna' : 'Od poziomu 10'}</span></label>`).join('')}</div><button type="submit" class="primary profession-submit">${unlocked ? current ? 'Zmień profesję' : 'Wybierz profesję' : 'Odblokowanie na poziomie 10'}</button></fieldset><p id="profession-status" role="status" aria-live="polite"></p></form><p class="panel-note">Profesję możesz zmienić w koszarach. Jej umiejętności pojawią się wraz z systemem walki.</p>`;
+      <form id="profession-form"><fieldset ${canChoose ? '' : 'disabled'}><legend class="sr-only">Profesje dla twojej klasy</legend><div class="profession-grid">${PROFESSIONS[hero.classId].map(p=>`<label class="profession-card"><input type="radio" name="profession" value="${p.id}" ${current?.id===p.id ? 'checked' : ''} ${p.pending ? 'disabled' : ''} required><span class="profession-symbol">${icon(p.icon)}</span><strong>${p.name}</strong><span class="profession-role">${p.role}</span><span class="profession-state">${p.pending ? 'Do ustalenia' : unlocked ? 'Dostępna' : 'Od poziomu 10'}</span></label>`).join('')}</div><button type="submit" class="primary profession-submit">${unlocked ? canChoose ? current ? 'Zmień profesję' : 'Wybierz profesję' : 'Profesje w przygotowaniu' : 'Odblokowanie na poziomie 10'}</button></fieldset><p id="profession-status" role="status" aria-live="polite"></p></form><p class="panel-note">Każda klasa otrzyma trzy własne profesje do wyboru od poziomu 10. Nazwy i umiejętności ustalimy później.</p>`;
   }
   const stats = {warrior:[12,5,3,10],mage:[3,5,12,6],elf:[5,12,4,7],dwarf:[10,3,4,12]};
   const gear = {warrior:['Wyszczerbiony miecz','Znoszona kolczuga'],mage:['Kostur czarnego jesionu','Szata wygnańca'],elf:['Łuk z martwego cisu','Płaszcz tropiciela'],dwarf:['Żelazny topór','Pancerz wędrowca']};
@@ -91,8 +98,9 @@
     e.preventDefault();
     const status = $('#profession-status');
     if (level() < 10) { status.textContent = 'Wybór profesji wymaga poziomu 10.'; return; }
+    if (PROFESSIONS[hero.classId].every(p=>p.pending)) { status.textContent = 'Profesje tej klasy są jeszcze do ustalenia.'; return; }
     const chosen = new FormData(e.target).get('profession');
-    if (!PROFESSIONS[hero.classId].some(p=>p.id===chosen)) { status.textContent = 'Wybierz jedną z dostępnych profesji.'; return; }
+    if (!PROFESSIONS[hero.classId].some(p=>!p.pending && p.id===chosen)) { status.textContent = 'Wybierz jedną z dostępnych profesji.'; return; }
     const updated = {...hero, level:level(), profession:chosen};
     try {
       const stored = localStorage.getItem(HERO_KEY);

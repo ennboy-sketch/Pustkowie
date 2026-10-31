@@ -26,15 +26,9 @@ Utworzona lub zapisana postać otwiera bezpośrednio Zamek Czarnej Stali. Autors
 
 ## Koszary i profesje
 
-Koszary Żelaznej Przysięgi znajdują się przy placu treningowym (znacznik na mapie i menu ŚWIAT). Profesję można wybrać od poziomu 10; niższe poziomy widzą zablokowane ścieżki. Blokada obowiązuje także w obsłudze formularza. Każda klasa ma dwie profesje:
+Koszary Żelaznej Przysięgi znajdują się przy placu treningowym (znacznik na mapie i menu ŚWIAT). Każda klasa (wojownik, mag, elf, krasnolud) ma trzy osobne miejsca na profesje, łącznie 12. Nazwy i umiejętności ustalimy później. Robocze etykiety to Profesja 1, Profesja 2 i Profesja 3; identyfikatory są osobne dla każdej klasy.
 
-- Wojownik: Rycerz Popiołu / Berserker.
-- Mag: Piromanta / Czarnoksiężnik.
-- Elf: Łowca Cieni / Strażnik Lasu.
-- Krasnolud: Runiczny Strażnik / Mistrz Żelaza.
-
-Profesja zapisuje się w istniejącym zapisie v2, pojawia się w panelu i karcie bohatera. Można ją zmienić w koszarach. Stare zapisy bez pola level mają poziom 1. Nowe postacie zaczynają z level: 1 i profession: null. System zdobywania poziomów oraz umiejętności profesji nie jest jeszcze zaimplementowany; odblokowanie poziomu 10 jest fundamentem przyszłej progresji. Nie ma serwera i poziomy nie są autoryzowane po stronie serwera.
-
+Wymagany poziom to 10. Dopóki profesje mają pending: true, wybór jest niedostępny również po osiągnięciu tego poziomu. Blokada działa w interfejsie i obsłudze formularza. Poprzednie robocze nazwy zostały usunięte; istniejące zapisy postaci nie są nadpisywane podczas wczytywania. Wybrana docelowo profesja będzie zapisywana w istniejącym zapisie v2. Stare zapisy bez pola level mają poziom 1. System zdobywania poziomów i umiejętności pozostaje w przygotowaniu.
 
 ## Ikony interfejsu
 
