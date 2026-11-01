@@ -210,3 +210,10 @@ Widok przesuwa się swobodnie palcem, gładzikiem lub myszą, bez widocznych pas
 Kuźnia na mapie i w menu zamku otwiera panoramiczną pracownię `forge-workshop.webp`. Gorim Sadza jest potężnym, szerokim w barach człowiekiem z młotem, stojącym przy kowadle na tle rozpalonego pieca hutniczego. Otoczenie uzupełniają narzędzia, sztaby metalu i stojaki z uzbrojeniem. Widok przesuwa się palcem i myszą, z zachowaniem proporcji obrazu i początkowym kadrem na kowala.
 
 Jedyną interaktywną postacią i znacznikiem w pracowni jest Gorim Sadza. Kliknięcie otwiera rozmowę i informację o przyszłym wytwarzaniu rzadkiego ekwipunku. Kowadło, piec i pozostałe wyposażenie są częścią ilustracji. Nie dodano receptur, cen, kosztów ani możliwości wytwarzania przedmiotów. Oglądanie kuźni i rozmowa nie zmieniają zapisu postaci.
+
+
+## Przybliżanie lokacji
+
+Wspólne przybliżanie (100–300%) obejmuje mapę zamku, karczmę, pracownię alchemiczki, kuźnię, korytarz piętra i oba pokoje. Przyciski +/− i procentowy reset skali znajdują się w rogu widoku. Działa również kółko myszy, gest dwóch palców oraz klawisze +/−/0 przy skupieniu na widoku. Po powiększeniu można przesuwać widok palcem i myszą; znaczniki postaci i drzwi pozostają przy ilustracji.
+
+Podczas zwiadu i walki przycisk lupy otwiera osobny pełnoekranowy podgląd lokacji z tą samą obsługą przybliżania. Mechanika i czas misji działają dalej; nie powiększa się odliczanie, statystyki ani przyciski odbioru nagrody. Zmiany skali nie zapisują danych postaci. Obsługa jest usuwana po opuszczeniu lokacji.
