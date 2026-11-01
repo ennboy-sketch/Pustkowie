@@ -134,7 +134,7 @@
     } else if (id === 'mount') {
       content = '';
     } else if (id === 'inventory') {
-      content = window.HeroSheet.inventoryMarkup(hero);
+      content = '<div class="backpack-root"></div>';
     } else if (id === 'journal') {
       content = `<div class="journal-entry">${icon('journal')}<div><h3>Przybycie do zamku</h3><p>Twoja postać dotarła do Zamku Czarnej Stali.</p><span class="state-badge">Zapisane</span></div></div>`;
     } else if (id === 'help') {
@@ -144,7 +144,7 @@
     }
     $('#place-content').innerHTML = content;
     if (id === 'hero') stopHeroSheet=window.HeroSheet.mount($('.hero-sheet-root'),{read:readCurrentHero,update:updateCurrentHero});
-    if (id === 'inventory') document.querySelectorAll('.hero-bag strong').forEach((el,i)=>{el.textContent=window.HeroSheet.inventory(hero)[i].name;});
+    if (id === 'inventory') stopHeroSheet=window.HeroSheet.mountBag($('.backpack-root'),{read:readCurrentHero,update:updateCurrentHero});
     if (id === 'wheel') window.FateWheel.mount($('#place-content'));
     if(id==='tavern'){
       if(scouting){

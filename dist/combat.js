@@ -55,7 +55,7 @@
     const won=fight.battle.winner==='hero',reward=won?fight.reward:{gold:0,xp:0};
     const next=window.Progression.award(hero,reward.xp),gold=(hero.gold??25)+reward.gold;
     if(!Number.isSafeInteger(gold))throw new Error('Nieprawidłowa ilość złota.');
-    const loot=won?(fight.loot===undefined?window.HeroSheet.rollLoot(hero):fight.loot):null;
+    const loot=won&&window.HeroSheet.bagItems(hero).length<25?(fight.loot===undefined?window.HeroSheet.rollLoot(hero):fight.loot):null;
     return {...window.HeroSheet.receiveLoot(next,loot),gold,activeCombat:null,combatOffer:null,lastCombat:{id,sceneId:fight.sceneId,enemyId:fight.battle.enemy.id,won,reward,loot,levelsGained:next.level-window.Progression.level(hero)}};
   }
   function profile(hero){

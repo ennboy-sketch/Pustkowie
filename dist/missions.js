@@ -48,7 +48,7 @@
     const gold=(Number.isSafeInteger(hero.gold)&&hero.gold>=0?hero.gold:25)+reward.gold;
     if(!Number.isSafeInteger(gold))throw new Error('Nie można zapisać tak dużej ilości złota.');
     const progressed=window.Progression.award(hero,reward.xp);
-    const loot=mission.loot===undefined?window.HeroSheet.rollLoot(hero):mission.loot;
+    const loot=window.HeroSheet.bagItems(hero).length>=25?null:mission.loot===undefined?window.HeroSheet.rollLoot(hero):mission.loot;
     return {...window.HeroSheet.receiveLoot(progressed,loot),gold,activeMission:null,lastScout:{...mission,loot,reward:{xp:reward.xp,gold:reward.gold},reportedAt:now,rewardClaimed:true,levelsGained:progressed.level-window.Progression.level(hero)}};
   }
   function markup() {

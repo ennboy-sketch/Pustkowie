@@ -166,3 +166,12 @@ Zgodnie z ustaleniem gracz otrzymuje 5 punktów na start i 3 za każdy kolejny p
 Początkowe Szczęście wynosi 0. Szansa zdobycia przedmiotu to 10% + 1 punkt procentowy za punkt Szczęścia, maksymalnie 60%. Wyświetla się przy cesze i symbolu koniczyny. Szczęście nie zwiększa obrażeń ani szansy krytycznej. Każdy nowy zwiad i walka zapisuje osobny wynik losowania przedmiotu (`loot`, obiekt albo null) przy rozpoczęciu; zmiana cech i odświeżenie w trakcie misji nie zmieniają tego wyniku. Wcześniejsza aktywna misja bez tego pola losuje przedmiot przy skutecznym zakończeniu.
 
 Zwiad oraz zwycięska walka mogą dać jeden z siedmiu podstawowych przedmiotów, po jednym rodzaju dla każdego slotu. Porażka nie daje przedmiotu. Rzecz trafia do `lootInventory` w tym samym zapisie co złoto, EXP i usunięcie aktywnej misji, a okno nagrody pokazuje jej ikonę i nazwę. Wyposażenie zapisuje się w `equipment` jako identyfikatory rzeczy z torby. Nie ma podwójnego odbioru ani częściowego zapisu.
+
+
+## Plecak z 25 miejscami
+
+Przycisk Ekwipunek przy portrecie otwiera osobne okno z siatką 5×5, nową ikoną skórzanego plecaka (`inventory-icon.webp`) i licznikiem zajętych miejsc. Ten sam widok jest dostępny z menu Ekwipunek. Każde puste pole pozostaje widoczne; kliknięcie zajętego pokazuje nazwę i przycisk założenia przedmiotu. Zamknięcie wraca do postaci. Ikona jest też używana w menu zamku.
+
+Limit 25 dotyczy przedmiotów w plecaku, poza siedmioma miejscami założonego wyposażenia. Założenie rzeczy w pustym miejscu zwalnia pole plecaka. Wymiana założonego przedmiotu przenosi poprzedni do plecaka, zachowując liczbę zajętych pól; zdjęcie rzeczy przy pełnym plecaku jest zablokowane. Wyposażenie zapisuje się atomowo pod dotychczasową blokadą Web Locks.
+
+Zgodnie z wyborem użytkownika pełny plecak blokuje zdobywanie nowych przedmiotów. Losowanie przedmiotu nie zachodzi przy rozpoczęciu misji z pełnym plecakiem. Jeżeli plecak zapełni się przed odbiorem wcześniej wylosowanej rzeczy, rzecz nie zostaje przyznana ani pokazana jako zdobyta. Złoto, EXP i zakończenie misji pozostają dostępne. Nie ma kolejki oczekujących zdobyczy. Istniejące przedmioty nie są automatycznie usuwane; jeżeli starszy zapis przekracza limit, nadmiar pozostaje zachowany i dostępny z wyboru rzeczy przy miejscach wyposażenia, a plecak wyświetla informację o tym stanie.
