@@ -98,7 +98,6 @@
       ${current ? `<p class="current-profession">Obecna profesja: <strong>${current.name}</strong></p>` : ''}
       <form id="profession-form"><fieldset ${canChoose ? '' : 'disabled'}><legend class="sr-only">Profesje dla twojej klasy</legend><div class="profession-grid">${PROFESSIONS[hero.classId].map(p=>`<label class="profession-card"><input type="radio" name="profession" value="${p.id}" ${current?.id===p.id ? 'checked' : ''} ${p.pending ? 'disabled' : ''} required><span class="profession-symbol">${icon(p.icon)}</span><strong>${p.name}</strong><span class="profession-role">${p.role}</span><span class="profession-state">${p.pending ? 'Do ustalenia' : unlocked ? 'Dostępna' : 'Od poziomu 10'}</span></label>`).join('')}</div><button type="submit" class="primary profession-submit">${unlocked ? canChoose ? current ? 'Zmień profesję' : 'Wybierz profesję' : 'Profesje w przygotowaniu' : 'Odblokowanie na poziomie 10'}</button></fieldset><p id="profession-status" role="status" aria-live="polite"></p></form><p class="panel-note">Każda klasa otrzyma trzy własne profesje do wyboru od poziomu 10. Nazwy i umiejętności ustalimy później.</p>`;
   }
-  const stats = {warrior:[12,5,3,10],mage:[3,5,12,6],elf:[5,12,4,7],dwarf:[10,3,4,12]};
   const gear = {warrior:['Wyszczerbiony miecz','Znoszona kolczuga'],mage:['Kostur czarnego jesionu','Szata wygnańca'],elf:['Łuk z martwego cisu','Płaszcz tropiciela'],dwarf:['Żelazny topór','Pancerz wędrowca']};
   const labels = ['Siła','Zręczność','Inteligencja','Wytrzymałość'];
   function toggleMenu(open) {
@@ -124,7 +123,8 @@
     if(id==='tavern'){try{scouting=!!window.BrandMissions.status(hero).mission;}catch{}}
     let content;
     if (id === 'hero') {
-      content = `<div class="hero-sheet"><div class="sheet-art"><div id="ready-art" class="character ${hero.gender} ${hero.classId}" role="img" aria-label="Twoja postać"></div></div><div class="sheet-stats"><h3 id="sheet-name"></h3><p>Poziom ${level()}</p><p class="sheet-profession">${profession()?.name || 'Bez profesji'}</p><div class="health-label">Życie <b>${50+stats[hero.classId][3]*10} / ${50+stats[hero.classId][3]*10}</b></div><div class="health-bar"></div>${labels.map((name,i)=>`<div class="stat-row"><span>${name}</span><strong>${stats[hero.classId][i]}</strong></div>`).join('')}<div class="xp-info">Doświadczenie <span>${window.Progression.info(hero).label}</span></div><p class="panel-note">Maksymalny poziom: 250</p></div></div>`;
+      const combatProfile=window.BrandCombat.profile(hero);
+      content = `<div class="hero-sheet"><div class="sheet-art"><div id="ready-art" class="character ${hero.gender} ${hero.classId}" role="img" aria-label="Twoja postać"></div></div><div class="sheet-stats"><h3 id="sheet-name"></h3><p>Poziom ${level()}</p><p class="sheet-profession">${profession()?.name || 'Bez profesji'}</p><div class="health-label">Życie <b>${combatProfile.maxHp} / ${combatProfile.maxHp}</b></div><div class="health-bar"></div>${labels.map((name,i)=>`<div class="stat-row"><span>${name}</span><strong>${combatProfile.stats[i]}</strong></div>`).join('')}<div class="xp-info">Doświadczenie <span>${window.Progression.info(hero).label}</span></div><p class="panel-note">Maksymalny poziom: 250</p></div></div>`;
     } else if (id === 'tavern') {
       content = scouting?'<div class="scout-active-view" aria-label="Aktywny zwiad"></div>':window.TavernPanel.markup();
     } else if (id === 'barracks') {

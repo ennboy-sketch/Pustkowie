@@ -64,7 +64,7 @@ Brand ma dwie zakładki: Zwiad czasowy i Walka z potworami. Zwiad można rozpocz
 
 Przedziały z nakładającymi się granicami zostały zinterpretowane jako zmiana czasu od poziomu 3, 8 i 15: poziomy 1–2 → 1 minuta, 3–7 → 5 minut, 8–14 → 10 minut, 15–25 → 15 minut. Czas powyżej poziomu 25 pozostaje do ustalenia. Zmiana poziomu podczas aktywnej misji nie zmienia jej czasu.
 
-Potwory, walka i dalsze szczegóły misji nie są jeszcze dodane. Rozpoczęcie zwiadu kosztuje 5 energii, a zgłoszenie powrotu nie kosztuje dodatkowej energii. Zwiad przyznaje losowe złoto i EXP po zgłoszeniu powrotu. Reguły i panel znajdują się w `missions.js` oraz `missions.css`; zapis korzysta z tej samej transakcji localStorage i blokady Web Locks co zakupy piwa. Ukończenie zwiadu Branda nie odblokowuje schodów związanych z przyszłą misją Tauriel.
+Widok walki i mechanizm tur są przygotowane; listy potworów pozostają puste. Rozpoczęcie zwiadu kosztuje 5 energii, a zgłoszenie powrotu nie kosztuje dodatkowej energii. Zwiad przyznaje losowe złoto i EXP po zgłoszeniu powrotu. Reguły i panel znajdują się w `missions.js` oraz `missions.css`; zapis korzysta z tej samej transakcji localStorage i blokady Web Locks co zakupy piwa. Ukończenie zwiadu Branda nie odblokowuje schodów związanych z przyszłą misją Tauriel.
 
 
 ## Dzienne odnowienie energii
@@ -104,3 +104,12 @@ Opis wylosowanego obszaru zwiadu jest widoczny w półprzezroczystej, złoto obr
 | 15 minut | 125–200 | 50–100 |
 
 Losowania są niezależne i obejmują obie granice przedziałów. Nowa misja zapisuje nagrodę w `activeMission.reward` przy rozpoczęciu; tytuł, czas, lokacja i nagroda nie zmieniają się po odświeżeniu. Przy zgłoszeniu powrotu EXP, poziom, złoto i usunięcie aktywnej misji zapisują się w jednej transakcji, pod wspólną blokadą Web Locks. Nie ma dodatkowego kosztu energii ani podwójnego odbioru. Podsumowanie nagrody pojawia się po powrocie do karczmy i pozostaje w `lastScout`. Stary zwiad bez zapisanej nagrody otrzymuje ją przy pierwszym skutecznie zapisanym zakończeniu, według swojego czasu. Błąd zapisu nie przyznaje częściowej nagrody ani nie usuwa misji.
+
+
+## Automatyczna walka u Branda
+
+Zakładka „Walka z potworami” pozwala wylosować teren i otworzyć pełnoekranowy podgląd pola walki: Mroczny Las, Starą Kopalnię albo Podziemia Miasta. Po lewej są portret, poziom, życie i cztery startowe statystyki bohatera, zgodne z kartą postaci. Po prawej pozostaje puste miejsce przeciwnika. Wspólne statystyki początkowe i dotychczasowy wzór życia przeniesiono do `BrandCombat.profile`. Podgląd i ponowne losowanie nie zapisują misji, nie pobierają energii i nie przyznają nagród.
+
+`combat.js` ma oddzielne, puste pule potworów dla trzech terenów. Przycisk rozpoczęcia jest zablokowany; nie dodano żadnych potworów ani zasad ich obrażeń, inicjatywy i nagród. Docelowy koszt misji u Branda wynosi 5 energii. W czasie aktywnego zwiadu nie można otworzyć podglądu walki. Zamknięcie pełnoekranowego podglądu wraca do Branda, a zamknięcie rozmowy usuwa jego okno.
+
+Mechanizm `createBattle(hero, enemy, first)` i `advance(battle, resolveHit)` obsługuje naprzemienne ataki, obniżanie życia bez wartości ujemnych i zakończenie po pokonaniu jednej ze stron. Kolejność pierwszego ataku i funkcję obrażeń trzeba jawnie dostarczyć po ustaleniu reguł. `play(root, battle, resolveHit)` pokazuje automatycznie pojedynczy cios co 1,1 sekundy, uaktualnia paski życia, liczby obrażeń, turę i wynik; zwraca funkcję zatrzymania. Nie jest uruchamiany dla pustych pul przeciwników i nie zmienia zapisu postaci. Nagrody zwiadowcze nie są używane jako nagrody walki.
