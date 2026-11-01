@@ -196,3 +196,10 @@ Schody po odblokowaniu otwierają przesuwany korytarz `tavern-upstairs.webp`, z 
 ### Tauriel po przepędzeniu rozbójników
 
 Po trzecim zaliczonym zwycięstwie (status `ready`, także przed odebraniem naszyjnika) Tauriel przechodzi do Pokoju z Zieloną Kotarą. Jej znacznik i postać znikają z dolnej sali; używana jest osobna panorama `tavern-after-tauriel.webp`. Lewy pokój korzysta z atlasu `tavern-rooms-tauriel.webp`, przedstawiającego Tauriel w jej pokoju. W drugim pokoju nie ma Tauriel. Rozmowa z przyciskiem Tauriel w pokoju pozwala odebrać zachowaną nagrodę, także po ponownym otwarciu gry. Status `completed` zachowuje tę samą lokalizację. Przed ukończeniem trzech walk Tauriel nadal przebywa na dole, gdzie można przyjąć i kontynuować zadanie.
+
+
+## Pracownia alchemiczki
+
+Alchemiczka na mapie i w menu zamku otwiera Wieżę Zielonego Płomienia. Lokal ma własną panoramę `alchemist-workshop.webp`: dorosła, czarnowłosa alchemiczka w dopasowanej czarnej sukni ze złotymi detalami, stół alchemiczny, kolby, zioła, regały i schody na prywatne piętro. Bohaterka ma osobną ilustrację `alchemist-character.webp`, widoczną w rozmowie.
+
+Widok przesuwa się swobodnie palcem, gładzikiem lub myszą, bez widocznych pasków przewijania i bez stałego panelu zasłaniającego ilustrację. Początkowy kadr kieruje się na alchemiczkę. Kliknięcie jej znacznika otwiera portret i powitanie; stół pokazuje opis wyposażenia pracowni, a schody informują o zamkniętym na razie prywatnym piętrze. Nie dodano jeszcze receptur, warzenia, zakupów, kosztów ani nowej misji. Oglądanie pracowni nie zmienia zapisu postaci. Zamknięcie lub zmiana miejsca usuwa obsługę przeciągania, obserwator rozmiaru i okno rozmowy.

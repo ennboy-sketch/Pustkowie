@@ -13,7 +13,7 @@
     dungeon:{name:'Lochy',title:'Krypta Zapomnianych',category:'Walka',icon:'dungeon',x:14,y:14,text:'Za kamienną bramą nawet cisza ma swoją cenę.',future:'Walka z potworami'},
     barracks:{name:'Koszary',title:'Koszary Żelaznej Przysięgi',category:'Profesje',icon:'barracks',x:16,y:35},
     forge:{name:'Kuźnia',title:'Kuźnia Czarnego Żaru',category:'Handel',icon:'forge',x:47,y:22,text:'Ostatni kowal zamku wciąż podtrzymuje ogień.',future:'Broń i pancerze'},
-    alchemy:{name:'Alchemik',title:'Wieża Zielonego Płomienia',category:'Handel',icon:'alchemy',x:87,y:64,text:'Za zielonymi szybami coś nigdy nie zasypia.',future:'Mikstury'},
+    alchemy:{name:'Alchemiczka',title:'Wieża Zielonego Płomienia',category:'Handel',icon:'alchemy',x:87,y:64,text:'Za zielonymi szybami coś nigdy nie zasypia.',future:'Mikstury'},
     market:{name:'Targ',title:'Targ Popiołów',category:'Handel',icon:'market',x:48,y:76,text:'Każda rzecz ma tu cenę. Każda moneta swoją historię.',future:'Kupno i sprzedaż'},
     guild:{name:'Gildia',title:'Bastion Przysięgi',category:'Społeczność',icon:'guild',x:77,y:12,text:'Przysięgi złożone w cieniu cytadeli wiążą mocniej niż stal.',future:'Gildie graczy'},
     wheel:{name:'Koło Losu',title:'Koło Losu',category:'Fontanna Czarnej Stali',icon:'wheel',x:50,y:39},
@@ -113,6 +113,7 @@
     stopActiveScout();stopHeroSheet();
     window.FateWheel.cancel();
     window.TavernPanel.cancel();
+    window.AlchemistPanel.cancel();
     toggleMenu(false);
     requestAnimationFrame(() => { const view = $('.world-viewport'); view.scrollLeft = Math.max(0,(view.scrollWidth-view.clientWidth)/2); });
     document.querySelectorAll('.nav-tile').forEach(el => el.setAttribute('aria-current',el.dataset.place === id ? 'page' : 'false'));
@@ -127,6 +128,8 @@
       content = '<div class="hero-sheet-root"></div>';
     } else if (id === 'tavern') {
       content = scouting?'<div class="scout-active-view" aria-label="Aktywny zwiad"></div>':window.TavernPanel.markup();
+    } else if (id === 'alchemy') {
+      content = window.AlchemistPanel.markup();
     } else if (id === 'barracks') {
       content = barracksPanel();
     } else if (id === 'wheel') {
@@ -146,6 +149,7 @@
     if (id === 'hero') stopHeroSheet=window.HeroSheet.mount($('.hero-sheet-root'),{read:readCurrentHero,update:updateCurrentHero});
     if (id === 'inventory') stopHeroSheet=window.HeroSheet.mountBag($('.backpack-root'),{read:readCurrentHero,update:updateCurrentHero});
     if (id === 'wheel') window.FateWheel.mount($('#place-content'));
+    if (id === 'alchemy') window.AlchemistPanel.mount($('#place-content'));
     if(id==='tavern'){
       if(scouting){
         const scene=window.BrandMissions.SCENES[hero.activeMission.sceneId];
@@ -186,7 +190,7 @@
     openPlace('barracks');
     $('#profession-status').textContent = `Wybrano profesję: ${profession().name}.`;
   });
-  $('#place-dialog').addEventListener('close', () => {stopHeroSheet();stopActiveScout();window.FateWheel.cancel();window.TavernPanel.cancel();});
+  $('#place-dialog').addEventListener('close', () => {stopHeroSheet();stopActiveScout();window.FateWheel.cancel();window.TavernPanel.cancel();window.AlchemistPanel.cancel();});
   $('#close-place').addEventListener('click',()=>$('#place-dialog').close());
   $('#place-dialog').addEventListener('click',e=>{if(e.target===$('#place-dialog')){const r=e.target.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)e.target.close();}});
   $('#menu-toggle').addEventListener('click',()=>toggleMenu(!$('#sidebar').classList.contains('is-open')));
