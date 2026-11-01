@@ -7,7 +7,7 @@ dialog.combat-dialog{position:fixed;inset:0;margin:0;padding:0;border:0;border-r
 /* Kwadratowy kadr atlasu mieści się nad podpisem bez zmiany proporcji. */
 .combat-portrait:has(.monster-avatar){display:flex;flex-direction:column}
 .combat-portrait .combat-figure.monster-avatar{position:relative;inset:auto;flex:1;min-height:0;width:100%;height:auto;container-type:size;--monster-art:url('forest-monsters.webp')}
-.combat-portrait .combat-figure.monster-avatar:before{content:'';position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(100cqw,100cqh);aspect-ratio:1;background-image:var(--monster-art);background-size:200% 200%;background-position:var(--monster-position);background-repeat:no-repeat}
+.combat-portrait .combat-figure.monster-avatar:before{content:'';position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(100cqw,100cqh);aspect-ratio:1;background-image:var(--monster-art);background-size:var(--monster-grid,200% 200%);background-position:var(--monster-position);background-repeat:no-repeat}
 .combat-portrait .combat-figure.monster-mine{--monster-art:url('mine-monsters.webp')}
 .combat-portrait .combat-figure.monster-undercity{--monster-art:url('undercity-monsters.webp')}
 .combat-portrait:has(.monster-avatar) .combat-identity{position:static;flex-shrink:0;padding:8px;background:#0a160fe8}

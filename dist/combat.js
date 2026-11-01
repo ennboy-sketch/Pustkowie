@@ -52,6 +52,7 @@
   function finish(hero,id){
     const fight=hero.activeCombat;
     if(!fight||fight.id!==id||!fight.battle.winner)throw new Error('Walka trwa lub została już rozliczona.');
+    if(fight.source==='tauriel')return window.TaurielQuest.resolve(hero,id);
     const won=fight.battle.winner==='hero',reward=won?fight.reward:{gold:0,xp:0};
     const next=window.Progression.award(hero,reward.xp),gold=(hero.gold??25)+reward.gold;
     if(!Number.isSafeInteger(gold))throw new Error('Nieprawidłowa ilość złota.');
@@ -62,7 +63,7 @@
     const base=BASE_STATS[hero.classId];
     if(!base)throw new Error('Nieznana klasa postaci.');
     const added=window.HeroSheet.bonuses(hero),stats=base.map((n,i)=>n+added[i]);
-    return {name:hero.name,level:window.Progression.level(hero),maxHp:50+stats[3]*10,stats:[...stats],classId:hero.classId,gender:hero.gender};
+    return {name:hero.name,level:window.Progression.level(hero),maxHp:50+stats[3]*10+window.HeroSheet.hpBonus(hero),stats:[...stats],classId:hero.classId,gender:hero.gender};
   }
   function drawLocation(){
     const ids=Object.keys(ROSTERS).filter(id=>ROSTERS[id].length),value=new Uint32Array(1),limit=4294967296-(4294967296%ids.length);
@@ -94,7 +95,7 @@
     const figure=root.querySelector('.combat-figure');
     figure.className='combat-figure';
     figure.style.cssText='';
-    if(Number.isInteger(fighter?.tile)){figure.classList.add('monster-avatar');if(fighter.atlas==='mine')figure.classList.add('monster-mine');if(fighter.atlas==='undercity')figure.classList.add('monster-undercity');figure.style.setProperty('--monster-position',`${fighter.tile%2*100}% ${Math.floor(fighter.tile/2)*100}%`);}
+    if(Number.isInteger(fighter?.tile)){figure.classList.add('monster-avatar');if(fighter.atlas==='mine')figure.classList.add('monster-mine');if(fighter.atlas==='undercity')figure.classList.add('monster-undercity');if(fighter.atlas==='tauriel')figure.classList.add('monster-tauriel');figure.style.setProperty('--monster-position',fighter.atlas==='tauriel'?`${fighter.tile*50}% 0%`:`${fighter.tile%2*100}% ${Math.floor(fighter.tile/2)*100}%`);}
     if(fighter&&Object.hasOwn(BASE_STATS,fighter.classId)&&['male','female'].includes(fighter.gender))figure.className+=` character ${fighter.gender} ${fighter.classId}`;
     root.classList.toggle('combat-empty',!fighter);
     const hp=fighter?(fighter.hp??fighter.maxHp):0,bar=root.querySelector('progress');
@@ -141,8 +142,10 @@
     const locked=fn=>navigator.locks?navigator.locks.request('pustkowie-hero-v2',fn):fn();
     function render(hero){
       const fight=hero.activeCombat,offer=hero.combatOffer;
-      dialog.querySelector('.combat-bottom>small').textContent=fight?`Koszt misji: ${fight.cost??5} energii · Opłacono przy rozpoczęciu`:'Wybierz zlecenie u Branda.';
-      const sceneId=fight?.sceneId||offer?.sceneId||'forest',scene=window.BrandMissions.SCENES[sceneId];
+      dialog.querySelector('.combat-top>div>span').textContent=fight?.source==='tauriel'?'Tauriel · Przepędź nieproszonych gości':'Dowódca Brand · Walka z potworami';
+      dialog.querySelector('[data-close-combat]').setAttribute('aria-label',fight?.source==='tauriel'?'Wróć do Tauriel':'Wróć do Branda');
+      dialog.querySelector('.combat-bottom>small').textContent=fight?.source==='tauriel'?'Misja Tauriel · Bez kosztu energii':fight?`Koszt misji: ${fight.cost??5} energii · Opłacono przy rozpoczęciu`:'Wybierz zlecenie u Branda.';
+      const sceneId=fight?.sceneId||offer?.sceneId||'forest',scene=fight?.source==='tauriel'?{image:'tavern-upstairs.webp',short:'Górne piętro · Barykada'}:window.BrandMissions.SCENES[sceneId];
       dialog.querySelector('.combat-stage').style.setProperty('--combat-art',`url("${scene.image}")`);
       dialog.querySelector('#combat-location').textContent=scene.short;
       if(fight){
@@ -175,12 +178,13 @@
       catch(error){if(!disposed)dialog.querySelector('.combat-status').textContent='Nie udało się zapisać walki. Spróbuj ponownie.';}
     }
     async function act(){
-      if(busy)return;const intent=action.dataset.action,id=action.dataset.fightId;busy=true;action.disabled=true;
+      if(busy)return;const intent=action.dataset.action,id=action.dataset.fightId,isQuest=state.read().activeCombat?.source==='tauriel';busy=true;action.disabled=true;
       try{
         const next=await locked(()=>state.update(hero=>intent==='finish'?finish(hero,id):start(hero)));
         if(disposed)return;
         if(intent==='finish'){
           dialog.close();shownId=null;
+          if(isQuest){state.onQuestResolved?.(next);return;}
           if(next.lastCombat.won)window.TavernPanel.showReward(next.lastCombat,window.Progression.level(next));
           else{dialog.querySelector('.combat-status').textContent='Porażka. Nie otrzymujesz nagrody.';render(next);dialog.querySelector('.combat-status').textContent='Porażka. Nie otrzymujesz nagrody.';dialog.showModal();}
         }else{busy=false;render(next);}

@@ -3,17 +3,20 @@
   const people = {
     tobiasz:{name:'Tobiasz',role:'Karczmarz',line:'Siadaj. Przy ogniu łatwiej zapomnieć o chłodzie.'},
     brand:{name:'Dowódca Brand',role:'Dowódca',line:'Wybierz zlecenie odpowiednie do swoich sił.'},
-    tauriel:{name:'Tauriel',role:'Elfka',line:'Nie każda historia nadaje się do opowiedzenia przy całej sali.'}
+    tauriel:{name:'Tauriel',role:'Elfka',line:'Trzej rozbójnicy zajęli górne piętro. Pomożesz mi ich przepędzić?'}
   };
   let resizeObserver = null;
   let beerTimer = null;
   let stopMissions = () => {};
+  let stopQuest = () => {};
+  let stopUpstairs = () => {};
   function showReward(completed,currentLevel) {
     const dialog=document.querySelector('.tavern-npc-dialog');
     if(!dialog||!completed?.reward)return;
     dialog.classList.add('is-mission-reward');
     dialog.querySelector('.brand-service').hidden=true;
     dialog.querySelector('.beer-service').hidden=true;
+    dialog.querySelector('.tauriel-service').hidden=true;
     dialog.querySelector('#tavern-speaker').textContent='Nagroda za misję';
     dialog.querySelector('.tavern-dialogue-line').hidden=true;
     const reward=dialog.querySelector('.mission-reward');
@@ -29,13 +32,15 @@
     if(!dialog.open)dialog.showModal();
   }
   function stopBeerTimer(){if(beerTimer){clearInterval(beerTimer);beerTimer=null;}}
-  function cancel() { stopBeerTimer(); stopMissions(); if(resizeObserver){resizeObserver.disconnect();resizeObserver=null;} }
+  function cancel() { stopBeerTimer(); stopMissions(); stopQuest(); stopUpstairs(); if(resizeObserver){resizeObserver.disconnect();resizeObserver=null;} }
   function markup() {
-    return `<section class="tavern-panel" aria-label="Wnętrze karczmy"><div class="tavern-viewport" tabindex="0" role="region" aria-label="Swobodnie przesuwany widok karczmy" aria-describedby="tavern-pan-hint"><div class="tavern-panorama"><img class="tavern-art" src="tavern-panorama.webp" alt="Jedno wnętrze karczmy: Tobiasz za ladą po lewej, Dowódca Brand przy stole, Tauriel pośrodku i schody po prawej." draggable="false"><div class="tavern-vignette" aria-hidden="true"></div>${Object.entries(people).map(([id,p])=>`<button type="button" class="npc-marker npc-${id}" data-npc="${id}" aria-label="Porozmawiaj: ${p.name}" aria-pressed="false"><span>${p.name}</span><small>${p.role}</small></button>`).join('')}<button type="button" class="stairs-hotspot" aria-label="Wejście na piętro"><span>Schody na piętro</span></button></div></div><p class="sr-only" id="tavern-pan-hint">Przesuń widok palcem lub przeciągnij myszą, aby rozejrzeć się po karczmie.</p><dialog class="tavern-npc-dialog" aria-labelledby="tavern-speaker"><h2 class="tavern-dialogue-name" id="tavern-speaker"></h2><p class="tavern-dialogue-line"></p><div class="mission-reward" hidden><span class="reward-ornament" aria-hidden="true">◆</span><dl class="mission-reward-items"><div class="mission-reward-item"><dt><span class="rpg-icon icon-coin" aria-hidden="true"></span><span>Złoto</span></dt><dd data-reward-gold></dd></div><div class="mission-reward-item"><dt><span class="rpg-icon icon-exp" aria-hidden="true"></span><span>EXP</span></dt><dd data-reward-xp></dd></div></dl><div class="mission-reward-loot" hidden><span class="gear-art" aria-hidden="true"></span>Zdobyty przedmiot<br><strong></strong></div><p class="mission-reward-level" role="status" hidden></p></div><div class="beer-service" hidden></div><div class="brand-service" hidden></div><button type="button" class="secondary" data-close-npc autofocus>Wróć do karczmy</button></dialog><dialog class="tavern-lock-dialog" aria-labelledby="stairs-lock-title"><h2 id="stairs-lock-title">Wejście zablokowane</h2><p>Wejście na piętro odblokujesz po wykonaniu misji od Tauriel.</p><p class="panel-note">Misja jeszcze niedostępna.</p><button type="button" class="secondary" data-close-stairs autofocus>Wróć do karczmy</button></dialog></section>`;
+    return `<section class="tavern-panel" aria-label="Wnętrze karczmy"><div class="tavern-viewport" tabindex="0" role="region" aria-label="Swobodnie przesuwany widok karczmy" aria-describedby="tavern-pan-hint"><div class="tavern-panorama"><img class="tavern-art" src="tavern-panorama.webp" alt="Jedno wnętrze karczmy: Tobiasz za ladą po lewej, Dowódca Brand przy stole, Tauriel pośrodku i schody po prawej." draggable="false"><div class="tavern-vignette" aria-hidden="true"></div>${Object.entries(people).map(([id,p])=>`<button type="button" class="npc-marker npc-${id}" data-npc="${id}" aria-label="Porozmawiaj: ${p.name}" aria-pressed="false"><span>${p.name}</span><small>${p.role}</small></button>`).join('')}<button type="button" class="stairs-hotspot" aria-label="Wejście na piętro"><span>Schody na piętro</span></button></div></div><p class="sr-only" id="tavern-pan-hint">Przesuń widok palcem lub przeciągnij myszą, aby rozejrzeć się po karczmie.</p><dialog class="tavern-npc-dialog" aria-labelledby="tavern-speaker"><h2 class="tavern-dialogue-name" id="tavern-speaker"></h2><p class="tavern-dialogue-line"></p><div class="mission-reward" hidden><span class="reward-ornament" aria-hidden="true">◆</span><dl class="mission-reward-items"><div class="mission-reward-item"><dt><span class="rpg-icon icon-coin" aria-hidden="true"></span><span>Złoto</span></dt><dd data-reward-gold></dd></div><div class="mission-reward-item"><dt><span class="rpg-icon icon-exp" aria-hidden="true"></span><span>EXP</span></dt><dd data-reward-xp></dd></div></dl><div class="mission-reward-loot" hidden><span class="gear-art" aria-hidden="true"></span>Zdobyty przedmiot<br><strong></strong></div><p class="mission-reward-level" role="status" hidden></p></div><div class="beer-service" hidden></div><div class="brand-service" hidden></div><div class="tauriel-service" hidden></div><button type="button" class="secondary" data-close-npc autofocus>Wróć do karczmy</button></dialog><dialog class="tavern-lock-dialog" aria-labelledby="stairs-lock-title"><h2 id="stairs-lock-title">Wejście zablokowane</h2><p>Wejście na piętro odblokujesz po wykonaniu misji od Tauriel.</p><p class="panel-note">Porozmawiaj z Tauriel. Misja „Przepędź nieproszonych gości” jest dostępna od poziomu 5.</p><button type="button" class="secondary" data-close-stairs autofocus>Wróć do karczmy</button></dialog><div class="upstairs-service"></div></section>`;
   }
   function mount(root,state) {
     cancel();
     const panel = root.querySelector('.tavern-panel');
+    const upstairs=window.TaurielQuest.mountUpstairs(panel.querySelector('.upstairs-service'),state);
+    stopUpstairs=()=>upstairs.dispose();
     const view = panel.querySelector('.tavern-viewport');
     const lock = panel.querySelector('.tavern-lock-dialog');
     const conversation = panel.querySelector('.tavern-npc-dialog');
@@ -84,7 +89,7 @@
       } catch(error) {beerMessage=error.name==='QuotaExceededError'||error.name==='SecurityError'?'Nie udało się zapisać zakupu. Nie pobrano złota.':error.message;}
       finally{buying=false;renderBeer();}
     }
-    conversation.addEventListener('close',()=>{stopBeerTimer();stopMissions();});
+    conversation.addEventListener('close',()=>{stopBeerTimer();stopMissions();stopQuest();});
     let drag = null;
     let suppressClick = false;
     view.addEventListener('pointerdown',e=>{
@@ -112,14 +117,17 @@
       if(e.target.closest('[data-buy-beer]')){void buyBeer();return;}
       if(e.target.closest('[data-close-npc]')){conversation.close();return;}
       if(e.target.closest('[data-close-stairs]')){lock.close();return;}
-      if(e.target.closest('.stairs-hotspot')){if(!lock.open)lock.showModal();return;}
+      if(e.target.closest('.stairs-hotspot')){if(window.TaurielQuest.canEnter(state.read()))upstairs.open();else if(!lock.open)lock.showModal();return;}
       const button=e.target.closest('[data-npc]');
       if(!button || !people[button.dataset.npc])return;
       const person=people[button.dataset.npc];
       conversation.classList.remove('is-mission-reward');
       conversation.querySelector('.mission-reward').hidden=true;
       conversation.querySelector('.tavern-dialogue-line').hidden=false;
-      stopMissions();
+      stopMissions();stopQuest();
+      const questPanel=panel.querySelector('.tauriel-service');
+      questPanel.hidden=button.dataset.npc!=='tauriel';
+      if(!questPanel.hidden)stopQuest=window.TaurielQuest.mount(questPanel,state);
       const brandPanel=panel.querySelector('.brand-service');
       brandPanel.hidden=button.dataset.npc!=='brand';
       if(!brandPanel.hidden)stopMissions=window.BrandChoices.mount(brandPanel,state);
@@ -127,7 +135,7 @@
       if(!beerPanel.hidden){renderBeer();beerTimer=setInterval(renderBeer,1000);}
       panel.querySelectorAll('[data-npc]').forEach(el=>el.setAttribute('aria-pressed',String(el===button)));
       panel.querySelector('.tavern-dialogue-name').textContent=person.name;
-      panel.querySelector('.tavern-dialogue-line').textContent=person.line;
+      panel.querySelector('.tavern-dialogue-line').textContent=button.dataset.npc==='tauriel'&&window.TaurielQuest.canEnter(state.read())?'Dzięki Tobie na piętrze znów jest spokojnie. Dziękuję za pomoc.':person.line;
       if(!conversation.open)conversation.showModal();
     });
   }

@@ -44,7 +44,7 @@ Kliknięcie Karczmy na mapie lub w menu otwiera autorską ilustrację wnętrza: 
 
 ### Swobodne przesuwanie i schody
 
-Karczma ma szeroki widok sali i schodów po prawej, przewijany swobodnie w obu osiach jak mapa zamku. Można przesuwać go palcem, gładzikiem, paskiem przewijania lub przeciągnięciem myszy; nie ma stron ani przyciągania do kadrów. Kliknięcie schodów otwiera osobne okno z informacją o wymaganej misji Tauriel. Przeciąganie przez schody nie otwiera komunikatu. Wejście na piętro pozostaje zablokowane, bez dodanej misji i bez zmiany zapisu postaci.
+Karczma ma szeroki widok sali i schodów po prawej, przewijany swobodnie w obu osiach jak mapa zamku. Można przesuwać go palcem, gładzikiem, paskiem przewijania lub przeciągnięciem myszy; nie ma stron ani przyciągania do kadrów. Kliknięcie schodów otwiera osobne okno z informacją o wymaganej misji Tauriel. Przeciąganie przez schody nie otwiera komunikatu. Wejście na piętro odblokowuje misja Tauriel opisana poniżej.
 
 Karczma wypełnia panel aż do dolnej krawędzi: paski przewijania oraz stałe pole instrukcji i rozmów są ukryte. Rozmowa z NPC otwiera osobne okno tylko po kliknięciu postaci. Rozmiar panoramy dopasowuje się do wysokości okna.
 
@@ -64,7 +64,7 @@ Brand ma dwie zakładki: Zwiad czasowy i Walka z potworami. Zwiad można rozpocz
 
 Przedziały z nakładającymi się granicami zostały zinterpretowane jako zmiana czasu od poziomu 3, 8 i 15: poziomy 1–2 → 1 minuta, 3–7 → 5 minut, 8–14 → 10 minut, 15–25 → 15 minut. Czas powyżej poziomu 25 pozostaje do ustalenia. Zmiana poziomu podczas aktywnej misji nie zmienia jej czasu.
 
-Widok walki i mechanizm tur są przygotowane; listy potworów pozostają puste. Rozpoczęcie zwiadu kosztuje 5 energii, a zgłoszenie powrotu nie kosztuje dodatkowej energii. Zwiad przyznaje losowe złoto i EXP po zgłoszeniu powrotu. Reguły i panel znajdują się w `missions.js` oraz `missions.css`; zapis korzysta z tej samej transakcji localStorage i blokady Web Locks co zakupy piwa. Ukończenie zwiadu Branda nie odblokowuje schodów związanych z przyszłą misją Tauriel.
+Widok walki i mechanizm tur są przygotowane; listy potworów pozostają puste. Rozpoczęcie zwiadu kosztuje 5 energii, a zgłoszenie powrotu nie kosztuje dodatkowej energii. Zwiad przyznaje losowe złoto i EXP po zgłoszeniu powrotu. Reguły i panel znajdują się w `missions.js` oraz `missions.css`; zapis korzysta z tej samej transakcji localStorage i blokady Web Locks co zakupy piwa. Ukończenie zwiadu Branda nie odblokowuje schodów związanych z osobną misją Tauriel.
 
 
 ## Dzienne odnowienie energii
@@ -159,7 +159,7 @@ Usunięto ręczny wybór typu misji, napis o losowaniu kierunków oraz rozwijan�
 
 ## Nowa karta postaci, cechy i Szczęście
 
-Karta pokazuje postać między siedmioma miejscami wyposażenia: hełm, zbroja, buty, tarcza, broń, naszyjnik i kolczyki. Lokalne ikony pochodzą z atlasu `gear-icons.webp`. Kliknięcie miejsca otwiera wybór posiadanych przedmiotów pasujących do danego slotu oraz zdejmowanie. Broń i pancerz startowy ze starego podglądu są dostępne także w istniejących zapisach. Puste miejsca mają przygaszone ikony, założone rzeczy — kolorowe. Panel Ekwipunek wyświetla teraz rzeczywisty stan torby. Przedmioty nie mają jeszcze premii do statystyk; ich parametry można ustalić później.
+Karta pokazuje postać między siedmioma miejscami wyposażenia: hełm, zbroja, buty, tarcza, broń, naszyjnik i kolczyki. Lokalne ikony pochodzą z atlasu `gear-icons.webp`. Kliknięcie miejsca otwiera wybór posiadanych przedmiotów pasujących do danego slotu oraz zdejmowanie. Broń i pancerz startowy ze starego podglądu są dostępne także w istniejących zapisach. Puste miejsca mają przygaszone ikony, założone rzeczy — kolorowe. Panel Ekwipunek wyświetla teraz rzeczywisty stan torby. Podstawowe losowe przedmioty nie mają jeszcze premii do statystyk. Naszyjnik z misji Tauriel ma opisany niżej bonus +100 HP.
 
 Zgodnie z ustaleniem gracz otrzymuje 5 punktów na start i 3 za każdy kolejny poziom. Budżet wynosi `5 + 3 × (poziom − 1)`, także dla istniejących postaci. Punkty rozdziela się między Siłę, Zręczność, Inteligencję, Wytrzymałość i Szczęście. Przydziały są zapisywane w `statAllocations`; pozostałe punkty wylicza się z budżetu, więc odświeżanie nie przyznaje ich ponownie. Wydawanie korzysta ze wspólnej blokady zapisu; brak punktów i błędy zapisu nie zmieniają cech. Podstawowe cechy uwzględniają przydziały w nowych walkach, a Wytrzymałość zwiększa maksymalne życie zgodnie z wcześniejszym wzorem. Już rozpoczęte walki zachowują zapisane statystyki.
 
@@ -180,3 +180,14 @@ Zgodnie z wyborem użytkownika pełny plecak blokuje zdobywanie nowych przedmiot
 ### Miejsce na przedmiot specjalny
 
 Pole nad bronią, wcześniej pokazujące koniczynę i szansę na przedmiot, jest teraz ósmym miejscem wyposażenia: `special` — Przedmiot specjalny. Pozostaje puste do dodania takich przedmiotów, a kliknięcie otwiera zwykły wybór rzeczy pasujących do slotu. Nie dodano nowych przedmiotów ani nie rozszerzono puli losowych zdobyczy: wciąż losowane jest siedem dotychczasowych rodzajów. Szczęście i procent szansy pozostają widoczne w statystykach i działają jak wcześniej.
+
+
+## Misja Tauriel i górne piętro
+
+Tauriel oferuje od poziomu 5 jednorazową misję „Przepędź nieproszonych gości”. Trzej odrębni rozbójnicy mają własne awatary w atlasie `tauriel-bandits.webp` (3×1): Rozbójnik spod barykady, Rozbójnik Żelazna Pięść i Przywódca rozbójników. Każdy ma poziom 5; początkowo życie 125/140/160 i obrażenia 11–15/12–17/14–19. Walki korzystają z automatycznych tur i zapisu `activeCombat`, oznaczonego `source: 'tauriel'`. Nie pobierają energii i nie przyznają nagród Branda ani losowych przedmiotów. Nie można prowadzić równolegle drugiej aktywnej walki lub zwiadu.
+
+Przyjęcie, rozliczanie kolejnych starć i odbiór nagrody zapisują się pod wspólną blokadą Web Locks. Postęp w `taurielQuest.defeated` jest trwały; porażka nie usuwa wcześniejszych zwycięstw i pozwala ponowić ten sam etap. Ten sam wynik walki można rozliczyć tylko raz. Po trzecim zwycięstwie status `ready` odblokowuje schody. Naszyjnik odbiera się osobno u Tauriel; status `completed` blokuje ponowną wypłatę. Pełny plecak nie usuwa nagrody — Tauriel zachowuje ją do zwolnienia miejsca.
+
+Szmaragdowy naszyjnik Tauriel ma stały identyfikator `tauriel-emerald-necklace`, miejsce `necklace` i osobną ilustrację `tauriel-necklace.webp`. Daje dokładnie +100 maksymalnego HP wyłącznie po założeniu. Zdjęcie lub wymiana odbiera bonus, ponowne zakładanie nie kumuluje go. Premia jest widoczna na karcie postaci i trafia do statystyk nowych walk; już rozpoczęte starcia zachowują swój zapis. Naszyjnik nie trafia do puli losowych łupów.
+
+Schody po odblokowaniu otwierają przesuwany korytarz `tavern-upstairs.webp`, z drzwiami do Pokoju z Zieloną Kotarą i Pokoju pod Latarnią. Oba pokoje mają oddzielne kadry atlasu `tavern-rooms.webp`. Widok można przesuwać palcem i myszą; przyciski pozwalają wracać na korytarz i do sali karczmy. Pokoje są miejscami do oglądania; nie dodano opłat, regeneracji ani dodatkowych nagród.

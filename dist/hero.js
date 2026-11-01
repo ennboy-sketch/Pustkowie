@@ -22,6 +22,7 @@
   function inventory(hero){return hero.lootInventory??['weapon','armor'].map((slot,i)=>({id:`starter-${slot}`,slot,name:STARTERS[hero.classId][i]}));}
   function equipment(hero){return hero.equipment??{weapon:'starter-weapon',armor:'starter-armor'};}
   function bagItems(hero){const worn=new Set(Object.values(equipment(hero)));return inventory(hero).filter(item=>!worn.has(item.id));}
+  function hpBonus(hero){return equipment(hero).necklace==='tauriel-emerald-necklace'&&inventory(hero).some(i=>i.id==='tauriel-emerald-necklace'&&i.slot==='necklace')?100:0;}
   function equip(hero,slot,id){
     if(!SLOTS.some(([key])=>key===slot))throw new Error('Nieznane miejsce wyposażenia.');
     if(id&&!inventory(hero).some(item=>item.id===id&&item.slot===slot))throw new Error('Nie masz tego przedmiotu.');
@@ -40,9 +41,9 @@
     if(items.some(i=>i.id===item.id)||bagItems(hero).length>=25)return hero;
     return {...hero,lootInventory:[...items,item]};
   }
-  const art=i=>i===7?'<span class="special-slot-mark" aria-hidden="true"></span>':`<span class="gear-art gear-${i}" aria-hidden="true"></span>`;
+  const art=(i,item)=>item?.id==='tauriel-emerald-necklace'?'<span class="gear-art tauriel-necklace" aria-hidden="true"></span>':i===7?'<span class="special-slot-mark" aria-hidden="true"></span>':`<span class="gear-art gear-${i}" aria-hidden="true"></span>`;
   function inventoryMarkup(hero){
-    return `<div class="hero-bag">${inventory(hero).map(item=>`<article>${art(SLOTS.findIndex(([slot])=>slot===item.slot))}<strong></strong><small>${SLOTS.find(([slot])=>slot===item.slot)?.[1]||''}</small></article>`).join('')}</div><p class="panel-note">Przedmioty zakładasz w oknie Bohater.</p>`;
+    return `<div class="hero-bag">${inventory(hero).map(item=>`<article>${art(SLOTS.findIndex(([slot])=>slot===item.slot),item)}<strong></strong><small>${SLOTS.find(([slot])=>slot===item.slot)?.[1]||''}</small></article>`).join('')}</div><p class="panel-note">Przedmioty zakładasz w oknie Bohater.</p>`;
   }
   function mountBag(root,state){
     root.innerHTML='<div class="backpack-heading"><span class="backpack-icon" aria-hidden="true"></span><div><h3>Ekwipunek</h3><p class="backpack-count"></p></div></div><div class="backpack-grid" aria-label="25 miejsc na przedmioty"></div><div class="backpack-detail"><p>Wybierz przedmiot, aby go obejrzeć lub założyć.</p></div><p class="backpack-pending"></p><p class="backpack-message" role="status" aria-live="polite"></p>';
@@ -56,12 +57,12 @@
       grid.replaceChildren();
       for(let i=0;i<25;i++){
         const item=items[i],button=document.createElement('button');button.type='button';button.className='backpack-cell';button.dataset.bagIndex=String(i);
-        if(item){button.classList.add('has-item');button.innerHTML=art(SLOTS.findIndex(([slot])=>slot===item.slot));button.setAttribute('aria-label',`Miejsce ${i+1}: ${item.name}`);button.title=item.name;}
+        if(item){button.classList.add('has-item');button.innerHTML=art(SLOTS.findIndex(([slot])=>slot===item.slot),item);button.setAttribute('aria-label',`Miejsce ${i+1}: ${item.name}`);button.title=item.name;}
         else{button.innerHTML='<span aria-hidden="true">'+(i+1)+'</span>';button.setAttribute('aria-label',`Miejsce ${i+1}: puste`);button.disabled=true;}
         grid.append(button);
       }
       const item=items.find(i=>i.id===selected);
-      if(item){detail.innerHTML='<strong></strong><small></small><button type="button" class="secondary" data-bag-equip>Załóż przedmiot</button>';detail.querySelector('strong').textContent=item.name;detail.querySelector('small').textContent=SLOTS.find(([slot])=>slot===item.slot)?.[1]||'';detail.querySelector('button').disabled=busy;}
+      if(item){detail.innerHTML='<strong></strong><small></small><button type="button" class="secondary" data-bag-equip>Załóż przedmiot</button>';detail.querySelector('strong').textContent=item.name;detail.querySelector('small').textContent=(SLOTS.find(([slot])=>slot===item.slot)?.[1]||'')+(item.id==='tauriel-emerald-necklace'?' · +100 HP':'');detail.querySelector('button').disabled=busy;}
       else{selected=null;detail.innerHTML='<p>Wybierz przedmiot, aby go obejrzeć lub założyć.</p>';}
     }
     async function click(e){
@@ -94,13 +95,13 @@
       root.querySelector('.hero-vitals').textContent=`Życie: ${profile.maxHp} / ${profile.maxHp}`;
       root.querySelector('.hero-points').textContent=`Punkty do rozdania: ${available(hero)}`;
       STATS.forEach(([id],i)=>{const row=root.querySelector(`[data-attribute="${id}"]`);row.querySelector('strong').textContent=i<4?profile.stats[i]:luck(hero);row.querySelector('button').disabled=busy||available(hero)<1;if(id==='luck')row.querySelector('small').textContent=`${chance(hero)}% szansy na przedmiot`;});
-      for(const [slot,label] of SLOTS){const button=root.querySelector(`[data-gear-slot="${slot}"]`),item=inventory(hero).find(i=>i.id===equipment(hero)[slot]);button.classList.toggle('is-equipped',!!item);button.querySelector('small').textContent=item?'Założono':'Puste';button.setAttribute('aria-label',`${label}: ${item?.name||'Puste'}`);button.title=item?.name||label;}
+      for(const [slot,label] of SLOTS){const button=root.querySelector(`[data-gear-slot="${slot}"]`),item=inventory(hero).find(i=>i.id===equipment(hero)[slot]);button.classList.toggle('is-equipped',!!item);button.querySelector('small').textContent=item?'Założono':'Puste';button.setAttribute('aria-label',`${label}: ${item?.name||'Puste'}`);button.title=(item?.name||label)+(item?.id==='tauriel-emerald-necklace'?' · +100 HP':'');const icon=button.querySelector('.gear-art');if(icon)icon.className=item?.id==='tauriel-emerald-necklace'?'gear-art tauriel-necklace':`gear-art gear-${SLOTS.findIndex(([id])=>id===slot)}`;}
     }
     function showPicker(slot){
       selectedSlot=slot;const hero=state.read(),items=inventory(hero).filter(i=>i.slot===slot);
       picker.innerHTML=`<h2>${SLOTS.find(([id])=>id===slot)[1]}</h2><div class="gear-pick-list"></div><button type="button" class="secondary" data-unequip>Zdejmij przedmiot</button><button type="button" class="secondary" data-close-gear>Wróć do postaci</button><p role="status"></p>`;
       const list=picker.querySelector('.gear-pick-list');if(!items.length)list.textContent='Nie masz jeszcze przedmiotu do tego miejsca.';
-      for(const item of items){const button=document.createElement('button');button.type='button';button.dataset.equipItem=item.id;button.textContent=item.name+(equipment(hero)[slot]===item.id?' · Założono':'');list.append(button);}
+      for(const item of items){const button=document.createElement('button');button.type='button';button.dataset.equipItem=item.id;button.textContent=item.name+(item.id==='tauriel-emerald-necklace'?' · +100 HP':'')+(equipment(hero)[slot]===item.id?' · Założono':'');list.append(button);}
       picker.querySelector('[data-unequip]').disabled=!equipment(hero)[slot];if(!picker.open)picker.showModal();
     }
     async function change(fn){
@@ -117,5 +118,5 @@
     root.addEventListener('click',click);picker.addEventListener('click',pick);window.addEventListener('storage',storage);render();
     return ()=>{disposed=true;stopBag();bag.removeEventListener('click',closeBag);if(bag.open)bag.close();bag.remove();root.removeEventListener('click',click);picker.removeEventListener('click',pick);window.removeEventListener('storage',storage);if(picker.open)picker.close();picker.remove();};
   }
-  window.HeroSheet={mount,mountBag,bagItems,bonuses,luck,chance,available,allocate,rollLoot,receiveLoot,inventory,equipment,equip,inventoryMarkup,SLOTS};
+  window.HeroSheet={mount,mountBag,bagItems,hpBonus,bonuses,luck,chance,available,allocate,rollLoot,receiveLoot,inventory,equipment,equip,inventoryMarkup,SLOTS};
 })();
