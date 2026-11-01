@@ -155,3 +155,14 @@ Rozmowa z Brandem pokazuje dwie pionowe karty misji: Szlak wędrowca (łatwiejsz
 Łatwe walki losują przeciwników poziomu 1–2, trudne poziomu 3–5. Obowiązują wcześniejsze nagrody za walkę. Łatwy zwiad korzysta z dotychczasowego czasu dla poziomu gracza; trudny z kolejnego ustalonego przedziału czasu (1→5→10→15 minut, maksymalnie 15). Nagrody zwiadu pozostają zgodne z tabelą dla jego rzeczywistego czasu. Powyżej poziomu 5, do ustalenia dalszych potworów, losowane są zwiady; powyżej 25 czasu nadal nie określono. Stare aktywne misje zachowują swój czas, przeciwnika i już opłacony koszt.
 
 Usunięto ręczny wybór typu misji, napis o losowaniu kierunków oraz rozwijaną tabelę czasu według poziomu. Aktywny zwiad i walka zachowują dotychczasowe pełnoekranowe widoki i jednorazowe nagrody.
+
+
+## Nowa karta postaci, cechy i Szczęście
+
+Karta pokazuje postać między siedmioma miejscami wyposażenia: hełm, zbroja, buty, tarcza, broń, naszyjnik i kolczyki. Lokalne ikony pochodzą z atlasu `gear-icons.webp`. Kliknięcie miejsca otwiera wybór posiadanych przedmiotów pasujących do danego slotu oraz zdejmowanie. Broń i pancerz startowy ze starego podglądu są dostępne także w istniejących zapisach. Puste miejsca mają przygaszone ikony, założone rzeczy — kolorowe. Panel Ekwipunek wyświetla teraz rzeczywisty stan torby. Przedmioty nie mają jeszcze premii do statystyk; ich parametry można ustalić później.
+
+Zgodnie z ustaleniem gracz otrzymuje 5 punktów na start i 3 za każdy kolejny poziom. Budżet wynosi `5 + 3 × (poziom − 1)`, także dla istniejących postaci. Punkty rozdziela się między Siłę, Zręczność, Inteligencję, Wytrzymałość i Szczęście. Przydziały są zapisywane w `statAllocations`; pozostałe punkty wylicza się z budżetu, więc odświeżanie nie przyznaje ich ponownie. Wydawanie korzysta ze wspólnej blokady zapisu; brak punktów i błędy zapisu nie zmieniają cech. Podstawowe cechy uwzględniają przydziały w nowych walkach, a Wytrzymałość zwiększa maksymalne życie zgodnie z wcześniejszym wzorem. Już rozpoczęte walki zachowują zapisane statystyki.
+
+Początkowe Szczęście wynosi 0. Szansa zdobycia przedmiotu to 10% + 1 punkt procentowy za punkt Szczęścia, maksymalnie 60%. Wyświetla się przy cesze i symbolu koniczyny. Szczęście nie zwiększa obrażeń ani szansy krytycznej. Każdy nowy zwiad i walka zapisuje osobny wynik losowania przedmiotu (`loot`, obiekt albo null) przy rozpoczęciu; zmiana cech i odświeżenie w trakcie misji nie zmieniają tego wyniku. Wcześniejsza aktywna misja bez tego pola losuje przedmiot przy skutecznym zakończeniu.
+
+Zwiad oraz zwycięska walka mogą dać jeden z siedmiu podstawowych przedmiotów, po jednym rodzaju dla każdego slotu. Porażka nie daje przedmiotu. Rzecz trafia do `lootInventory` w tym samym zapisie co złoto, EXP i usunięcie aktywnej misji, a okno nagrody pokazuje jej ikonę i nazwę. Wyposażenie zapisuje się w `equipment` jako identyfikatory rzeczy z torby. Nie ma podwójnego odbioru ani częściowego zapisu.

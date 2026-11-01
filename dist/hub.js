@@ -106,10 +106,11 @@
     $('#menu-toggle').setAttribute('aria-expanded',String(open));
   }
   let stopActiveScout=()=>{};
+  let stopHeroSheet=()=>{};
   function openPlace(id) {
     if (!places[id] || !hero) return;
-    if(id==='tavern'){try{readCurrentHero();}catch{}}
-    stopActiveScout();
+    if(['tavern','hero','inventory'].includes(id)){try{readCurrentHero();}catch{}}
+    stopActiveScout();stopHeroSheet();
     window.FateWheel.cancel();
     window.TavernPanel.cancel();
     toggleMenu(false);
@@ -123,8 +124,7 @@
     if(id==='tavern'){try{scouting=!!window.BrandMissions.status(hero).mission;}catch{}}
     let content;
     if (id === 'hero') {
-      const combatProfile=window.BrandCombat.profile(hero);
-      content = `<div class="hero-sheet"><div class="sheet-art"><div id="ready-art" class="character ${hero.gender} ${hero.classId}" role="img" aria-label="Twoja postać"></div></div><div class="sheet-stats"><h3 id="sheet-name"></h3><p>Poziom ${level()}</p><p class="sheet-profession">${profession()?.name || 'Bez profesji'}</p><div class="health-label">Życie <b>${combatProfile.maxHp} / ${combatProfile.maxHp}</b></div><div class="health-bar"></div>${labels.map((name,i)=>`<div class="stat-row"><span>${name}</span><strong>${combatProfile.stats[i]}</strong></div>`).join('')}<div class="xp-info">Doświadczenie <span>${window.Progression.info(hero).label}</span></div><p class="panel-note">Maksymalny poziom: 250</p></div></div>`;
+      content = '<div class="hero-sheet-root"></div>';
     } else if (id === 'tavern') {
       content = scouting?'<div class="scout-active-view" aria-label="Aktywny zwiad"></div>':window.TavernPanel.markup();
     } else if (id === 'barracks') {
@@ -134,7 +134,7 @@
     } else if (id === 'mount') {
       content = '';
     } else if (id === 'inventory') {
-      content = `<div class="equipment-grid">${gear[hero.classId].map((name,i)=>`<div class="equipment-slot">${icon(i ? 'hero':'arena')}<h3>${name}</h3><span>Przedmiot startowy</span></div>`).join('')}</div><p class="panel-note">Złoto: ${window.BeerService.status(hero).gold} · Odłamki: ${Number.isSafeInteger(hero.shards) && hero.shards >= 0 ? hero.shards : 0}</p>`;
+      content = window.HeroSheet.inventoryMarkup(hero);
     } else if (id === 'journal') {
       content = `<div class="journal-entry">${icon('journal')}<div><h3>Przybycie do zamku</h3><p>Twoja postać dotarła do Zamku Czarnej Stali.</p><span class="state-badge">Zapisane</span></div></div>`;
     } else if (id === 'help') {
@@ -143,7 +143,8 @@
       content = `<div class="place-emblem">${icon(place.icon)}</div><p class="place-text">${place.text}</p><div class="coming-soon"><span>${place.future}</span><span class="state-badge">W przygotowaniu</span></div>`;
     }
     $('#place-content').innerHTML = content;
-    if (id === 'hero') $('#sheet-name').textContent = hero.name;
+    if (id === 'hero') stopHeroSheet=window.HeroSheet.mount($('.hero-sheet-root'),{read:readCurrentHero,update:updateCurrentHero});
+    if (id === 'inventory') document.querySelectorAll('.hero-bag strong').forEach((el,i)=>{el.textContent=window.HeroSheet.inventory(hero)[i].name;});
     if (id === 'wheel') window.FateWheel.mount($('#place-content'));
     if(id==='tavern'){
       if(scouting){
@@ -185,7 +186,7 @@
     openPlace('barracks');
     $('#profession-status').textContent = `Wybrano profesję: ${profession().name}.`;
   });
-  $('#place-dialog').addEventListener('close', () => {stopActiveScout();window.FateWheel.cancel();window.TavernPanel.cancel();});
+  $('#place-dialog').addEventListener('close', () => {stopHeroSheet();stopActiveScout();window.FateWheel.cancel();window.TavernPanel.cancel();});
   $('#close-place').addEventListener('click',()=>$('#place-dialog').close());
   $('#place-dialog').addEventListener('click',e=>{if(e.target===$('#place-dialog')){const r=e.target.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)e.target.close();}});
   $('#menu-toggle').addEventListener('click',()=>toggleMenu(!$('#sidebar').classList.contains('is-open')));
