@@ -1,0 +1,83 @@
+'use strict';
+(() => {
+  let stop=()=>{};
+  function cancel(){stop();stop=()=>{};}
+  const PRODUCTS=[
+    {id:'guard-sword',name:'Miecz strażnika',slot:'weapon',price:30,stats:[2,0,0,0]},
+    {id:'iron-axe',name:'Topór żelazny',slot:'weapon',price:30,stats:[2,0,0,0]},
+    {id:'ash-bow',name:'Łuk jesionowy',slot:'weapon',price:30,stats:[0,2,0,0]},
+    {id:'oak-staff',name:'Kostur dębowy',slot:'weapon',price:30,stats:[0,0,2,0]},
+    {id:'guard-helmet',name:'Hełm wartownika',slot:'helmet',price:20,stats:[0,0,0,1]},
+    {id:'riveted-armor',name:'Nitowana zbroja',slot:'armor',price:45,stats:[0,0,0,3]},
+    {id:'traveler-boots',name:'Buty podróżnika',slot:'boots',price:20,stats:[0,1,0,0]},
+    {id:'oak-shield',name:'Tarcza dębowa',slot:'shield',price:25,stats:[0,0,0,2]}
+  ];
+  function productFor(item){return PRODUCTS.find(p=>p.id===item?.marketProduct&&p.slot===item.slot);}
+  function describeItem(item){const p=productFor(item);return p?p.stats.map((n,i)=>n?`+${n} ${['Siła','Zręczność','Inteligencja','Wytrzymałość'][i]}`:'').filter(Boolean).join(' · '):'';}
+  function bonuses(hero){
+    const inventory=window.HeroSheet.inventory(hero),worn=window.HeroSheet.equipment(hero),out=[0,0,0,0];
+    for(const [slot,id] of Object.entries(worn)){const item=inventory.find(i=>i.id===id&&i.slot===slot),p=productFor(item);if(p)p.stats.forEach((n,i)=>out[i]+=n);}
+    return out;
+  }
+  function purchase(hero,id){
+    const p=PRODUCTS.find(p=>p.id===id);if(!p)throw new Error('Nieznany przedmiot.');
+    if(window.HeroSheet.bagItems(hero).length>=25)throw new Error('Ekwipunek pełny. Zwolnij miejsce przed zakupem.');
+    const gold=window.BeerService.status(hero).gold;
+    if(gold<p.price)throw new Error(`Potrzebujesz ${p.price} złota.`);
+    return {...hero,gold:gold-p.price,lootInventory:[...window.HeroSheet.inventory(hero),{id:crypto.randomUUID(),slot:p.slot,name:p.name,marketProduct:p.id}]};
+  }
+  function markup(){
+    return `<section class="market-panel" aria-label="Plac targowy"><div class="market-viewport" tabindex="0" role="region" aria-label="Przesuwany widok placu targowego" aria-describedby="market-pan-hint"><div class="market-panorama"><img class="market-room-art" src="market-square.webp" alt="Targ Popiołów: pulchny kupiec Gringo przy straganie z bronią i pancerzami. Wokół puste stragany pod zielonymi płóciennymi dachami, skrzynie, beczki i kamienna zabudowa zamku." draggable="false"><div class="market-vignette" aria-hidden="true"></div><button type="button" class="market-hotspot market-person" data-market-part="person"><span>Gringo</span><small>Kupiec uzbrojenia</small></button></div></div><p class="sr-only" id="market-pan-hint">Przesuwaj i przybliżaj widok, aby obejrzeć stragany. U Gringa możesz kupić broń i pancerze.</p><dialog class="market-detail-dialog" aria-labelledby="market-detail-title"><h2 id="market-detail-title">Gringo · Uzbrojenie</h2><p class="market-welcome">Solidne żelazo, uczciwa cena. Rozejrzyj się, wędrowcze.</p><div class="market-detail-content"></div><p class="market-message" role="status" aria-live="polite"></p><button type="button" class="secondary" data-close-market-detail>Wróć na plac targowy</button></dialog></section>`;
+  }
+  function mount(root,state){
+    cancel();
+    const panel=root.querySelector('.market-panel'),view=panel.querySelector('.market-viewport'),scene=panel.querySelector('.market-panorama'),art=scene.querySelector('img'),dialog=panel.querySelector('.market-detail-dialog');
+    let centered=false,disposed=false,drag=null,suppressClick=false;
+    function fit(){
+      if(disposed||!view.isConnected)return;
+      const height=Math.max(600,view.clientHeight),ratio=art.naturalWidth&&art.naturalHeight?art.naturalWidth/art.naturalHeight:2;
+      scene.style.height=`${height}px`;scene.style.width=`${height*ratio}px`;
+      if(!centered&&art.naturalWidth&&view.clientWidth){view.scrollLeft=Math.max(0,scene.clientWidth*.5-view.clientWidth/2);centered=true;}
+    }
+    let busy=false;
+    function renderShop(){
+      if(disposed||!dialog.open)return;
+      let hero;try{hero=state.read();}catch{dialog.querySelector('.market-detail-content').replaceChildren();dialog.querySelector('.market-message').textContent='Nie udało się odczytać postaci. Odśwież grę.';return;}
+      const gold=window.BeerService.status(hero).gold,full=window.HeroSheet.bagItems(hero).length>=25;
+      const content=dialog.querySelector('.market-detail-content');
+      content.innerHTML=`<div class="market-wallet"><span>Złoto: <strong>${gold}</strong></span><span>Ekwipunek: ${window.HeroSheet.bagItems(hero).length} / 25</span></div><p class="market-help">Premie działają po założeniu przedmiotu. Zakupy trafiają do ekwipunku.</p>${full?'<p class="market-full">Ekwipunek pełny — zakupy zablokowane.</p>':''}<div class="market-stock">${PRODUCTS.map(p=>`<article class="market-product"><span class="gear-art gear-${window.HeroSheet.SLOTS.findIndex(([slot])=>slot===p.slot)}" aria-hidden="true"></span><div><h3>${p.name}</h3><small>${window.HeroSheet.SLOTS.find(([slot])=>slot===p.slot)[1]} · ${describeItem({marketProduct:p.id,slot:p.slot})}</small><strong>${p.price} złota</strong></div><button type="button" data-buy-market="${p.id}" aria-label="Kup: ${p.name}, ${p.price} złota" ${busy||full||gold<p.price?'disabled':''}>${full?'Brak miejsca':gold<p.price?'Brak złota':'Kup'}</button></article>`).join('')}</div>`;
+    }
+    function show(part){
+      if(part!=='person')return;
+      dialog.querySelector('.market-message').textContent='';
+      if(!dialog.open)dialog.showModal();
+      try{renderShop();}catch{dialog.querySelector('.market-message').textContent='Nie udało się odczytać postaci. Odśwież grę.';}
+    }
+    async function buy(id){
+      if(busy||disposed)return;busy=true;renderShop();
+      const status=dialog.querySelector('.market-message');status.textContent='';
+      try{
+        const change=()=>{if(disposed)return;state.update(hero=>purchase(hero,id));};
+        if(navigator.locks)await navigator.locks.request('pustkowie-hero-v2',change);else change();
+        if(!disposed)status.textContent=`Kupiono: ${PRODUCTS.find(p=>p.id===id)?.name}. Przedmiot czeka w ekwipunku.`;
+      }catch(error){if(!disposed)status.textContent=error.name==='QuotaExceededError'||error.name==='SecurityError'?'Nie udało się zapisać zakupu. Złoto nie zostało pobrane. Spróbuj ponownie.':error.message;}
+      finally{busy=false;if(!disposed)renderShop();}
+    }
+    function storage(e){if(e.key==='pustkowie.hero.v2'&&dialog.open){try{renderShop();}catch{dialog.querySelector('.market-message').textContent='Zapis postaci zmienił się. Odśwież grę.';}}}
+    function down(e){if(e.pointerType!=='mouse'||e.button!==0)return;suppressClick=false;drag={id:e.pointerId,x:e.clientX,y:e.clientY,left:view.scrollLeft,top:view.scrollTop,moved:false};}
+    function move(e){
+      if(!drag||drag.id!==e.pointerId)return;
+      const dx=e.clientX-drag.x,dy=e.clientY-drag.y;if(!drag.moved&&Math.hypot(dx,dy)<6)return;
+      if(!drag.moved){drag.moved=true;view.setPointerCapture(e.pointerId);view.classList.add('is-dragging');}
+      e.preventDefault();view.scrollLeft=drag.left-dx;view.scrollTop=drag.top-dy;
+    }
+    function end(e){if(!drag||drag.id!==e.pointerId)return;suppressClick=drag.moved;drag=null;view.classList.remove('is-dragging');if(view.hasPointerCapture(e.pointerId))view.releasePointerCapture(e.pointerId);}
+    function leave(e){if(drag&&!drag.moved)end(e);}
+    function suppress(e){if(suppressClick){e.preventDefault();e.stopImmediatePropagation();suppressClick=false;}}
+    function click(e){const buyButton=e.target.closest('[data-buy-market]');if(buyButton){void buy(buyButton.dataset.buyMarket);return;}if(e.target.closest('[data-close-market-detail]')){dialog.close();return;}const target=e.target.closest('[data-market-part]');if(target)show(target.dataset.marketPart);}
+    art.addEventListener('load',fit);const observer=new ResizeObserver(fit);observer.observe(view);
+    view.addEventListener('pointerdown',down);view.addEventListener('pointermove',move);view.addEventListener('pointerup',end);view.addEventListener('pointercancel',end);view.addEventListener('pointerleave',leave);view.addEventListener('click',suppress,true);panel.addEventListener('click',click);window.addEventListener('storage',storage);fit();
+    stop=()=>{disposed=true;observer.disconnect();art.removeEventListener('load',fit);view.removeEventListener('pointerdown',down);view.removeEventListener('pointermove',move);view.removeEventListener('pointerup',end);view.removeEventListener('pointercancel',end);view.removeEventListener('pointerleave',leave);view.removeEventListener('click',suppress,true);panel.removeEventListener('click',click);window.removeEventListener('storage',storage);if(dialog.open)dialog.close();};
+  }
+  window.MarketPanel={markup,mount,cancel,purchase,bonuses,describeItem};
+})();

@@ -109,13 +109,13 @@
   let stopHeroSheet=()=>{};
   function openPlace(id) {
     if (!places[id] || !hero) return;
-    if(['tavern','hero','inventory'].includes(id)){try{readCurrentHero();}catch{}}
+    if(['tavern','hero','inventory','market'].includes(id)){try{readCurrentHero();}catch{}}
     stopActiveScout();stopHeroSheet();
     window.FateWheel.cancel();
     window.TavernPanel.cancel();
     window.AlchemistPanel.cancel();
     window.ForgePanel.cancel();
-    window.BarracksPanel.cancel();
+    window.BarracksPanel.cancel();window.MarketPanel.cancel();
     toggleMenu(false);
     requestAnimationFrame(() => { const view = $('.world-viewport'); view.scrollLeft = Math.max(0,(view.scrollWidth-view.clientWidth)/2); });
     document.querySelectorAll('.nav-tile').forEach(el => el.setAttribute('aria-current',el.dataset.place === id ? 'page' : 'false'));
@@ -134,6 +134,8 @@
       content = window.AlchemistPanel.markup();
     } else if (id === 'forge') {
       content = window.ForgePanel.markup();
+    } else if (id === 'market') {
+      content = window.MarketPanel.markup();
     } else if (id === 'barracks') {
       content = window.BarracksPanel.markup();
     } else if (id === 'wheel') {
@@ -155,6 +157,7 @@
     if (id === 'wheel') window.FateWheel.mount($('#place-content'));
     if (id === 'alchemy') window.AlchemistPanel.mount($('#place-content'));
     if (id === 'forge') window.ForgePanel.mount($('#place-content'));
+    if (id === 'market') window.MarketPanel.mount($('#place-content'),{read:readCurrentHero,update:updateCurrentHero});
     if (id === 'barracks') window.BarracksPanel.mount($('#place-content'),{professionMarkup:barracksPanel});
     if(id==='tavern'){
       if(scouting){
@@ -196,7 +199,7 @@
     openPlace('barracks');window.BarracksPanel.openProfessions();
     $('#profession-status').textContent = `Wybrano profesję: ${profession().name}.`;
   });
-  $('#place-dialog').addEventListener('close', () => {stopHeroSheet();stopActiveScout();window.FateWheel.cancel();window.TavernPanel.cancel();window.AlchemistPanel.cancel();window.ForgePanel.cancel();window.BarracksPanel.cancel();});
+  $('#place-dialog').addEventListener('close', () => {stopHeroSheet();stopActiveScout();window.FateWheel.cancel();window.TavernPanel.cancel();window.AlchemistPanel.cancel();window.ForgePanel.cancel();window.BarracksPanel.cancel();window.MarketPanel.cancel();});
   $('#close-place').addEventListener('click',()=>$('#place-dialog').close());
   $('#place-dialog').addEventListener('click',e=>{if(e.target===$('#place-dialog')){const r=e.target.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)e.target.close();}});
   $('#menu-toggle').addEventListener('click',()=>toggleMenu(!$('#sidebar').classList.contains('is-open')));

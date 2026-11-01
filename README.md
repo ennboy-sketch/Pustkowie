@@ -224,3 +224,10 @@ Podczas zwiadu i walki przycisk lupy otwiera osobny pełnoekranowy podgląd loka
 Koszary Żelaznej Przysięgi otwierają panoramiczny plac treningowy (`barracks-training.webp`). Paladyn Gabriel jest człowiekiem w lśniącej srebrnej zbroi ze złotymi detalami, bez hełmu. Otaczają go manekiny, stojaki z bronią, tarcze i sztandary. Plac obsługuje przesuwanie i wspólne przybliżanie 100–300%.
 
 Kliknięcie Gabriela otwiera powitanie i dostęp do wcześniejszego panelu profesji; zachowane są jego wymagania poziomu 10 i blokada profesji czekających na ustalenie. Drzwi do zbrojowni oraz gabinetu dowódcy paladynów mają osobne znaczniki i informują o zamkniętym wejściu. Nie dodano jeszcze postaci dowódcy, wnętrz ani mechaniki treningu. Oglądanie placu i rozmowy nie pobierają zasobów i nie zmieniają zapisu postaci.
+
+
+## Gringo i Targ Popiołów
+
+Panoramiczny plac targowy (`market-square.webp`) ma stragan Gringa, pulchnego kupca uzbrojenia, oraz puste boczne stragany na przyszłe postacie. Obsługuje przesuwanie i przybliżanie 100–300%. Kliknięcie Gringa otwiera sklep z ośmioma podstawowymi przedmiotami: czterema rodzajami broni, hełmem, zbroją, butami i tarczą. Ceny wynoszą 20–45 złota; premie są widoczne przed zakupem i działają po założeniu, także podczas walki. Nie są to rzadkie przedmioty z przyszłego rzemiosła Gorima.
+
+Zakup atomowo zapisuje odjęcie złota i nowy przedmiot z unikalnym ID w istniejącym ekwipunku. Używa wspólnej blokady `pustkowie-hero-v2` oraz ponownie sprawdza bieżący zapis, złoto i limit 25 niezałożonych przedmiotów. Pełny ekwipunek lub brak złota blokują zakup. Założone przedmioty nie zajmują miejsc plecaka; zakupy nie zakładają się automatycznie. Zamknięcie targu usuwa obsługę i nie zużywa energii.
