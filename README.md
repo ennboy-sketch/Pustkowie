@@ -64,7 +64,7 @@ Brand ma dwie zakładki: Zwiad czasowy i Walka z potworami. Zwiad można rozpocz
 
 Przedziały z nakładającymi się granicami zostały zinterpretowane jako zmiana czasu od poziomu 3, 8 i 15: poziomy 1–2 → 1 minuta, 3–7 → 5 minut, 8–14 → 10 minut, 15–25 → 15 minut. Czas powyżej poziomu 25 pozostaje do ustalenia. Zmiana poziomu podczas aktywnej misji nie zmienia jej czasu.
 
-Potwory, walka, nagrody i szczegóły misji nie są jeszcze dodane. Rozpoczęcie zwiadu kosztuje 5 energii, a zgłoszenie powrotu nie kosztuje dodatkowej energii. Zwiad nie zmienia złota ani doświadczenia. Reguły i panel znajdują się w `missions.js` oraz `missions.css`; zapis korzysta z tej samej transakcji localStorage i blokady Web Locks co zakupy piwa. Ukończenie zwiadu Branda nie odblokowuje schodów związanych z przyszłą misją Tauriel.
+Potwory, walka i dalsze szczegóły misji nie są jeszcze dodane. Rozpoczęcie zwiadu kosztuje 5 energii, a zgłoszenie powrotu nie kosztuje dodatkowej energii. Zwiad przyznaje losowe złoto i EXP po zgłoszeniu powrotu. Reguły i panel znajdują się w `missions.js` oraz `missions.css`; zapis korzysta z tej samej transakcji localStorage i blokady Web Locks co zakupy piwa. Ukończenie zwiadu Branda nie odblokowuje schodów związanych z przyszłą misją Tauriel.
 
 
 ## Dzienne odnowienie energii
@@ -76,13 +76,13 @@ Panel energii pokazuje czas do odnowienia. Gra sprawdza termin podczas działani
 
 ## Poziomy i EXP
 
-Limit postaci wynosi 250 poziomów. W `progression.js` skonfigurowano podane wymagania na kolejny awans: poziom 1 — 100 EXP, 2 — 250 EXP, 3 — 500 EXP. Wzór i dalsze progi do poziomu 100 wymagają ustalenia. Powyżej nich wymagania pozostają nieokreślone; EXP jest zachowywane bez automatycznych awansów. Nagrody misji nadal nie przyznają EXP. Moduł obsługuje dodawanie EXP i nadwyżki przy awansie, z ograniczeniem do poziomu 250.
+Limit postaci wynosi 250 poziomów. W `progression.js` skonfigurowano podane wymagania na kolejny awans: poziom 1 — 100 EXP, 2 — 250 EXP, 3 — 500 EXP. Wzór i dalsze progi do poziomu 100 wymagają ustalenia. Powyżej nich wymagania pozostają nieokreślone; EXP jest zachowywane bez automatycznych awansów. Nagrody zwiadu przyznają EXP zgodnie z ustalonymi progami; ponad nie punkty są przechowywane do ustalenia dalszych wymagań. Moduł obsługuje dodawanie EXP i nadwyżki przy awansie, z ograniczeniem do poziomu 250.
 
 ### Trzy losowe miejsca zwiadu
 
 Nowy zwiad Branda losuje jedno z trzech miejsc: Mroczny Las (`forest`), Stara Kopalnia (`mine`) lub Podziemia Miasta (`undercity`). Każde ma własny tytuł, opis i oryginalną ilustrację `scout-*.webp`. Wybór jest losowany raz przy rozpoczęciu, zapisany jako `activeMission.sceneId` i kopiowany do `lastScout` po powrocie. Odświeżenie lub ponowne otwarcie panelu nie losuje miejsca ponownie. Przed przyjęciem panel pokazuje podgląd trzech kierunków. Starsza aktywna misja bez `sceneId` zachowuje dotychczasowy czas i neutralny widok.
 
-Koszt nadal wynosi 5 energii, czasy zależą od poziomu według poprzedniej tabeli. Nagrody nie są ustalone: zakończenie nie dodaje złota, EXP, przedmiotów ani innych zasobów.
+Koszt nadal wynosi 5 energii, czasy zależą od poziomu według poprzedniej tabeli. Po zgłoszeniu powrotu przyznawana jest zapisana nagroda złota i EXP zgodnie z czasem przyjętej misji.
 
 
 ### Pełnoekranowy aktywny zwiad
@@ -92,3 +92,15 @@ Po przyjęciu misji oraz po kliknięciu Karczmy w czasie aktywnego zwiadu otwier
 Pełnoekranowy zwiad pokazuje u dołu szeroki pasek postępu w metalowo-złotej ramie z odliczaniem pośrodku. Wypełnienie rośnie zgodnie z faktycznie upływającym czasem zapisanej misji, także po odświeżeniu; kończy na 100% po upływie zwiadu.
 
 Opis wylosowanego obszaru zwiadu jest widoczny w półprzezroczystej, złoto obramowanej ramce nad paskiem postępu. Po zakończeniu misji ramka przesuwa się ponad przycisk zgłoszenia powrotu. Każda z trzech lokacji ma osobny tekst, bez deklarowania nagród.
+
+
+## Nagrody zwiadowcze
+
+| Czas | EXP | Złoto |
+| --- | --- | --- |
+| 1 minuta | 5–11 | 3–5 |
+| 5 minut | 25–44 | 7–15 |
+| 10 minut | 77–101 | 17–33 |
+| 15 minut | 125–200 | 50–100 |
+
+Losowania są niezależne i obejmują obie granice przedziałów. Nowa misja zapisuje nagrodę w `activeMission.reward` przy rozpoczęciu; tytuł, czas, lokacja i nagroda nie zmieniają się po odświeżeniu. Przy zgłoszeniu powrotu EXP, poziom, złoto i usunięcie aktywnej misji zapisują się w jednej transakcji, pod wspólną blokadą Web Locks. Nie ma dodatkowego kosztu energii ani podwójnego odbioru. Podsumowanie nagrody pojawia się po powrocie do karczmy i pozostaje w `lastScout`. Stary zwiad bez zapisanej nagrody otrzymuje ją przy pierwszym skutecznie zapisanym zakończeniu, według swojego czasu. Błąd zapisu nie przyznaje częściowej nagrody ani nie usuwa misji.

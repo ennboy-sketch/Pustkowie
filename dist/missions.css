@@ -14,3 +14,7 @@
 
 /* Opis obszaru nad paskiem postępu. */
 .scout-active-view .scout-scene .scout-narrative{display:block!important;position:absolute;bottom:86px;left:50%;transform:translateX(-50%);width:calc(100% - 28px);max-width:920px;max-height:calc(100svh - 190px);overflow:auto;margin:0;padding:16px 19px;border:1px solid #b39757;border-radius:3px;background:linear-gradient(#0b190fe8,#0a160ff2);box-shadow:inset 0 0 0 1px #27301c,0 5px 20px #0008;color:#eee4c8!important;font-size:15px!important;line-height:1.8;text-shadow:0 1px 2px #000;z-index:2}.scout-active-view.scout-ready .scout-scene .scout-narrative{bottom:144px;max-height:calc(100svh - 245px)}@media(max-width:420px){.scout-active-view .scout-scene .scout-narrative{width:calc(100% - 20px);bottom:78px;padding:12px 14px;font-size:13px!important;line-height:1.75}.scout-active-view.scout-ready .scout-scene .scout-narrative{bottom:140px}}
+
+.tavern-npc-dialog .scout-reward-preview{font-size:10px!important;line-height:1.8;color:#dcc78e!important;margin:7px 0 0}.scout-active-view .scout-reward-preview{display:none!important}
+
+.scout-active-view.scout-has-error .mission-message{display:block!important;position:absolute;top:70px;left:50%;transform:translateX(-50%);width:calc(100% - 28px);max-width:920px;z-index:5;border:1px solid #b08a57;background:#172017ed;color:#f0cf9a;padding:10px 13px;font-size:12px;line-height:1.7;margin:0}
