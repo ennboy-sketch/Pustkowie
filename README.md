@@ -134,3 +134,10 @@ Początkowy balans do dalszego dostrojenia: życie potworów 70/90/110/135; obra
 Dla postaci poziomu 1–5 dodano Ducha (1), Rozbójnika (2), Ogromnego szczura (3) i Kryształowego ogra (5). Atlas `mine-monsters.webp` ma układ 2×2: duch, rozbójnik / ogromny szczur, kryształowy ogr. Każdy przeciwnik używa własnego awatara również po odświeżeniu walki. Początkowy balans życia i obrażeń według poziomu jest taki sam jak dla potworów lasu.
 
 Nowa oferta losuje jeden z dwóch dostępnych terenów (Mroczny Las albo Stara Kopalnia), a potem jednego z czterech przeciwników danego terenu. Zapisane oferty i rozpoczęte walki pozostają bez zmian. Stary przydział kopalni bez przeciwnika otrzymuje potwora z kopalni; podziemia czekają na własną pulę. Nie ma ręcznego ponawiania losowania. Koszt rozpoczęcia nadal wynosi 5 energii; nagroda za zwycięstwo to niezależnie losowane 10–30 złota i 33–55 EXP. Porażka nie daje nagrody. Odbiór pozostaje jednorazowy i atomowy, pod wspólną blokadą zapisu.
+
+
+## Potwory Podziemi Miasta
+
+Dla postaci poziomu 1–5 dodano Węża błotnego (1), Dzikiego Psa (2), Zbłąkanego człowieka (3) i Trolgotytę (5), zachowując podaną nazwę. Atlas `undercity-monsters.webp` ma układ 2×2: wąż, pies / człowiek, Trolgotyta. Portrety pokazują przeciwników na tle wilgotnych kanałów i podziemnych kamiennych korytarzy. Życie i zakresy obrażeń według poziomu odpowiadają początkowemu balansowi pozostałych terenów.
+
+Nowe oferty losują teraz jeden z trzech terenów, a następnie potwora z jego własnej puli. Istniejące oferty i aktywne walki nie są ponownie losowane. Dawny pusty przydział Podziemi otrzymuje potwora z tej lokacji. Nadal obowiązują koszt 5 energii, automatyczne tury, zapis postępu i jednorazowa nagroda za zwycięstwo: niezależnie losowane 10–30 złota i 33–55 EXP.

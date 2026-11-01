@@ -12,7 +12,12 @@
     {id:'bandit',name:'Rozbójnik',level:2,maxHp:90,stats:[9,8,3,6],attack:[9,13],tile:1,atlas:'mine'},
     {id:'giant-rat',name:'Ogromny szczur',level:3,maxHp:110,stats:[10,12,1,7],attack:[11,16],tile:2,atlas:'mine'},
     {id:'crystal-ogre',name:'Kryształowy ogr',level:5,maxHp:135,stats:[16,4,5,9],attack:[13,19],tile:3,atlas:'mine'}
-  ],undercity:[]};
+  ],undercity:[
+    {id:'mud-snake',name:'Wąż błotny',level:1,maxHp:70,stats:[6,8,1,5],attack:[7,10],tile:0,atlas:'undercity'},
+    {id:'wild-dog',name:'Dziki Pies',level:2,maxHp:90,stats:[8,10,2,6],attack:[9,13],tile:1,atlas:'undercity'},
+    {id:'lost-human',name:'Zbłąkany człowiek',level:3,maxHp:110,stats:[11,8,4,7],attack:[11,16],tile:2,atlas:'undercity'},
+    {id:'trolgotyta',name:'Trolgotyta',level:5,maxHp:135,stats:[15,6,3,9],attack:[13,19],tile:3,atlas:'undercity'}
+  ]};
   function random(min,max){const a=new Uint32Array(1),range=max-min+1,limit=4294967296-4294967296%range;do{crypto.getRandomValues(a);}while(a[0]>=limit);return min+a[0]%range;}
   function eligible(hero){return window.Progression.level(hero)<=5;}
   function prepare(hero){
@@ -86,7 +91,7 @@
     const figure=root.querySelector('.combat-figure');
     figure.className='combat-figure';
     figure.style.cssText='';
-    if(Number.isInteger(fighter?.tile)){figure.classList.add('monster-avatar');if(fighter.atlas==='mine')figure.classList.add('monster-mine');figure.style.backgroundPosition=`${fighter.tile%2*100}% ${Math.floor(fighter.tile/2)*100}%`;}
+    if(Number.isInteger(fighter?.tile)){figure.classList.add('monster-avatar');if(fighter.atlas==='mine')figure.classList.add('monster-mine');if(fighter.atlas==='undercity')figure.classList.add('monster-undercity');figure.style.backgroundPosition=`${fighter.tile%2*100}% ${Math.floor(fighter.tile/2)*100}%`;}
     if(fighter&&Object.hasOwn(BASE_STATS,fighter.classId)&&['male','female'].includes(fighter.gender))figure.className+=` character ${fighter.gender} ${fighter.classId}`;
     root.classList.toggle('combat-empty',!fighter);
     const hp=fighter?(fighter.hp??fighter.maxHp):0,bar=root.querySelector('progress');
@@ -119,7 +124,7 @@
     return stop;
   }
   function markup(){
-    return '<p class="combat-availability">Mroczny Las i Stara Kopalnia: potwory dla postaci poziomu 1–5. Brand przydziela przeciwnika automatycznie. Podgląd jest bezpłatny.</p><p class="combat-entry-error" role="status"></p>';
+    return '<p class="combat-availability">Mroczny Las, Stara Kopalnia i Podziemia Miasta: potwory dla postaci poziomu 1–5. Brand przydziela przeciwnika automatycznie. Podgląd jest bezpłatny.</p><p class="combat-entry-error" role="status"></p>';
   }
   function mount(container,state){
     container.innerHTML=markup();

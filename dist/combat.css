@@ -7,3 +7,5 @@ dialog.combat-dialog{position:fixed;inset:0;margin:0;padding:0;border:0;border-r
 .combat-portrait .combat-figure.monster-avatar{position:absolute;inset:0;width:100%;height:100%;background-image:url('forest-monsters.webp');background-size:200% 200%;background-repeat:no-repeat}
 
 .combat-portrait .combat-figure.monster-mine{background-image:url('mine-monsters.webp')}
+
+.combat-portrait .combat-figure.monster-undercity{background-image:url('undercity-monsters.webp')}
