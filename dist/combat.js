@@ -2,8 +2,47 @@
 (() => {
   const BASE_STATS={warrior:[12,5,3,10],mage:[3,5,12,6],elf:[5,12,4,7],dwarf:[10,3,4,12]};
   const LABELS=['Siła','Zręczność','Inteligencja','Wytrzymałość'];
-  // Each location will receive its own opponents later. No sample monsters ship in the game.
-  const ROSTERS=Object.freeze({forest:Object.freeze([]),mine:Object.freeze([]),undercity:Object.freeze([])});
+  const ROSTERS={forest:[
+    {id:'boar',name:'Dzik',level:1,maxHp:70,stats:[7,4,1,5],attack:[7,10],tile:0},
+    {id:'wolf',name:'Wilk',level:2,maxHp:90,stats:[8,10,2,6],attack:[9,13],tile:1},
+    {id:'dryad',name:'Driada',level:3,maxHp:110,stats:[5,8,13,7],attack:[11,16],tile:2},
+    {id:'goblin',name:'Goblin',level:5,maxHp:135,stats:[11,12,5,9],attack:[13,19],tile:3}
+  ],mine:[],undercity:[]};
+  function random(min,max){const a=new Uint32Array(1),range=max-min+1,limit=4294967296-4294967296%range;do{crypto.getRandomValues(a);}while(a[0]>=limit);return min+a[0]%range;}
+  function eligible(hero){return window.Progression.level(hero)<=5;}
+  function prepare(hero){
+    if(hero.activeMission)throw new Error('Najpierw zakończ aktywny zwiad.');
+    if(hero.activeCombat)return hero;
+    const old=hero.combatOffer;
+    if(!eligible(hero))return hero;
+    if(old?.sceneId==='forest'&&ROSTERS.forest.some(m=>m.id===old.enemyId))return hero;
+    // Previously empty previews become a playable forest assignment once.
+    return {...hero,combatOffer:{sceneId:'forest',enemyId:ROSTERS.forest[random(0,3)].id}};
+  }
+  function start(hero,now=Date.now()){
+    hero=window.EnergyCycle.apply(hero,now);
+    if(hero.activeMission||hero.activeCombat)throw new Error('Najpierw zakończ obecną misję.');
+    if(!eligible(hero))throw new Error('Te potwory są dostępne dla poziomów 1–5.');
+    const enemy=ROSTERS.forest.find(m=>hero.combatOffer?.sceneId==='forest'&&m.id===hero.combatOffer.enemyId);
+    if(!enemy)throw new Error('Brak przydzielonego przeciwnika.');
+    if(hero.energy<5)throw new Error('Potrzebujesz 5 energii.');
+    const player=profile(hero),power=Math.max(...player.stats)+player.level*2;
+    player.attack=[Math.max(1,power-3),power+3];
+    return {...hero,energy:hero.energy-5,activeCombat:{id:crypto.randomUUID(),sceneId:'forest',battle:createBattle(player,enemy,'hero'),reward:{gold:random(10,30),xp:random(33,55)},nextHitAt:now+1100}};
+  }
+  function tick(hero,now=Date.now()){
+    const fight=hero.activeCombat;
+    if(!fight||fight.battle.winner||now<fight.nextHitAt)return hero;
+    return {...hero,activeCombat:{...fight,battle:advance(fight.battle,actor=>random(...actor.attack)),nextHitAt:now+1100}};
+  }
+  function finish(hero,id){
+    const fight=hero.activeCombat;
+    if(!fight||fight.id!==id||!fight.battle.winner)throw new Error('Walka trwa lub została już rozliczona.');
+    const won=fight.battle.winner==='hero',reward=won?fight.reward:{gold:0,xp:0};
+    const next=window.Progression.award(hero,reward.xp),gold=(hero.gold??25)+reward.gold;
+    if(!Number.isSafeInteger(gold))throw new Error('Nieprawidłowa ilość złota.');
+    return {...next,gold,activeCombat:null,combatOffer:null,lastCombat:{id,sceneId:fight.sceneId,enemyId:fight.battle.enemy.id,won,reward,levelsGained:next.level-window.Progression.level(hero)}};
+  }
   function profile(hero){
     const stats=BASE_STATS[hero.classId];
     if(!stats)throw new Error('Nieznana klasa postaci.');
@@ -38,6 +77,8 @@
     root.querySelector('.combat-level').textContent=fighter?`Poziom ${fighter.level||1}`:'Oczekuje na odkrycie';
     const figure=root.querySelector('.combat-figure');
     figure.className='combat-figure';
+    figure.style.cssText='';
+    if(Number.isInteger(fighter?.tile)){figure.classList.add('monster-avatar');figure.style.backgroundPosition=`${fighter.tile%2*100}% ${Math.floor(fighter.tile/2)*100}%`;}
     if(fighter&&Object.hasOwn(BASE_STATS,fighter.classId)&&['male','female'].includes(fighter.gender))figure.className+=` character ${fighter.gender} ${fighter.classId}`;
     root.classList.toggle('combat-empty',!fighter);
     const hp=fighter?(fighter.hp??fighter.maxHp):0,bar=root.querySelector('progress');
@@ -70,7 +111,7 @@
     return stop;
   }
   function markup(){
-    return '<p class="combat-availability">Brand wyznacza teren walki automatycznie. Potwory pojawią się później. Podgląd nie kosztuje energii.</p><p class="combat-entry-error" role="status"></p>';
+    return '<p class="combat-availability">Mroczny Las: Dzik, Wilk, Driada i Goblin dla postaci poziomu 1–5. Brand przydziela przeciwnika automatycznie. Podgląd jest bezpłatny.</p><p class="combat-entry-error" role="status"></p>';
   }
   function mount(container,state){
     container.innerHTML=markup();
@@ -78,39 +119,62 @@
     dialog.className='combat-dialog';dialog.setAttribute('aria-labelledby','combat-location');
     dialog.innerHTML=`<div class="combat-stage"><div class="combat-top"><div><span>Dowódca Brand · Walka z potworami</span><h2 id="combat-location"></h2></div><button type="button" data-close-combat aria-label="Wróć do Branda">×</button></div><div class="combat-battlefield"><div class="combat-round">Przygotowanie do walki</div><div class="combat-fighters">${fighterMarkup('hero')}<span class="combat-versus" aria-hidden="true">⚔</span>${fighterMarkup('enemy')}</div></div><div class="combat-bottom"><p class="combat-status" role="status" aria-live="polite"></p><div class="combat-actions"><button type="button" class="primary" disabled>Walka niedostępna</button></div><small>Rozpoczęcie misji: 5 energii · Podgląd jest bezpłatny</small></div></div>`;
     document.body.append(dialog);
-    let disposed=false,busy=false;
-    async function preview(){
-      if(disposed||busy)return;
-      busy=true;
-      try{
-        const assign=()=>{
-          const current=state.read();
-          if(current.activeMission)throw new Error('Najpierw zakończ aktywny zwiad.');
-          if(current.combatOffer){opponents(current.combatOffer.sceneId);return current;}
-          return state.update(hero=>{
-            if(hero.activeMission)throw new Error('Najpierw zakończ aktywny zwiad.');
-            if(hero.combatOffer){opponents(hero.combatOffer.sceneId);return hero;}
-            return {...hero,combatOffer:{sceneId:drawLocation()}};
-          });
-        };
-        const hero=navigator.locks?await navigator.locks.request('pustkowie-hero-v2',assign):assign();
-        if(disposed)return;
-        const id=hero.combatOffer.sceneId,scene=window.BrandMissions.SCENES[id];
-        opponents(id);
-        dialog.querySelector('.combat-stage').style.setProperty('--combat-art',`url("${scene.image}")`);
-        dialog.querySelector('#combat-location').textContent=scene.short;
+    let disposed=false,busy=false,shownId=null,timer=null;
+    const action=dialog.querySelector('.combat-actions button');
+    action.removeAttribute('disabled');
+    const locked=fn=>navigator.locks?navigator.locks.request('pustkowie-hero-v2',fn):fn();
+    function render(hero){
+      const fight=hero.activeCombat,offer=hero.combatOffer;
+      const sceneId=fight?.sceneId||offer?.sceneId||'forest',scene=window.BrandMissions.SCENES[sceneId];
+      dialog.querySelector('.combat-stage').style.setProperty('--combat-art',`url("${scene.image}")`);
+      dialog.querySelector('#combat-location').textContent=scene.short;
+      if(fight){
+        renderBattle(dialog,fight.battle);shownId=fight.id;
+        action.textContent=fight.battle.winner?'Zgłoś wynik walki':'Walka trwa';action.disabled=!fight.battle.winner||busy;
+        action.dataset.action='finish';action.dataset.fightId=fight.id;
+      }else{
+        const enemy=eligible(hero)?ROSTERS[sceneId].find(m=>m.id===offer?.enemyId):null;
         renderFighter(dialog.querySelector('[data-fighter="hero"]'),profile(hero));
-        renderFighter(dialog.querySelector('[data-fighter="enemy"]'),null);
-        dialog.querySelector('.combat-status').textContent=`${scene.short} — na tym terenie nie ma jeszcze dostępnych potworów.`;
-        if(!dialog.open)dialog.showModal();
-      }catch(error){if(!disposed)container.querySelector('.combat-entry-error').textContent=error.name==='QuotaExceededError'||error.name==='SecurityError'?'Nie udało się zapisać terenu walki. Spróbuj ponownie.':error.message;if(dialog.open)dialog.close();}
+        renderFighter(dialog.querySelector('[data-fighter="enemy"]'),enemy);
+        dialog.querySelector('.combat-round').textContent='Przygotowanie do walki';
+        dialog.querySelector('.combat-status').textContent=enemy?'Nagroda za zwycięstwo: 10–30 złota · 33–55 EXP':eligible(hero)?'Brak dostępnych przeciwników.':'Potwory Mrocznego Lasu: poziomy postaci 1–5.';
+        action.textContent=enemy?'Rozpocznij walkę · 5 energii':'Walka niedostępna';action.disabled=!enemy||busy;action.dataset.action='start';
+      }
+    }
+    async function preview(){
+      if(disposed||busy)return;busy=true;
+      try{
+        const hero=await locked(()=>{
+          const current=state.read();if(current.activeMission)throw new Error('Najpierw zakończ aktywny zwiad.');
+          const next=prepare(current);return next===current?current:state.update(latest=>prepare(latest));
+        });
+        if(disposed)return;busy=false;render(hero);if(!dialog.open)dialog.showModal();
+      }catch(error){if(!disposed)container.querySelector('.combat-entry-error').textContent=error.message;}
       finally{busy=false;}
     }
-    function click(e){if(e.target.closest('[data-close-combat]'))dialog.close();}
-    dialog.addEventListener('click',click);
-    const dispose=()=>{disposed=true;dialog.removeEventListener('click',click);if(dialog.open)dialog.close();dialog.remove();};
+    async function update(){
+      if(disposed||busy||!dialog.open)return;
+      try{const hero=await locked(()=>{const current=state.read(),next=tick(current);return next===current?current:state.update(latest=>tick(latest));});if(!disposed){if(shownId&&!hero.activeCombat){dialog.close();shownId=null;}else render(hero);}}
+      catch(error){if(!disposed)dialog.querySelector('.combat-status').textContent='Nie udało się zapisać walki. Spróbuj ponownie.';}
+    }
+    async function act(){
+      if(busy)return;const intent=action.dataset.action,id=action.dataset.fightId;busy=true;action.disabled=true;
+      try{
+        const next=await locked(()=>state.update(hero=>intent==='finish'?finish(hero,id):start(hero)));
+        if(disposed)return;
+        if(intent==='finish'){
+          dialog.close();shownId=null;
+          if(next.lastCombat.won)window.TavernPanel.showReward(next.lastCombat,window.Progression.level(next));
+          else{dialog.querySelector('.combat-status').textContent='Porażka. Nie otrzymujesz nagrody.';render(next);dialog.querySelector('.combat-status').textContent='Porażka. Nie otrzymujesz nagrody.';dialog.showModal();}
+        }else{busy=false;render(next);}
+      }catch(error){if(!disposed)dialog.querySelector('.combat-status').textContent=error.message;}
+      finally{busy=false;if(!disposed){const current=state.read();action.disabled=current.activeCombat?!current.activeCombat.battle.winner:!current.combatOffer?.enemyId||!eligible(current);}}
+    }
+    function click(e){if(e.target.closest('[data-close-combat]'))dialog.close();else if(e.target.closest('.combat-actions button'))void act();}
+    dialog.addEventListener('click',click);timer=setInterval(update,500);
+    const dispose=()=>{disposed=true;clearInterval(timer);dialog.removeEventListener('click',click);if(dialog.open)dialog.close();dialog.remove();};
     dispose.open=preview;
     return dispose;
   }
-  window.BrandCombat={profile,opponents,drawLocation,createBattle,advance,play,mount};
+  window.BrandCombat={profile,opponents,drawLocation,createBattle,advance,play,mount,prepare,start,tick,finish};
 })();

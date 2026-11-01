@@ -118,3 +118,12 @@ Mechanizm `createBattle(hero, enemy, first)` i `advance(battle, resolveHit)` obs
 ### Okno nagrody za misję
 
 Po odebraniu zwiadu otwiera się ramka „Nagroda za misję” z ornamentami z ciemnej stali i starego złota. Dwa pola pokazują ikonę monet z liczbą złota oraz autorski runiczny medalion EXP (`exp-icon.webp`) z liczbą doświadczenia. Osobno pojawia się informacja o awansie, jeśli nastąpił. Okno korzysta z już zapisanej nagrody; jego zamykanie i wyświetlanie nie przyznaje jej ponownie. Po powrocie do rozmowy z NPC przywracany jest zwykły widok dialogu.
+
+
+## Potwory Mrocznego Lasu
+
+Dla postaci poziomu 1–5 losowany jest Dzik (1), Wilk (2), Driada (3) lub Goblin (5). Portrety znajdują się w atlasie `forest-monsters.webp` (2×2: dzik, wilk / driada, goblin). Pozostałe tereny nie mają jeszcze potworów; dawne puste przydziały dla poziomów 1–5 są jednorazowo zastępowane dostępną walką w lesie. Przeciwnik jest zapisywany w `combatOffer.enemyId` i nie zmienia się przy ponownym otwarciu.
+
+Koszt rozpoczęcia to 5 energii. Walka pokazuje naprzemienne ciosy co 1,1 sekundy; każdy zapisany cios i aktualne życie znajdują się w `activeCombat`. Zamknięta walka czeka na ponowne otwarcie; odświeżenie nie zmienia przeciwnika ani nagrody. Zwiadu nie można rozpocząć przed rozliczeniem walki. Zwycięstwo daje niezależnie losowane 10–30 złota i 33–55 EXP, porażka nie daje nagród. Rozliczenie atomowo zapisuje nagrodę i usuwa walkę oraz ofertę pod blokadą Web Locks; błąd zapisu nie przyznaje częściowej nagrody.
+
+Początkowy balans do dalszego dostrojenia: życie potworów 70/90/110/135; obrażenia odpowiednio 7–10/9–13/11–16/13–19. Bohater zaczyna, a jego bazowe obrażenia to najwyższa statystyka + 2×poziom, z losowym odchyleniem ±3. Życie i statystyki bohatera są zgodne z kartą postaci. Nagroda jest losowana przy rozpoczęciu i wypłacana tylko raz po zgłoszeniu wyniku.

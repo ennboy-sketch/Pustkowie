@@ -28,6 +28,7 @@
   }
   function start(hero,now=Date.now(),draw=drawScene,roll=rollReward) {
     hero=window.EnergyCycle.apply(hero,now);
+    if(hero.activeCombat)throw new Error('Najpierw zakończ walkę z potworem.');
     if(active(hero))throw new Error('Najpierw zakończ obecny zwiad.');
     const level=heroLevel(hero),duration=minutes(level);
     if(!duration)throw new Error('Zwiad powyżej poziomu 25 ustalimy później.');

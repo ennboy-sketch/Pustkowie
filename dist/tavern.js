@@ -12,6 +12,8 @@
     const dialog=document.querySelector('.tavern-npc-dialog');
     if(!dialog||!completed?.reward)return;
     dialog.classList.add('is-mission-reward');
+    dialog.querySelector('.brand-service').hidden=true;
+    dialog.querySelector('.beer-service').hidden=true;
     dialog.querySelector('#tavern-speaker').textContent='Nagroda za misję';
     dialog.querySelector('.tavern-dialogue-line').hidden=true;
     const reward=dialog.querySelector('.mission-reward');
