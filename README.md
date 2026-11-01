@@ -246,7 +246,7 @@ Koszary Żelaznej Przysięgi otwierają panoramiczny plac treningowy (`barracks-
 Kliknięcie Gabriela otwiera powitanie i dostęp do wcześniejszego panelu profesji; zachowane są jego wymagania poziomu 10 i blokada profesji czekających na ustalenie. Drzwi do zbrojowni oraz gabinetu dowódcy paladynów mają osobne znaczniki i informują o zamkniętym wejściu. Nie dodano jeszcze postaci dowódcy, wnętrz ani mechaniki treningu. Oglądanie placu i rozmowy nie pobierają zasobów i nie zmieniają zapisu postaci.
 
 
-## Gringo i Targ Popiołów
+## Gringo i Czarny Targ
 
 Panoramiczny plac targowy (`market-square.webp`) ma stragan Gringa, pulchnego kupca uzbrojenia, oraz puste boczne stragany na przyszłe postacie. Obsługuje przesuwanie i przybliżanie 100–300%. Kliknięcie Gringa otwiera sklep z ośmioma podstawowymi przedmiotami: czterema rodzajami broni, hełmem, zbroją, butami i tarczą. Ceny wynoszą 20–45 złota; premie są widoczne przed zakupem i działają po założeniu, także podczas walki. Nie są to rzadkie przedmioty z przyszłego rzemiosła Gorima.
 
