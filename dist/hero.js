@@ -3,8 +3,22 @@
   const SLOTS=[['helmet','Hełm'],['armor','Zbroja'],['boots','Buty'],['shield','Tarcza'],['weapon','Broń'],['necklace','Naszyjnik'],['earrings','Kolczyki'],['special','Przedmiot specjalny']];
   const STATS=[['strength','Siła'],['agility','Zręczność'],['intelligence','Inteligencja'],['endurance','Wytrzymałość'],['luck','Szczęście']];
   const DROPS=['Hełm żelaznej straży','Zbroja wędrowca','Buty tropiciela','Tarcza czarnej stali','Ostrze wygnańca','Naszyjnik zielonego płomienia','Kolczyki starego srebra'];
-  const STARTERS={warrior:['Miecz adepta','Znoszona kolczuga'],mage:['Różdżka adepta','Szata wygnańca'],elf:['Łuk adepta','Płaszcz tropiciela'],dwarf:['Topór adepta','Pancerz wędrowca']};
+  const STARTERS={warrior:['Miecz adepta','Znoszona kolczuga'],mage:['Różdżka adepta','Płaszcz wygnańca'],elf:['Łuk adepta','Pancerz tropiciela'],dwarf:['Topór adepta','Znoszona kolczuga']};
   const LEGACY_WEAPONS={warrior:'Wyszczerbiony miecz',mage:'Kostur czarnego jesionu',elf:'Łuk z martwego cisu',dwarf:'Żelazny topór'};
+  const BODY_TYPES={
+    heavy:{label:'Zbroja',classes:['warrior','dwarf'],restriction:'Wojownik i Krasnolud',drop:'Zbroja wędrowca'},
+    cloak:{label:'Płaszcz',classes:['mage'],restriction:'Tylko Mag',drop:'Płaszcz wędrowca'},
+    light:{label:'Pancerz',classes:['elf'],restriction:'Tylko Elf',drop:'Pancerz wędrowca'}
+  };
+  const LEGACY_ARMOR={warrior:'Znoszona kolczuga',mage:'Szata wygnańca',elf:'Płaszcz tropiciela',dwarf:'Pancerz wędrowca'};
+  function bodyTypeFor(classId){return classId==='mage'?'cloak':classId==='elf'?'light':'heavy';}
+  function armorType(item){
+    if(item?.slot!=='armor')return null;
+    return window.MarketPanel?.armorType(item)||item.armorType||(/^(Płaszcz|Szata) /u.test(item.name)?'cloak':/^Pancerz /u.test(item.name)?'light':'heavy');
+  }
+  function canEquip(hero,item){return item?.slot!=='armor'||!!BODY_TYPES[armorType(item)]?.classes.includes(hero.classId);}
+  function slotLabel(slot,hero){return slot==='armor'?BODY_TYPES[bodyTypeFor(hero.classId)].label:SLOTS.find(([id])=>id===slot)?.[1]||'';}
+  function itemSlotLabel(item){return item?.slot==='armor'?BODY_TYPES[armorType(item)]?.label||'Ochrona ciała':SLOTS.find(([id])=>id===item?.slot)?.[1]||'';}
   function manaCapacity(classId,intelligence){return classId==='mage'?Math.max(0,intelligence)*10:0;}
   function random(max){const a=new Uint32Array(1),limit=4294967296-4294967296%max;do{crypto.getRandomValues(a);}while(a[0]>=limit);return a[0]%max;}
   function allocations(hero){
@@ -23,33 +37,43 @@
   }
   function inventory(hero){
     const items=hero.lootInventory??['weapon','armor'].map((slot,i)=>({id:`starter-${slot}`,slot,name:STARTERS[hero.classId][i]}));
-    return items.map(item=>item.id==='starter-weapon'&&item.slot==='weapon'&&item.name===LEGACY_WEAPONS[hero.classId]?{...item,name:STARTERS[hero.classId][0]}:item);
+    return items.map(item=>{
+      if(item.id==='starter-weapon'&&item.slot==='weapon'&&item.name===LEGACY_WEAPONS[hero.classId])return {...item,name:STARTERS[hero.classId][0]};
+      if(item.id==='starter-armor'&&item.slot==='armor'&&[LEGACY_ARMOR[hero.classId],STARTERS[hero.classId][1]].includes(item.name))return {...item,name:STARTERS[hero.classId][1],armorType:bodyTypeFor(hero.classId)};
+      return item;
+    });
   }
-  function equipment(hero){return hero.equipment??{weapon:'starter-weapon',armor:'starter-armor'};}
+  function equipment(hero){
+    const worn=hero.equipment??{weapon:'starter-weapon',armor:'starter-armor'},body=inventory(hero).find(i=>i.id===worn.armor&&i.slot==='armor');
+    return body&&!canEquip(hero,body)?{...worn,armor:null}:worn;
+  }
   function bagItems(hero){const worn=new Set(Object.values(equipment(hero)));return inventory(hero).filter(item=>!worn.has(item.id));}
   function hpBonus(hero){return equipment(hero).necklace==='tauriel-emerald-necklace'&&inventory(hero).some(i=>i.id==='tauriel-emerald-necklace'&&i.slot==='necklace')?100:0;}
   function equip(hero,slot,id){
     if(!SLOTS.some(([key])=>key===slot))throw new Error('Nieznane miejsce wyposażenia.');
-    if(id&&!inventory(hero).some(item=>item.id===id&&item.slot===slot))throw new Error('Nie masz tego przedmiotu.');
+    const item=id?inventory(hero).find(item=>item.id===id&&item.slot===slot):null;
+    if(id&&!item)throw new Error('Nie masz tego przedmiotu.');
+    if(item&&!canEquip(hero,item))throw new Error('Twoja klasa nie może założyć tego przedmiotu.');
     if(!id&&equipment(hero)[slot]&&bagItems(hero).length>=25)throw new Error('Ekwipunek jest pełny. Najpierw zwolnij miejsce.');
     return {...hero,lootInventory:inventory(hero),equipment:{...equipment(hero),[slot]:id||null}};
   }
   function rollLoot(hero,draw=random){
     if(bagItems(hero).length>=25)return null;
     if(draw(10000)>=chance(hero)*100)return null;
-    const i=draw(DROPS.length);return {id:crypto.randomUUID(),slot:SLOTS[i][0],name:DROPS[i]};
+    const i=draw(DROPS.length),type=bodyTypeFor(hero.classId);return {id:crypto.randomUUID(),slot:SLOTS[i][0],name:i===1?BODY_TYPES[type].drop:DROPS[i],...(i===1?{armorType:type}:{})};
   }
   function receiveLoot(hero,item){
     if(!item)return hero;
-    if(typeof item.name!=='string'||!SLOTS.some(([slot],i)=>slot===item.slot&&DROPS[i]===item.name)||typeof item.id!=='string')throw new Error('Nieprawidłowy przedmiot.');
+    if(typeof item.name!=='string'||!SLOTS.some(([slot],i)=>slot===item.slot&&(i===1?Object.values(BODY_TYPES).some(t=>t.drop===item.name):DROPS[i]===item.name))||typeof item.id!=='string')throw new Error('Nieprawidłowy przedmiot.');
+    if(item.slot==='armor'&&item.armorType&&BODY_TYPES[item.armorType]?.drop!==item.name)throw new Error('Nieprawidłowy typ ochrony ciała.');
     const items=inventory(hero);
     if(items.some(i=>i.id===item.id)||bagItems(hero).length>=25)return hero;
     return {...hero,lootInventory:[...items,item]};
   }
-  function itemDetails(item){return item?.id==='tauriel-emerald-necklace'?' · +100 HP':window.MarketPanel?.describeItem(item)?' · '+window.MarketPanel.describeItem(item):'';}
+  function itemDetails(item){const bonus=item?.id==='tauriel-emerald-necklace'?'+100 HP':window.MarketPanel?.describeItem(item)||'',restriction=item?.slot==='armor'?BODY_TYPES[armorType(item)]?.restriction||'':'';return [bonus,restriction].filter(Boolean).map(text=>' · '+text).join('');}
   const art=(i,item)=>item?.id==='tauriel-emerald-necklace'?'<span class="gear-art tauriel-necklace" aria-hidden="true"></span>':i===7?'<span class="special-slot-mark" aria-hidden="true"></span>':`<span class="gear-art gear-${i}" aria-hidden="true"></span>`;
   function inventoryMarkup(hero){
-    return `<div class="hero-bag">${inventory(hero).map(item=>`<article>${art(SLOTS.findIndex(([slot])=>slot===item.slot),item)}<strong></strong><small>${SLOTS.find(([slot])=>slot===item.slot)?.[1]||''}</small></article>`).join('')}</div><p class="panel-note">Przedmioty zakładasz w oknie Bohater.</p>`;
+    return `<div class="hero-bag">${inventory(hero).map(item=>`<article>${art(SLOTS.findIndex(([slot])=>slot===item.slot),item)}<strong></strong><small>${itemSlotLabel(item)}</small></article>`).join('')}</div><p class="panel-note">Przedmioty zakładasz w oknie Bohater.</p>`;
   }
   function mountBag(root,state){
     root.innerHTML='<div class="backpack-heading"><span class="backpack-icon" aria-hidden="true"></span><div><h3>Ekwipunek</h3><p class="backpack-count"></p></div></div><div class="backpack-grid" aria-label="25 miejsc na przedmioty"></div><div class="backpack-detail"><p>Wybierz przedmiot, aby go obejrzeć lub założyć.</p></div><p class="backpack-pending"></p><p class="backpack-message" role="status" aria-live="polite"></p>';
@@ -68,7 +92,7 @@
         grid.append(button);
       }
       const item=items.find(i=>i.id===selected);
-      if(item){detail.innerHTML='<strong></strong><small></small><button type="button" class="secondary" data-bag-equip>Załóż przedmiot</button>';detail.querySelector('strong').textContent=item.name;detail.querySelector('small').textContent=(SLOTS.find(([slot])=>slot===item.slot)?.[1]||'')+itemDetails(item);detail.querySelector('button').disabled=busy;}
+      if(item){detail.innerHTML='<strong></strong><small></small><button type="button" class="secondary" data-bag-equip>Załóż przedmiot</button>';detail.querySelector('strong').textContent=item.name;detail.querySelector('small').textContent=(itemSlotLabel(item))+itemDetails(item);detail.querySelector('button').disabled=busy||!canEquip(hero,item);if(!canEquip(hero,item))detail.querySelector('button').textContent='Niedostępne dla tej klasy';}
       else{selected=null;detail.innerHTML='<p>Wybierz przedmiot, aby go obejrzeć lub założyć.</p>';}
     }
     async function click(e){
@@ -105,11 +129,11 @@
       root.querySelector('[data-attribute="intelligence"] small').textContent=hero.classId==='mage'?'+10 many za punkt':'';
       root.querySelector('.hero-points').textContent=`Punkty do rozdania: ${available(hero)}`;
       STATS.forEach(([id],i)=>{const row=root.querySelector(`[data-attribute="${id}"]`);row.querySelector('strong').textContent=i<4?profile.stats[i]:luck(hero);row.querySelector('button').disabled=busy||available(hero)<1;if(id==='luck')row.querySelector('small').textContent=`${chance(hero)}% szansy na przedmiot`;});
-      for(const [slot,label] of SLOTS){const button=root.querySelector(`[data-gear-slot="${slot}"]`),item=inventory(hero).find(i=>i.id===equipment(hero)[slot]);button.classList.toggle('is-equipped',!!item);button.querySelector('small').textContent=item?'Założono':'Puste';button.setAttribute('aria-label',`${label}: ${item?.name||'Puste'}`);button.title=(item?.name||label)+itemDetails(item);const icon=button.querySelector('.gear-art');if(icon)icon.className=item?.id==='tauriel-emerald-necklace'?'gear-art tauriel-necklace':`gear-art gear-${SLOTS.findIndex(([id])=>id===slot)}`;}
+      for(const [slot,label] of SLOTS){const button=root.querySelector(`[data-gear-slot="${slot}"]`),item=inventory(hero).find(i=>i.id===equipment(hero)[slot]);button.querySelector('span:not(.gear-art):not(.special-slot-mark)').textContent=slotLabel(slot,hero);button.classList.toggle('is-equipped',!!item);button.querySelector('small').textContent=item?'Założono':'Puste';button.setAttribute('aria-label',`${slotLabel(slot,hero)}: ${item?.name||'Puste'}`);button.title=(item?.name||slotLabel(slot,hero))+itemDetails(item);const icon=button.querySelector('.gear-art');if(icon)icon.className=item?.id==='tauriel-emerald-necklace'?'gear-art tauriel-necklace':`gear-art gear-${SLOTS.findIndex(([id])=>id===slot)}`;}
     }
     function showPicker(slot){
-      selectedSlot=slot;const hero=state.read(),items=inventory(hero).filter(i=>i.slot===slot);
-      picker.innerHTML=`<h2>${SLOTS.find(([id])=>id===slot)[1]}</h2><div class="gear-pick-list"></div><button type="button" class="secondary" data-unequip>Zdejmij przedmiot</button><button type="button" class="secondary" data-close-gear>Wróć do postaci</button><p role="status"></p>`;
+      selectedSlot=slot;const hero=state.read(),items=inventory(hero).filter(i=>i.slot===slot&&canEquip(hero,i));
+      picker.innerHTML=`<h2>${slotLabel(slot,hero)}</h2><div class="gear-pick-list"></div><button type="button" class="secondary" data-unequip>Zdejmij przedmiot</button><button type="button" class="secondary" data-close-gear>Wróć do postaci</button><p role="status"></p>`;
       const list=picker.querySelector('.gear-pick-list');if(!items.length)list.textContent='Nie masz jeszcze przedmiotu do tego miejsca.';
       for(const item of items){const button=document.createElement('button');button.type='button';button.dataset.equipItem=item.id;button.textContent=item.name+itemDetails(item)+(equipment(hero)[slot]===item.id?' · Założono':'');list.append(button);}
       picker.querySelector('[data-unequip]').disabled=!equipment(hero)[slot];if(!picker.open)picker.showModal();
@@ -128,5 +152,5 @@
     root.addEventListener('click',click);picker.addEventListener('click',pick);window.addEventListener('storage',storage);render();
     return ()=>{disposed=true;stopBag();bag.removeEventListener('click',closeBag);if(bag.open)bag.close();bag.remove();root.removeEventListener('click',click);picker.removeEventListener('click',pick);window.removeEventListener('storage',storage);if(picker.open)picker.close();picker.remove();};
   }
-  window.HeroSheet={manaCapacity,mount,mountBag,bagItems,hpBonus,bonuses,luck,chance,available,allocate,rollLoot,receiveLoot,inventory,equipment,equip,inventoryMarkup,SLOTS};
+  window.HeroSheet={canEquip,armorType,slotLabel,itemSlotLabel,manaCapacity,mount,mountBag,bagItems,hpBonus,bonuses,luck,chance,available,allocate,rollLoot,receiveLoot,inventory,equipment,equip,inventoryMarkup,SLOTS};
 })();

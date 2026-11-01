@@ -267,3 +267,12 @@ Wyłącznie Mag ma niebieski pasek many pod paskiem życia, w karcie bohatera i 
 Nowe walki zachowują pojemność i pełny początkowy zasób many w migawce Maga. Starsze zapisane walki bez pól many wyświetlają ją na podstawie Inteligencji zapisanej w walce, bez zmiany trwającego starcia.
 
 Broń początkowa: Wojownik — Miecz adepta, Mag — Różdżka adepta, Elf — Łuk adepta, Krasnolud — Topór adepta. Istniejące przedmioty o ID `starter-weapon` i dawnej standardowej nazwie są odczytywane pod nową nazwą; identyfikatory i założenie pozostają zachowane, bez dodawania przedmiotów. Broń kupiona, zdobyta i przedmioty z własnymi nazwami pozostają bez zmian.
+
+
+## Ochrona ciała zależna od klasy
+
+Wspólny slot `armor` ma nazwę i zasady właściwe klasie: Wojownik i Krasnolud używają tych samych zbroi, tylko Mag zakłada płaszcze, a tylko Elf zakłada pancerze. Walidacja działa w obu sposobach zakładania (karta bohatera i plecak), niezależnie od interfejsu. Obce typy nie dają premii, nawet jeśli starszy zapis ma je jako założone; przedmiot pozostaje w ekwipunku. Starszy pełny plecak może przez to mieć nadmiarowy zachowany przedmiot, obsługiwany tak samo jak pozostałe przedmioty ze starszych zapisów.
+
+Standardowe przedmioty startowe są odczytywane jako: Znoszona kolczuga (Wojownik i Krasnolud), Płaszcz wygnańca (Mag), Pancerz tropiciela (Elf). Migracja zachowuje ID i nie dodaje duplikatów. Nowe losowe zdobycze ochrony ciała pasują do klasy. Wcześniej wylosowane nagrody nadal można odebrać, z zachowaniem ograniczeń zakładania.
+
+Gringo pokazuje właściwy typ ochrony ciała dla danej postaci: Nitowaną zbroję dla Wojownika i Krasnoluda, Płaszcz wędrownego maga dla Maga, Pancerz leśnego strażnika dla Elfa. Wszystkie trzy kosztują 45 złota i dają dotychczasowe +3 Wytrzymałości po założeniu. Zakup obcego typu jest blokowany także w regule transakcji.
