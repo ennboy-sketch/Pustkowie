@@ -203,3 +203,10 @@ Po trzecim zaliczonym zwycięstwie (status `ready`, także przed odebraniem nasz
 Alchemiczka na mapie i w menu zamku otwiera Wieżę Zielonego Płomienia. Lokal ma własną panoramę `alchemist-workshop.webp`: dorosła, czarnowłosa alchemiczka w dopasowanej czarnej sukni ze złotymi detalami, stół alchemiczny, kolby, zioła, regały i schody na prywatne piętro. Bohaterka ma osobną ilustrację `alchemist-character.webp`, widoczną w rozmowie.
 
 Widok przesuwa się swobodnie palcem, gładzikiem lub myszą, bez widocznych pasków przewijania i bez stałego panelu zasłaniającego ilustrację. Początkowy kadr kieruje się na alchemiczkę. Kliknięcie jej znacznika otwiera portret i powitanie; stół pokazuje opis wyposażenia pracowni, a schody informują o zamkniętym na razie prywatnym piętrze. Nie dodano jeszcze receptur, warzenia, zakupów, kosztów ani nowej misji. Oglądanie pracowni nie zmienia zapisu postaci. Zamknięcie lub zmiana miejsca usuwa obsługę przeciągania, obserwator rozmiaru i okno rozmowy.
+
+
+## Gorim Sadza i Kuźnia Czarnego Żaru
+
+Kuźnia na mapie i w menu zamku otwiera panoramiczną pracownię `forge-workshop.webp`. Gorim Sadza jest potężnym, szerokim w barach człowiekiem z młotem, stojącym przy kowadle na tle rozpalonego pieca hutniczego. Otoczenie uzupełniają narzędzia, sztaby metalu i stojaki z uzbrojeniem. Widok przesuwa się palcem i myszą, z zachowaniem proporcji obrazu i początkowym kadrem na kowala.
+
+Jedyną interaktywną postacią i znacznikiem w pracowni jest Gorim Sadza. Kliknięcie otwiera rozmowę i informację o przyszłym wytwarzaniu rzadkiego ekwipunku. Kowadło, piec i pozostałe wyposażenie są częścią ilustracji. Nie dodano receptur, cen, kosztów ani możliwości wytwarzania przedmiotów. Oglądanie kuźni i rozmowa nie zmieniają zapisu postaci.

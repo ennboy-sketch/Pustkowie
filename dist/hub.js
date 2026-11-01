@@ -114,6 +114,7 @@
     window.FateWheel.cancel();
     window.TavernPanel.cancel();
     window.AlchemistPanel.cancel();
+    window.ForgePanel.cancel();
     toggleMenu(false);
     requestAnimationFrame(() => { const view = $('.world-viewport'); view.scrollLeft = Math.max(0,(view.scrollWidth-view.clientWidth)/2); });
     document.querySelectorAll('.nav-tile').forEach(el => el.setAttribute('aria-current',el.dataset.place === id ? 'page' : 'false'));
@@ -130,6 +131,8 @@
       content = scouting?'<div class="scout-active-view" aria-label="Aktywny zwiad"></div>':window.TavernPanel.markup();
     } else if (id === 'alchemy') {
       content = window.AlchemistPanel.markup();
+    } else if (id === 'forge') {
+      content = window.ForgePanel.markup();
     } else if (id === 'barracks') {
       content = barracksPanel();
     } else if (id === 'wheel') {
@@ -150,6 +153,7 @@
     if (id === 'inventory') stopHeroSheet=window.HeroSheet.mountBag($('.backpack-root'),{read:readCurrentHero,update:updateCurrentHero});
     if (id === 'wheel') window.FateWheel.mount($('#place-content'));
     if (id === 'alchemy') window.AlchemistPanel.mount($('#place-content'));
+    if (id === 'forge') window.ForgePanel.mount($('#place-content'));
     if(id==='tavern'){
       if(scouting){
         const scene=window.BrandMissions.SCENES[hero.activeMission.sceneId];
@@ -190,7 +194,7 @@
     openPlace('barracks');
     $('#profession-status').textContent = `Wybrano profesję: ${profession().name}.`;
   });
-  $('#place-dialog').addEventListener('close', () => {stopHeroSheet();stopActiveScout();window.FateWheel.cancel();window.TavernPanel.cancel();window.AlchemistPanel.cancel();});
+  $('#place-dialog').addEventListener('close', () => {stopHeroSheet();stopActiveScout();window.FateWheel.cancel();window.TavernPanel.cancel();window.AlchemistPanel.cancel();window.ForgePanel.cancel();});
   $('#close-place').addEventListener('click',()=>$('#place-dialog').close());
   $('#place-dialog').addEventListener('click',e=>{if(e.target===$('#place-dialog')){const r=e.target.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)e.target.close();}});
   $('#menu-toggle').addEventListener('click',()=>toggleMenu(!$('#sidebar').classList.contains('is-open')));
