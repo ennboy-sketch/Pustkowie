@@ -2,8 +2,6 @@
 (() => {
   const MIN=1,MAX=3;
   function mount(view,scene){
-    const parent=view.parentElement,position=parent.style.position,needsPosition=getComputedStyle(parent).position==='static';
-    if(needsPosition)parent.style.position='relative';
     const previousZoom=scene.style.zoom,previousTouch=view.style.touchAction,previousTab=view.getAttribute('tabindex');
     if(previousTab===null)view.tabIndex=0;
     const previousWidth=scene.style.width,previousHeight=scene.style.height;
@@ -18,16 +16,11 @@
       mapObserver=new ResizeObserver(fit);mapObserver.observe(view);fit();
     }
     view.classList.add('scene-zoom-viewport');view.style.touchAction='none';
-    const controls=document.createElement('div');controls.className='scene-zoom-controls';
-    controls.innerHTML='<button type="button" data-zoom="reset" aria-label="Przywróć skalę 100%" title="Przywróć skalę 100%">100%</button>';
-    parent.append(controls);
-    const reset=controls.firstElementChild,reducedMotion=matchMedia('(prefers-reduced-motion: reduce)');
+    const reducedMotion=matchMedia('(prefers-reduced-motion: reduce)');
     const pointers=new Map();
     let scale=1,disposed=false,gesture=false,pinch=null,pan=null,pending=null,frame=0,inertia=0;
     function update(){
       view.dataset.zoomScale=String(scale);
-      const label=`${Math.round(scale*100)}%`;
-      if(reset.firstChild.data!==label)reset.firstChild.data=label;
     }
     function local(x,y){const r=view.getBoundingClientRect();return{x:x-r.left-view.clientLeft,y:y-r.top-view.clientTop};}
     function apply(){
@@ -63,7 +56,6 @@
       }
       inertia=requestAnimationFrame(tick);
     }
-    function control(){zoom(1);}
     function wheel(e){
       if(!e.deltaY)return;e.preventDefault();
       const base=pending?.type==='zoom'?pending.scale:scale;
@@ -133,7 +125,6 @@
       view.classList.remove('is-dragging');
     }
     const dialog=view.closest('dialog');
-    controls.addEventListener('click',control);
     view.addEventListener('wheel',wheel,{passive:false});
     view.addEventListener('pointerdown',down);view.addEventListener('pointermove',move,{passive:false});
     view.addEventListener('pointerup',end);view.addEventListener('pointercancel',end);view.addEventListener('lostpointercapture',end);view.addEventListener('pointerleave',leave);
@@ -143,9 +134,9 @@
     return ()=>{
       suspend();disposed=true;
       if(mapObserver){mapObserver.disconnect();scene.style.width=previousWidth;scene.style.height=previousHeight;}
-      controls.remove();scene.style.zoom=previousZoom;view.style.touchAction=previousTouch;view.classList.remove('scene-zoom-viewport');
-      if(previousTab===null)view.removeAttribute('tabindex');delete view.dataset.zoomScale;if(needsPosition)parent.style.position=position;
-      controls.removeEventListener('click',control);view.removeEventListener('wheel',wheel);
+      scene.style.zoom=previousZoom;view.style.touchAction=previousTouch;view.classList.remove('scene-zoom-viewport');
+      if(previousTab===null)view.removeAttribute('tabindex');delete view.dataset.zoomScale;
+      view.removeEventListener('wheel',wheel);
       view.removeEventListener('pointerdown',down);view.removeEventListener('pointermove',move);view.removeEventListener('pointerup',end);view.removeEventListener('pointercancel',end);view.removeEventListener('lostpointercapture',end);view.removeEventListener('pointerleave',leave);
       view.removeEventListener('click',click,true);view.removeEventListener('keydown',key);
       document.removeEventListener('pointerdown',haltInertia,true);document.removeEventListener('visibilitychange',suspend);window.removeEventListener('blur',suspend);dialog?.removeEventListener('close',suspend);
