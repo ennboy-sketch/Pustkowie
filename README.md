@@ -141,3 +141,8 @@ Nowa oferta losuje jeden z dwóch dostępnych terenów (Mroczny Las albo Stara K
 Dla postaci poziomu 1–5 dodano Węża błotnego (1), Dzikiego Psa (2), Zbłąkanego człowieka (3) i Trolgotytę (5), zachowując podaną nazwę. Atlas `undercity-monsters.webp` ma układ 2×2: wąż, pies / człowiek, Trolgotyta. Portrety pokazują przeciwników na tle wilgotnych kanałów i podziemnych kamiennych korytarzy. Życie i zakresy obrażeń według poziomu odpowiadają początkowemu balansowi pozostałych terenów.
 
 Nowe oferty losują teraz jeden z trzech terenów, a następnie potwora z jego własnej puli. Istniejące oferty i aktywne walki nie są ponownie losowane. Dawny pusty przydział Podziemi otrzymuje potwora z tej lokacji. Nadal obowiązują koszt 5 energii, automatyczne tury, zapis postępu i jednorazowa nagroda za zwycięstwo: niezależnie losowane 10–30 złota i 33–55 EXP.
+
+
+### Proporcje awatarów potworów
+
+Każdy kwadratowy kadr atlasu jest wyświetlany w oryginalnych proporcjach i w całości, z dopasowaniem do miejsca nad podpisem. Nazwa i poziom mają osobny obszar poniżej grafiki. W prostokątnej ramce pozostaje neutralne tło po bokach albo nad i pod portretem, zamiast rozciągania ilustracji. Dotyczy wszystkich trzech atlasów, również podczas aktywnej walki.
