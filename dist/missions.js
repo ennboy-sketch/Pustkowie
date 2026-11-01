@@ -15,27 +15,29 @@
     if(!Number.isSafeInteger(level)||level<1||level>25)return null;
     return level>=15?15:level>=8?10:level>=3?5:1;
   }
+  function durationFor(level,difficulty){const base=minutes(level);if(!base||difficulty!=='hard')return base;const times=[1,5,10,15];return times[Math.min(3,times.indexOf(base)+1)];}
   const heroLevel=h=>Number.isSafeInteger(h.level)&&h.level>0?h.level:1;
   function active(hero) {
     const m=hero.activeMission;
     if(!m)return null;
-    if((m.reward!==undefined&&!validReward(m.reward,m.durationMs/60000))||(m.sceneId!==undefined&&!Object.hasOwn(SCENES,m.sceneId))||m.type!=='scout'||!Number.isSafeInteger(m.startedAt)||!Number.isSafeInteger(m.endsAt)||m.startedAt<0||!Number.isSafeInteger(m.durationMs)||m.durationMs!==minutes(m.levelAtStart)*60000||m.endsAt-m.startedAt!==m.durationMs||!minutes(m.levelAtStart))throw new Error('Zapis aktywnej misji jest niezgodny. Nie rozpoczynaj nowej misji przed naprawą zapisu.');
+    if((m.reward!==undefined&&!validReward(m.reward,m.durationMs/60000))||(m.sceneId!==undefined&&!Object.hasOwn(SCENES,m.sceneId))||m.type!=='scout'||!Number.isSafeInteger(m.startedAt)||!Number.isSafeInteger(m.endsAt)||m.startedAt<0||!Number.isSafeInteger(m.durationMs)||m.durationMs!==durationFor(m.levelAtStart,m.difficulty)*60000||m.endsAt-m.startedAt!==m.durationMs||!minutes(m.levelAtStart))throw new Error('Zapis aktywnej misji jest niezgodny. Nie rozpoczynaj nowej misji przed naprawą zapisu.');
     return m;
   }
   function status(hero,now=Date.now()) {
     const mission=active(hero),duration=minutes(heroLevel(hero));
     return {mission,minutes:duration,energy:window.EnergyCycle.info(hero,now).energy,level:heroLevel(hero),remaining:mission?Math.max(0,mission.endsAt-now):0,ready:!!mission&&now>=mission.endsAt};
   }
-  function start(hero,now=Date.now(),draw=drawScene,roll=rollReward) {
+  function start(hero,now=Date.now(),draw=drawScene,roll=rollReward,options={}) {
+    const cost=options.cost??COST;if(![3,5].includes(cost))throw new Error('Nieprawidłowy koszt misji.');
     hero=window.EnergyCycle.apply(hero,now);
     if(hero.activeCombat)throw new Error('Najpierw zakończ walkę z potworem.');
     if(active(hero))throw new Error('Najpierw zakończ obecny zwiad.');
-    const level=heroLevel(hero),duration=minutes(level);
+    const level=heroLevel(hero),duration=durationFor(level,options.difficulty);
     if(!duration)throw new Error('Zwiad powyżej poziomu 25 ustalimy później.');
-    if(hero.energy<COST)throw new Error('Potrzebujesz 5 punktów energii, aby rozpocząć zwiad.');
+    if(hero.energy<cost)throw new Error(`Potrzebujesz ${cost} punktów energii.`);
     const sceneId=draw();if(!Object.hasOwn(SCENES,sceneId))throw new Error('Nieznane miejsce zwiadu.');
     const reward=roll(duration);if(!validReward(reward,duration))throw new Error('Nieprawidłowa nagroda zwiadu.');
-    return {...hero,energy:hero.energy-COST,activeMission:{type:'scout',sceneId,reward:{xp:reward.xp,gold:reward.gold},levelAtStart:level,durationMs:duration*60000,startedAt:now,endsAt:now+duration*60000}};
+    return {...hero,energy:hero.energy-cost,brandOffers:null,activeMission:{cost,difficulty:options.difficulty||null,type:'scout',sceneId,reward:{xp:reward.xp,gold:reward.gold},levelAtStart:level,durationMs:duration*60000,startedAt:now,endsAt:now+duration*60000}};
   }
   function finish(hero,now=Date.now(),roll=rollReward) {
     const mission=active(hero);
@@ -49,7 +51,7 @@
     return {...progressed,gold,activeMission:null,lastScout:{...mission,reward:{xp:reward.xp,gold:reward.gold},reportedAt:now,rewardClaimed:true,levelsGained:progressed.level-window.Progression.level(hero)}};
   }
   function markup() {
-    return `<div class="mission-tabs" role="tablist" aria-label="Rodzaj misji"><button type="button" role="tab" id="scout-tab" data-mission-tab="scout" aria-selected="true" aria-controls="scout-panel">Zwiad czasowy</button><button type="button" role="tab" id="combat-tab" data-mission-tab="combat" aria-selected="false" aria-controls="combat-panel" tabindex="-1">Walka z potworami</button></div><section id="scout-panel" role="tabpanel" aria-labelledby="scout-tab"><div class="scout-scene"><div class="scout-heading"><span class="rpg-icon icon-journal" aria-hidden="true"></span><div><h3>Zwiad</h3><p class="scout-duration"></p><p class="scout-cost"></p><p class="scout-reward-preview"></p></div></div><div class="scout-offers"><span class="scout-offer-label">Brand wylosuje jeden z trzech kierunków</span><div class="scout-offer-grid">${Object.entries(SCENES).map(([id,scene])=>`<div class="scout-offer"><img src="${scene.image}" alt="" loading="lazy"><strong>${scene.short}</strong></div>`).join('')}</div></div><p class="scout-narrative">Przed murami Zamku Czarnej Stali zapada mgła. Rozglądasz się uważnie, obserwując ścieżki i nasłuchując odgłosów dochodzących z lasu.</p><div class="scout-progress" hidden><div><span class="scout-phase"></span><strong class="scout-clock" role="timer" aria-label="Pozostały czas zwiadu"></strong></div><progress aria-label="Postęp zwiadu" max="1" value="0"></progress></div><button type="button" class="primary" data-scout-action></button></div><p class="mission-message" role="status" aria-live="polite"></p><p class="scout-history" hidden>Ostatni zwiad został zakończony.</p><details class="scout-times"><summary>Czas zwiadu według poziomu</summary><ul><li>Poziom 1–2: 1 minuta</li><li>Poziom 3–7: 5 minut</li><li>Poziom 8–14: 10 minut</li><li>Poziom 15–25: 15 minut</li></ul></details><p class="mission-note">Nagroda EXP i złota zależy od czasu zwiadu. Rozpoczęcie kosztuje 5 energii. Nagrodę otrzymasz po zgłoszeniu powrotu.</p></section><section id="combat-panel" role="tabpanel" aria-labelledby="combat-tab" hidden><div class="combat-service"></div></section>`;
+    return `<div class="mission-tabs" role="tablist" aria-label="Rodzaj misji"><button type="button" role="tab" id="scout-tab" data-mission-tab="scout" aria-selected="true" aria-controls="scout-panel">Zwiad czasowy</button><button type="button" role="tab" id="combat-tab" data-mission-tab="combat" aria-selected="false" aria-controls="combat-panel" tabindex="-1">Walka z potworami</button></div><section id="scout-panel" role="tabpanel" aria-labelledby="scout-tab"><div class="scout-scene"><div class="scout-heading"><span class="rpg-icon icon-journal" aria-hidden="true"></span><div><h3>Zwiad</h3><p class="scout-duration"></p><p class="scout-cost"></p><p class="scout-reward-preview"></p></div></div><div class="scout-offers"><div class="scout-offer-grid">${Object.entries(SCENES).map(([id,scene])=>`<div class="scout-offer"><img src="${scene.image}" alt="" loading="lazy"><strong>${scene.short}</strong></div>`).join('')}</div></div><p class="scout-narrative">Przed murami Zamku Czarnej Stali zapada mgła. Rozglądasz się uważnie, obserwując ścieżki i nasłuchując odgłosów dochodzących z lasu.</p><div class="scout-progress" hidden><div><span class="scout-phase"></span><strong class="scout-clock" role="timer" aria-label="Pozostały czas zwiadu"></strong></div><progress aria-label="Postęp zwiadu" max="1" value="0"></progress></div><button type="button" class="primary" data-scout-action></button></div><p class="mission-message" role="status" aria-live="polite"></p><p class="scout-history" hidden>Ostatni zwiad został zakończony.</p><p class="mission-note">Nagroda EXP i złota zależy od czasu zwiadu. Rozpoczęcie kosztuje 5 energii. Nagrodę otrzymasz po zgłoszeniu powrotu.</p></section><section id="combat-panel" role="tabpanel" aria-labelledby="combat-tab" hidden><div class="combat-service"></div></section>`;
   }
   function mount(container,state) {
     container.innerHTML=markup();
@@ -111,5 +113,5 @@
     container.addEventListener('click',click);container.addEventListener('keydown',key);refresh();const timer=setInterval(refresh,1000);
     return ()=>{disposed=true;stopCombat();clearInterval(timer);container.removeEventListener('click',click);container.removeEventListener('keydown',key);};
   }
-  window.BrandMissions={minutes,status,start,finish,mount,COST,SCENES,REWARDS,rollReward};
+  window.BrandMissions={durationFor,minutes,status,start,finish,mount,COST,SCENES,REWARDS,rollReward};
 })();

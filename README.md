@@ -146,3 +146,12 @@ Nowe oferty losują teraz jeden z trzech terenów, a następnie potwora z jego w
 ### Proporcje awatarów potworów
 
 Każdy kwadratowy kadr atlasu jest wyświetlany w oryginalnych proporcjach i w całości, z dopasowaniem do miejsca nad podpisem. Nazwa i poziom mają osobny obszar poniżej grafiki. W prostokątnej ramce pozostaje neutralne tło po bokach albo nad i pod portretem, zamiast rozciągania ilustracji. Dotyczy wszystkich trzech atlasów, również podczas aktywnej walki.
+
+
+## Dwie oferty Branda
+
+Rozmowa z Brandem pokazuje dwie pionowe karty misji: Szlak wędrowca (łatwiejsza, 3 energii) i Próba śmiałka (trudniejsza, 5 energii). Każda niezależnie losuje zwiad lub walkę, teren i odpowiedniego przeciwnika. Oferty zapisują się w `brandOffers`; ponowne otwarcie, odświeżenie lub druga karta przeglądarki ich nie zmieniają. Przyjęcie jednej zużywa cały zestaw i atomowo pobiera jej koszt. Kolejny zestaw pojawia się dopiero po zakończeniu obecnej misji.
+
+Łatwe walki losują przeciwników poziomu 1–2, trudne poziomu 3–5. Obowiązują wcześniejsze nagrody za walkę. Łatwy zwiad korzysta z dotychczasowego czasu dla poziomu gracza; trudny z kolejnego ustalonego przedziału czasu (1→5→10→15 minut, maksymalnie 15). Nagrody zwiadu pozostają zgodne z tabelą dla jego rzeczywistego czasu. Powyżej poziomu 5, do ustalenia dalszych potworów, losowane są zwiady; powyżej 25 czasu nadal nie określono. Stare aktywne misje zachowują swój czas, przeciwnika i już opłacony koszt.
+
+Usunięto ręczny wybór typu misji, napis o losowaniu kierunków oraz rozwijaną tabelę czasu według poziomu. Aktywny zwiad i walka zachowują dotychczasowe pełnoekranowe widoki i jednorazowe nagrody.

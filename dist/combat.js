@@ -31,17 +31,18 @@
     const pool=ROSTERS[sceneId];
     return {...hero,combatOffer:{sceneId,enemyId:pool[random(0,pool.length-1)].id}};
   }
-  function start(hero,now=Date.now()){
+  function start(hero,now=Date.now(),options={}){
+    const cost=options.cost??5;if(![3,5].includes(cost))throw new Error('Nieprawidłowy koszt misji.');
     hero=window.EnergyCycle.apply(hero,now);
     if(hero.activeMission||hero.activeCombat)throw new Error('Najpierw zakończ obecną misję.');
     if(!eligible(hero))throw new Error('Te potwory są dostępne dla poziomów 1–5.');
     const sceneId=hero.combatOffer?.sceneId;
     const enemy=sceneId&&Object.hasOwn(ROSTERS,sceneId)?ROSTERS[sceneId].find(m=>m.id===hero.combatOffer.enemyId):null;
     if(!enemy)throw new Error('Brak przydzielonego przeciwnika.');
-    if(hero.energy<5)throw new Error('Potrzebujesz 5 energii.');
+    if(hero.energy<cost)throw new Error(`Potrzebujesz ${cost} energii.`);
     const player=profile(hero),power=Math.max(...player.stats)+player.level*2;
     player.attack=[Math.max(1,power-3),power+3];
-    return {...hero,energy:hero.energy-5,activeCombat:{id:crypto.randomUUID(),sceneId,battle:createBattle(player,enemy,'hero'),reward:{gold:random(10,30),xp:random(33,55)},nextHitAt:now+1100}};
+    return {...hero,energy:hero.energy-cost,brandOffers:null,activeCombat:{cost,difficulty:options.difficulty||null,id:crypto.randomUUID(),sceneId,battle:createBattle(player,enemy,'hero'),reward:{gold:random(10,30),xp:random(33,55)},nextHitAt:now+1100}};
   }
   function tick(hero,now=Date.now()){
     const fight=hero.activeCombat;
@@ -138,6 +139,7 @@
     const locked=fn=>navigator.locks?navigator.locks.request('pustkowie-hero-v2',fn):fn();
     function render(hero){
       const fight=hero.activeCombat,offer=hero.combatOffer;
+      dialog.querySelector('.combat-bottom>small').textContent=fight?`Koszt misji: ${fight.cost??5} energii · Opłacono przy rozpoczęciu`:'Wybierz zlecenie u Branda.';
       const sceneId=fight?.sceneId||offer?.sceneId||'forest',scene=window.BrandMissions.SCENES[sceneId];
       dialog.querySelector('.combat-stage').style.setProperty('--combat-art',`url("${scene.image}")`);
       dialog.querySelector('#combat-location').textContent=scene.short;

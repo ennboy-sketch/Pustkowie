@@ -2,7 +2,7 @@
 (() => {
   const people = {
     tobiasz:{name:'Tobiasz',role:'Karczmarz',line:'Siadaj. Przy ogniu łatwiej zapomnieć o chłodzie.'},
-    brand:{name:'Dowódca Brand',role:'Dowódca',line:'Zanim wyruszysz, poznaj ludzi tego zamku.'},
+    brand:{name:'Dowódca Brand',role:'Dowódca',line:'Wybierz zlecenie odpowiednie do swoich sił.'},
     tauriel:{name:'Tauriel',role:'Elfka',line:'Nie każda historia nadaje się do opowiedzenia przy całej sali.'}
   };
   let resizeObserver = null;
@@ -119,7 +119,7 @@
       stopMissions();
       const brandPanel=panel.querySelector('.brand-service');
       brandPanel.hidden=button.dataset.npc!=='brand';
-      if(!brandPanel.hidden)stopMissions=window.BrandMissions.mount(brandPanel,state);
+      if(!brandPanel.hidden)stopMissions=window.BrandChoices.mount(brandPanel,state);
       stopBeerTimer();beerMessage='';beerPanel.hidden=button.dataset.npc!=='tobiasz';
       if(!beerPanel.hidden){renderBeer();beerTimer=setInterval(renderBeer,1000);}
       panel.querySelectorAll('[data-npc]').forEach(el=>el.setAttribute('aria-pressed',String(el===button)));
