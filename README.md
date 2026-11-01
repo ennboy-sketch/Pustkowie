@@ -76,7 +76,27 @@ Panel energii pokazuje czas do odnowienia. Gra sprawdza termin podczas działani
 
 ## Poziomy i EXP
 
-Limit postaci wynosi 250 poziomów. W `progression.js` skonfigurowano podane wymagania na kolejny awans: poziom 1 — 100 EXP, 2 — 250 EXP, 3 — 500 EXP. Wzór i dalsze progi do poziomu 100 wymagają ustalenia. Powyżej nich wymagania pozostają nieokreślone; EXP jest zachowywane bez automatycznych awansów. Nagrody zwiadu przyznają EXP zgodnie z ustalonymi progami; ponad nie punkty są przechowywane do ustalenia dalszych wymagań. Moduł obsługuje dodawanie EXP i nadwyżki przy awansie, z ograniczeniem do poziomu 250.
+Limit postaci wynosi 250 poziomów. `progression.js` określa wymagania EXP na awans z danego poziomu na kolejny:
+
+| Poziom | EXP do następnego poziomu |
+| --- | ---: |
+| 1 | 100 |
+| 2 | 250 |
+| 3 | 500 |
+| 4 | 750 |
+| 5 | 1000 |
+| 6 | 1300 |
+| 7 | 1700 |
+| 8 | 2100 |
+| 9 | 2500 |
+| 10 | 3000 |
+| 11 | 3500 |
+| 12 | 4000 |
+| 13 | 4500 |
+| 14 | 5000 |
+| 15 | 5500 |
+
+Progi nie są sumą EXP od początku gry. Nadwyżka przechodzi na kolejny poziom, a duża nagroda może dać kilka awansów. Na poziomie 16 i wyższych dalsze wymagania pozostają do ustalenia; EXP jest zachowywane bez automatycznych awansów ponad znane progi. Wczytanie istniejącej postaci nie resetuje jej poziomu ani EXP. Paski doświadczenia i nagrody zwiadu oraz walk korzystają z tego samego modułu.
 
 ### Trzy losowe miejsca zwiadu
 

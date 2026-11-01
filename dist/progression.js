@@ -1,8 +1,12 @@
 'use strict';
 (() => {
   const MAX_LEVEL=250;
-  // Progi podane przez użytkownika; następne wymagają ustalenia reguły.
-  const REQUIREMENTS={1:100,2:250,3:500};
+  // EXP wymagane do awansu z danego poziomu. Dalsze progi zostaną dodane później.
+  const REQUIREMENTS={
+    1:100,2:250,3:500,4:750,5:1000,
+    6:1300,7:1700,8:2100,9:2500,10:3000,
+    11:3500,12:4000,13:4500,14:5000,15:5500
+  };
   function level(hero){return Number.isSafeInteger(hero.level)&&hero.level>0?Math.min(MAX_LEVEL,hero.level):1;}
   function required(atLevel){return atLevel>=MAX_LEVEL?null:REQUIREMENTS[atLevel]??null;}
   function info(hero){const current=level(hero),xp=current===MAX_LEVEL?0:Number.isSafeInteger(hero.xp)&&hero.xp>=0?hero.xp:0,need=required(current);return{level:current,xp,required:need,max:MAX_LEVEL,percent:need?Math.min(100,xp/need*100):0,label:current===MAX_LEVEL?'Maksymalny poziom':need===null?'Próg EXP do ustalenia':`${xp} / ${need} EXP`};}
