@@ -102,29 +102,6 @@
       finally{buying=false;renderBeer();}
     }
     conversation.addEventListener('close',()=>{stopBeerTimer();stopMissions();stopQuest();});
-    let drag = null;
-    let suppressClick = false;
-    view.addEventListener('pointerdown',e=>{
-      if(e.pointerType!=='mouse' || e.button!==0)return;
-      suppressClick=false;
-      drag={id:e.pointerId,x:e.clientX,y:e.clientY,left:view.scrollLeft,top:view.scrollTop,moved:false};
-    });
-    view.addEventListener('pointermove',e=>{
-      if(!drag || drag.id!==e.pointerId)return;
-      const dx=e.clientX-drag.x,dy=e.clientY-drag.y;
-      if(!drag.moved && Math.hypot(dx,dy)<6)return;
-      if(!drag.moved){drag.moved=true;view.setPointerCapture(e.pointerId);view.classList.add('is-dragging');}
-      e.preventDefault();view.scrollLeft=drag.left-dx;view.scrollTop=drag.top-dy;
-    });
-    function endDrag(e){
-      if(!drag || drag.id!==e.pointerId)return;
-      suppressClick=drag.moved;drag=null;view.classList.remove('is-dragging');
-      if(view.hasPointerCapture(e.pointerId))view.releasePointerCapture(e.pointerId);
-    }
-    view.addEventListener('pointerup',endDrag);
-    view.addEventListener('pointercancel',endDrag);
-    view.addEventListener('pointerleave',e=>{if(drag && !drag.moved)endDrag(e);});
-    view.addEventListener('click',e=>{if(suppressClick){e.preventDefault();e.stopImmediatePropagation();suppressClick=false;}},true);
     panel.addEventListener('click',e=>{
       if(e.target.closest('[data-buy-beer]')){void buyBeer();return;}
       if(e.target.closest('[data-close-npc]')){conversation.close();return;}

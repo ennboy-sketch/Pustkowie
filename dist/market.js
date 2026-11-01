@@ -32,7 +32,7 @@
   function mount(root,state){
     cancel();
     const panel=root.querySelector('.market-panel'),view=panel.querySelector('.market-viewport'),scene=panel.querySelector('.market-panorama'),art=scene.querySelector('img'),dialog=panel.querySelector('.market-detail-dialog');
-    let centered=false,disposed=false,drag=null,suppressClick=false;
+    let centered=false,disposed=false;
     function fit(){
       if(disposed||!view.isConnected)return;
       const height=Math.max(600,view.clientHeight),ratio=art.naturalWidth&&art.naturalHeight?art.naturalWidth/art.naturalHeight:2;
@@ -64,20 +64,10 @@
       finally{busy=false;if(!disposed)renderShop();}
     }
     function storage(e){if(e.key==='pustkowie.hero.v2'&&dialog.open){try{renderShop();}catch{dialog.querySelector('.market-message').textContent='Zapis postaci zmienił się. Odśwież grę.';}}}
-    function down(e){if(e.pointerType!=='mouse'||e.button!==0)return;suppressClick=false;drag={id:e.pointerId,x:e.clientX,y:e.clientY,left:view.scrollLeft,top:view.scrollTop,moved:false};}
-    function move(e){
-      if(!drag||drag.id!==e.pointerId)return;
-      const dx=e.clientX-drag.x,dy=e.clientY-drag.y;if(!drag.moved&&Math.hypot(dx,dy)<6)return;
-      if(!drag.moved){drag.moved=true;view.setPointerCapture(e.pointerId);view.classList.add('is-dragging');}
-      e.preventDefault();view.scrollLeft=drag.left-dx;view.scrollTop=drag.top-dy;
-    }
-    function end(e){if(!drag||drag.id!==e.pointerId)return;suppressClick=drag.moved;drag=null;view.classList.remove('is-dragging');if(view.hasPointerCapture(e.pointerId))view.releasePointerCapture(e.pointerId);}
-    function leave(e){if(drag&&!drag.moved)end(e);}
-    function suppress(e){if(suppressClick){e.preventDefault();e.stopImmediatePropagation();suppressClick=false;}}
     function click(e){const buyButton=e.target.closest('[data-buy-market]');if(buyButton){void buy(buyButton.dataset.buyMarket);return;}if(e.target.closest('[data-close-market-detail]')){dialog.close();return;}const target=e.target.closest('[data-market-part]');if(target)show(target.dataset.marketPart);}
     art.addEventListener('load',fit);const observer=new ResizeObserver(fit);observer.observe(view);
-    view.addEventListener('pointerdown',down);view.addEventListener('pointermove',move);view.addEventListener('pointerup',end);view.addEventListener('pointercancel',end);view.addEventListener('pointerleave',leave);view.addEventListener('click',suppress,true);panel.addEventListener('click',click);window.addEventListener('storage',storage);fit();
-    stop=()=>{disposed=true;observer.disconnect();art.removeEventListener('load',fit);view.removeEventListener('pointerdown',down);view.removeEventListener('pointermove',move);view.removeEventListener('pointerup',end);view.removeEventListener('pointercancel',end);view.removeEventListener('pointerleave',leave);view.removeEventListener('click',suppress,true);panel.removeEventListener('click',click);window.removeEventListener('storage',storage);if(dialog.open)dialog.close();};
+    panel.addEventListener('click',click);window.addEventListener('storage',storage);fit();
+    stop=()=>{disposed=true;observer.disconnect();art.removeEventListener('load',fit);panel.removeEventListener('click',click);window.removeEventListener('storage',storage);if(dialog.open)dialog.close();};
   }
   window.MarketPanel={markup,mount,cancel,purchase,bonuses,describeItem};
 })();

@@ -93,11 +93,7 @@
     const view=root.querySelector('.upstairs-viewport'),panorama=root.querySelector('.upstairs-panorama'),art=panorama.querySelector('img');
     function fit(){const height=Math.max(480,view.clientHeight);const ratio=art.naturalWidth&&art.naturalHeight?art.naturalWidth/art.naturalHeight:2.4;panorama.style.height=`${height}px`;panorama.style.width=`${height*ratio}px`;}
     art.addEventListener('load',fit);const observer=new ResizeObserver(fit);observer.observe(view);
-    let drag=null,suppress=false;
-    view.addEventListener('pointerdown',e=>{if(e.pointerType==='mouse'&&e.button===0){suppress=false;drag={id:e.pointerId,x:e.clientX,left:view.scrollLeft,moved:false};}});
-    view.addEventListener('pointermove',e=>{if(!drag||drag.id!==e.pointerId)return;const dx=e.clientX-drag.x;if(!drag.moved&&Math.abs(dx)<6)return;drag.moved=true;suppress=true;view.setPointerCapture(e.pointerId);e.preventDefault();view.scrollLeft=drag.left-dx;});
-    function end(e){if(drag?.id!==e.pointerId)return;drag=null;if(view.hasPointerCapture(e.pointerId))view.releasePointerCapture(e.pointerId);}
-    view.addEventListener('pointerup',end);view.addEventListener('pointercancel',end);view.addEventListener('click',e=>{if(suppress){e.preventDefault();e.stopImmediatePropagation();suppress=false;}},true);
+
     root.addEventListener('click',click);
     return {openRoom,open(){if(!canEnter(state.read()))throw new Error('Najpierw przepędź rozbójników.');if(!dialog.open)dialog.showModal();},dispose(){stopRoomQuest();if(tauriel.open)tauriel.close();observer.disconnect();art.removeEventListener('load',fit);root.removeEventListener('click',click);if(room.open)room.close();if(dialog.open)dialog.close();root.replaceChildren();}};
   }

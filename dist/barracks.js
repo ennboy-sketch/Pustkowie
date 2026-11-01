@@ -9,7 +9,7 @@
   function mount(root,{professionMarkup}={}){
     cancel();
     const panel=root.querySelector('.barracks-panel'),view=panel.querySelector('.barracks-viewport'),scene=panel.querySelector('.barracks-panorama'),art=scene.querySelector('img'),dialog=panel.querySelector('.barracks-detail-dialog');
-    let centered=false,disposed=false,drag=null,suppressClick=false;
+    let centered=false,disposed=false;
     function fit(){
       if(disposed||!view.isConnected)return;
       const height=Math.max(600,view.clientHeight),ratio=art.naturalWidth&&art.naturalHeight?art.naturalWidth/art.naturalHeight:2;
@@ -32,20 +32,10 @@
       if(!dialog.open)dialog.showModal();
     }
     showProfessions=()=>show('professions');
-    function down(e){if(e.pointerType!=='mouse'||e.button!==0)return;suppressClick=false;drag={id:e.pointerId,x:e.clientX,y:e.clientY,left:view.scrollLeft,top:view.scrollTop,moved:false};}
-    function move(e){
-      if(!drag||drag.id!==e.pointerId)return;
-      const dx=e.clientX-drag.x,dy=e.clientY-drag.y;if(!drag.moved&&Math.hypot(dx,dy)<6)return;
-      if(!drag.moved){drag.moved=true;view.setPointerCapture(e.pointerId);view.classList.add('is-dragging');}
-      e.preventDefault();view.scrollLeft=drag.left-dx;view.scrollTop=drag.top-dy;
-    }
-    function end(e){if(!drag||drag.id!==e.pointerId)return;suppressClick=drag.moved;drag=null;view.classList.remove('is-dragging');if(view.hasPointerCapture(e.pointerId))view.releasePointerCapture(e.pointerId);}
-    function leave(e){if(drag&&!drag.moved)end(e);}
-    function suppress(e){if(suppressClick){e.preventDefault();e.stopImmediatePropagation();suppressClick=false;}}
     function click(e){if(e.target.closest('[data-close-barracks-detail]')){dialog.close();return;}const target=e.target.closest('[data-barracks-part]');if(target)show(target.dataset.barracksPart);}
     art.addEventListener('load',fit);const observer=new ResizeObserver(fit);observer.observe(view);
-    view.addEventListener('pointerdown',down);view.addEventListener('pointermove',move);view.addEventListener('pointerup',end);view.addEventListener('pointercancel',end);view.addEventListener('pointerleave',leave);view.addEventListener('click',suppress,true);panel.addEventListener('click',click);fit();
-    stop=()=>{disposed=true;showProfessions=()=>{};observer.disconnect();art.removeEventListener('load',fit);view.removeEventListener('pointerdown',down);view.removeEventListener('pointermove',move);view.removeEventListener('pointerup',end);view.removeEventListener('pointercancel',end);view.removeEventListener('pointerleave',leave);view.removeEventListener('click',suppress,true);panel.removeEventListener('click',click);if(dialog.open)dialog.close();};
+    panel.addEventListener('click',click);fit();
+    stop=()=>{disposed=true;showProfessions=()=>{};observer.disconnect();art.removeEventListener('load',fit);panel.removeEventListener('click',click);if(dialog.open)dialog.close();};
   }
   window.BarracksPanel={markup,mount,cancel,openProfessions:()=>showProfessions()};
 })();

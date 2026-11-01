@@ -214,7 +214,7 @@ Jedyną interaktywną postacią i znacznikiem w pracowni jest Gorim Sadza. Klikn
 
 ## Przybliżanie lokacji
 
-Wspólne przybliżanie (100–300%) obejmuje mapę zamku, karczmę, pracownię alchemiczki, kuźnię, korytarz piętra i oba pokoje. Przyciski +/− i procentowy reset skali znajdują się w rogu widoku. Działa również kółko myszy, gest dwóch palców oraz klawisze +/−/0 przy skupieniu na widoku. Po powiększeniu można przesuwać widok palcem i myszą; znaczniki postaci i drzwi pozostają przy ilustracji.
+Wspólne przybliżanie (100–300%) obejmuje mapę zamku, karczmę, pracownię alchemiczki, kuźnię, korytarz piętra i oba pokoje. W rogu widoku pozostał tylko procentowy reset skali; przyciski +/− zostały usunięte. Działa również kółko myszy, gest dwóch palców oraz klawisze +/−/0 przy skupieniu na widoku. Po powiększeniu można przesuwać widok palcem i myszą; znaczniki postaci i drzwi pozostają przy ilustracji.
 
 Podczas zwiadu i walki przycisk lupy otwiera osobny pełnoekranowy podgląd lokacji z tą samą obsługą przybliżania. Mechanika i czas misji działają dalej; nie powiększa się odliczanie, statystyki ani przyciski odbioru nagrody. Zmiany skali nie zapisują danych postaci. Obsługa jest usuwana po opuszczeniu lokacji.
 
@@ -231,3 +231,10 @@ Kliknięcie Gabriela otwiera powitanie i dostęp do wcześniejszego panelu profe
 Panoramiczny plac targowy (`market-square.webp`) ma stragan Gringa, pulchnego kupca uzbrojenia, oraz puste boczne stragany na przyszłe postacie. Obsługuje przesuwanie i przybliżanie 100–300%. Kliknięcie Gringa otwiera sklep z ośmioma podstawowymi przedmiotami: czterema rodzajami broni, hełmem, zbroją, butami i tarczą. Ceny wynoszą 20–45 złota; premie są widoczne przed zakupem i działają po założeniu, także podczas walki. Nie są to rzadkie przedmioty z przyszłego rzemiosła Gorima.
 
 Zakup atomowo zapisuje odjęcie złota i nowy przedmiot z unikalnym ID w istniejącym ekwipunku. Używa wspólnej blokady `pustkowie-hero-v2` oraz ponownie sprawdza bieżący zapis, złoto i limit 25 niezałożonych przedmiotów. Pełny ekwipunek lub brak złota blokują zakup. Założone przedmioty nie zajmują miejsc plecaka; zakupy nie zakładają się automatycznie. Zamknięcie targu usuwa obsługę i nie zużywa energii.
+
+
+## Płynne przesuwanie lokacji
+
+Wszystkie panoramy, mapa, piętro, pokoje i podglądy walk/zwiadu korzystają ze wspólnej obsługi w `scene-zoom.js`. Ruch palcem, piórem i myszą jest przetwarzany raz na klatkę animacji; po puszczeniu szybkiego przeciągnięcia widok łagodnie wyhamowuje. Nowy dotyk, kółko, utrata aktywności lub zamknięcie widoku zatrzymują ruch. Przy preferencji ograniczonego ruchu wyhamowanie jest wyłączone. Przeciągnięcie nie uruchamia znaczników postaci i drzwi.
+
+Usunięto ekranowe przyciski plus i minus. Pozostają gest dwóch palców, kółko myszy, klawisze +/−/0 i przycisk procentowego resetu do 100%. Obsługa gestów i animacje są usuwane przy opuszczeniu lokacji.
