@@ -258,3 +258,12 @@ Zakup atomowo zapisuje odjęcie złota i nowy przedmiot z unikalnym ID w istniej
 Wszystkie panoramy, mapa, piętro, pokoje i podglądy walk/zwiadu korzystają ze wspólnej obsługi w `scene-zoom.js`. Ruch palcem, piórem i myszą jest przetwarzany raz na klatkę animacji; po puszczeniu szybkiego przeciągnięcia widok łagodnie wyhamowuje. Nowy dotyk, kółko, utrata aktywności lub zamknięcie widoku zatrzymują ruch. Przy preferencji ograniczonego ruchu wyhamowanie jest wyłączone. Przeciągnięcie nie uruchamia znaczników postaci i drzwi.
 
 Usunięto wszystkie ekranowe przyciski skali, w tym procentowy reset. Pozostają gest dwóch palców, kółko myszy oraz klawisze +/−/0 (0 przywraca skalę 100%). Obsługa gestów i animacje są usuwane przy opuszczeniu lokacji.
+
+
+## Mana Maga i broń adepta
+
+Wyłącznie Mag ma niebieski pasek many pod paskiem życia, w karcie bohatera i w widoku walki. Maksymalna mana to 10 × Inteligencja, z uwzględnieniem rozdanych punktów i premii założonego wyposażenia. Pod Inteligencją Maga znajduje się informacja o przeliczniku. Zmiana cechy lub założonego ekwipunku odświeża pojemność many. Obecne automatyczne ataki nie zużywają many; system zaklęć nie został jeszcze dodany.
+
+Nowe walki zachowują pojemność i pełny początkowy zasób many w migawce Maga. Starsze zapisane walki bez pól many wyświetlają ją na podstawie Inteligencji zapisanej w walce, bez zmiany trwającego starcia.
+
+Broń początkowa: Wojownik — Miecz adepta, Mag — Różdżka adepta, Elf — Łuk adepta, Krasnolud — Topór adepta. Istniejące przedmioty o ID `starter-weapon` i dawnej standardowej nazwie są odczytywane pod nową nazwą; identyfikatory i założenie pozostają zachowane, bez dodawania przedmiotów. Broń kupiona, zdobyta i przedmioty z własnymi nazwami pozostają bez zmian.

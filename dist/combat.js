@@ -63,7 +63,7 @@
     const base=BASE_STATS[hero.classId];
     if(!base)throw new Error('Nieznana klasa postaci.');
     const added=window.HeroSheet.bonuses(hero),stats=base.map((n,i)=>n+added[i]);
-    return {name:hero.name,level:window.Progression.level(hero),maxHp:50+stats[3]*10+window.HeroSheet.hpBonus(hero),stats:[...stats],classId:hero.classId,gender:hero.gender};
+    return {name:hero.name,level:window.Progression.level(hero),maxHp:50+stats[3]*10+window.HeroSheet.hpBonus(hero),maxMana:window.HeroSheet.manaCapacity(hero.classId,stats[2]),stats:[...stats],classId:hero.classId,gender:hero.gender};
   }
   function drawLocation(){
     const ids=Object.keys(ROSTERS).filter(id=>ROSTERS[id].length),value=new Uint32Array(1),limit=4294967296-(4294967296%ids.length);
@@ -74,7 +74,10 @@
   function createBattle(hero,enemy,first){
     if(!['hero','enemy'].includes(first))throw new Error('Ustal kolejność ataków.');
     for(const fighter of [hero,enemy])if(!fighter||typeof fighter.name!=='string'||!Number.isSafeInteger(fighter.maxHp)||fighter.maxHp<1)throw new Error('Brak statystyk do rozpoczęcia walki.');
-    const snapshot=f=>({...f,stats:f.stats?[...f.stats]:undefined,hp:f.maxHp});
+    const snapshot=f=>{
+      const mana=f.classId==='mage'?{maxMana:f.maxMana??window.HeroSheet.manaCapacity(f.classId,f.stats?.[2]??0),mana:f.maxMana??window.HeroSheet.manaCapacity(f.classId,f.stats?.[2]??0)}:{};
+      return {...f,...mana,stats:f.stats?[...f.stats]:undefined,hp:f.maxHp};
+    };
     return {hero:snapshot(hero),enemy:snapshot(enemy),next:first,hits:0,winner:null,lastHit:null};
   }
   // Damage and initiative must be supplied by future combat rules, never inferred from scouting rewards.
@@ -88,7 +91,7 @@
     const hp=Math.max(0,battle[target].hp-damage);
     return {...battle,[target]:{...battle[target],hp},next:target,hits:battle.hits+1,winner:hp===0?actor:null,lastHit:{actor,target,damage:Math.min(damage,battle[target].hp)}};
   }
-  function fighterMarkup(side){return `<article class="combat-fighter" data-fighter="${side}"><div class="combat-portrait"><div class="combat-figure"></div><span class="combat-empty-icon rpg-icon icon-arena" aria-hidden="true"></span><span class="combat-damage" aria-hidden="true"></span><div class="combat-identity"><h3></h3><span class="combat-level"></span></div></div><div class="combat-health"><progress max="1" value="0" aria-label="Punkty życia"></progress><strong></strong></div><dl class="combat-stats">${LABELS.map(label=>`<div><dt>${label}</dt><dd>—</dd></div>`).join('')}</dl></article>`;}
+  function fighterMarkup(side){return `<article class="combat-fighter" data-fighter="${side}"><div class="combat-portrait"><div class="combat-figure"></div><span class="combat-empty-icon rpg-icon icon-arena" aria-hidden="true"></span><span class="combat-damage" aria-hidden="true"></span><div class="combat-identity"><h3></h3><span class="combat-level"></span></div></div><div class="combat-health"><progress max="1" value="0" aria-label="Punkty życia"></progress><strong></strong></div><div class="combat-mana" hidden><progress max="1" value="0" aria-label="Punkty many"></progress><strong></strong></div><dl class="combat-stats">${LABELS.map(label=>`<div><dt>${label}</dt><dd>—</dd></div>`).join('')}</dl></article>`;}
   function renderFighter(root,fighter){
     root.querySelector('h3').textContent=fighter?.name||'Przeciwnik';
     root.querySelector('.combat-level').textContent=fighter?`Poziom ${fighter.level||1}`:'Oczekuje na odkrycie';
@@ -101,6 +104,11 @@
     const hp=fighter?(fighter.hp??fighter.maxHp):0,bar=root.querySelector('progress');
     bar.max=fighter?.maxHp||1;bar.value=hp;bar.setAttribute('aria-label',fighter?`Życie: ${fighter.name}`:'Życie przeciwnika — brak danych');
     root.querySelector('.combat-health strong').textContent=fighter?`${hp} / ${fighter.maxHp}`:'— / —';
+    const mana=root.querySelector('.combat-mana');mana.hidden=fighter?.classId!=='mage';
+    if(!mana.hidden){
+      const maxMana=fighter.maxMana??window.HeroSheet.manaCapacity(fighter.classId,fighter.stats?.[2]??0),current=Math.max(0,Math.min(maxMana,fighter.mana??maxMana));
+      const bar=mana.querySelector('progress');bar.max=maxMana||1;bar.value=current;bar.setAttribute('aria-label',`Mana: ${fighter.name}`);mana.querySelector('strong').textContent=`${current} / ${maxMana}`;
+    }
     root.querySelectorAll('dd').forEach((el,i)=>{el.textContent=fighter?.stats?.[i]??'—';});
   }
   function renderBattle(root,battle){

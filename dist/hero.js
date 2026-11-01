@@ -3,7 +3,9 @@
   const SLOTS=[['helmet','Hełm'],['armor','Zbroja'],['boots','Buty'],['shield','Tarcza'],['weapon','Broń'],['necklace','Naszyjnik'],['earrings','Kolczyki'],['special','Przedmiot specjalny']];
   const STATS=[['strength','Siła'],['agility','Zręczność'],['intelligence','Inteligencja'],['endurance','Wytrzymałość'],['luck','Szczęście']];
   const DROPS=['Hełm żelaznej straży','Zbroja wędrowca','Buty tropiciela','Tarcza czarnej stali','Ostrze wygnańca','Naszyjnik zielonego płomienia','Kolczyki starego srebra'];
-  const STARTERS={warrior:['Wyszczerbiony miecz','Znoszona kolczuga'],mage:['Kostur czarnego jesionu','Szata wygnańca'],elf:['Łuk z martwego cisu','Płaszcz tropiciela'],dwarf:['Żelazny topór','Pancerz wędrowca']};
+  const STARTERS={warrior:['Miecz adepta','Znoszona kolczuga'],mage:['Różdżka adepta','Szata wygnańca'],elf:['Łuk adepta','Płaszcz tropiciela'],dwarf:['Topór adepta','Pancerz wędrowca']};
+  const LEGACY_WEAPONS={warrior:'Wyszczerbiony miecz',mage:'Kostur czarnego jesionu',elf:'Łuk z martwego cisu',dwarf:'Żelazny topór'};
+  function manaCapacity(classId,intelligence){return classId==='mage'?Math.max(0,intelligence)*10:0;}
   function random(max){const a=new Uint32Array(1),limit=4294967296-4294967296%max;do{crypto.getRandomValues(a);}while(a[0]>=limit);return a[0]%max;}
   function allocations(hero){
     const out=Object.fromEntries(STATS.map(([id])=>[id,hero.statAllocations?.[id]??0]));
@@ -19,7 +21,10 @@
     if(available(hero)<1)throw new Error('Nie masz wolnych punktów cech.');
     const next=allocations(hero);next[id]++;return {...hero,statAllocations:next};
   }
-  function inventory(hero){return hero.lootInventory??['weapon','armor'].map((slot,i)=>({id:`starter-${slot}`,slot,name:STARTERS[hero.classId][i]}));}
+  function inventory(hero){
+    const items=hero.lootInventory??['weapon','armor'].map((slot,i)=>({id:`starter-${slot}`,slot,name:STARTERS[hero.classId][i]}));
+    return items.map(item=>item.id==='starter-weapon'&&item.slot==='weapon'&&item.name===LEGACY_WEAPONS[hero.classId]?{...item,name:STARTERS[hero.classId][0]}:item);
+  }
   function equipment(hero){return hero.equipment??{weapon:'starter-weapon',armor:'starter-armor'};}
   function bagItems(hero){const worn=new Set(Object.values(equipment(hero)));return inventory(hero).filter(item=>!worn.has(item.id));}
   function hpBonus(hero){return equipment(hero).necklace==='tauriel-emerald-necklace'&&inventory(hero).some(i=>i.id==='tauriel-emerald-necklace'&&i.slot==='necklace')?100:0;}
@@ -82,7 +87,7 @@
     return ()=>{disposed=true;root.removeEventListener('click',click);window.removeEventListener('storage',storage);};
   }
   function mount(root,state){
-    root.innerHTML=`<section class="hero-v2"><div class="hero-loadout"><div class="hero-portrait"><div class="character" role="img" aria-label="Twoja postać"></div><div class="hero-identity"><h3></h3><span></span></div></div>${SLOTS.map(([id,label],i)=>`<button type="button" class="hero-gear-slot slot-${id}" data-gear-slot="${id}" aria-label="${label}">${art(i)}<span>${label}</span><small>Puste</small></button>`).join('')}</div><button type="button" class="hero-backpack-button" data-open-backpack><span class="backpack-icon" aria-hidden="true"></span><span>Ekwipunek<small>25 miejsc na przedmioty</small></span></button><div class="hero-xp"><span></span><progress max="100" value="0" aria-label="Postęp poziomu"></progress><small></small></div><div class="hero-vitals"></div><div class="hero-attributes"><div class="hero-points"></div>${STATS.map(([id,label],i)=>`<div class="hero-attribute" data-attribute="${id}"><div><span>${label}</span><small>${id==='luck'?'Szansa na przedmiot':''}</small></div><strong></strong><button type="button" data-stat-add="${id}" aria-label="Zwiększ: ${label}">+</button></div>`).join('')}</div><p class="hero-point-note">5 punktów na start i 3 za każdy kolejny poziom.<br>Szczęście: +1 punkt procentowy szansy na przedmiot za punkt, maks. 60%.</p><p class="hero-message" role="status" aria-live="polite"></p></section>`;
+    root.innerHTML=`<section class="hero-v2"><div class="hero-loadout"><div class="hero-portrait"><div class="character" role="img" aria-label="Twoja postać"></div><div class="hero-identity"><h3></h3><span></span></div></div>${SLOTS.map(([id,label],i)=>`<button type="button" class="hero-gear-slot slot-${id}" data-gear-slot="${id}" aria-label="${label}">${art(i)}<span>${label}</span><small>Puste</small></button>`).join('')}</div><button type="button" class="hero-backpack-button" data-open-backpack><span class="backpack-icon" aria-hidden="true"></span><span>Ekwipunek<small>25 miejsc na przedmioty</small></span></button><div class="hero-xp"><span></span><progress max="100" value="0" aria-label="Postęp poziomu"></progress><small></small></div><div class="hero-vitals"><div class="hero-health"><span></span><progress max="1" value="1" aria-label="Punkty życia"></progress></div><div class="hero-mana" hidden><span></span><progress max="1" value="1" aria-label="Punkty many"></progress></div></div><div class="hero-attributes"><div class="hero-points"></div>${STATS.map(([id,label],i)=>`<div class="hero-attribute" data-attribute="${id}"><div><span>${label}</span><small>${id==='luck'?'Szansa na przedmiot':''}</small></div><strong></strong><button type="button" data-stat-add="${id}" aria-label="Zwiększ: ${label}">+</button></div>`).join('')}</div><p class="hero-point-note">5 punktów na start i 3 za każdy kolejny poziom.<br>Szczęście: +1 punkt procentowy szansy na przedmiot za punkt, maks. 60%.</p><p class="hero-message" role="status" aria-live="polite"></p></section>`;
     const picker=document.createElement('dialog');picker.className='hero-gear-picker';picker.setAttribute('aria-label','Wybierz wyposażenie');document.body.append(picker);
     const bag=document.createElement('dialog');bag.className='hero-backpack-dialog';bag.setAttribute('aria-label','Ekwipunek — 25 miejsc');bag.innerHTML='<div class="backpack-root"></div><button type="button" class="secondary" data-close-backpack>Wróć do postaci</button>';document.body.append(bag);
     let stopBag=()=>{};
@@ -93,7 +98,11 @@
       const hero=state.read(),profile=window.BrandCombat.profile(hero),xp=window.Progression.info(hero);
       const portrait=root.querySelector('.hero-portrait');portrait.querySelector('.character').className=`character ${hero.gender} ${hero.classId}`;portrait.querySelector('h3').textContent=hero.name;portrait.querySelector('.hero-identity>span').textContent=`Poziom ${xp.level}`;
       root.querySelector('.hero-xp>span').textContent=`Poziom ${xp.level} / 250`;root.querySelector('.hero-xp progress').value=xp.percent;root.querySelector('.hero-xp>small').textContent=xp.label;
-      root.querySelector('.hero-vitals').textContent=`Życie: ${profile.maxHp} / ${profile.maxHp}`;
+      const health=root.querySelector('.hero-health'),mana=root.querySelector('.hero-mana');
+      health.querySelector('span').textContent=`Życie: ${profile.maxHp} / ${profile.maxHp}`;health.querySelector('progress').max=profile.maxHp;health.querySelector('progress').value=profile.maxHp;
+      mana.hidden=hero.classId!=='mage';
+      if(!mana.hidden){mana.querySelector('span').textContent=`Mana: ${profile.maxMana} / ${profile.maxMana}`;mana.querySelector('progress').max=profile.maxMana||1;mana.querySelector('progress').value=profile.maxMana;}
+      root.querySelector('[data-attribute="intelligence"] small').textContent=hero.classId==='mage'?'+10 many za punkt':'';
       root.querySelector('.hero-points').textContent=`Punkty do rozdania: ${available(hero)}`;
       STATS.forEach(([id],i)=>{const row=root.querySelector(`[data-attribute="${id}"]`);row.querySelector('strong').textContent=i<4?profile.stats[i]:luck(hero);row.querySelector('button').disabled=busy||available(hero)<1;if(id==='luck')row.querySelector('small').textContent=`${chance(hero)}% szansy na przedmiot`;});
       for(const [slot,label] of SLOTS){const button=root.querySelector(`[data-gear-slot="${slot}"]`),item=inventory(hero).find(i=>i.id===equipment(hero)[slot]);button.classList.toggle('is-equipped',!!item);button.querySelector('small').textContent=item?'Założono':'Puste';button.setAttribute('aria-label',`${label}: ${item?.name||'Puste'}`);button.title=(item?.name||label)+itemDetails(item);const icon=button.querySelector('.gear-art');if(icon)icon.className=item?.id==='tauriel-emerald-necklace'?'gear-art tauriel-necklace':`gear-art gear-${SLOTS.findIndex(([id])=>id===slot)}`;}
@@ -119,5 +128,5 @@
     root.addEventListener('click',click);picker.addEventListener('click',pick);window.addEventListener('storage',storage);render();
     return ()=>{disposed=true;stopBag();bag.removeEventListener('click',closeBag);if(bag.open)bag.close();bag.remove();root.removeEventListener('click',click);picker.removeEventListener('click',pick);window.removeEventListener('storage',storage);if(picker.open)picker.close();picker.remove();};
   }
-  window.HeroSheet={mount,mountBag,bagItems,hpBonus,bonuses,luck,chance,available,allocate,rollLoot,receiveLoot,inventory,equipment,equip,inventoryMarkup,SLOTS};
+  window.HeroSheet={manaCapacity,mount,mountBag,bagItems,hpBonus,bonuses,luck,chance,available,allocate,rollLoot,receiveLoot,inventory,equipment,equip,inventoryMarkup,SLOTS};
 })();
