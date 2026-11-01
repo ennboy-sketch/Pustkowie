@@ -108,7 +108,7 @@ Losowania są niezależne i obejmują obie granice przedziałów. Nowa misja zap
 
 ## Automatyczna walka u Branda
 
-Zakładka „Walka z potworami” pozwala wylosować teren i otworzyć pełnoekranowy podgląd pola walki: Mroczny Las, Starą Kopalnię albo Podziemia Miasta. Po lewej są portret, poziom, życie i cztery startowe statystyki bohatera, zgodne z kartą postaci. Po prawej pozostaje puste miejsce przeciwnika. Wspólne statystyki początkowe i dotychczasowy wzór życia przeniesiono do `BrandCombat.profile`. Podgląd i ponowne losowanie nie zapisują misji, nie pobierają energii i nie przyznają nagród.
+Zakładka „Walka z potworami” pozwala wylosować teren i otworzyć pełnoekranowy podgląd pola walki: Mroczny Las, Starą Kopalnię albo Podziemia Miasta. Po lewej są portret, poziom, życie i cztery startowe statystyki bohatera, zgodne z kartą postaci. Po prawej pozostaje puste miejsce przeciwnika. Wspólne statystyki początkowe i dotychczasowy wzór życia przeniesiono do `BrandCombat.profile`. Kliknięcie zakładki od razu otwiera wylosowany teren. Podgląd nie pobiera energii i nie przyznaje nagród. Teren jest zapisywany jako `combatOffer.sceneId` pod wspólną blokadą Web Locks, więc ponowne otwarcie, odświeżenie i inna karta zachowują ten sam przydział. Nie ma przycisków losowania ani ponownego losowania. Po dodaniu potworów przydział będzie zużywany przez zakończoną walkę.
 
 `combat.js` ma oddzielne, puste pule potworów dla trzech terenów. Przycisk rozpoczęcia jest zablokowany; nie dodano żadnych potworów ani zasad ich obrażeń, inicjatywy i nagród. Docelowy koszt misji u Branda wynosi 5 energii. W czasie aktywnego zwiadu nie można otworzyć podglądu walki. Zamknięcie pełnoekranowego podglądu wraca do Branda, a zamknięcie rozmowy usuwa jego okno.
 

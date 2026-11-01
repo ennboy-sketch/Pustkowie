@@ -84,7 +84,7 @@
         if(hero.lastScout)$('.scout-history').textContent=`Ostatni zwiad: ${SCENES[hero.lastScout.sceneId]?.name||'Zwiad'} — zakończony.${hero.lastScout.reward?` +${hero.lastScout.reward.xp} EXP i ${hero.lastScout.reward.gold} złota.`:''}`;
       } catch(error){container.classList.add('scout-has-error');$('[data-scout-action]').disabled=true;$('.mission-message').textContent='Nie można odczytać aktywnej misji. Odśwież grę i sprawdź zapis postaci.';}
     }
-    function selectTab(type){container.querySelectorAll('[data-mission-tab]').forEach(el=>{const selected=el.dataset.missionTab===type;el.setAttribute('aria-selected',String(selected));el.tabIndex=selected?0:-1;});$('#scout-panel').hidden=type!=='scout';$('#combat-panel').hidden=type!=='combat';}
+    function selectTab(type){container.querySelectorAll('[data-mission-tab]').forEach(el=>{const selected=el.dataset.missionTab===type;el.setAttribute('aria-selected',String(selected));el.tabIndex=selected?0:-1;});$('#scout-panel').hidden=type!=='scout';$('#combat-panel').hidden=type!=='combat';if(type==='combat')void stopCombat.open();}
     async function act(button) {
       if(busy)return;
       const action=button.dataset.missionAction;

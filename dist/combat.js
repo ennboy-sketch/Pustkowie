@@ -70,19 +70,32 @@
     return stop;
   }
   function markup(){
-    return `<div class="combat-briefing"><span class="rpg-icon icon-arena" aria-hidden="true"></span><h3>Rozkazy Branda</h3><p>Wyrusz na losowy teren: do Mrocznego Lasu, Starej Kopalni lub Podziemi Miasta. Każdy obszar otrzyma własnych przeciwników.</p><div class="scout-offer-grid">${Object.values(window.BrandMissions.SCENES).map(scene=>`<div class="scout-offer"><img src="${scene.image}" alt="" loading="lazy"><strong>${scene.short}</strong></div>`).join('')}</div><p>Walka będzie automatyczna i turowa. Zobaczysz każdy cios, utratę życia i wynik starcia.</p><button type="button" class="primary" data-combat-preview>Losuj teren walki</button><p class="combat-availability">Potwory pojawią się później. Podgląd nie kosztuje energii.</p><p class="combat-entry-error" role="status"></p></div>`;
+    return '<p class="combat-availability">Brand wyznacza teren walki automatycznie. Potwory pojawią się później. Podgląd nie kosztuje energii.</p><p class="combat-entry-error" role="status"></p>';
   }
   function mount(container,state){
     container.innerHTML=markup();
     const dialog=document.createElement('dialog');
     dialog.className='combat-dialog';dialog.setAttribute('aria-labelledby','combat-location');
-    dialog.innerHTML=`<div class="combat-stage"><div class="combat-top"><div><span>Dowódca Brand · Walka z potworami</span><h2 id="combat-location"></h2></div><button type="button" data-close-combat aria-label="Wróć do Branda">×</button></div><div class="combat-battlefield"><div class="combat-round">Przygotowanie do walki</div><div class="combat-fighters">${fighterMarkup('hero')}<span class="combat-versus" aria-hidden="true">⚔</span>${fighterMarkup('enemy')}</div></div><div class="combat-bottom"><p class="combat-status" role="status" aria-live="polite"></p><div class="combat-actions"><button type="button" class="secondary" data-reroll-combat>Losuj inny teren</button><button type="button" class="primary" disabled>Walka niedostępna</button></div><small>Rozpoczęcie misji: 5 energii · Podgląd jest bezpłatny</small></div></div>`;
+    dialog.innerHTML=`<div class="combat-stage"><div class="combat-top"><div><span>Dowódca Brand · Walka z potworami</span><h2 id="combat-location"></h2></div><button type="button" data-close-combat aria-label="Wróć do Branda">×</button></div><div class="combat-battlefield"><div class="combat-round">Przygotowanie do walki</div><div class="combat-fighters">${fighterMarkup('hero')}<span class="combat-versus" aria-hidden="true">⚔</span>${fighterMarkup('enemy')}</div></div><div class="combat-bottom"><p class="combat-status" role="status" aria-live="polite"></p><div class="combat-actions"><button type="button" class="primary" disabled>Walka niedostępna</button></div><small>Rozpoczęcie misji: 5 energii · Podgląd jest bezpłatny</small></div></div>`;
     document.body.append(dialog);
-    function preview(){
+    let disposed=false,busy=false;
+    async function preview(){
+      if(disposed||busy)return;
+      busy=true;
       try{
-        const hero=state.read();
-        if(hero.activeMission)throw new Error('Najpierw zakończ aktywny zwiad.');
-        const id=drawLocation(),scene=window.BrandMissions.SCENES[id];
+        const assign=()=>{
+          const current=state.read();
+          if(current.activeMission)throw new Error('Najpierw zakończ aktywny zwiad.');
+          if(current.combatOffer){opponents(current.combatOffer.sceneId);return current;}
+          return state.update(hero=>{
+            if(hero.activeMission)throw new Error('Najpierw zakończ aktywny zwiad.');
+            if(hero.combatOffer){opponents(hero.combatOffer.sceneId);return hero;}
+            return {...hero,combatOffer:{sceneId:drawLocation()}};
+          });
+        };
+        const hero=navigator.locks?await navigator.locks.request('pustkowie-hero-v2',assign):assign();
+        if(disposed)return;
+        const id=hero.combatOffer.sceneId,scene=window.BrandMissions.SCENES[id];
         opponents(id);
         dialog.querySelector('.combat-stage').style.setProperty('--combat-art',`url("${scene.image}")`);
         dialog.querySelector('#combat-location').textContent=scene.short;
@@ -90,12 +103,14 @@
         renderFighter(dialog.querySelector('[data-fighter="enemy"]'),null);
         dialog.querySelector('.combat-status').textContent=`${scene.short} — na tym terenie nie ma jeszcze dostępnych potworów.`;
         if(!dialog.open)dialog.showModal();
-      }catch(error){container.querySelector('.combat-entry-error').textContent=error.message;if(dialog.open)dialog.close();}
+      }catch(error){if(!disposed)container.querySelector('.combat-entry-error').textContent=error.name==='QuotaExceededError'||error.name==='SecurityError'?'Nie udało się zapisać terenu walki. Spróbuj ponownie.':error.message;if(dialog.open)dialog.close();}
+      finally{busy=false;}
     }
-    function click(e){if(e.target.closest('[data-close-combat]'))dialog.close();else if(e.target.closest('[data-reroll-combat]'))preview();}
-    const button=container.querySelector('[data-combat-preview]');
-    button.addEventListener('click',preview);dialog.addEventListener('click',click);
-    return ()=>{button.removeEventListener('click',preview);dialog.removeEventListener('click',click);if(dialog.open)dialog.close();dialog.remove();};
+    function click(e){if(e.target.closest('[data-close-combat]'))dialog.close();}
+    dialog.addEventListener('click',click);
+    const dispose=()=>{disposed=true;dialog.removeEventListener('click',click);if(dialog.open)dialog.close();dialog.remove();};
+    dispose.open=preview;
+    return dispose;
   }
   window.BrandCombat={profile,opponents,drawLocation,createBattle,advance,play,mount};
 })();
