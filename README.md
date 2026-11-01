@@ -87,6 +87,8 @@ Koszt nadal wynosi 5 energii, czasy zależą od poziomu według poprzedniej tabe
 
 ### Pełnoekranowy aktywny zwiad
 
-Po przyjęciu misji oraz po kliknięciu Karczmy w czasie aktywnego zwiadu otwiera się sama lokacja na całe okno przeglądarki. Widoczne są mały tytuł, przycisk zamknięcia i zegar na środku u dołu. Brak opisów, kosztów, zakładek i przycisku powrotu do sali w trakcie misji. Zwiad można zamknąć do mapy i otworzyć ponownie bez zmiany czasu lub miejsca. Po upływie czasu pojawia się przycisk Zgłoś powrót; zapis zakończenia otwiera zwykłą karczmę, bez nagród i dodatkowego kosztu.
+Po przyjęciu misji oraz po kliknięciu Karczmy w czasie aktywnego zwiadu otwiera się sama lokacja na całe okno przeglądarki. Widoczne są mały tytuł, przycisk zamknięcia i zegar na środku u dołu. Opis lokacji znajduje się nad paskiem postępu. Podczas misji nie są widoczne koszty, zakładki ani przycisk powrotu do sali. Zwiad można zamknąć do mapy i otworzyć ponownie bez zmiany czasu lub miejsca. Po upływie czasu pojawia się przycisk Zgłoś powrót; zapis zakończenia otwiera zwykłą karczmę, bez nagród i dodatkowego kosztu.
 
 Pełnoekranowy zwiad pokazuje u dołu szeroki pasek postępu w metalowo-złotej ramie z odliczaniem pośrodku. Wypełnienie rośnie zgodnie z faktycznie upływającym czasem zapisanej misji, także po odświeżeniu; kończy na 100% po upływie zwiadu.
+
+Opis wylosowanego obszaru zwiadu jest widoczny w półprzezroczystej, złoto obramowanej ramce nad paskiem postępu. Po zakończeniu misji ramka przesuwa się ponad przycisk zgłoszenia powrotu. Każda z trzech lokacji ma osobny tekst, bez deklarowania nagród.

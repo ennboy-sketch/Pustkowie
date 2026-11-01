@@ -2,9 +2,9 @@
 (() => {
   const COST=5;
   const SCENES={
-    forest:{name:'Zwiad w Mrocznym Lesie',short:'Mroczny Las',image:'scout-forest.webp',description:'Mgła zalega między korzeniami starych drzew. Obserwujesz leśne ścieżki i szukasz śladów prowadzących w głąb Mrocznego Lasu.'},
-    mine:{name:'Przeszukiwanie Starej Kopalni',short:'Stara Kopalnia',image:'scout-mine.webp',description:'W opuszczonych chodnikach skrzypią spróchniałe belki. Ostrożnie sprawdzasz dawne tory i boczne tunele Starej Kopalni.'},
-    undercity:{name:'Sprawdzanie Podziemi Miasta',short:'Podziemia Miasta',image:'scout-undercity.webp',description:'Pod ulicami miasta ciągną się wilgotne korytarze. Przemierzasz kamienne przejścia i sprawdzasz, dokąd prowadzą stare schody.'}
+    forest:{name:'Zwiad w Mrocznym Lesie',short:'Mroczny Las',image:'scout-forest.webp',description:'Nad Mrocznym Lasem gęstnieje mgła. Między splątanymi korzeniami szukasz śladów i obserwujesz trakt, wsłuchując się w trzask gałęzi. Brand czeka na wieści z tej zapomnianej drogi.'},
+    mine:{name:'Przeszukiwanie Starej Kopalni',short:'Stara Kopalnia',image:'scout-mine.webp',description:'W Starej Kopalni powietrze pachnie wilgocią i rdzą. Przy świetle latarni sprawdzasz porzucone tory oraz boczne chodniki. Każdy krok odbija się echem pod spróchniałymi belkami.'},
+    undercity:{name:'Sprawdzanie Podziemi Miasta',short:'Podziemia Miasta',image:'scout-undercity.webp',description:'Pod ulicami miasta płynie ciemna woda. Mijasz zardzewiałe kraty i porośnięte mchem schody, szukając przejść pod Zamkiem Czarnej Stali. Z oddali dochodzi miarowy odgłos kapiącej wody.'}
   };
   function drawScene(){const ids=Object.keys(SCENES),random=new Uint32Array(1),limit=4294967296-(4294967296%ids.length);do{crypto.getRandomValues(random);}while(random[0]>=limit);return ids[random[0]%ids.length];}
   function minutes(level) {
