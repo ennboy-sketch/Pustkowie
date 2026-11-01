@@ -5,3 +5,5 @@ dialog.combat-dialog{position:fixed;inset:0;margin:0;padding:0;border:0;border-r
 @media(max-height:650px){.combat-top{min-height:64px;padding:10px 0}.combat-top h2{font-size:18px}.combat-battlefield{padding:12px 0}.combat-round{margin-bottom:12px;font-size:10px}.combat-portrait{height:140px}.combat-portrait .combat-figure.character{width:185px;top:0}.combat-stats{margin-top:8px;padding:6px 8px}.combat-stats>div{line-height:1.8;font-size:10px}.combat-bottom{padding-top:8px}.combat-bottom .combat-status{padding:8px;margin-bottom:10px;font-size:10px}.combat-actions button{min-height:44px;padding:9px 6px}.combat-bottom>small{margin-top:8px;font-size:9px}.combat-identity{padding-bottom:8px}.combat-level{margin-top:3px}}
 
 .combat-portrait .combat-figure.monster-avatar{position:absolute;inset:0;width:100%;height:100%;background-image:url('forest-monsters.webp');background-size:200% 200%;background-repeat:no-repeat}
+
+.combat-portrait .combat-figure.monster-mine{background-image:url('mine-monsters.webp')}

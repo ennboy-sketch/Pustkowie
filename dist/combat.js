@@ -7,7 +7,12 @@
     {id:'wolf',name:'Wilk',level:2,maxHp:90,stats:[8,10,2,6],attack:[9,13],tile:1},
     {id:'dryad',name:'Driada',level:3,maxHp:110,stats:[5,8,13,7],attack:[11,16],tile:2},
     {id:'goblin',name:'Goblin',level:5,maxHp:135,stats:[11,12,5,9],attack:[13,19],tile:3}
-  ],mine:[],undercity:[]};
+  ],mine:[
+    {id:'ghost',name:'Duch',level:1,maxHp:70,stats:[2,6,9,5],attack:[7,10],tile:0,atlas:'mine'},
+    {id:'bandit',name:'Rozbójnik',level:2,maxHp:90,stats:[9,8,3,6],attack:[9,13],tile:1,atlas:'mine'},
+    {id:'giant-rat',name:'Ogromny szczur',level:3,maxHp:110,stats:[10,12,1,7],attack:[11,16],tile:2,atlas:'mine'},
+    {id:'crystal-ogre',name:'Kryształowy ogr',level:5,maxHp:135,stats:[16,4,5,9],attack:[13,19],tile:3,atlas:'mine'}
+  ],undercity:[]};
   function random(min,max){const a=new Uint32Array(1),range=max-min+1,limit=4294967296-4294967296%range;do{crypto.getRandomValues(a);}while(a[0]>=limit);return min+a[0]%range;}
   function eligible(hero){return window.Progression.level(hero)<=5;}
   function prepare(hero){
@@ -15,20 +20,23 @@
     if(hero.activeCombat)return hero;
     const old=hero.combatOffer;
     if(!eligible(hero))return hero;
-    if(old?.sceneId==='forest'&&ROSTERS.forest.some(m=>m.id===old.enemyId))return hero;
-    // Previously empty previews become a playable forest assignment once.
-    return {...hero,combatOffer:{sceneId:'forest',enemyId:ROSTERS.forest[random(0,3)].id}};
+    if(old&&Object.hasOwn(ROSTERS,old.sceneId)&&ROSTERS[old.sceneId].some(m=>m.id===old.enemyId))return hero;
+    // Preserve a previously assigned playable terrain; new offers draw from populated locations.
+    const sceneId=old&&Object.hasOwn(ROSTERS,old.sceneId)&&ROSTERS[old.sceneId].length?old.sceneId:drawLocation();
+    const pool=ROSTERS[sceneId];
+    return {...hero,combatOffer:{sceneId,enemyId:pool[random(0,pool.length-1)].id}};
   }
   function start(hero,now=Date.now()){
     hero=window.EnergyCycle.apply(hero,now);
     if(hero.activeMission||hero.activeCombat)throw new Error('Najpierw zakończ obecną misję.');
     if(!eligible(hero))throw new Error('Te potwory są dostępne dla poziomów 1–5.');
-    const enemy=ROSTERS.forest.find(m=>hero.combatOffer?.sceneId==='forest'&&m.id===hero.combatOffer.enemyId);
+    const sceneId=hero.combatOffer?.sceneId;
+    const enemy=sceneId&&Object.hasOwn(ROSTERS,sceneId)?ROSTERS[sceneId].find(m=>m.id===hero.combatOffer.enemyId):null;
     if(!enemy)throw new Error('Brak przydzielonego przeciwnika.');
     if(hero.energy<5)throw new Error('Potrzebujesz 5 energii.');
     const player=profile(hero),power=Math.max(...player.stats)+player.level*2;
     player.attack=[Math.max(1,power-3),power+3];
-    return {...hero,energy:hero.energy-5,activeCombat:{id:crypto.randomUUID(),sceneId:'forest',battle:createBattle(player,enemy,'hero'),reward:{gold:random(10,30),xp:random(33,55)},nextHitAt:now+1100}};
+    return {...hero,energy:hero.energy-5,activeCombat:{id:crypto.randomUUID(),sceneId,battle:createBattle(player,enemy,'hero'),reward:{gold:random(10,30),xp:random(33,55)},nextHitAt:now+1100}};
   }
   function tick(hero,now=Date.now()){
     const fight=hero.activeCombat;
@@ -49,7 +57,7 @@
     return {name:hero.name,level:window.Progression.level(hero),maxHp:50+stats[3]*10,stats:[...stats],classId:hero.classId,gender:hero.gender};
   }
   function drawLocation(){
-    const ids=Object.keys(ROSTERS),value=new Uint32Array(1),limit=4294967296-(4294967296%ids.length);
+    const ids=Object.keys(ROSTERS).filter(id=>ROSTERS[id].length),value=new Uint32Array(1),limit=4294967296-(4294967296%ids.length);
     do{crypto.getRandomValues(value);}while(value[0]>=limit);
     return ids[value[0]%ids.length];
   }
@@ -78,7 +86,7 @@
     const figure=root.querySelector('.combat-figure');
     figure.className='combat-figure';
     figure.style.cssText='';
-    if(Number.isInteger(fighter?.tile)){figure.classList.add('monster-avatar');figure.style.backgroundPosition=`${fighter.tile%2*100}% ${Math.floor(fighter.tile/2)*100}%`;}
+    if(Number.isInteger(fighter?.tile)){figure.classList.add('monster-avatar');if(fighter.atlas==='mine')figure.classList.add('monster-mine');figure.style.backgroundPosition=`${fighter.tile%2*100}% ${Math.floor(fighter.tile/2)*100}%`;}
     if(fighter&&Object.hasOwn(BASE_STATS,fighter.classId)&&['male','female'].includes(fighter.gender))figure.className+=` character ${fighter.gender} ${fighter.classId}`;
     root.classList.toggle('combat-empty',!fighter);
     const hp=fighter?(fighter.hp??fighter.maxHp):0,bar=root.querySelector('progress');
@@ -111,7 +119,7 @@
     return stop;
   }
   function markup(){
-    return '<p class="combat-availability">Mroczny Las: Dzik, Wilk, Driada i Goblin dla postaci poziomu 1–5. Brand przydziela przeciwnika automatycznie. Podgląd jest bezpłatny.</p><p class="combat-entry-error" role="status"></p>';
+    return '<p class="combat-availability">Mroczny Las i Stara Kopalnia: potwory dla postaci poziomu 1–5. Brand przydziela przeciwnika automatycznie. Podgląd jest bezpłatny.</p><p class="combat-entry-error" role="status"></p>';
   }
   function mount(container,state){
     container.innerHTML=markup();
@@ -137,7 +145,7 @@
         renderFighter(dialog.querySelector('[data-fighter="hero"]'),profile(hero));
         renderFighter(dialog.querySelector('[data-fighter="enemy"]'),enemy);
         dialog.querySelector('.combat-round').textContent='Przygotowanie do walki';
-        dialog.querySelector('.combat-status').textContent=enemy?'Nagroda za zwycięstwo: 10–30 złota · 33–55 EXP':eligible(hero)?'Brak dostępnych przeciwników.':'Potwory Mrocznego Lasu: poziomy postaci 1–5.';
+        dialog.querySelector('.combat-status').textContent=enemy?'Nagroda za zwycięstwo: 10–30 złota · 33–55 EXP':eligible(hero)?'Brak dostępnych przeciwników.':'Potwory tych terenów: poziomy postaci 1–5.';
         action.textContent=enemy?'Rozpocznij walkę · 5 energii':'Walka niedostępna';action.disabled=!enemy||busy;action.dataset.action='start';
       }
     }
