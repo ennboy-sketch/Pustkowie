@@ -217,3 +217,10 @@ Jedyną interaktywną postacią i znacznikiem w pracowni jest Gorim Sadza. Klikn
 Wspólne przybliżanie (100–300%) obejmuje mapę zamku, karczmę, pracownię alchemiczki, kuźnię, korytarz piętra i oba pokoje. Przyciski +/− i procentowy reset skali znajdują się w rogu widoku. Działa również kółko myszy, gest dwóch palców oraz klawisze +/−/0 przy skupieniu na widoku. Po powiększeniu można przesuwać widok palcem i myszą; znaczniki postaci i drzwi pozostają przy ilustracji.
 
 Podczas zwiadu i walki przycisk lupy otwiera osobny pełnoekranowy podgląd lokacji z tą samą obsługą przybliżania. Mechanika i czas misji działają dalej; nie powiększa się odliczanie, statystyki ani przyciski odbioru nagrody. Zmiany skali nie zapisują danych postaci. Obsługa jest usuwana po opuszczeniu lokacji.
+
+
+## Gabriel i plac treningowy koszar
+
+Koszary Żelaznej Przysięgi otwierają panoramiczny plac treningowy (`barracks-training.webp`). Paladyn Gabriel jest człowiekiem w lśniącej srebrnej zbroi ze złotymi detalami, bez hełmu. Otaczają go manekiny, stojaki z bronią, tarcze i sztandary. Plac obsługuje przesuwanie i wspólne przybliżanie 100–300%.
+
+Kliknięcie Gabriela otwiera powitanie i dostęp do wcześniejszego panelu profesji; zachowane są jego wymagania poziomu 10 i blokada profesji czekających na ustalenie. Drzwi do zbrojowni oraz gabinetu dowódcy paladynów mają osobne znaczniki i informują o zamkniętym wejściu. Nie dodano jeszcze postaci dowódcy, wnętrz ani mechaniki treningu. Oglądanie placu i rozmowy nie pobierają zasobów i nie zmieniają zapisu postaci.

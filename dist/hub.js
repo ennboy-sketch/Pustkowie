@@ -115,6 +115,7 @@
     window.TavernPanel.cancel();
     window.AlchemistPanel.cancel();
     window.ForgePanel.cancel();
+    window.BarracksPanel.cancel();
     toggleMenu(false);
     requestAnimationFrame(() => { const view = $('.world-viewport'); view.scrollLeft = Math.max(0,(view.scrollWidth-view.clientWidth)/2); });
     document.querySelectorAll('.nav-tile').forEach(el => el.setAttribute('aria-current',el.dataset.place === id ? 'page' : 'false'));
@@ -134,7 +135,7 @@
     } else if (id === 'forge') {
       content = window.ForgePanel.markup();
     } else if (id === 'barracks') {
-      content = barracksPanel();
+      content = window.BarracksPanel.markup();
     } else if (id === 'wheel') {
       content = window.FateWheel.markup(hero);
     } else if (id === 'mount') {
@@ -154,6 +155,7 @@
     if (id === 'wheel') window.FateWheel.mount($('#place-content'));
     if (id === 'alchemy') window.AlchemistPanel.mount($('#place-content'));
     if (id === 'forge') window.ForgePanel.mount($('#place-content'));
+    if (id === 'barracks') window.BarracksPanel.mount($('#place-content'),{professionMarkup:barracksPanel});
     if(id==='tavern'){
       if(scouting){
         const scene=window.BrandMissions.SCENES[hero.activeMission.sceneId];
@@ -191,10 +193,10 @@
       localStorage.setItem(HERO_KEY,JSON.stringify(updated));
     } catch { status.textContent = 'Nie udało się zapisać profesji. Sprawdź ustawienia zapisu w przeglądarce.'; return; }
     hero = updated; updateProfile();
-    openPlace('barracks');
+    openPlace('barracks');window.BarracksPanel.openProfessions();
     $('#profession-status').textContent = `Wybrano profesję: ${profession().name}.`;
   });
-  $('#place-dialog').addEventListener('close', () => {stopHeroSheet();stopActiveScout();window.FateWheel.cancel();window.TavernPanel.cancel();window.AlchemistPanel.cancel();window.ForgePanel.cancel();});
+  $('#place-dialog').addEventListener('close', () => {stopHeroSheet();stopActiveScout();window.FateWheel.cancel();window.TavernPanel.cancel();window.AlchemistPanel.cancel();window.ForgePanel.cancel();window.BarracksPanel.cancel();});
   $('#close-place').addEventListener('click',()=>$('#place-dialog').close());
   $('#place-dialog').addEventListener('click',e=>{if(e.target===$('#place-dialog')){const r=e.target.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)e.target.close();}});
   $('#menu-toggle').addEventListener('click',()=>toggleMenu(!$('#sidebar').classList.contains('is-open')));
