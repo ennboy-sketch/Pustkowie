@@ -113,3 +113,8 @@ Zakładka „Walka z potworami” pozwala wylosować teren i otworzyć pełnoekr
 `combat.js` ma oddzielne, puste pule potworów dla trzech terenów. Przycisk rozpoczęcia jest zablokowany; nie dodano żadnych potworów ani zasad ich obrażeń, inicjatywy i nagród. Docelowy koszt misji u Branda wynosi 5 energii. W czasie aktywnego zwiadu nie można otworzyć podglądu walki. Zamknięcie pełnoekranowego podglądu wraca do Branda, a zamknięcie rozmowy usuwa jego okno.
 
 Mechanizm `createBattle(hero, enemy, first)` i `advance(battle, resolveHit)` obsługuje naprzemienne ataki, obniżanie życia bez wartości ujemnych i zakończenie po pokonaniu jednej ze stron. Kolejność pierwszego ataku i funkcję obrażeń trzeba jawnie dostarczyć po ustaleniu reguł. `play(root, battle, resolveHit)` pokazuje automatycznie pojedynczy cios co 1,1 sekundy, uaktualnia paski życia, liczby obrażeń, turę i wynik; zwraca funkcję zatrzymania. Nie jest uruchamiany dla pustych pul przeciwników i nie zmienia zapisu postaci. Nagrody zwiadowcze nie są używane jako nagrody walki.
+
+
+### Okno nagrody za misję
+
+Po odebraniu zwiadu otwiera się ramka „Nagroda za misję” z ornamentami z ciemnej stali i starego złota. Dwa pola pokazują ikonę monet z liczbą złota oraz autorski runiczny medalion EXP (`exp-icon.webp`) z liczbą doświadczenia. Osobno pojawia się informacja o awansie, jeśli nastąpił. Okno korzysta z już zapisanej nagrody; jego zamykanie i wyświetlanie nie przyznaje jej ponownie. Po powrocie do rozmowy z NPC przywracany jest zwykły widok dialogu.

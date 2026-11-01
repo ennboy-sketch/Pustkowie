@@ -149,7 +149,7 @@
       if(scouting){
         const scene=window.BrandMissions.SCENES[hero.activeMission.sceneId];
         $('#place-title').textContent=scene?.name||'Zwiad';
-        stopActiveScout=window.BrandMissions.mount($('.scout-active-view'),{read:readCurrentHero,update:updateCurrentHero,onFinished:completed=>{openPlace('tavern');if(completed?.reward){$('#tavern-speaker').textContent='Zwiad zakończony';$('.tavern-dialogue-line').textContent=`Otrzymujesz ${completed.reward.xp} EXP i ${completed.reward.gold} złota.${completed.levelsGained>0?` Awans! Twój poziom: ${level()}.`:''}`;$('.tavern-npc-dialog').showModal();}}});
+        stopActiveScout=window.BrandMissions.mount($('.scout-active-view'),{read:readCurrentHero,update:updateCurrentHero,onFinished:completed=>{openPlace('tavern');if(completed?.reward)window.TavernPanel.showReward(completed,level());}});
       }else window.TavernPanel.mount($('#place-content'),{read:readCurrentHero,update:updateCurrentHero,onStarted:()=>{const npc=$('.tavern-npc-dialog');if(npc?.open)npc.close();openPlace('tavern');}});
     }
     const dialog = $('#place-dialog');

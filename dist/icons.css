@@ -25,3 +25,6 @@
 .icon-mount{background-image:url('mount.webp');background-size:100% 100%;background-position:center}
 
 .place-dialog:has(#place-content:empty){min-height:220px}
+
+/* Medalion doświadczenia, osobny od atlasu walut i miejsc. */
+.icon-exp{background-image:url('exp-icon.webp');background-size:contain;background-position:center;border-radius:0}
