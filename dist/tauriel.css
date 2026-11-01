@@ -3,3 +3,7 @@
 .upstairs-dialog{height:auto}.upstairs-viewport{flex:0 1 480px}.tauriel-service{margin-bottom:16px}
 
 .upstairs-dialog{height:min(640px,calc(100svh - 32px))}.upstairs-viewport{flex:1}.upstairs-top,.upstairs-dialog>.secondary{flex-shrink:0}.upstairs-top h2{padding:0;border:0}
+
+.upstairs-room-art{position:relative}.upstairs-room-art.has-tauriel{background-image:url('tavern-rooms-tauriel.webp')}.upstairs-tauriel-marker{position:absolute;left:50%;bottom:9%;transform:translateX(-50%);border:1px solid #b69b59;border-radius:3px;padding:9px 19px;background:linear-gradient(#283a26ee,#0b180ff5);color:#efd39c;font:600 15px 'Cinzel',Georgia,serif;box-shadow:0 4px 15px #000b}.upstairs-tauriel-marker small{display:block;font:9px 'Nunito Sans',Arial,sans-serif;margin-top:3px;color:#b6bb99}.upstairs-tauriel-dialog{max-height:calc(100svh - 32px)}
+
+.upstairs-room-dialog .upstairs-tauriel-marker{width:auto;min-width:108px;max-width:80%}

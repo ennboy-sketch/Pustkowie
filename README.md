@@ -191,3 +191,8 @@ Przyjęcie, rozliczanie kolejnych starć i odbiór nagrody zapisują się pod ws
 Szmaragdowy naszyjnik Tauriel ma stały identyfikator `tauriel-emerald-necklace`, miejsce `necklace` i osobną ilustrację `tauriel-necklace.webp`. Daje dokładnie +100 maksymalnego HP wyłącznie po założeniu. Zdjęcie lub wymiana odbiera bonus, ponowne zakładanie nie kumuluje go. Premia jest widoczna na karcie postaci i trafia do statystyk nowych walk; już rozpoczęte starcia zachowują swój zapis. Naszyjnik nie trafia do puli losowych łupów.
 
 Schody po odblokowaniu otwierają przesuwany korytarz `tavern-upstairs.webp`, z drzwiami do Pokoju z Zieloną Kotarą i Pokoju pod Latarnią. Oba pokoje mają oddzielne kadry atlasu `tavern-rooms.webp`. Widok można przesuwać palcem i myszą; przyciski pozwalają wracać na korytarz i do sali karczmy. Pokoje są miejscami do oglądania; nie dodano opłat, regeneracji ani dodatkowych nagród.
+
+
+### Tauriel po przepędzeniu rozbójników
+
+Po trzecim zaliczonym zwycięstwie (status `ready`, także przed odebraniem naszyjnika) Tauriel przechodzi do Pokoju z Zieloną Kotarą. Jej znacznik i postać znikają z dolnej sali; używana jest osobna panorama `tavern-after-tauriel.webp`. Lewy pokój korzysta z atlasu `tavern-rooms-tauriel.webp`, przedstawiającego Tauriel w jej pokoju. W drugim pokoju nie ma Tauriel. Rozmowa z przyciskiem Tauriel w pokoju pozwala odebrać zachowaną nagrodę, także po ponownym otwarciu gry. Status `completed` zachowuje tę samą lokalizację. Przed ukończeniem trzech walk Tauriel nadal przebywa na dole, gdzie można przyjąć i kontynuować zadanie.

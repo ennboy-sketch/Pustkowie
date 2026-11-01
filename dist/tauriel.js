@@ -40,7 +40,7 @@
     root.innerHTML='<div class="tauriel-quest-body"></div><p class="tauriel-message" role="status" aria-live="polite"></p><div class="tauriel-combat" hidden></div>';
     const body=root.querySelector('.tauriel-quest-body'),message=root.querySelector('.tauriel-message');
     let disposed=false,busy=false;
-    const stopCombat=window.BrandCombat.mount(root.querySelector('.tauriel-combat'),{...state,onQuestResolved:()=>{if(!disposed){message.textContent='';render();}}});
+    const stopCombat=window.BrandCombat.mount(root.querySelector('.tauriel-combat'),{...state,onQuestResolved:next=>{if(!disposed){message.textContent='';if(canEnter(next)&&state.onRelocated)state.onRelocated();else render();}}});
     const locked=fn=>navigator.locks?navigator.locks.request('pustkowie-hero-v2',fn):fn();
     function render(){
       if(disposed)return;
@@ -68,13 +68,27 @@
     return ()=>{disposed=true;stopCombat();root.removeEventListener('click',click);window.removeEventListener('storage',storage);};
   }
   function mountUpstairs(root,state){
-    root.innerHTML='<dialog class="upstairs-dialog" aria-label="Górne piętro karczmy"><div class="upstairs-top"><h2>Górne piętro</h2><button type="button" data-close-upstairs aria-label="Wróć do sali karczmy">×</button></div><div class="upstairs-viewport" tabindex="0" aria-label="Przesuwany widok górnego piętra"><div class="upstairs-panorama"><img src="tavern-upstairs.webp" alt="Korytarz na piętrze z dwojgiem drzwi do pokoi, drewnianymi belkami i ciepłym światłem latarni" draggable="false"><button class="upstairs-door door-one" type="button" data-upstairs-room="0">Pokój z Zieloną Kotarą</button><button class="upstairs-door door-two" type="button" data-upstairs-room="1">Pokój pod Latarnią</button></div></div><button type="button" class="secondary" data-close-upstairs>Zejdź do karczmy</button></dialog><dialog class="upstairs-room-dialog" aria-labelledby="upstairs-room-title"><h2 id="upstairs-room-title"></h2><div class="upstairs-room-art"></div><p></p><button type="button" class="secondary" data-close-room>Wróć na korytarz</button></dialog>';
+    root.innerHTML='<dialog class="upstairs-dialog" aria-label="Górne piętro karczmy"><div class="upstairs-top"><h2>Górne piętro</h2><button type="button" data-close-upstairs aria-label="Wróć do sali karczmy">×</button></div><div class="upstairs-viewport" tabindex="0" aria-label="Przesuwany widok górnego piętra"><div class="upstairs-panorama"><img src="tavern-upstairs.webp" alt="Korytarz na piętrze z dwojgiem drzwi do pokoi, drewnianymi belkami i ciepłym światłem latarni" draggable="false"><button class="upstairs-door door-one" type="button" data-upstairs-room="0">Pokój z Zieloną Kotarą</button><button class="upstairs-door door-two" type="button" data-upstairs-room="1">Pokój pod Latarnią</button></div></div><button type="button" class="secondary" data-close-upstairs>Zejdź do karczmy</button></dialog><dialog class="upstairs-room-dialog" aria-labelledby="upstairs-room-title"><h2 id="upstairs-room-title"></h2><div class="upstairs-room-art"><button type="button" class="upstairs-tauriel-marker" data-room-tauriel hidden>Tauriel<small>Elfka</small></button></div><p></p><button type="button" class="secondary" data-close-room>Wróć na korytarz</button></dialog><dialog class="tavern-npc-dialog upstairs-tauriel-dialog" aria-labelledby="upstairs-tauriel-title"><h2 id="upstairs-tauriel-title">Tauriel</h2><p>Dzięki Tobie odzyskałam spokój i mogę wrócić do swojego pokoju.</p><div class="tauriel-service"></div><button type="button" class="secondary" data-close-room-tauriel>Wróć do pokoju</button></dialog>';
     const dialog=root.querySelector('.upstairs-dialog'),room=root.querySelector('.upstairs-room-dialog');
+    const tauriel=root.querySelector('.upstairs-tauriel-dialog');
+    let stopRoomQuest=()=>{};
+    tauriel.addEventListener('close',()=>stopRoomQuest());
     const names=['Pokój z Zieloną Kotarą','Pokój pod Latarnią'],descriptions=['Zielone zasłony tłumią chłód nocy. Przy drewnianym łóżku czeka biurko i cicha latarnia.','W kominku tli się żar. Wełniane koce, podróżny kufer i ciepłe światło dają wytchnienie po trudach drogi.'];
+    function openRoom(i){
+      if(!canEnter(state.read()))throw new Error('Najpierw przepędź rozbójników.');
+      room.querySelector('h2').textContent=names[i];room.querySelector('p').textContent=descriptions[i];
+      const scene=room.querySelector('.upstairs-room-art');scene.style.backgroundPosition=`${i*100}% 0`;scene.classList.toggle('has-tauriel',i===0);
+      room.querySelector('[data-room-tauriel]').hidden=i!==0;
+      if(!dialog.open)dialog.showModal();if(!room.open)room.showModal();
+    }
     function click(e){
       if(e.target.closest('[data-close-upstairs]'))dialog.close();
       else if(e.target.closest('[data-close-room]'))room.close();
-      else{const button=e.target.closest('[data-upstairs-room]');if(!button)return;if(!canEnter(state.read())){dialog.close();return;}const i=Number(button.dataset.upstairsRoom);room.querySelector('h2').textContent=names[i];room.querySelector('p').textContent=descriptions[i];room.querySelector('.upstairs-room-art').style.backgroundPosition=`${i*100}% 0`;room.showModal();}
+      else if(e.target.closest('[data-close-room-tauriel]'))tauriel.close();
+      else if(e.target.closest('[data-room-tauriel]')){
+        if(!canEnter(state.read())||room.querySelector('[data-room-tauriel]').hidden)return;
+        stopRoomQuest();stopRoomQuest=mount(tauriel.querySelector('.tauriel-service'),state);if(!tauriel.open)tauriel.showModal();
+      }else{const button=e.target.closest('[data-upstairs-room]');if(button)openRoom(Number(button.dataset.upstairsRoom));}
     }
     const view=root.querySelector('.upstairs-viewport'),panorama=root.querySelector('.upstairs-panorama'),art=panorama.querySelector('img');
     function fit(){const height=Math.max(480,view.clientHeight);const ratio=art.naturalWidth&&art.naturalHeight?art.naturalWidth/art.naturalHeight:2.4;panorama.style.height=`${height}px`;panorama.style.width=`${height*ratio}px`;}
@@ -85,7 +99,7 @@
     function end(e){if(drag?.id!==e.pointerId)return;drag=null;if(view.hasPointerCapture(e.pointerId))view.releasePointerCapture(e.pointerId);}
     view.addEventListener('pointerup',end);view.addEventListener('pointercancel',end);view.addEventListener('click',e=>{if(suppress){e.preventDefault();e.stopImmediatePropagation();suppress=false;}},true);
     root.addEventListener('click',click);
-    return {open(){if(!canEnter(state.read()))throw new Error('Najpierw przepędź rozbójników.');if(!dialog.open)dialog.showModal();},dispose(){observer.disconnect();art.removeEventListener('load',fit);root.removeEventListener('click',click);if(room.open)room.close();if(dialog.open)dialog.close();root.replaceChildren();}};
+    return {openRoom,open(){if(!canEnter(state.read()))throw new Error('Najpierw przepędź rozbójników.');if(!dialog.open)dialog.showModal();},dispose(){stopRoomQuest();if(tauriel.open)tauriel.close();observer.disconnect();art.removeEventListener('load',fit);root.removeEventListener('click',click);if(room.open)room.close();if(dialog.open)dialog.close();root.replaceChildren();}};
   }
   window.TaurielQuest={TITLE,NECKLACE,BANDITS,quest,count,canEnter,accept,beginFight,resolve,claim,mount,mountUpstairs};
 })();
