@@ -1,6 +1,6 @@
 'use strict';
 (() => {
-  const SLOTS=[['helmet','Hełm'],['armor','Zbroja'],['boots','Buty'],['shield','Tarcza'],['weapon','Broń'],['necklace','Naszyjnik'],['earrings','Kolczyki']];
+  const SLOTS=[['helmet','Hełm'],['armor','Zbroja'],['boots','Buty'],['shield','Tarcza'],['weapon','Broń'],['necklace','Naszyjnik'],['earrings','Kolczyki'],['special','Przedmiot specjalny']];
   const STATS=[['strength','Siła'],['agility','Zręczność'],['intelligence','Inteligencja'],['endurance','Wytrzymałość'],['luck','Szczęście']];
   const DROPS=['Hełm żelaznej straży','Zbroja wędrowca','Buty tropiciela','Tarcza czarnej stali','Ostrze wygnańca','Naszyjnik zielonego płomienia','Kolczyki starego srebra'];
   const STARTERS={warrior:['Wyszczerbiony miecz','Znoszona kolczuga'],mage:['Kostur czarnego jesionu','Szata wygnańca'],elf:['Łuk z martwego cisu','Płaszcz tropiciela'],dwarf:['Żelazny topór','Pancerz wędrowca']};
@@ -31,16 +31,16 @@
   function rollLoot(hero,draw=random){
     if(bagItems(hero).length>=25)return null;
     if(draw(10000)>=chance(hero)*100)return null;
-    const i=draw(SLOTS.length);return {id:crypto.randomUUID(),slot:SLOTS[i][0],name:DROPS[i]};
+    const i=draw(DROPS.length);return {id:crypto.randomUUID(),slot:SLOTS[i][0],name:DROPS[i]};
   }
   function receiveLoot(hero,item){
     if(!item)return hero;
-    if(!SLOTS.some(([slot],i)=>slot===item.slot&&DROPS[i]===item.name)||typeof item.id!=='string')throw new Error('Nieprawidłowy przedmiot.');
+    if(typeof item.name!=='string'||!SLOTS.some(([slot],i)=>slot===item.slot&&DROPS[i]===item.name)||typeof item.id!=='string')throw new Error('Nieprawidłowy przedmiot.');
     const items=inventory(hero);
     if(items.some(i=>i.id===item.id)||bagItems(hero).length>=25)return hero;
     return {...hero,lootInventory:[...items,item]};
   }
-  const art=i=>`<span class="gear-art gear-${i}" aria-hidden="true"></span>`;
+  const art=i=>i===7?'<span class="special-slot-mark" aria-hidden="true"></span>':`<span class="gear-art gear-${i}" aria-hidden="true"></span>`;
   function inventoryMarkup(hero){
     return `<div class="hero-bag">${inventory(hero).map(item=>`<article>${art(SLOTS.findIndex(([slot])=>slot===item.slot))}<strong></strong><small>${SLOTS.find(([slot])=>slot===item.slot)?.[1]||''}</small></article>`).join('')}</div><p class="panel-note">Przedmioty zakładasz w oknie Bohater.</p>`;
   }
@@ -80,7 +80,7 @@
     return ()=>{disposed=true;root.removeEventListener('click',click);window.removeEventListener('storage',storage);};
   }
   function mount(root,state){
-    root.innerHTML=`<section class="hero-v2"><div class="hero-loadout"><div class="hero-portrait"><div class="character" role="img" aria-label="Twoja postać"></div><div class="hero-identity"><h3></h3><span></span></div></div><div class="hero-luck-seal" title="Szansa na znalezienie przedmiotu">${art(7)}<span></span></div>${SLOTS.map(([id,label],i)=>`<button type="button" class="hero-gear-slot slot-${id}" data-gear-slot="${id}" aria-label="${label}">${art(i)}<span>${label}</span><small>Puste</small></button>`).join('')}</div><button type="button" class="hero-backpack-button" data-open-backpack><span class="backpack-icon" aria-hidden="true"></span><span>Ekwipunek<small>25 miejsc na przedmioty</small></span></button><div class="hero-xp"><span></span><progress max="100" value="0" aria-label="Postęp poziomu"></progress><small></small></div><div class="hero-vitals"></div><div class="hero-attributes"><div class="hero-points"></div>${STATS.map(([id,label],i)=>`<div class="hero-attribute" data-attribute="${id}"><div><span>${label}</span><small>${id==='luck'?'Szansa na przedmiot':''}</small></div><strong></strong><button type="button" data-stat-add="${id}" aria-label="Zwiększ: ${label}">+</button></div>`).join('')}</div><p class="hero-point-note">5 punktów na start i 3 za każdy kolejny poziom.<br>Szczęście: +1 punkt procentowy szansy na przedmiot za punkt, maks. 60%.</p><p class="hero-message" role="status" aria-live="polite"></p></section>`;
+    root.innerHTML=`<section class="hero-v2"><div class="hero-loadout"><div class="hero-portrait"><div class="character" role="img" aria-label="Twoja postać"></div><div class="hero-identity"><h3></h3><span></span></div></div>${SLOTS.map(([id,label],i)=>`<button type="button" class="hero-gear-slot slot-${id}" data-gear-slot="${id}" aria-label="${label}">${art(i)}<span>${label}</span><small>Puste</small></button>`).join('')}</div><button type="button" class="hero-backpack-button" data-open-backpack><span class="backpack-icon" aria-hidden="true"></span><span>Ekwipunek<small>25 miejsc na przedmioty</small></span></button><div class="hero-xp"><span></span><progress max="100" value="0" aria-label="Postęp poziomu"></progress><small></small></div><div class="hero-vitals"></div><div class="hero-attributes"><div class="hero-points"></div>${STATS.map(([id,label],i)=>`<div class="hero-attribute" data-attribute="${id}"><div><span>${label}</span><small>${id==='luck'?'Szansa na przedmiot':''}</small></div><strong></strong><button type="button" data-stat-add="${id}" aria-label="Zwiększ: ${label}">+</button></div>`).join('')}</div><p class="hero-point-note">5 punktów na start i 3 za każdy kolejny poziom.<br>Szczęście: +1 punkt procentowy szansy na przedmiot za punkt, maks. 60%.</p><p class="hero-message" role="status" aria-live="polite"></p></section>`;
     const picker=document.createElement('dialog');picker.className='hero-gear-picker';picker.setAttribute('aria-label','Wybierz wyposażenie');document.body.append(picker);
     const bag=document.createElement('dialog');bag.className='hero-backpack-dialog';bag.setAttribute('aria-label','Ekwipunek — 25 miejsc');bag.innerHTML='<div class="backpack-root"></div><button type="button" class="secondary" data-close-backpack>Wróć do postaci</button>';document.body.append(bag);
     let stopBag=()=>{};
@@ -91,7 +91,6 @@
       const hero=state.read(),profile=window.BrandCombat.profile(hero),xp=window.Progression.info(hero);
       const portrait=root.querySelector('.hero-portrait');portrait.querySelector('.character').className=`character ${hero.gender} ${hero.classId}`;portrait.querySelector('h3').textContent=hero.name;portrait.querySelector('.hero-identity>span').textContent=`Poziom ${xp.level}`;
       root.querySelector('.hero-xp>span').textContent=`Poziom ${xp.level} / 250`;root.querySelector('.hero-xp progress').value=xp.percent;root.querySelector('.hero-xp>small').textContent=xp.label;
-      root.querySelector('.hero-luck-seal>span:last-child').textContent=`${chance(hero)}%`;
       root.querySelector('.hero-vitals').textContent=`Życie: ${profile.maxHp} / ${profile.maxHp}`;
       root.querySelector('.hero-points').textContent=`Punkty do rozdania: ${available(hero)}`;
       STATS.forEach(([id],i)=>{const row=root.querySelector(`[data-attribute="${id}"]`);row.querySelector('strong').textContent=i<4?profile.stats[i]:luck(hero);row.querySelector('button').disabled=busy||available(hero)<1;if(id==='luck')row.querySelector('small').textContent=`${chance(hero)}% szansy na przedmiot`;});

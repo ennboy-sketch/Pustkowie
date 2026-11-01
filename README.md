@@ -175,3 +175,8 @@ Przycisk Ekwipunek przy portrecie otwiera osobne okno z siatką 5×5, nową ikon
 Limit 25 dotyczy przedmiotów w plecaku, poza siedmioma miejscami założonego wyposażenia. Założenie rzeczy w pustym miejscu zwalnia pole plecaka. Wymiana założonego przedmiotu przenosi poprzedni do plecaka, zachowując liczbę zajętych pól; zdjęcie rzeczy przy pełnym plecaku jest zablokowane. Wyposażenie zapisuje się atomowo pod dotychczasową blokadą Web Locks.
 
 Zgodnie z wyborem użytkownika pełny plecak blokuje zdobywanie nowych przedmiotów. Losowanie przedmiotu nie zachodzi przy rozpoczęciu misji z pełnym plecakiem. Jeżeli plecak zapełni się przed odbiorem wcześniej wylosowanej rzeczy, rzecz nie zostaje przyznana ani pokazana jako zdobyta. Złoto, EXP i zakończenie misji pozostają dostępne. Nie ma kolejki oczekujących zdobyczy. Istniejące przedmioty nie są automatycznie usuwane; jeżeli starszy zapis przekracza limit, nadmiar pozostaje zachowany i dostępny z wyboru rzeczy przy miejscach wyposażenia, a plecak wyświetla informację o tym stanie.
+
+
+### Miejsce na przedmiot specjalny
+
+Pole nad bronią, wcześniej pokazujące koniczynę i szansę na przedmiot, jest teraz ósmym miejscem wyposażenia: `special` — Przedmiot specjalny. Pozostaje puste do dodania takich przedmiotów, a kliknięcie otwiera zwykły wybór rzeczy pasujących do slotu. Nie dodano nowych przedmiotów ani nie rozszerzono puli losowych zdobyczy: wciąż losowane jest siedem dotychczasowych rodzajów. Szczęście i procent szansy pozostają widoczne w statystykach i działają jak wcześniej.
