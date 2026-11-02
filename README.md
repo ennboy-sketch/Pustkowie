@@ -276,3 +276,10 @@ Wspólny slot `armor` ma nazwę i zasady właściwe klasie: Wojownik i Krasnolud
 Standardowe przedmioty startowe są odczytywane jako: Znoszona kolczuga (Wojownik i Krasnolud), Płaszcz wygnańca (Mag), Pancerz tropiciela (Elf). Migracja zachowuje ID i nie dodaje duplikatów. Nowe losowe zdobycze ochrony ciała pasują do klasy. Wcześniej wylosowane nagrody nadal można odebrać, z zachowaniem ograniczeń zakładania.
 
 Gringo pokazuje właściwy typ ochrony ciała dla danej postaci: Nitowaną zbroję dla Wojownika i Krasnoluda, Płaszcz wędrownego maga dla Maga, Pancerz leśnego strażnika dla Elfa. Wszystkie trzy kosztują 45 złota i dają dotychczasowe +3 Wytrzymałości po założeniu. Zakup obcego typu jest blokowany także w regule transakcji.
+
+
+## Wyraźniejsze postacie alchemiczki, Gringa i Gabriela
+
+Odnowiono cztery ilustracje z zachowaniem układu lokacji, tożsamości postaci i stylu gry: pracownię i portret alchemiczki, plac targowy Gringa oraz plac treningowy Gabriela. Twarze, włosy, tkaniny i zbroja mają czytelniejsze szczegóły i oświetlenie. Ilustracje są eksportowane do WebP w pełnej rozdzielczości generowanych źródeł, z jakością 94 zamiast wcześniejszego pomniejszania panoram do 1536 px i silniejszej kompresji.
+
+Rozmiary: pracownia 1774×887, portret 1024×1536, targ 1983×793, koszary 1916×821 px. Zachowano proporcje obrazów i istniejące pozycje znaczników. Wersjonowanie adresów tych czterech grafik wymusza pobranie nowych plików zamiast starych kopii z pamięci podręcznej; dekodowanie jest asynchroniczne. Przybliżanie, przesuwanie, rozmowy, zakupy i profesje korzystają z dotychczasowych zasad.
