@@ -21,6 +21,7 @@
     help:{name:'Pomoc',category:'Pustkowie',icon:'help'}
   };
   const HERO_KEY = 'pustkowie.hero.v2';
+  const FORGE_LEVEL = 30;
   // Nazwy i umiejętności trzech osobnych profesji każdej klasy ustalimy później.
   const PROFESSIONS = Object.fromEntries(
     Object.entries({warrior:'arena',mage:'alchemy',elf:'guild',dwarf:'forge'}).map(([classId,symbol]) => [
@@ -57,6 +58,10 @@
     $('.map-caption small').textContent = `Poziom ${level()}`;
     $('#hero-profession').textContent = profession()?.name || '';
     $('#hero-profession').hidden = !profession();
+    document.querySelectorAll('[data-place="forge"]').forEach(button=>{
+      const label=level()<FORGE_LEVEL?`Kuźnia · Wymagany poziom ${FORGE_LEVEL}`:'Kuźnia';
+      button.title=label;button.setAttribute('aria-label',label);
+    });
   }
   function readSavedHero() {
     const saved=JSON.parse(localStorage.getItem(HERO_KEY));
@@ -108,6 +113,11 @@
   let stopHeroSheet=()=>{};
   function openPlace(id) {
     if (!places[id] || !hero) return;
+    if(id==='forge'){
+      try{readCurrentHero();}
+      catch{$('#status').textContent='Nie można odczytać poziomu postaci. Odśwież grę, aby wejść do kuźni.';return;}
+    }
+    const forgeLocked=id==='forge'&&level()<FORGE_LEVEL;
     if(['tavern','hero','inventory','market'].includes(id)){try{readCurrentHero();}catch{}}
     stopActiveScout();stopHeroSheet();
     window.FateWheel.cancel();
@@ -132,7 +142,7 @@
     } else if (id === 'alchemy') {
       content = window.AlchemistPanel.markup();
     } else if (id === 'forge') {
-      content = window.ForgePanel.markup();
+      content = forgeLocked?`<div class="place-emblem">${icon('forge')}</div><p class="place-text" role="status">Wejście do kuźni jest dostępne od ${FORGE_LEVEL}. poziomu postaci.</p><p class="panel-note">Twój poziom: ${level()} · Wymagany poziom: ${FORGE_LEVEL}</p>`:window.ForgePanel.markup();
     } else if (id === 'market') {
       content = window.MarketPanel.markup();
     } else if (id === 'barracks') {
@@ -155,7 +165,7 @@
     if (id === 'inventory') stopHeroSheet=window.HeroSheet.mountBag($('.backpack-root'),{read:readCurrentHero,update:updateCurrentHero});
     if (id === 'wheel') window.FateWheel.mount($('#place-content'));
     if (id === 'alchemy') window.AlchemistPanel.mount($('#place-content'));
-    if (id === 'forge') window.ForgePanel.mount($('#place-content'));
+    if (id === 'forge' && !forgeLocked) window.ForgePanel.mount($('#place-content'));
     if (id === 'market') window.MarketPanel.mount($('#place-content'),{read:readCurrentHero,update:updateCurrentHero});
     if (id === 'barracks') window.BarracksPanel.mount($('#place-content'),{professionMarkup:barracksPanel});
     if(id==='tavern'){

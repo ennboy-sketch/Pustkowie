@@ -338,3 +338,8 @@ Przycisk sprzedaży działa na jeden konkretny przedmiot. Pod wspólną blokadą
 ## Przewijanie walki
 
 Podczas walki przycisk „Przewiń walkę” rozgrywa pozostałe tury bez oczekiwania na animacje. Zachowuje zasady obrażeń, zużycia many i wyniku walki. Po zwycięstwie od razu otwiera okno nagród; po porażce pokazuje wynik bez nagrody. Rozliczenie i zapis odbywają się razem, bez ponownego kosztu energii ani podwójnego przyznawania nagród. W misji Tauriel przewijanie kończy bieżący pojedynek; naszyjnik nadal odbiera się po pokonaniu trzech rozbójników.
+
+
+## Kuźnia od poziomu 30
+
+Wejście do Kuźni Czarnego Żaru z mapy oraz menu wymaga co najmniej 30. poziomu postaci. Poniżej tego progu wyświetla się informacja o wymaganym i obecnym poziomie, bez dostępu do wnętrza ani rozmowy z Gorimem. Poziom jest odczytywany z aktualnego zapisu przy każdej próbie wejścia.
