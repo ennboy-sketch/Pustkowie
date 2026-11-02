@@ -72,9 +72,25 @@
     return {...hero,lootInventory:[...items,item]};
   }
   function itemDetails(item){const bonus=item?.id==='tauriel-emerald-necklace'?'+100 HP':window.MarketPanel?.describeItem(item)||'',restriction=window.GearCatalog.details(item)||(item?.slot==='armor'?BODY_TYPES[armorType(item)]?.restriction||'':'');return [bonus,restriction].filter(Boolean).map(text=>' · '+text).join('');}
-  const art=(i,item)=>window.GearCatalog.icon(item)||(item?.id==='tauriel-emerald-necklace'?'<span class="gear-art tauriel-necklace" aria-hidden="true"></span>':i===7?'<span class="special-slot-mark" aria-hidden="true"></span>':`<span class="gear-art gear-${i}" aria-hidden="true"></span>`);
+  function starterIconClass(item,hero){
+    if(!item||!hero)return null;
+    if(item.id==='starter-weapon'&&item.slot==='weapon'){
+      const col={warrior:0,mage:1,elf:2,dwarf:3}[hero.classId];
+      return col===undefined?null:`gear-art adept-art adept-weapon-${col}`;
+    }
+    if(item.id==='starter-armor'&&item.slot==='armor'){
+      const col={heavy:0,cloak:1,light:2}[armorType(item)];
+      return col===undefined?null:`gear-art adept-art adept-body-${col}`;
+    }
+    return null;
+  }
+  function iconClass(item,hero){return window.GearCatalog.iconClass(item)||starterIconClass(item,hero)||(item?.id==='tauriel-emerald-necklace'?'gear-art tauriel-necklace':`gear-art gear-${SLOTS.findIndex(([id])=>id===item?.slot)}`);}
+  function art(i,item,hero){
+    if(item)return `<span class="${iconClass(item,hero)}" aria-hidden="true"></span>`;
+    return i===7?'<span class="special-slot-mark" aria-hidden="true"></span>':`<span class="gear-art gear-${i}" aria-hidden="true"></span>`;
+  }
   function inventoryMarkup(hero){
-    return `<div class="hero-bag">${inventory(hero).map(item=>`<article>${art(SLOTS.findIndex(([slot])=>slot===item.slot),item)}<strong></strong><small>${itemSlotLabel(item)}</small></article>`).join('')}</div><p class="panel-note">Przedmioty zakładasz w oknie Bohater.</p>`;
+    return `<div class="hero-bag">${inventory(hero).map(item=>`<article>${art(SLOTS.findIndex(([slot])=>slot===item.slot),item,hero)}<strong></strong><small>${itemSlotLabel(item)}</small></article>`).join('')}</div><p class="panel-note">Przedmioty zakładasz w oknie Bohater.</p>`;
   }
   function mountBag(root,state){
     root.innerHTML='<div class="backpack-heading"><span class="backpack-icon" aria-hidden="true"></span><div><h3>Ekwipunek</h3><p class="backpack-count"></p></div></div><div class="backpack-grid" aria-label="25 miejsc na przedmioty"></div><div class="backpack-detail"><p>Wybierz przedmiot, aby go obejrzeć lub założyć.</p></div><p class="backpack-pending"></p><p class="backpack-message" role="status" aria-live="polite"></p>';
@@ -88,7 +104,7 @@
       grid.replaceChildren();
       for(let i=0;i<25;i++){
         const item=items[i],button=document.createElement('button');button.type='button';button.className='backpack-cell';button.dataset.bagIndex=String(i);
-        if(item){button.classList.add('has-item');button.innerHTML=art(SLOTS.findIndex(([slot])=>slot===item.slot),item);button.setAttribute('aria-label',`Miejsce ${i+1}: ${item.name}`);button.title=item.name;}
+        if(item){button.classList.add('has-item');button.innerHTML=art(SLOTS.findIndex(([slot])=>slot===item.slot),item,hero);button.setAttribute('aria-label',`Miejsce ${i+1}: ${item.name}`);button.title=item.name;}
         else{button.innerHTML='<span aria-hidden="true">'+(i+1)+'</span>';button.setAttribute('aria-label',`Miejsce ${i+1}: puste`);button.disabled=true;}
         grid.append(button);
       }
@@ -131,7 +147,7 @@
       root.querySelector('[data-attribute="intelligence"] small').textContent=hero.classId==='mage'?'+10 many za punkt':'';
       root.querySelector('.hero-points').textContent=`Punkty do rozdania: ${available(hero)}`;
       STATS.forEach(([id],i)=>{const row=root.querySelector(`[data-attribute="${id}"]`);row.querySelector('strong').textContent=i<4?profile.stats[i]:luck(hero);row.querySelector('button').disabled=busy||available(hero)<1;if(id==='luck')row.querySelector('small').textContent=`${chance(hero)}% szansy na przedmiot`;});
-      for(const [slot,label] of SLOTS){const button=root.querySelector(`[data-gear-slot="${slot}"]`),item=inventory(hero).find(i=>i.id===equipment(hero)[slot]);button.querySelector('span:not(.gear-art):not(.special-slot-mark)').textContent=slotLabel(slot,hero);button.classList.toggle('is-equipped',!!item);button.querySelector('small').textContent=item?'Założono':'Puste';button.setAttribute('aria-label',`${slotLabel(slot,hero)}: ${item?.name||'Puste'}`);button.title=(item?.name||slotLabel(slot,hero))+itemDetails(item);const icon=button.querySelector('.gear-art');if(icon)icon.className=window.GearCatalog.iconClass(item)||(item?.id==='tauriel-emerald-necklace'?'gear-art tauriel-necklace':`gear-art gear-${SLOTS.findIndex(([id])=>id===slot)}`);}
+      for(const [slot,label] of SLOTS){const button=root.querySelector(`[data-gear-slot="${slot}"]`),item=inventory(hero).find(i=>i.id===equipment(hero)[slot]);button.querySelector('span:not(.gear-art):not(.special-slot-mark)').textContent=slotLabel(slot,hero);button.classList.toggle('is-equipped',!!item);button.querySelector('small').textContent=item?'Założono':'Puste';button.setAttribute('aria-label',`${slotLabel(slot,hero)}: ${item?.name||'Puste'}`);button.title=(item?.name||slotLabel(slot,hero))+itemDetails(item);const icon=button.querySelector('.gear-art');if(icon)icon.className=item?iconClass(item,hero):starterIconClass({id:'starter-'+slot,slot,armorType:bodyTypeFor(hero.classId)},hero)||`gear-art gear-${SLOTS.findIndex(([id])=>id===slot)}`;}
     }
     function showPicker(slot){
       selectedSlot=slot;const hero=state.read(),items=inventory(hero).filter(i=>i.slot===slot&&canEquip(hero,i));
@@ -154,5 +170,5 @@
     root.addEventListener('click',click);picker.addEventListener('click',pick);window.addEventListener('storage',storage);render();
     return ()=>{disposed=true;stopBag();bag.removeEventListener('click',closeBag);if(bag.open)bag.close();bag.remove();root.removeEventListener('click',click);picker.removeEventListener('click',pick);window.removeEventListener('storage',storage);if(picker.open)picker.close();picker.remove();};
   }
-  window.HeroSheet={canEquip,armorType,slotLabel,itemSlotLabel,manaCapacity,mount,mountBag,bagItems,hpBonus,bonuses,luck,chance,available,allocate,rollLoot,receiveLoot,inventory,equipment,equip,inventoryMarkup,SLOTS};
+  window.HeroSheet={art,iconClass,starterIconClass,canEquip,armorType,slotLabel,itemSlotLabel,manaCapacity,mount,mountBag,bagItems,hpBonus,bonuses,luck,chance,available,allocate,rollLoot,receiveLoot,inventory,equipment,equip,inventoryMarkup,SLOTS};
 })();

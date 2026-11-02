@@ -30,8 +30,29 @@
     if(gold<p.price)throw new Error(`Potrzebujesz ${p.price} złota.`);
     return {...hero,gold:gold-p.price,lootInventory:[...window.HeroSheet.inventory(hero),{id:crypto.randomUUID(),slot:p.slot,name:p.name,marketProduct:p.id,requiredLevel:p.requiredLevel,...(p.armorType?{armorType:p.armorType}:{})}]};
   }
+  const BASE_VALUES=Object.freeze({helmet:50,armor:90,boots:40,shield:60,weapon:75,necklace:100,earrings:80,special:100});
+  function itemValue(item){
+    if(!item)return null;
+    const p=productFor(item);if(p)return p.price;
+    if(item.marketProduct?.startsWith('gringo-'))return null;
+    if(item.id==='starter-weapon'&&item.slot==='weapon')return 30;
+    if(item.id==='starter-armor'&&item.slot==='armor')return 45;
+    if(item.id==='tauriel-emerald-necklace'&&item.slot==='necklace')return 250;
+    return BASE_VALUES[item.slot]??null;
+  }
+  function sellPrice(item){const value=itemValue(item);return value===null?null:Math.floor(value*3/5);}
+  function sell(hero,id){
+    const items=window.HeroSheet.inventory(hero),matches=items.filter(i=>i.id===id);
+    if(matches.length!==1)throw new Error('Przedmiot został sprzedany lub nie istnieje.');
+    const item=matches[0];
+    if(!window.HeroSheet.bagItems(hero).some(i=>i.id===id))throw new Error('Najpierw zdejmij ten przedmiot z postaci.');
+    const amount=sellPrice(item);if(amount===null)throw new Error('Gringo nie może wycenić tego przedmiotu.');
+    const gold=window.BeerService.status(hero).gold+amount;
+    if(!Number.isSafeInteger(gold))throw new Error('Zbyt duża ilość złota.');
+    return {...hero,gold,lootInventory:items.filter(i=>i.id!==id)};
+  }
   function markup(){
-    return `<section class="market-panel" aria-label="Plac targowy"><div class="market-viewport" tabindex="0" role="region" aria-label="Przesuwany widok placu targowego" aria-describedby="market-pan-hint"><div class="market-panorama"><img class="market-room-art" src="market-square.webp?v=npc-clarity-1" decoding="async" alt="Czarny Targ: pulchny kupiec Gringo przy straganie z bronią i pancerzami. Wokół puste stragany pod zielonymi płóciennymi dachami, skrzynie, beczki i kamienna zabudowa zamku." draggable="false"><div class="market-vignette" aria-hidden="true"></div><button type="button" class="market-hotspot market-person" data-market-part="person"><span>Gringo</span><small>Kupiec uzbrojenia</small></button></div></div><p class="sr-only" id="market-pan-hint">Przesuwaj i przybliżaj widok, aby obejrzeć stragany. U Gringa możesz kupić broń i pancerze.</p><dialog class="market-detail-dialog" aria-labelledby="market-detail-title"><h2 id="market-detail-title">Gringo · Uzbrojenie</h2><p class="market-welcome">Solidne żelazo, uczciwa cena. Rozejrzyj się, wędrowcze.</p><div class="market-detail-content"></div><p class="market-message" role="status" aria-live="polite"></p><button type="button" class="secondary" data-close-market-detail>Wróć na plac targowy</button></dialog></section>`;
+    return `<section class="market-panel" aria-label="Plac targowy"><div class="market-viewport" tabindex="0" role="region" aria-label="Przesuwany widok placu targowego" aria-describedby="market-pan-hint"><div class="market-panorama"><img class="market-room-art" src="market-square.webp?v=npc-clarity-1" decoding="async" alt="Czarny Targ: pulchny kupiec Gringo przy straganie z bronią i pancerzami. Wokół puste stragany pod zielonymi płóciennymi dachami, skrzynie, beczki i kamienna zabudowa zamku." draggable="false"><div class="market-vignette" aria-hidden="true"></div><button type="button" class="market-hotspot market-person" data-market-part="person"><span>Gringo</span><small>Kupiec uzbrojenia</small></button></div></div><p class="sr-only" id="market-pan-hint">Przesuwaj i przybliżaj widok, aby obejrzeć stragany. U Gringa możesz kupić broń i pancerze.</p><dialog class="market-detail-dialog" aria-labelledby="market-detail-title"><h2 id="market-detail-title">Gringo · Handel</h2><p class="market-welcome">Solidne żelazo, uczciwa cena. Rozejrzyj się, wędrowcze.</p><div class="market-detail-content"></div><p class="market-message" role="status" aria-live="polite"></p><button type="button" class="secondary" data-close-market-detail>Wróć na plac targowy</button></dialog></section>`;
   }
   function mount(root,state){
     cancel();
@@ -43,15 +64,32 @@
       scene.style.height=`${height}px`;scene.style.width=`${height*ratio}px`;
       if(!centered&&art.naturalWidth&&view.clientWidth){view.scrollLeft=Math.max(0,scene.clientWidth*.5-view.clientWidth/2);centered=true;}
     }
-    let busy=false,selectedTier=null;
+    let busy=false,selectedTier=null,mode='buy';
     function renderShop(){
       if(disposed||!dialog.open)return;
       let hero;try{hero=state.read();}catch{dialog.querySelector('.market-detail-content').replaceChildren();dialog.querySelector('.market-message').textContent='Nie udało się odczytać postaci. Odśwież grę.';return;}
       const gold=window.BeerService.status(hero).gold,full=window.HeroSheet.bagItems(hero).length>=25;
       const content=dialog.querySelector('.market-detail-content');
+      const wallet=`<div class="market-wallet"><span>Złoto: <strong>${gold}</strong></span><span>Ekwipunek: ${window.HeroSheet.bagItems(hero).length} / 25</span></div><nav class="market-modes" aria-label="Handel"><button type="button" data-market-mode="buy" aria-pressed="${mode==='buy'}">Kupno</button><button type="button" data-market-mode="sell" aria-pressed="${mode==='sell'}">Sprzedaż · 60%</button></nav>`;
+      if(mode==='sell'){
+        content.innerHTML=wallet+'<p class="market-help">Gringo płaci 60% wartości, zaokrąglone w dół. Sprzedajesz przedmioty z plecaka — założone trzeba najpierw zdjąć.</p><div class="market-stock market-sale-stock"></div>';
+        const list=content.querySelector('.market-sale-stock'),items=window.HeroSheet.bagItems(hero);
+        if(!items.length){const empty=document.createElement('p');empty.className='market-empty';empty.textContent='Plecak jest pusty. Nie masz przedmiotów do sprzedaży.';list.append(empty);}
+        for(const item of items){
+          const article=document.createElement('article');article.className='market-product';
+          article.innerHTML=window.HeroSheet.art(window.HeroSheet.SLOTS.findIndex(([s])=>s===item.slot),item,hero)+'<div><h3></h3><small></small><small class="sale-value"></small><strong></strong></div><button type="button" data-sell-market></button>';
+          article.querySelector('h3').textContent=item.name;
+          article.querySelector('small').textContent=window.HeroSheet.itemSlotLabel(item)+(window.GearCatalog.details(item)?' · '+window.GearCatalog.details(item):'');
+          const price=sellPrice(item),button=article.querySelector('button');
+          article.querySelector('.sale-value').textContent=price===null?'Brak wyceny':`Wartość: ${itemValue(item)} złota`;
+          article.querySelector('strong').textContent=price===null?'':`Otrzymasz: ${price} złota (60%)`;
+          button.dataset.sellMarket=item.id;button.disabled=busy||price===null;button.textContent=busy?'Zapisywanie…':price===null?'Brak wyceny':`Sprzedaj · ${price} złota`;button.setAttribute('aria-label',`Sprzedaj: ${item.name}, ${price??0} złota`);list.append(article);
+        }
+        return;
+      }
       if(selectedTier===null)selectedTier=[...window.GearCatalog.LEVELS].reverse().find(n=>n<=window.Progression.level(hero))||5;
       const stock=window.GearCatalog.forClass(hero.classId).filter(p=>p.requiredLevel===selectedTier);
-      content.innerHTML=`<div class="market-wallet"><span>Złoto: <strong>${gold}</strong></span><span>Ekwipunek: ${window.HeroSheet.bagItems(hero).length} / 25</span></div><p class="market-help">Uzbrojenie Zamku Czarnej Stali dla Twojej klasy. Premie działają po założeniu. Zakupy trafiają do ekwipunku.</p><nav class="market-tiers" aria-label="Poziom uzbrojenia">${window.GearCatalog.LEVELS.map(n=>`<button type="button" data-market-tier="${n}" aria-pressed="${n===selectedTier}">Poziom ${n}</button>`).join('')}</nav>${full?'<p class="market-full">Ekwipunek pełny — zakupy zablokowane.</p>':''}<div class="market-stock">${stock.map(p=>{const reason=window.GearCatalog.reason(hero,p),blocked=busy||full||!!reason||gold<p.price;return `<article class="market-product ${reason?'is-level-locked':''}">${window.GearCatalog.icon(p)}<div><h3>${p.name}</h3><small>${window.HeroSheet.itemSlotLabel(p)} · ${window.GearCatalog.details(p)}</small><small>${describeItem({marketProduct:p.id,slot:p.slot})}</small><strong>${p.price} złota</strong></div><button type="button" data-buy-market="${p.id}" aria-label="Kup: ${p.name}, ${p.price} złota" ${blocked?'disabled':''}>${busy?'Zapisywanie…':full?'Brak miejsca':reason?`Wymagany poziom ${p.requiredLevel}`:gold<p.price?'Brak złota':'Kup'}</button></article>`;}).join('')}</div>`;
+      content.innerHTML=wallet+`<p class="market-help">Uzbrojenie Zamku Czarnej Stali dla Twojej klasy. Premie działają po założeniu. Zakupy trafiają do ekwipunku.</p><nav class="market-tiers" aria-label="Poziom uzbrojenia">${window.GearCatalog.LEVELS.map(n=>`<button type="button" data-market-tier="${n}" aria-pressed="${n===selectedTier}">Poziom ${n}</button>`).join('')}</nav>${full?'<p class="market-full">Ekwipunek pełny — zakupy zablokowane.</p>':''}<div class="market-stock">${stock.map(p=>{const reason=window.GearCatalog.reason(hero,p),blocked=busy||full||!!reason||gold<p.price;return `<article class="market-product ${reason?'is-level-locked':''}">${window.GearCatalog.icon(p)}<div><h3>${p.name}</h3><small>${window.HeroSheet.itemSlotLabel(p)} · ${window.GearCatalog.details(p)}</small><small>${describeItem({marketProduct:p.id,slot:p.slot})}</small><strong>${p.price} złota</strong></div><button type="button" data-buy-market="${p.id}" aria-label="Kup: ${p.name}, ${p.price} złota" ${blocked?'disabled':''}>${busy?'Zapisywanie…':full?'Brak miejsca':reason?`Wymagany poziom ${p.requiredLevel}`:gold<p.price?'Brak złota':'Kup'}</button></article>`;}).join('')}</div>`;
     }
     function show(part){
       if(part!=='person')return;
@@ -69,11 +107,22 @@
       }catch(error){if(!disposed)status.textContent=error.name==='QuotaExceededError'||error.name==='SecurityError'?'Nie udało się zapisać zakupu. Złoto nie zostało pobrane. Spróbuj ponownie.':error.message;}
       finally{busy=false;if(!disposed)renderShop();}
     }
+    async function sellItem(id){
+      if(busy||disposed)return;busy=true;renderShop();
+      const status=dialog.querySelector('.market-message');status.textContent='';
+      try{
+        let name='',amount=0;
+        const change=()=>{if(disposed)return;state.update(hero=>{const item=window.HeroSheet.bagItems(hero).find(i=>i.id===id);if(!item)throw new Error('Przedmiot został już przeniesiony lub sprzedany.');name=item.name;amount=sellPrice(item);return sell(hero,id);});};
+        if(navigator.locks)await navigator.locks.request('pustkowie-hero-v2',change);else change();
+        if(!disposed)status.textContent=`Sprzedano: ${name}. Otrzymano ${amount} złota.`;
+      }catch(error){if(!disposed)status.textContent=error.name==='QuotaExceededError'||error.name==='SecurityError'?'Nie udało się zapisać sprzedaży. Przedmiot i złoto pozostały bez zmian.':error.message;}
+      finally{busy=false;if(!disposed)renderShop();}
+    }
     function storage(e){if(e.key==='pustkowie.hero.v2'&&dialog.open){try{renderShop();}catch{dialog.querySelector('.market-message').textContent='Zapis postaci zmienił się. Odśwież grę.';}}}
-    function click(e){const tier=e.target.closest('[data-market-tier]');if(tier){const value=Number(tier.dataset.marketTier);if(window.GearCatalog.LEVELS.includes(value)){selectedTier=value;renderShop();dialog.querySelector(`[data-market-tier="${value}"]`).focus();}return;}const buyButton=e.target.closest('[data-buy-market]');if(buyButton){void buy(buyButton.dataset.buyMarket);return;}if(e.target.closest('[data-close-market-detail]')){dialog.close();return;}const target=e.target.closest('[data-market-part]');if(target)show(target.dataset.marketPart);}
+    function click(e){const tab=e.target.closest('[data-market-mode]');if(tab){if(['buy','sell'].includes(tab.dataset.marketMode)){mode=tab.dataset.marketMode;renderShop();dialog.querySelector(`[data-market-mode="${mode}"]`).focus();}return;}const sale=e.target.closest('[data-sell-market]');if(sale){void sellItem(sale.dataset.sellMarket);return;}const tier=e.target.closest('[data-market-tier]');if(tier){const value=Number(tier.dataset.marketTier);if(window.GearCatalog.LEVELS.includes(value)){selectedTier=value;renderShop();dialog.querySelector(`[data-market-tier="${value}"]`).focus();}return;}const buyButton=e.target.closest('[data-buy-market]');if(buyButton){void buy(buyButton.dataset.buyMarket);return;}if(e.target.closest('[data-close-market-detail]')){dialog.close();return;}const target=e.target.closest('[data-market-part]');if(target)show(target.dataset.marketPart);}
     art.addEventListener('load',fit);const observer=new ResizeObserver(fit);observer.observe(view);
     panel.addEventListener('click',click);window.addEventListener('storage',storage);fit();
     stop=()=>{disposed=true;observer.disconnect();art.removeEventListener('load',fit);panel.removeEventListener('click',click);window.removeEventListener('storage',storage);if(dialog.open)dialog.close();};
   }
-  window.MarketPanel={armorType:item=>productFor(item)?.armorType,markup,mount,cancel,purchase,bonuses,describeItem};
+  window.MarketPanel={sell,itemValue,sellPrice,armorType:item=>productFor(item)?.armorType,markup,mount,cancel,purchase,bonuses,describeItem};
 })();

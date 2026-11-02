@@ -324,3 +324,12 @@ Oferta na Czarnym Targu w Zamku Czarnej Stali ma 57 unikalnych przedmiotów i po
 Ceny (broń / hełm / ochrona ciała / buty / tarcza): poziom 5 — 120/80/150/70/100 złota; 15 — 420/280/520/240/350; 25 — 900/600/1100/550/750. Premie do cech rosną z poziomem; są pokazane przed zakupem i działają po założeniu. Główna cecha broni to Siła Wojownika i Krasnoluda, Inteligencja Maga, Zręczność Elfa.
 
 Wymagania klasy i poziomu są sprawdzane ponownie przy zakupie i zakładaniu; zapis przedmiotu odwołuje się do kanonicznego katalogu. Nie można obejść reguł przez zmianę opisowych pól przedmiotu. Starsze zakupy nadal mają swoje premie i mogą być używane według wcześniejszych zasad, lecz poprzednia podstawowa oferta nie jest już sprzedawana. Limit 25 miejsc, aktualny zapis i Web Locks nadal chronią transakcje. Nie dopisano nieustalonych progów EXP powyżej poziomu 15: zestaw na poziom 25 jest przygotowany na dalszy rozwój gry.
+
+
+## Ikony adeptów i sprzedaż u Gringa
+
+Broń startowa ma osobne ikony: miecz Wojownika, krótka różdżka Maga, łuk ze struną Elfa i topór Krasnoluda. Dodano też ikony początkowej kolczugi, płaszcza i pancerza; kolczuga Wojownika i Krasnoluda ma wspólną grafikę. Ikony są dobierane po istniejącym ID przedmiotu i klasie lub typie ochrony, bez zmian zapisu i bez duplikowania przedmiotów. Widać je w karcie postaci, plecaku i na liście sprzedaży.
+
+Zakładka Sprzedaż u Gringa pokazuje wszystkie niezałożone przedmioty z plecaka, ich wartość bazową i kwotę sprzedaży: `floor(wartość × 3 / 5)`. Wartość nowych i dawnych zakupów odpowiada cenie katalogowej. Broń startowa ma wartość 30 złota, ochrona startowa 45. Pozostałe przedmioty mają wycenę według typu: hełm 50, ochrona ciała 90, buty 40, tarcza 60, broń 75, naszyjnik 100, kolczyki 80, przedmiot specjalny 100; naszyjnik Tauriel 250. Dane o cenie wpisane do przedmiotu nie zmieniają wyceny.
+
+Przycisk sprzedaży działa na jeden konkretny przedmiot. Pod wspólną blokadą Web Locks odczytywany jest aktualny zapis, następnie atomowo zapisuje się usunięcie przedmiotu i dodanie złota. Założonych przedmiotów nie można sprzedać. Ponowna sprzedaż tego samego ID, zduplikowane ID, brak wyceny i przepełnienie liczby złota są blokowane. Błąd zapisu nie zabiera przedmiotu ani nie przyznaje częściowej wypłaty. Sprzedaż zwalnia miejsce także przy pełnym plecaku.
