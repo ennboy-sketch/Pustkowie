@@ -1,6 +1,8 @@
 'use strict';
 (() => {
   const BASE_STATS={warrior:[12,5,3,10],mage:[3,5,12,6],elf:[5,12,4,7],dwarf:[10,3,4,12]};
+  const FIREBALL=Object.freeze({id:'fireball',name:'Kula ognia',manaCost:10});
+  function manaInfo(fighter){const max=fighter.maxMana??window.HeroSheet.manaCapacity(fighter.classId,fighter.stats?.[2]??0);return {max,current:Number.isSafeInteger(fighter.mana)?Math.max(0,Math.min(max,fighter.mana)):max};}
   const LABELS=['Siła','Zręczność','Inteligencja','Wytrzymałość'];
   const ROSTERS={forest:[
     {id:'boar',name:'Dzik',level:1,maxHp:70,stats:[7,4,1,5],attack:[7,10],tile:0},
@@ -88,8 +90,11 @@
     const copy=f=>({...f,stats:f.stats?[...f.stats]:undefined});
     const damage=resolveHit(copy(battle[actor]),copy(battle[target]),battle.hits+1);
     if(!Number.isSafeInteger(damage)||damage<1)throw new Error('Nieprawidłowe obrażenia.');
+    const mage=actor==='hero'&&battle[actor].classId==='mage',mana=mage?manaInfo(battle[actor]):null;
+    const fireball=!!mana&&mana.current>=FIREBALL.manaCost;
+    const attacker=mana?{...battle[actor],maxMana:mana.max,mana:mana.current-(fireball?FIREBALL.manaCost:0)}:battle[actor];
     const hp=Math.max(0,battle[target].hp-damage);
-    return {...battle,[target]:{...battle[target],hp},next:target,hits:battle.hits+1,winner:hp===0?actor:null,lastHit:{actor,target,damage:Math.min(damage,battle[target].hp)}};
+    return {...battle,[actor]:attacker,[target]:{...battle[target],hp},next:target,hits:battle.hits+1,winner:hp===0?actor:null,lastHit:{actor,target,damage:Math.min(damage,battle[target].hp),ability:fireball?'fireball':mage?'wand':'attack',manaCost:fireball?FIREBALL.manaCost:0}};
   }
   function fighterMarkup(side){return `<article class="combat-fighter" data-fighter="${side}"><div class="combat-portrait"><div class="combat-figure"></div><span class="combat-empty-icon rpg-icon icon-arena" aria-hidden="true"></span><span class="combat-damage" aria-hidden="true"></span><div class="combat-identity"><h3></h3><span class="combat-level"></span></div></div><div class="combat-health"><progress max="1" value="0" aria-label="Punkty życia"></progress><strong></strong></div><div class="combat-mana" hidden><progress max="1" value="0" aria-label="Punkty many"></progress><strong></strong></div><dl class="combat-stats">${LABELS.map(label=>`<div><dt>${label}</dt><dd>—</dd></div>`).join('')}</dl></article>`;}
   function renderFighter(root,fighter){
@@ -106,8 +111,7 @@
     root.querySelector('.combat-health strong').textContent=fighter?`${hp} / ${fighter.maxHp}`:'— / —';
     const mana=root.querySelector('.combat-mana');mana.hidden=fighter?.classId!=='mage';
     if(!mana.hidden){
-      const maxMana=fighter.maxMana??window.HeroSheet.manaCapacity(fighter.classId,fighter.stats?.[2]??0),current=Math.max(0,Math.min(maxMana,fighter.mana??maxMana));
-      const bar=mana.querySelector('progress');bar.max=maxMana||1;bar.value=current;bar.setAttribute('aria-label',`Mana: ${fighter.name}`);mana.querySelector('strong').textContent=`${current} / ${maxMana}`;
+      const resource=manaInfo(fighter),bar=mana.querySelector('progress');bar.max=resource.max||1;bar.value=resource.current;bar.setAttribute('aria-label',`Mana: ${fighter.name}`);mana.querySelector('strong').textContent=`${resource.current} / ${resource.max}`;
     }
     root.querySelectorAll('dd').forEach((el,i)=>{el.textContent=fighter?.stats?.[i]??'—';});
   }
@@ -115,12 +119,13 @@
     for(const side of ['hero','enemy']){
       const card=root.querySelector(`[data-fighter="${side}"]`);
       renderFighter(card,battle[side]);
+      card.classList.toggle('casting-fireball',battle.lastHit?.actor===side&&battle.lastHit?.ability==='fireball');
       card.classList.toggle('combat-attacking',!battle.winner&&battle.lastHit?.actor===side);
       card.classList.toggle('combat-struck',battle.lastHit?.target===side);
       card.querySelector('.combat-damage').textContent=battle.lastHit?.target===side?`−${battle.lastHit.damage}`:'';
     }
     root.querySelector('.combat-round').textContent=battle.winner?(battle.winner==='hero'?'Zwycięstwo':'Porażka'):`Tura ${Math.floor(battle.hits/2)+1}`;
-    root.querySelector('.combat-status').textContent=battle.winner?'Walka zakończona.':battle.lastHit?`${battle[battle.lastHit.actor].name} zadaje ${battle.lastHit.damage} obrażeń.`:'Przeciwnicy stają naprzeciw siebie.';
+    root.querySelector('.combat-status').textContent=battle.winner?'Walka zakończona.':battle.lastHit?`${battle[battle.lastHit.actor].name} ${battle.lastHit.ability==='fireball'?'rzuca Kulę ognia (−10 many) i zadaje':battle.lastHit.ability==='wand'?'atakuje różdżką i zadaje':'zadaje'} ${battle.lastHit.damage} obrażeń.`:'Przeciwnicy stają naprzeciw siebie.';
   }
   function play(root,battle,resolveHit,{delay=1100}={}){
     if(!Number.isFinite(delay)||delay<100)throw new Error('Nieprawidłowe tempo walki.');
@@ -165,7 +170,7 @@
         renderFighter(dialog.querySelector('[data-fighter="hero"]'),profile(hero));
         renderFighter(dialog.querySelector('[data-fighter="enemy"]'),enemy);
         dialog.querySelector('.combat-round').textContent='Przygotowanie do walki';
-        dialog.querySelector('.combat-status').textContent=enemy?'Nagroda za zwycięstwo: 10–30 złota · 33–55 EXP':eligible(hero)?'Brak dostępnych przeciwników.':'Potwory tych terenów: poziomy postaci 1–5.';
+        dialog.querySelector('.combat-status').textContent=enemy?'Nagroda za zwycięstwo: 10–30 złota · 33–55 EXP'+(hero.classId==='mage'?' · Kula ognia: 10 many za uderzenie. Bez many: atak różdżką.':''):eligible(hero)?'Brak dostępnych przeciwników.':'Potwory tych terenów: poziomy postaci 1–5.';
         action.textContent=enemy?'Rozpocznij walkę · 5 energii':'Walka niedostępna';action.disabled=!enemy||busy;action.dataset.action='start';
       }
     }
@@ -205,5 +210,5 @@
     dispose.open=preview;
     return dispose;
   }
-  window.BrandCombat={profile,opponents,drawLocation,createBattle,advance,play,mount,prepare,start,tick,finish};
+  window.BrandCombat={FIREBALL,manaInfo,profile,opponents,drawLocation,createBattle,advance,play,mount,prepare,start,tick,finish};
 })();

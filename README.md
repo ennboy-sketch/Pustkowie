@@ -262,7 +262,7 @@ Usunięto wszystkie ekranowe przyciski skali, w tym procentowy reset. Pozostają
 
 ## Mana Maga i broń adepta
 
-Wyłącznie Mag ma niebieski pasek many pod paskiem życia, w karcie bohatera i w widoku walki. Maksymalna mana to 10 × Inteligencja, z uwzględnieniem rozdanych punktów i premii założonego wyposażenia. Pod Inteligencją Maga znajduje się informacja o przeliczniku. Zmiana cechy lub założonego ekwipunku odświeża pojemność many. Obecne automatyczne ataki nie zużywają many; system zaklęć nie został jeszcze dodany.
+Wyłącznie Mag ma niebieski pasek many pod paskiem życia, w karcie bohatera i w widoku walki. Maksymalna mana to 10 × Inteligencja, z uwzględnieniem rozdanych punktów i premii założonego wyposażenia. Pod Inteligencją Maga znajduje się informacja o przeliczniku. Zmiana cechy lub założonego ekwipunku odświeża pojemność many. Mag automatycznie używa Kuli ognia za 10 many za uderzenie; po wyczerpaniu many atakuje różdżką.
 
 Nowe walki zachowują pojemność i pełny początkowy zasób many w migawce Maga. Starsze zapisane walki bez pól many wyświetlają ją na podstawie Inteligencji zapisanej w walce, bez zmiany trwającego starcia.
 
@@ -288,3 +288,10 @@ Rozmiary: pracownia 1774×887, portret 1024×1536, targ 1983×793, koszary 1915�
 ## Naturalniejsze twarze alchemiczki i Gabriela
 
 Skorygowano oczy i anatomię twarzy alchemiczki (portret oraz pracownia) i Gabriela w koszarach: naturalne rozmiary oczu, spójny kierunek spojrzenia, realistyczna skóra i proporcje twarzy. Portret alchemiczki posłużył za wzór dla jej twarzy w pracowni. Zachowano stroje, pozy, proporcje panoram i położenie znaczników. Nowe adresy grafik (`realistic-faces-1`) odświeżają kopie w pamięci podręcznej. Mechanika gry pozostaje bez zmian.
+
+
+## Startowe zaklęcie Maga: Kula ognia
+
+Każdy Mag, także wcześniej zapisany, zna Kulę ognia od poziomu 1. Automatyczny atak Maga zużywa 10 many, jeśli ma co najmniej 10. Przy mniejszej ilości many atakuje różdżką bez kosztu many. Obrażenia pozostają według dotychczasowych zasad; nie zmieniono balansu przeciwników ani nagród. Nowa walka zaczyna się z pełną maną. Reguła obowiązuje także w misji Tauriel, która używa wspólnego mechanizmu tur.
+
+Ubytek many, obrażenia, nazwa ataku i następna tura są zapisywane razem w `activeCombat.battle`. Odczyt i ponowne otwarcie nie odnawiają many. Starsza walka bez pola many inicjuje ją na podstawie Inteligencji zapisanej w migawce przy pierwszym ciosie Maga, a następnie zapisuje jej zużycie. Tura przeciwnika nie pobiera many Maga. Karta postaci pokazuje pozostałą manę trwającej walki; opis zaklęcia i koszt są widoczne w karcie oraz podglądzie walki.
