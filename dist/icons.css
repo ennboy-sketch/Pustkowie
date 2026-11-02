@@ -30,3 +30,6 @@
 .icon-exp{background-image:url('exp-icon.webp');background-size:contain;background-position:center;border-radius:0}
 
 .icon-inventory{background-image:url('inventory-icon.webp');background-size:contain;background-position:center;border-radius:0}
+
+/* Osobny medalion wejścia do komnat zamku. */
+.icon-castle{background-image:url('castle-icon.webp');background-size:contain;background-position:center;border-radius:0}

@@ -1,7 +1,7 @@
 'use strict';
 (() => {
   const $ = s => document.querySelector(s);
-  const ICONS = ['map','tavern','barracks','arena','dungeon','forge','alchemy','market','hero','inventory','journal','guild','coin','shard','energy','help','mount','wheel'];
+  const ICONS = ['map','tavern','barracks','arena','dungeon','forge','alchemy','market','hero','inventory','journal','guild','coin','shard','energy','help','mount','wheel','castle'];
   const icon = id => `<span class="rpg-icon icon-${ICONS.includes(id) ? id : 'map'}" aria-hidden="true"></span>`;
   const places = {
     map:{name:'Zamek',category:'Świat',icon:'map'},
@@ -15,7 +15,7 @@
     forge:{name:'Kuźnia',title:'Kuźnia Czarnego Żaru',category:'Handel',icon:'forge',x:47,y:22,text:'Ostatni kowal zamku wciąż podtrzymuje ogień.',future:'Broń i pancerze'},
     alchemy:{name:'Alchemiczka',title:'Wieża Zielonego Płomienia',category:'Handel',icon:'alchemy',x:87,y:64,text:'Za zielonymi szybami coś nigdy nie zasypia.',future:'Mikstury'},
     market:{name:'Czarny Targ',title:'Czarny Targ',category:'Handel',icon:'market',x:48,y:76,text:'Każda rzecz ma tu cenę. Każda moneta swoją historię.',future:'Kupno i sprzedaż'},
-    guild:{name:'Zemek',title:'Komnaty z Czarnej Stali',category:'Świat',icon:'guild',x:77,y:12},
+    guild:{name:'Zamek',title:'Komnaty z Czarnej Stali',category:'Świat',icon:'castle',x:77,y:12},
     wheel:{name:'Koło Losu',title:'Koło Losu',category:'Fontanna Czarnej Stali',icon:'wheel',x:50,y:39},
     mount:{name:'Wierzchowiec',category:'Bohater',icon:'mount'},
     help:{name:'Pomoc',category:'Pustkowie',icon:'help'}
