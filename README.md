@@ -295,3 +295,8 @@ Skorygowano oczy i anatomię twarzy alchemiczki (portret oraz pracownia) i Gabri
 Każdy Mag, także wcześniej zapisany, zna Kulę ognia od poziomu 1. Automatyczny atak Maga zużywa 10 many, jeśli ma co najmniej 10. Przy mniejszej ilości many atakuje różdżką bez kosztu many. Obrażenia pozostają według dotychczasowych zasad; nie zmieniono balansu przeciwników ani nagród. Nowa walka zaczyna się z pełną maną. Reguła obowiązuje także w misji Tauriel, która używa wspólnego mechanizmu tur.
 
 Ubytek many, obrażenia, nazwa ataku i następna tura są zapisywane razem w `activeCombat.battle`. Odczyt i ponowne otwarcie nie odnawiają many. Starsza walka bez pola many inicjuje ją na podstawie Inteligencji zapisanej w migawce przy pierwszym ciosie Maga, a następnie zapisuje jej zużycie. Tura przeciwnika nie pobiera many Maga. Karta postaci pokazuje pozostałą manę trwającej walki; opis zaklęcia i koszt są widoczne w karcie oraz podglądzie walki.
+
+
+## Alchemiczka zgodna ze zdjęciem 1000001913
+
+Na życzenie przywrócono oryginalny wygląd alchemiczki sprzed zmian twarzy, zgodny z dostarczonym zdjęciem: oryginalną pracownię oraz portret. Wykorzystano zachowane pierwotne pliki źródłowe, bez ponownej generacji postaci. Eksport pozostaje w pełnej rozdzielczości (1774×887 i 1024×1536) i jakości WebP 94. Wersja adresów `alchemist-reference-1913-1` odświeża pobierane grafiki.
