@@ -51,6 +51,13 @@
     if(!fight||fight.battle.winner||now<fight.nextHitAt)return hero;
     return {...hero,activeCombat:{...fight,battle:advance(fight.battle,actor=>random(...actor.attack)),nextHitAt:now+1100}};
   }
+  function skip(hero,id){
+    const fight=hero.activeCombat;
+    if(!fight||fight.id!==id)throw new Error('Walka została już rozliczona lub zmieniła się.');
+    let battle=fight.battle;
+    while(!battle.winner)battle=advance(battle,actor=>random(...actor.attack));
+    return finish({...hero,activeCombat:{...fight,battle}},id);
+  }
   function finish(hero,id){
     const fight=hero.activeCombat;
     if(!fight||fight.id!==id||!fight.battle.winner)throw new Error('Walka trwa lub została już rozliczona.');
@@ -163,8 +170,8 @@
       dialog.querySelector('#combat-location').textContent=scene.short;
       if(fight){
         renderBattle(dialog,fight.battle);shownId=fight.id;
-        action.textContent=fight.battle.winner?'Zgłoś wynik walki':'Walka trwa';action.disabled=!fight.battle.winner||busy;
-        action.dataset.action='finish';action.dataset.fightId=fight.id;
+        action.textContent=fight.battle.winner?'Zgłoś wynik walki':'Przewiń walkę';action.disabled=busy;
+        action.dataset.action=fight.battle.winner?'finish':'skip';action.dataset.fightId=fight.id;
       }else{
         const enemy=eligible(hero)?ROSTERS[sceneId].find(m=>m.id===offer?.enemyId):null;
         renderFighter(dialog.querySelector('[data-fighter="hero"]'),profile(hero));
@@ -193,16 +200,16 @@
     async function act(){
       if(busy)return;const intent=action.dataset.action,id=action.dataset.fightId,isQuest=state.read().activeCombat?.source==='tauriel';busy=true;action.disabled=true;
       try{
-        const next=await locked(()=>state.update(hero=>intent==='finish'?finish(hero,id):start(hero)));
+        const next=await locked(()=>state.update(hero=>intent==='skip'?skip(hero,id):intent==='finish'?finish(hero,id):start(hero)));
         if(disposed)return;
-        if(intent==='finish'){
+        if(intent==='finish'||intent==='skip'){
           dialog.close();shownId=null;
           if(isQuest){state.onQuestResolved?.(next);return;}
           if(next.lastCombat.won)window.TavernPanel.showReward(next.lastCombat,window.Progression.level(next));
           else{dialog.querySelector('.combat-status').textContent='Porażka. Nie otrzymujesz nagrody.';render(next);dialog.querySelector('.combat-status').textContent='Porażka. Nie otrzymujesz nagrody.';dialog.showModal();}
         }else{busy=false;render(next);}
       }catch(error){if(!disposed)dialog.querySelector('.combat-status').textContent=error.message;}
-      finally{busy=false;if(!disposed){const current=state.read();action.disabled=current.activeCombat?!current.activeCombat.battle.winner:!current.combatOffer?.enemyId||!eligible(current);}}
+      finally{busy=false;if(!disposed){const current=state.read();action.disabled=current.activeCombat?false:!current.combatOffer?.enemyId||!eligible(current);}}
     }
     function click(e){if(e.target.closest('[data-close-combat]'))dialog.close();else if(e.target.closest('.combat-actions button'))void act();}
     dialog.addEventListener('click',click);timer=setInterval(update,500);
@@ -210,5 +217,5 @@
     dispose.open=preview;
     return dispose;
   }
-  window.BrandCombat={FIREBALL,manaInfo,profile,opponents,drawLocation,createBattle,advance,play,mount,prepare,start,tick,finish};
+  window.BrandCombat={FIREBALL,manaInfo,profile,opponents,drawLocation,createBattle,advance,play,mount,prepare,start,tick,skip,finish};
 })();

@@ -333,3 +333,8 @@ Broń startowa ma osobne ikony: miecz Wojownika, krótka różdżka Maga, łuk z
 Zakładka Sprzedaż u Gringa pokazuje wszystkie niezałożone przedmioty z plecaka, ich wartość bazową i kwotę sprzedaży: `floor(wartość × 3 / 5)`. Wartość nowych i dawnych zakupów odpowiada cenie katalogowej. Broń startowa ma wartość 30 złota, ochrona startowa 45. Pozostałe przedmioty mają wycenę według typu: hełm 50, ochrona ciała 90, buty 40, tarcza 60, broń 75, naszyjnik 100, kolczyki 80, przedmiot specjalny 100; naszyjnik Tauriel 250. Dane o cenie wpisane do przedmiotu nie zmieniają wyceny.
 
 Przycisk sprzedaży działa na jeden konkretny przedmiot. Pod wspólną blokadą Web Locks odczytywany jest aktualny zapis, następnie atomowo zapisuje się usunięcie przedmiotu i dodanie złota. Założonych przedmiotów nie można sprzedać. Ponowna sprzedaż tego samego ID, zduplikowane ID, brak wyceny i przepełnienie liczby złota są blokowane. Błąd zapisu nie zabiera przedmiotu ani nie przyznaje częściowej wypłaty. Sprzedaż zwalnia miejsce także przy pełnym plecaku.
+
+
+## Przewijanie walki
+
+Podczas walki przycisk „Przewiń walkę” rozgrywa pozostałe tury bez oczekiwania na animacje. Zachowuje zasady obrażeń, zużycia many i wyniku walki. Po zwycięstwie od razu otwiera okno nagród; po porażce pokazuje wynik bez nagrody. Rozliczenie i zapis odbywają się razem, bez ponownego kosztu energii ani podwójnego przyznawania nagród. W misji Tauriel przewijanie kończy bieżący pojedynek; naszyjnik nadal odbiera się po pokonaniu trzech rozbójników.
