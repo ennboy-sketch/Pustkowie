@@ -300,3 +300,27 @@ Ubytek many, obrażenia, nazwa ataku i następna tura są zapisywane razem w `ac
 ## Alchemiczka zgodna ze zdjęciem 1000001913
 
 Na życzenie przywrócono oryginalny wygląd alchemiczki sprzed zmian twarzy, zgodny z dostarczonym zdjęciem: oryginalną pracownię oraz portret. Wykorzystano zachowane pierwotne pliki źródłowe, bez ponownej generacji postaci. Eksport pozostaje w pełnej rozdzielczości (1774×887 i 1024×1536) i jakości WebP 94. Wersja adresów `alchemist-reference-1913-1` odświeża pobierane grafiki.
+
+
+## Zestawy Gringa: poziomy 5, 15 i 25
+
+Oferta na Czarnym Targu w Zamku Czarnej Stali ma 57 unikalnych przedmiotów i po 15 pasujących pozycji dla każdej klasy. Trzy zbroje są wspólne dla Wojownika i Krasnoluda. Każda klasa ma broń, hełm/kaptur, zbroję/płaszcz/pancerz, buty i tarczę na każdym progu. Nie ma kolczyków, naszyjników ani przedmiotów specjalnych. Ikony pochodzą z czterech atlasów 5×3; są wspólne dla sklepu, plecaka i założonego wyposażenia.
+
+| Klasa | Poziom | Broń | Hełm / kaptur | Ochrona ciała | Buty | Tarcza |
+| --- | ---: | --- | --- | --- | --- | --- |
+| Wojownik | 5 | Miecz Straży Zamkowej | Hełm Żelaznej Warty | Zbroja Żelaznej Warty | Buty Zamkowego Wartownika | Tarcza Straży Zamkowej |
+| Wojownik | 15 | Miecz Czarnej Stali | Hełm Czarnej Warty | Zbroja Czarnej Stali | Buty Czarnego Garnizonu | Tarcza Czarnej Twierdzy |
+| Wojownik | 25 | Miecz Przysięgi Obrońcy | Hełm Korony Zamku | Zbroja Nieugiętej Przysięgi | Buty Nieugiętego Obrońcy | Tarcza Bastionu Przysięgi |
+| Mag | 5 | Różdżka Żaru | Kaptur Adepta Płomienia | Płaszcz Tkacza Iskier | Buty Zaklinacza | Tarcza Runicznego Kręgu |
+| Mag | 15 | Różdżka Szmaragdowego Żaru | Kaptur Szeptów Wieży | Płaszcz Zielonego Płomienia | Buty Runicznego Szlaku | Tarcza Szmaragdowej Pieczęci |
+| Mag | 25 | Różdżka Serca Płomienia | Kaptur Arcymaga Czarnej Stali | Płaszcz Wiecznego Żaru | Buty Władcy Run | Tarcza Wiecznej Pieczęci |
+| Elf | 5 | Łuk Leśnej Straży | Hełm Zielonego Liścia | Pancerz Leśnego Strażnika | Buty Cichego Szlaku | Tarcza Dębowego Liścia |
+| Elf | 15 | Łuk Nocnej Kniei | Hełm Srebrnego Liścia | Pancerz Szmaragdowej Kniei | Buty Nocnego Tropiciela | Tarcza Starego Dębu |
+| Elf | 25 | Łuk Przysięgi Prastarego Lasu | Hełm Korony Kniei | Pancerz Strażnika Prastarego Lasu | Buty Szeptu Prastarej Kniei | Tarcza Serca Prastarego Dębu |
+| Krasnolud | 5 | Topór Kamiennej Straży | Hełm Górskiej Warty | Zbroja Żelaznej Warty | Buty Kamiennego Traktu | Puklerz Górskiej Warty |
+| Krasnolud | 15 | Topór Czarnej Kuźni | Hełm Kamiennej Przysięgi | Zbroja Czarnej Stali | Buty Żelaznego Szybu | Puklerz Runicznej Kuźni |
+| Krasnolud | 25 | Topór Serca Góry | Hełm Władcy Głębin | Zbroja Nieugiętej Przysięgi | Buty Nieugiętej Góry | Puklerz Kamiennego Bastionu |
+
+Ceny (broń / hełm / ochrona ciała / buty / tarcza): poziom 5 — 120/80/150/70/100 złota; 15 — 420/280/520/240/350; 25 — 900/600/1100/550/750. Premie do cech rosną z poziomem; są pokazane przed zakupem i działają po założeniu. Główna cecha broni to Siła Wojownika i Krasnoluda, Inteligencja Maga, Zręczność Elfa.
+
+Wymagania klasy i poziomu są sprawdzane ponownie przy zakupie i zakładaniu; zapis przedmiotu odwołuje się do kanonicznego katalogu. Nie można obejść reguł przez zmianę opisowych pól przedmiotu. Starsze zakupy nadal mają swoje premie i mogą być używane według wcześniejszych zasad, lecz poprzednia podstawowa oferta nie jest już sprzedawana. Limit 25 miejsc, aktualny zapis i Web Locks nadal chronią transakcje. Nie dopisano nieustalonych progów EXP powyżej poziomu 15: zestaw na poziom 25 jest przygotowany na dalszy rozwój gry.
