@@ -282,4 +282,9 @@ Gringo pokazuje właściwy typ ochrony ciała dla danej postaci: Nitowaną zbroj
 
 Odnowiono cztery ilustracje z zachowaniem układu lokacji, tożsamości postaci i stylu gry: pracownię i portret alchemiczki, plac targowy Gringa oraz plac treningowy Gabriela. Twarze, włosy, tkaniny i zbroja mają czytelniejsze szczegóły i oświetlenie. Ilustracje są eksportowane do WebP w pełnej rozdzielczości generowanych źródeł, z jakością 94 zamiast wcześniejszego pomniejszania panoram do 1536 px i silniejszej kompresji.
 
-Rozmiary: pracownia 1774×887, portret 1024×1536, targ 1983×793, koszary 1916×821 px. Zachowano proporcje obrazów i istniejące pozycje znaczników. Wersjonowanie adresów tych czterech grafik wymusza pobranie nowych plików zamiast starych kopii z pamięci podręcznej; dekodowanie jest asynchroniczne. Przybliżanie, przesuwanie, rozmowy, zakupy i profesje korzystają z dotychczasowych zasad.
+Rozmiary: pracownia 1774×887, portret 1024×1536, targ 1983×793, koszary 1915×821 px. Zachowano proporcje obrazów i istniejące pozycje znaczników. Wersjonowanie adresów tych czterech grafik wymusza pobranie nowych plików zamiast starych kopii z pamięci podręcznej; dekodowanie jest asynchroniczne. Przybliżanie, przesuwanie, rozmowy, zakupy i profesje korzystają z dotychczasowych zasad.
+
+
+## Naturalniejsze twarze alchemiczki i Gabriela
+
+Skorygowano oczy i anatomię twarzy alchemiczki (portret oraz pracownia) i Gabriela w koszarach: naturalne rozmiary oczu, spójny kierunek spojrzenia, realistyczna skóra i proporcje twarzy. Portret alchemiczki posłużył za wzór dla jej twarzy w pracowni. Zachowano stroje, pozy, proporcje panoram i położenie znaczników. Nowe adresy grafik (`realistic-faces-1`) odświeżają kopie w pamięci podręcznej. Mechanika gry pozostaje bez zmian.
