@@ -28,3 +28,6 @@ dialog.combat-dialog{position:fixed;inset:0;margin:0;padding:0;border:0;border-r
 
 .combat-portrait .combat-figure.monster-scorpion{--monster-art:url('crystal-scorpion.webp');--monster-grid:100% 100%}
 .combat-traits{margin:10px 0 0;padding:9px;border:1px solid #756c4b;background:#0b1914e8;color:#c0c5a5;font-size:11px;line-height:1.6}.combat-poison-hit .combat-damage{color:#c8ee8d;text-shadow:0 2px 3px #25410e,0 0 12px #000}
+
+.combat-portrait .combat-figure.monster-undead-miner{--monster-art:url('undead-miner.webp');--monster-grid:100% 100%}
+.combat-piercing-hit .combat-damage{color:#ffd39a;text-shadow:0 2px 3px #61360e,0 0 12px #000}

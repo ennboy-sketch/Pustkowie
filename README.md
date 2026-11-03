@@ -388,3 +388,8 @@ Nowy zwiad czasowy przyjęty na poziomie 8–11 ma 3% szansy na dodatkowy 1 odł
 ## Kryształowy Skorpion — Stara Kopalnia
 
 Przeciwnik poziomu 7 występuje w trudniejszych misjach Branda dla postaci poziomu 5–15, wyłącznie w Starej Kopalni. Ma 195 HP, cechy 16/12/4/22 i żądło zadające 25–30 obrażeń od trucizny. Kryształowy pancerz pochłania 2 punkty obrażeń przy każdym trafieniu; trafienie zawsze zadaje co najmniej 1 obrażenie. Zwycięstwo daje dokładnie 15 złota i 100 EXP, bez przedmiotów i odłamków; porażka nie daje nagrody. Awatar `crystal-scorpion.webp` przedstawia skorpiona o kryształowym pancerzu i jadowitym żądle. Pancerz, rodzaj ataku, obrażenia i wynik są zapisywane w migawce walki; przewijanie korzysta z tych samych zasad.
+
+
+## Nieumarły Górnik — Stara Kopalnia
+
+Przeciwnik poziomu 9 występuje w trudniejszych misjach Branda dla postaci poziomu 5–15, wyłącznie w Starej Kopalni. Ma 230 HP, cechy 24/10/5/20 i kilof zadający 26–35 obrażeń. Cios ignoruje 50% redukcji obrażeń z pancerza celu (pomijana wartość jest zaokrąglana w dół); pozostały pancerz nadal działa, a trafienie zadaje co najmniej 1 obrażenie. Zwycięstwo daje dokładnie 25 złota i 150 EXP, bez przedmiotów i odłamków; porażka nie daje nagrody. Awatar `undead-miner.webp` przedstawia szkielet dawnego górnika z kilofem. Przebicie pancerza, obrażenia i nagroda są zapisywane w migawce walki i stosowane również przy przewijaniu. Ekwipunek bohatera obecnie zwiększa cechy i HP, a nie pole redukcji `armor`; przebicie działa na redukcję pancerza, gdy cel ją posiada.
