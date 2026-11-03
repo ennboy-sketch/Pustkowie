@@ -378,3 +378,8 @@ Przeciwnik poziomu 15 występuje w trudniejszych misjach Branda dla postaci pozi
 ## Aelira — Mroczny Las
 
 Czarodziejka poziomu 14 występuje w trudniejszych misjach Branda dla postaci poziomu 5–15, wyłącznie w Mrocznym Lesie. Ma 360 HP, cechy 16/26/34/24 oraz obrażenia 28–38. Zwycięstwo daje dokładnie 75 złota i 450 EXP, bez przedmiotów; porażka nie daje nagrody. Awatar `aelira.webp` przedstawia dorosłą czarodziejkę o oliwkowozielonej skórze, bursztynowych oczach, ciemnych włosach z mchem i kwiatami, organicznych szatach, paprociowej pelerynie oraz sękatym kosturze z leśnym ognikiem.
+
+
+## Odłamki ze zwiadów od poziomu 8
+
+Nowy zwiad czasowy przyjęty od 8. poziomu ma 3% szansy na dodatkowy 1 odłamek, niezależnie od miejsca i wariantu kosztu energii. Poziom oraz wynik losowania są zapisywane przy przyjęciu zlecenia; odświeżenie, ponowna próba zapisu i późniejszy awans nie losują nagrody ponownie. Odłamek trafia do salda razem ze złotem i EXP po zgłoszeniu powrotu i pojawia się w oknie nagród. Starsze trwające zwiady bez zapisanego losowania zachowują dotychczasowe nagrody. Walki z potworami nie przyznają odłamków ani przedmiotów.
