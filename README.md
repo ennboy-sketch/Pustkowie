@@ -383,3 +383,8 @@ Czarodziejka poziomu 14 występuje w trudniejszych misjach Branda dla postaci po
 ## Odłamki ze zwiadów od poziomu 8
 
 Nowy zwiad czasowy przyjęty na poziomie 8–11 ma 3% szansy na dodatkowy 1 odłamek, a od poziomu 12 — 6%, niezależnie od miejsca i wariantu kosztu energii. Poziom, szansa oraz wynik losowania są zapisywane przy przyjęciu zlecenia; odświeżenie, ponowna próba zapisu i późniejszy awans nie losują nagrody ponownie. Odłamek trafia do salda razem ze złotem i EXP po zgłoszeniu powrotu i pojawia się w oknie nagród. Starsze trwające zwiady bez zapisanego losowania zachowują dotychczasowe nagrody. Walki z potworami nie przyznają odłamków ani przedmiotów.
+
+
+## Kryształowy Skorpion — Stara Kopalnia
+
+Przeciwnik poziomu 7 występuje w trudniejszych misjach Branda dla postaci poziomu 5–15, wyłącznie w Starej Kopalni. Ma 195 HP, cechy 16/12/4/22 i żądło zadające 25–30 obrażeń od trucizny. Kryształowy pancerz pochłania 2 punkty obrażeń przy każdym trafieniu; trafienie zawsze zadaje co najmniej 1 obrażenie. Zwycięstwo daje dokładnie 15 złota i 100 EXP, bez przedmiotów i odłamków; porażka nie daje nagrody. Awatar `crystal-scorpion.webp` przedstawia skorpiona o kryształowym pancerzu i jadowitym żądle. Pancerz, rodzaj ataku, obrażenia i wynik są zapisywane w migawce walki; przewijanie korzysta z tych samych zasad.
