@@ -37,7 +37,7 @@
     if(hero.energy<cost)throw new Error(`Potrzebujesz ${cost} punktów energii.`);
     const sceneId=draw();if(!Object.hasOwn(SCENES,sceneId))throw new Error('Nieznane miejsce zwiadu.');
     const reward=roll(duration);if(!validReward(reward,duration))throw new Error('Nieprawidłowa nagroda zwiadu.');
-    return {...hero,energy:hero.energy-cost,brandOffers:null,activeMission:{loot:window.HeroSheet.rollLoot(hero),cost,difficulty:options.difficulty||null,type:'scout',sceneId,reward:{xp:reward.xp,gold:reward.gold},levelAtStart:level,durationMs:duration*60000,startedAt:now,endsAt:now+duration*60000}};
+    return {...hero,energy:hero.energy-cost,brandOffers:null,activeMission:{loot:null,cost,difficulty:options.difficulty||null,type:'scout',sceneId,reward:{xp:reward.xp,gold:reward.gold},levelAtStart:level,durationMs:duration*60000,startedAt:now,endsAt:now+duration*60000}};
   }
   function finish(hero,now=Date.now(),roll=rollReward) {
     const mission=active(hero);
@@ -48,8 +48,8 @@
     const gold=(Number.isSafeInteger(hero.gold)&&hero.gold>=0?hero.gold:25)+reward.gold;
     if(!Number.isSafeInteger(gold))throw new Error('Nie można zapisać tak dużej ilości złota.');
     const progressed=window.Progression.award(hero,reward.xp);
-    const loot=window.HeroSheet.bagItems(hero).length>=25?null:mission.loot===undefined?window.HeroSheet.rollLoot(hero):mission.loot;
-    return {...window.HeroSheet.receiveLoot(progressed,loot),gold,activeMission:null,lastScout:{...mission,loot,reward:{xp:reward.xp,gold:reward.gold},reportedAt:now,rewardClaimed:true,levelsGained:progressed.level-window.Progression.level(hero)}};
+    // Ignore pending loot in older saves: Brand grants only gold and EXP.
+    return {...progressed,gold,activeMission:null,lastScout:{...mission,loot:null,reward:{xp:reward.xp,gold:reward.gold},reportedAt:now,rewardClaimed:true,levelsGained:progressed.level-window.Progression.level(hero)}};
   }
   function markup() {
     return `<div class="mission-tabs" role="tablist" aria-label="Rodzaj misji"><button type="button" role="tab" id="scout-tab" data-mission-tab="scout" aria-selected="true" aria-controls="scout-panel">Zwiad czasowy</button><button type="button" role="tab" id="combat-tab" data-mission-tab="combat" aria-selected="false" aria-controls="combat-panel" tabindex="-1">Walka z potworami</button></div><section id="scout-panel" role="tabpanel" aria-labelledby="scout-tab"><div class="scout-scene"><div class="scout-heading"><span class="rpg-icon icon-journal" aria-hidden="true"></span><div><h3>Zwiad</h3><p class="scout-duration"></p><p class="scout-cost"></p><p class="scout-reward-preview"></p></div></div><div class="scout-offers"><div class="scout-offer-grid">${Object.entries(SCENES).map(([id,scene])=>`<div class="scout-offer"><img src="${scene.image}" alt="" loading="lazy"><strong>${scene.short}</strong></div>`).join('')}</div></div><p class="scout-narrative">Przed murami Zamku Czarnej Stali zapada mgła. Rozglądasz się uważnie, obserwując ścieżki i nasłuchując odgłosów dochodzących z lasu.</p><div class="scout-progress" hidden><div><span class="scout-phase"></span><strong class="scout-clock" role="timer" aria-label="Pozostały czas zwiadu"></strong></div><progress aria-label="Postęp zwiadu" max="1" value="0"></progress></div><button type="button" class="primary" data-scout-action></button></div><p class="mission-message" role="status" aria-live="polite"></p><p class="scout-history" hidden>Ostatni zwiad został zakończony.</p><p class="mission-note">Nagroda EXP i złota zależy od czasu zwiadu. Rozpoczęcie kosztuje 5 energii. Nagrodę otrzymasz po zgłoszeniu powrotu.</p></section><section id="combat-panel" role="tabpanel" aria-labelledby="combat-tab" hidden><div class="combat-service"></div></section>`;

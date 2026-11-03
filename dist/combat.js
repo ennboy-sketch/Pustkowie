@@ -44,7 +44,7 @@
     if(hero.energy<cost)throw new Error(`Potrzebujesz ${cost} energii.`);
     const player=profile(hero),power=Math.max(...player.stats)+player.level*2;
     player.attack=[Math.max(1,power-3),power+3];
-    return {...hero,energy:hero.energy-cost,brandOffers:null,activeCombat:{cost,difficulty:options.difficulty||null,id:crypto.randomUUID(),sceneId,battle:createBattle(player,enemy,'hero'),loot:window.HeroSheet.rollLoot(hero),reward:{gold:random(10,30),xp:random(33,55)},nextHitAt:now+1100}};
+    return {...hero,energy:hero.energy-cost,brandOffers:null,activeCombat:{cost,difficulty:options.difficulty||null,id:crypto.randomUUID(),sceneId,battle:createBattle(player,enemy,'hero'),loot:null,reward:{gold:random(10,30),xp:random(33,55)},nextHitAt:now+1100}};
   }
   function tick(hero,now=Date.now()){
     const fight=hero.activeCombat;
@@ -65,8 +65,8 @@
     const won=fight.battle.winner==='hero',reward=won?fight.reward:{gold:0,xp:0};
     const next=window.Progression.award(hero,reward.xp),gold=(hero.gold??25)+reward.gold;
     if(!Number.isSafeInteger(gold))throw new Error('Nieprawidłowa ilość złota.');
-    const loot=won&&window.HeroSheet.bagItems(hero).length<25?(fight.loot===undefined?window.HeroSheet.rollLoot(hero):fight.loot):null;
-    return {...window.HeroSheet.receiveLoot(next,loot),gold,activeCombat:null,combatOffer:null,lastCombat:{id,sceneId:fight.sceneId,enemyId:fight.battle.enemy.id,won,reward,loot,levelsGained:next.level-window.Progression.level(hero)}};
+    // Brand grants only gold and EXP, including fights saved with pending loot.
+    return {...next,gold,activeCombat:null,combatOffer:null,lastCombat:{id,sceneId:fight.sceneId,enemyId:fight.battle.enemy.id,won,reward,loot:null,levelsGained:next.level-window.Progression.level(hero)}};
   }
   function profile(hero){
     const base=BASE_STATS[hero.classId];

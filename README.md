@@ -343,3 +343,8 @@ Podczas walki przycisk „Przewiń walkę” rozgrywa pozostałe tury bez oczeki
 ## Kuźnia od poziomu 30
 
 Wejście do Kuźni Czarnego Żaru z mapy oraz menu wymaga co najmniej 30. poziomu postaci. Poniżej tego progu wyświetla się informacja o wymaganym i obecnym poziomie, bez dostępu do wnętrza ani rozmowy z Gorimem. Poziom jest odczytywany z aktualnego zapisu przy każdej próbie wejścia.
+
+
+## Nagrody Dowódcy Branda
+
+Zwiady i walki z potworami u Branda przyznają wyłącznie złoto i EXP. Nie losują ani nie dodają przedmiotów, również przy rozliczaniu misji zapisanych przed tą zmianą. Przedmioty już posiadane pozostają w ekwipunku; nagroda z osobnej misji Tauriel pozostaje bez zmian.
