@@ -12,6 +12,7 @@
     {id:'tree-whisperer',name:'Szeptun drzewny',level:8,maxHp:210,stats:[18,8,16,14],attack:[18,25],tile:0,atlas:'whisperer',minPlayerLevel:5,maxPlayerLevel:15,reward:{gold:25,xp:150}},
     {id:'forest-demoness',name:'Demonica Puszczy',level:9,maxHp:235,stats:[15,22,20,16],attack:[20,27],tile:0,atlas:'demoness',minPlayerLevel:5,maxPlayerLevel:15,reward:{gold:35,xp:190}},
     {id:'spectral-knight',name:'Widmowy Rycerz',level:10,maxHp:260,stats:[24,20,12,18],attack:[23,30],tile:0,atlas:'spectral-knight',minPlayerLevel:5,maxPlayerLevel:15,reward:{gold:55,xp:230}},
+    {id:'aelira',name:'Aelira',level:14,maxHp:360,stats:[16,26,34,24],attack:[28,38],tile:0,atlas:'aelira',minPlayerLevel:5,maxPlayerLevel:15,reward:{gold:75,xp:450}},
     {id:'forest-devourer',name:'Leśny Pożeracz',level:15,maxHp:400,stats:[32,12,25,30],attack:[30,40],tile:0,atlas:'devourer',minPlayerLevel:5,maxPlayerLevel:15,reward:{gold:99,xp:500}}
   ],mine:[
     {id:'ghost',name:'Duch',level:1,maxHp:70,stats:[2,6,9,5],attack:[7,10],tile:0,atlas:'mine'},
@@ -118,7 +119,7 @@
     const figure=root.querySelector('.combat-figure');
     figure.className='combat-figure';
     figure.style.cssText='';
-    if(Number.isInteger(fighter?.tile)){figure.classList.add('monster-avatar');if(fighter.atlas==='devourer')figure.classList.add('monster-devourer');if(fighter.atlas==='spectral-knight')figure.classList.add('monster-spectral-knight');if(fighter.atlas==='demoness')figure.classList.add('monster-demoness');if(fighter.atlas==='whisperer')figure.classList.add('monster-whisperer');if(fighter.atlas==='mine')figure.classList.add('monster-mine');if(fighter.atlas==='undercity')figure.classList.add('monster-undercity');if(fighter.atlas==='tauriel')figure.classList.add('monster-tauriel');figure.style.setProperty('--monster-position',fighter.atlas==='tauriel'?`${fighter.tile*50}% 0%`:`${fighter.tile%2*100}% ${Math.floor(fighter.tile/2)*100}%`);}
+    if(Number.isInteger(fighter?.tile)){figure.classList.add('monster-avatar');if(fighter.atlas==='aelira')figure.classList.add('monster-aelira');if(fighter.atlas==='devourer')figure.classList.add('monster-devourer');if(fighter.atlas==='spectral-knight')figure.classList.add('monster-spectral-knight');if(fighter.atlas==='demoness')figure.classList.add('monster-demoness');if(fighter.atlas==='whisperer')figure.classList.add('monster-whisperer');if(fighter.atlas==='mine')figure.classList.add('monster-mine');if(fighter.atlas==='undercity')figure.classList.add('monster-undercity');if(fighter.atlas==='tauriel')figure.classList.add('monster-tauriel');figure.style.setProperty('--monster-position',fighter.atlas==='tauriel'?`${fighter.tile*50}% 0%`:`${fighter.tile%2*100}% ${Math.floor(fighter.tile/2)*100}%`);}
     if(fighter&&Object.hasOwn(BASE_STATS,fighter.classId)&&['male','female'].includes(fighter.gender))figure.className+=` character ${fighter.gender} ${fighter.classId}`;
     root.classList.toggle('combat-empty',!fighter);
     const hp=fighter?(fighter.hp??fighter.maxHp):0,bar=root.querySelector('progress');
@@ -156,7 +157,7 @@
     return stop;
   }
   function markup(){
-    return '<p class="combat-availability">Potwory podstawowe: poziomy postaci 1–5. Szeptun drzewny, Demonica Puszczy, Widmowy Rycerz i Leśny Pożeracz w Mrocznym Lesie: poziomy postaci 5–15. Brand przydziela przeciwnika automatycznie. Podgląd jest bezpłatny.</p><p class="combat-entry-error" role="status"></p>';
+    return '<p class="combat-availability">Potwory podstawowe: poziomy postaci 1–5. Szeptun drzewny, Demonica Puszczy, Widmowy Rycerz, Aelira i Leśny Pożeracz w Mrocznym Lesie: poziomy postaci 5–15. Brand przydziela przeciwnika automatycznie. Podgląd jest bezpłatny.</p><p class="combat-entry-error" role="status"></p>';
   }
   function mount(container,state){
     container.innerHTML=markup();

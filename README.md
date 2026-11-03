@@ -373,3 +373,8 @@ Przeciwnik poziomu 10 występuje w trudniejszych misjach Branda dla postaci pozi
 ## Leśny Pożeracz — Mroczny Las
 
 Przeciwnik poziomu 15 występuje w trudniejszych misjach Branda dla postaci poziomu 5–15, wyłącznie w Mrocznym Lesie. Ma 400 HP, cechy 32/12/25/30 oraz obrażenia 30–40. Zwycięstwo daje dokładnie 99 złota i 500 EXP, bez przedmiotów; porażka nie daje nagrody. Awatar `forest-devourer.webp` przedstawia bezkształtną masę czarnego szlamu i gnijących liści, z czaszkami i kośćmi zawieszonymi wewnątrz półprzezroczystego ciała.
+
+
+## Aelira — Mroczny Las
+
+Czarodziejka poziomu 14 występuje w trudniejszych misjach Branda dla postaci poziomu 5–15, wyłącznie w Mrocznym Lesie. Ma 360 HP, cechy 16/26/34/24 oraz obrażenia 28–38. Zwycięstwo daje dokładnie 75 złota i 450 EXP, bez przedmiotów; porażka nie daje nagrody. Awatar `aelira.webp` przedstawia dorosłą czarodziejkę o oliwkowozielonej skórze, bursztynowych oczach, ciemnych włosach z mchem i kwiatami, organicznych szatach, paprociowej pelerynie oraz sękatym kosturze z leśnym ognikiem.
