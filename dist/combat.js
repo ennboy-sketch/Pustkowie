@@ -13,7 +13,12 @@
     {id:'forest-demoness',name:'Demonica Puszczy',level:9,maxHp:235,stats:[15,22,20,16],attack:[20,27],tile:0,atlas:'demoness',minPlayerLevel:5,maxPlayerLevel:15,reward:{gold:35,xp:190}},
     {id:'spectral-knight',name:'Widmowy Rycerz',level:10,maxHp:260,stats:[24,20,12,18],attack:[23,30],tile:0,atlas:'spectral-knight',minPlayerLevel:5,maxPlayerLevel:15,reward:{gold:55,xp:230}},
     {id:'aelira',name:'Aelira',level:14,maxHp:360,stats:[16,26,34,24],attack:[28,38],tile:0,atlas:'aelira',minPlayerLevel:5,maxPlayerLevel:15,reward:{gold:75,xp:450}},
-    {id:'forest-devourer',name:'Leśny Pożeracz',level:15,maxHp:400,stats:[32,12,25,30],attack:[30,40],tile:0,atlas:'devourer',minPlayerLevel:5,maxPlayerLevel:15,reward:{gold:99,xp:500}}
+    {id:'forest-devourer',name:'Leśny Pożeracz',level:15,maxHp:400,stats:[32,12,25,30],attack:[30,40],tile:0,atlas:'devourer',minPlayerLevel:5,maxPlayerLevel:15,reward:{gold:99,xp:500}},
+    {id:'bloodthirsty-flower',name:'Krwiożerczy Kwiat',level:6,maxHp:165,stats:[17,8,4,15],attack:[15,22],tile:0,atlas:'bloodthirsty-flower',minPlayerLevel:5,maxPlayerLevel:15,special:{type:'flat',every:4,bonus:10,ability:'thorn-grab'},traits:'Ciernisty Chwyt: co czwarty atak zadaje dodatkowe 10 bazowych obrażeń.',reward:{gold:20,xp:90}},
+    {id:'cursed-stag',name:'Przeklęty Jeleń',level:7,maxHp:190,stats:[18,20,6,16],attack:[17,24],tile:0,atlas:'cursed-stag',minPlayerLevel:5,maxPlayerLevel:15,special:{type:'power',every:4,multiplier:150,ability:'cursed-charge'},traits:'Co czwarty atak: szarża zadaje 150% bazowych obrażeń (zaokrąglenie w dół).',reward:{gold:25,xp:110}},
+    {id:'ancient-forest-spirit',name:'Duch Starego Boru',level:14,maxHp:355,stats:[15,18,32,26],attack:[29,38],tile:0,atlas:'ancient-forest-spirit',minPlayerLevel:5,maxPlayerLevel:15,physicalResistance:15,magicVulnerability:20,traits:'Odporność: otrzymuje 15% mniej obrażeń fizycznych. Podatność: otrzymuje 20% więcej obrażeń magicznych (ogień i woda).',reward:{gold:85,xp:420}},
+    {id:'birch-werewolf',name:'Wilkołak Brzeziny',level:6,maxHp:175,stats:[22,25,4,16],attack:[20,22],tile:0,atlas:'birch-werewolf',minPlayerLevel:5,maxPlayerLevel:15,enrage:{threshold:30,bonus:20},traits:'Furia: poniżej 30% HP zadaje o 20% więcej bazowych obrażeń (zaokrąglenie w dół).',reward:{gold:15,xp:90}},
+    {id:'wraith-archer',name:'Upiorny Łucznik',level:13,maxHp:330,stats:[14,32,15,24],attack:[30,41],tile:0,atlas:'wraith-archer',minPlayerLevel:5,maxPlayerLevel:15,special:{type:'piercing',every:3,piercing:30,ability:'piercing-arrow'},traits:'Przeszywająca Strzała: co trzeci atak ignoruje 30% redukcji pancerza i odporności fizycznej celu.',reward:{gold:75,xp:370}}
   ],mine:[
     {id:'ghost',name:'Duch',level:1,maxHp:70,stats:[2,6,9,5],attack:[7,10],tile:0,atlas:'mine'},
     {id:'bandit',name:'Rozbójnik',level:2,maxHp:90,stats:[9,8,3,6],attack:[9,13],tile:1,atlas:'mine'},
@@ -104,6 +109,10 @@
     };
     return {hero:snapshot(hero),enemy:snapshot(enemy),next:first,hits:0,winner:null,lastHit:null};
   }
+  function ragePercent(fighter){
+    const rule=fighter?.enrage;
+    return rule&&fighter.hp>0&&fighter.hp*100<fighter.maxHp*rule.threshold?rule.bonus:0;
+  }
   // Status damage resolves at the start of the affected fighter's turn.
   function advance(battle,resolveHit){
     if(battle.winner)return battle;
@@ -126,8 +135,9 @@
     if(!Number.isSafeInteger(attackCount))throw new Error('Nieprawidłowy licznik ataków.');
     const special=current[actor].special;
     const triggered=!!special&&Number.isSafeInteger(special.every)&&special.every>0&&attackCount%special.every===0;
-    const powerBonus=triggered&&special.type==='power'?Math.floor(rawDamage*(special.multiplier-100)/100):0;
-    const poweredDamage=rawDamage+powerBonus;
+    const powerBonus=triggered?(special.type==='power'?Math.floor(rawDamage*(special.multiplier-100)/100):special.type==='flat'?special.bonus:0):0;
+    const rage=ragePercent(current[actor]),rageBonus=Math.floor((rawDamage+powerBonus)*rage/100);
+    const poweredDamage=rawDamage+powerBonus+rageBonus;
     if(!Number.isSafeInteger(poweredDamage)||poweredDamage<1)throw new Error('Nieprawidłowe obrażenia specjalne.');
     const poison=current[actor].attackType==='poison';
     const mage=actor==='hero'&&current[actor].classId==='mage',mana=mage?manaInfo(current[actor]):null;
@@ -135,20 +145,26 @@
     const fireball=!!mana&&mana.current>=FIREBALL.manaCost&&!selectedElement;
     const element=selectedElement??(fireball?'fire':poison?'poison':'physical');
     const weakness=element==='water'&&Number.isSafeInteger(current[target].waterWeakness)?Math.max(0,current[target].waterWeakness):0;
-    const weaknessBonus=Math.floor(poweredDamage*weakness/100),elementalDamage=poweredDamage+weaknessBonus;
+    const magicVulnerability=['fire','water'].includes(element)&&Number.isSafeInteger(current[target].magicVulnerability)?Math.max(0,current[target].magicVulnerability):0;
+    const magicBonus=Math.floor(poweredDamage*magicVulnerability/100);
+    const weaknessBonus=Math.floor(poweredDamage*weakness/100),elementalDamage=poweredDamage+weaknessBonus+magicBonus;
     if(!Number.isSafeInteger(elementalDamage))throw new Error('Nieprawidłowe obrażenia żywiołu.');
     const generalArmor=Number.isSafeInteger(current[target].armor)?Math.max(0,current[target].armor):0;
     const physicalArmor=element==='physical'&&Number.isSafeInteger(current[target].physicalArmor)?Math.max(0,current[target].physicalArmor):0;
     const armor=generalArmor+physicalArmor;
-    const piercing=Number.isSafeInteger(current[actor].armorPiercing)?Math.min(100,Math.max(0,current[actor].armorPiercing)):0;
+    const specialPiercing=triggered&&special.type==='piercing'&&element==='physical'?special.piercing:0;
+    const piercing=Math.min(100,Math.max(0,Number.isSafeInteger(current[actor].armorPiercing)?current[actor].armorPiercing:0,specialPiercing));
     const ignoredArmor=Math.floor(armor*piercing/100);
-    const absorbed=Math.min(elementalDamage-1,armor-ignoredArmor),damage=elementalDamage-absorbed;
+    const absorbed=Math.min(elementalDamage-1,armor-ignoredArmor),afterArmor=elementalDamage-absorbed;
+    const resistance=element==='physical'&&Number.isSafeInteger(current[target].physicalResistance)?Math.min(100,Math.max(0,current[target].physicalResistance)):0;
+    const resistanceIgnored=Math.floor(resistance*piercing/100);
+    const damage=Math.max(1,Math.floor(afterArmor*(100-resistance+resistanceIgnored)/100)),resisted=afterArmor-damage;
     const attacker={...current[actor],attackCount,...(mana?{maxMana:mana.max,mana:mana.current-(fireball?FIREBALL.manaCost:0)}:{})};
     const hp=Math.max(0,current[target].hp-damage);
     const poisonApplied=triggered&&special.type==='dot'&&hp>0?{damage:special.damage,turns:special.turns,label:special.label}:null;
     const defender={...current[target],hp,poisonEffect:hp===0?null:poisonApplied||current[target].poisonEffect||null};
     const ability=triggered?special.ability:fireball?'fireball':element==='water'?'water':mage?'wand':poison?'poison':piercing?'piercing':'attack';
-    return {...current,[actor]:attacker,[target]:defender,next:target,hits:battle.hits+1,winner:hp===0?actor:null,lastHit:{actor,target,damage:Math.min(damage,current[target].hp),ability,absorbed,ignoredArmor,element,weaknessBonus,powerBonus,poisonTick,poisonApplied,manaCost:fireball?FIREBALL.manaCost:0}};
+    return {...current,[actor]:attacker,[target]:defender,next:target,hits:battle.hits+1,winner:hp===0?actor:null,lastHit:{actor,target,damage:Math.min(damage,current[target].hp),ability,absorbed,ignoredArmor,element,weaknessBonus,magicBonus,resisted,resistanceIgnored,powerBonus,rageBonus,ragePercent:rage,poisonTick,poisonApplied,manaCost:fireball?FIREBALL.manaCost:0}};
   }
   function fighterMarkup(side){return `<article class="combat-fighter" data-fighter="${side}"><div class="combat-portrait"><div class="combat-figure"></div><span class="combat-empty-icon rpg-icon icon-arena" aria-hidden="true"></span><span class="combat-damage" aria-hidden="true"></span><div class="combat-identity"><h3></h3><span class="combat-level"></span></div></div><div class="combat-health"><progress max="1" value="0" aria-label="Punkty życia"></progress><strong></strong></div><div class="combat-mana" hidden><progress max="1" value="0" aria-label="Punkty many"></progress><strong></strong></div><dl class="combat-stats">${LABELS.map(label=>`<div><dt>${label}</dt><dd>—</dd></div>`).join('')}</dl><p class="combat-traits" hidden></p><p class="combat-effects" hidden role="status"></p></article>`;}
   function renderFighter(root,fighter){
@@ -157,7 +173,7 @@
     const figure=root.querySelector('.combat-figure');
     figure.className='combat-figure';
     figure.style.cssText='';
-    if(Number.isInteger(fighter?.tile)){figure.classList.add('monster-avatar');if(fighter.atlas==='centipede')figure.classList.add('monster-centipede');if(fighter.atlas==='chain-troll')figure.classList.add('monster-chain-troll');if(fighter.atlas==='spore-crawler')figure.classList.add('monster-spore-crawler');if(fighter.atlas==='magma-golem')figure.classList.add('monster-magma-golem');if(fighter.atlas==='undead-miner')figure.classList.add('monster-undead-miner');if(fighter.atlas==='scorpion')figure.classList.add('monster-scorpion');if(fighter.atlas==='aelira')figure.classList.add('monster-aelira');if(fighter.atlas==='devourer')figure.classList.add('monster-devourer');if(fighter.atlas==='spectral-knight')figure.classList.add('monster-spectral-knight');if(fighter.atlas==='demoness')figure.classList.add('monster-demoness');if(fighter.atlas==='whisperer')figure.classList.add('monster-whisperer');if(fighter.atlas==='mine')figure.classList.add('monster-mine');if(fighter.atlas==='undercity')figure.classList.add('monster-undercity');if(fighter.atlas==='tauriel')figure.classList.add('monster-tauriel');figure.style.setProperty('--monster-position',fighter.atlas==='tauriel'?`${fighter.tile*50}% 0%`:`${fighter.tile%2*100}% ${Math.floor(fighter.tile/2)*100}%`);}
+    if(Number.isInteger(fighter?.tile)){figure.classList.add('monster-avatar');if(fighter.atlas==='bloodthirsty-flower')figure.classList.add('monster-bloodthirsty-flower');if(fighter.atlas==='cursed-stag')figure.classList.add('monster-cursed-stag');if(fighter.atlas==='ancient-forest-spirit')figure.classList.add('monster-ancient-forest-spirit');if(fighter.atlas==='birch-werewolf')figure.classList.add('monster-birch-werewolf');if(fighter.atlas==='wraith-archer')figure.classList.add('monster-wraith-archer');if(fighter.atlas==='centipede')figure.classList.add('monster-centipede');if(fighter.atlas==='chain-troll')figure.classList.add('monster-chain-troll');if(fighter.atlas==='spore-crawler')figure.classList.add('monster-spore-crawler');if(fighter.atlas==='magma-golem')figure.classList.add('monster-magma-golem');if(fighter.atlas==='undead-miner')figure.classList.add('monster-undead-miner');if(fighter.atlas==='scorpion')figure.classList.add('monster-scorpion');if(fighter.atlas==='aelira')figure.classList.add('monster-aelira');if(fighter.atlas==='devourer')figure.classList.add('monster-devourer');if(fighter.atlas==='spectral-knight')figure.classList.add('monster-spectral-knight');if(fighter.atlas==='demoness')figure.classList.add('monster-demoness');if(fighter.atlas==='whisperer')figure.classList.add('monster-whisperer');if(fighter.atlas==='mine')figure.classList.add('monster-mine');if(fighter.atlas==='undercity')figure.classList.add('monster-undercity');if(fighter.atlas==='tauriel')figure.classList.add('monster-tauriel');figure.style.setProperty('--monster-position',fighter.atlas==='tauriel'?`${fighter.tile*50}% 0%`:`${fighter.tile%2*100}% ${Math.floor(fighter.tile/2)*100}%`);}
     if(fighter&&Object.hasOwn(BASE_STATS,fighter.classId)&&['male','female'].includes(fighter.gender))figure.className+=` character ${fighter.gender} ${fighter.classId}`;
     root.classList.toggle('combat-empty',!fighter);
     const hp=fighter?(fighter.hp??fighter.maxHp):0,bar=root.querySelector('progress');
@@ -171,6 +187,8 @@
     const traits=root.querySelector('.combat-traits');traits.hidden=!fighter?.traits;traits.textContent=fighter?.traits||'';
     const effects=root.querySelector('.combat-effects'),messages=[];
     if(fighter?.poisonEffect)messages.push(`${fighter.poisonEffect.label}: ${fighter.poisonEffect.damage} obrażeń na początku kolejnych tur. Pozostało: ${fighter.poisonEffect.turns}.`);
+    if(ragePercent(fighter))messages.push(`Furia aktywna: +${ragePercent(fighter)}% obrażeń (HP poniżej ${fighter.enrage.threshold}%).`);
+    root.classList.toggle('combat-enraged',ragePercent(fighter)>0);
     if(fighter?.special)messages.push(`Atak specjalny za ${fighter.special.every-((fighter.attackCount||0)%fighter.special.every)} ataków.`);
     effects.hidden=!messages.length;effects.textContent=messages.join(' ');
   }
@@ -182,7 +200,7 @@
       card.classList.toggle('combat-attacking',!battle.winner&&battle.lastHit?.actor===side);
       card.classList.toggle('combat-struck',battle.lastHit?.target===side||battle.lastHit?.poisonTick?.target===side);
       card.classList.toggle('combat-poison-hit',(battle.lastHit?.target===side&&['poison','poison-tick'].includes(battle.lastHit?.ability))||battle.lastHit?.poisonTick?.target===side);
-      card.classList.toggle('combat-piercing-hit',battle.lastHit?.target===side&&battle.lastHit?.ability==='piercing');
+      card.classList.toggle('combat-piercing-hit',battle.lastHit?.target===side&&['piercing','piercing-arrow'].includes(battle.lastHit?.ability));
       card.classList.toggle('combat-water-hit',battle.lastHit?.target===side&&battle.lastHit?.element==='water');
       const damage=(battle.lastHit?.target===side?battle.lastHit.damage:0)+(battle.lastHit?.poisonTick?.target===side?battle.lastHit.poisonTick.damage:0);
       card.querySelector('.combat-damage').textContent=damage?`−${damage}`:'';
@@ -192,10 +210,14 @@
     let message='Przeciwnicy stają naprzeciw siebie.';
     if(hit?.ability==='poison-tick')message=`${hit.poisonName}: ${battle[hit.target].name} otrzymuje ${hit.damage} obrażeń.`;
     else if(hit){
-      const verbs={fireball:'rzuca Kulę ognia (−10 many) i zadaje',water:'atakuje magią wody i zadaje',wand:'atakuje różdżką i zadaje',poison:'uderza zatrutym żądłem i zadaje',piercing:'wyprowadza potężny cios kilofem i zadaje','venom-bite':'wykonuje jadowite ukąszenie i zadaje',spores:'wypuszcza trujące zarodniki i zadaje','chain-slam':'wykonuje potężne uderzenie łańcuchami (150%) i zadaje'};
+      const verbs={fireball:'rzuca Kulę ognia (−10 many) i zadaje',water:'atakuje magią wody i zadaje',wand:'atakuje różdżką i zadaje',poison:'uderza zatrutym żądłem i zadaje',piercing:'wyprowadza potężny cios kilofem i zadaje','venom-bite':'wykonuje jadowite ukąszenie i zadaje',spores:'wypuszcza trujące zarodniki i zadaje','chain-slam':'wykonuje potężne uderzenie łańcuchami (150%) i zadaje','thorn-grab':'wykonuje Ciernisty Chwyt (+10) i zadaje','cursed-charge':'wykonuje szarżę (150%) i zadaje','piercing-arrow':'wypuszcza Przeszywającą Strzałę i zadaje'};
       message=`${battle[hit.actor].name} ${verbs[hit.ability]||'zadaje'} ${hit.damage} obrażeń${hit.ability==='poison'?' od trucizny':''}.`;
       if(hit.poisonTick)message=`${hit.poisonTick.label}: ${battle[hit.poisonTick.target].name} otrzymuje ${hit.poisonTick.damage} obrażeń. `+message;
       if(hit.poisonApplied)message+=` ${hit.poisonApplied.label}: ${hit.poisonApplied.damage} obrażeń przez ${hit.poisonApplied.turns} tury celu.`;
+      if(hit.ragePercent)message+=` Furia: +${hit.ragePercent}% obrażeń.`;
+      if(hit.magicBonus)message+=` Podatność na magię: +${hit.magicBonus} obrażeń.`;
+      if(hit.resisted)message+=` Odporność fizyczna pochłania ${hit.resisted} obrażeń.`;
+      if(hit.resistanceIgnored)message+=' Cios częściowo pomija odporność fizyczną.';
       if(hit.weaknessBonus)message+=` Podatność na wodę: +${hit.weaknessBonus} obrażeń.`;
       if(hit.ignoredArmor)message+=` Cios pomija ${hit.ignoredArmor} pancerza.`;
       if(hit.absorbed)message+=` Pancerz pochłania ${hit.absorbed} obrażenia.`;
@@ -216,7 +238,7 @@
     return stop;
   }
   function markup(){
-    return '<p class="combat-availability">Potwory podstawowe: poziomy postaci 1–5. Szeptun drzewny, Demonica Puszczy, Widmowy Rycerz, Aelira i Leśny Pożeracz w Mrocznym Lesie: poziomy postaci 5–15. Wzmocnione potwory Starej Kopalni (Skorpion, Stonóg, Górnik, Troll, Pełzacz i Golem): poziomy postaci 5–15. Brand przydziela przeciwnika automatycznie. Podgląd jest bezpłatny.</p><p class="combat-entry-error" role="status"></p>';
+    return '<p class="combat-availability">Potwory podstawowe: poziomy postaci 1–5. Wzmocnione potwory Mrocznego Lasu: poziomy postaci 5–15. Wzmocnione potwory Starej Kopalni (Skorpion, Stonóg, Górnik, Troll, Pełzacz i Golem): poziomy postaci 5–15. Brand przydziela przeciwnika automatycznie. Podgląd jest bezpłatny.</p><p class="combat-entry-error" role="status"></p>';
   }
   function mount(container,state){
     container.innerHTML=markup();

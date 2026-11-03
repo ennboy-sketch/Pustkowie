@@ -412,4 +412,19 @@ W trudniejszych misjach Starej Kopalni dla postaci poziomu 5–15 pojawiają si�
 
 Zatrucie działa na początku kolejnych tur celu i omija pancerz. Sam atak nakładający efekt nadal zadaje zwykłe obrażenia. Ponowne nałożenie odświeża czas, bez kumulowania. Śmierć od zatrucia kończy walkę przed atakiem i zużyciem many zatrutej postaci. Licznik liczy rzeczywiste ataki danego wojownika, nie łączną liczbę tur. Liczniki i efekty pozostają w migawce walki przy zamknięciu i odświeżeniu; przewijanie stosuje te same zasady. Zakończenie walki usuwa efekty razem z jej stanem. Nagrody pozostają w złocie i EXP, bez przedmiotów i odłamków.
 
-Testy mechaniki walki można uruchomić poleceniem `node --test tests/combat-specials.test.cjs` z katalogu repozytorium; nie wymagają instalowania pakietów.
+Testy mechaniki walki można uruchomić poleceniem `node --test tests/*.test.cjs` z katalogu repozytorium; nie wymagają instalowania pakietów.
+
+
+## Kolejni przeciwnicy Mrocznego Lasu
+
+Pięć nowych potworów z osobnymi awatarami występuje w trudniejszych zleceniach Branda dla postaci poziomu 5–15:
+
+| Potwór | Poziom | HP | Atak | Złoto | EXP | Zdolność |
+| --- | ---: | ---: | --- | ---: | ---: | --- |
+| Krwiożerczy Kwiat | 6 | 165 | 15–22 | 20 | 90 | Ciernisty Chwyt: +10 bazowych obrażeń co 4. własny atak. |
+| Przeklęty Jeleń | 7 | 190 | 17–24 | 25 | 110 | Szarża co 4. własny atak: 150% bazowych obrażeń. |
+| Duch Starego Boru | 14 | 355 | 29–38 | 85 | 420 | −15% obrażeń fizycznych, +20% obrażeń magicznych (ogień/woda). |
+| Wilkołak Brzeziny | 6 | 175 | 20–22 | 15 | 90 | +20% obrażeń wyłącznie poniżej 30% HP. |
+| Upiorny Łucznik | 13 | 330 | 30–41 | 75 | 370 | Przeszywająca Strzała co 3. własny atak: pomija 30% pancerza i odporności fizycznej celu. |
+
+Premie do ataku są naliczane przed obroną; procentowe zwiększenia i końcowe obrażenia po odporności są zaokrąglane w dół, z minimum 1 obrażeniem. Odporność procentowa działa po redukcji pancerza. Furia jest obliczana z aktualnego HP na początku ataku, także po obrażeniach od zatrucia; dokładnie 30% HP nie uruchamia furii. Przebicie pomija zaokrągloną w dół część pancerza i odporności. Obecne wyposażenie bohatera zwiększa cechy i HP, a nie redukcję pancerza — dodatkowy efekt Przeszywającej Strzały ma znaczenie, gdy cel taką redukcję posiada. Liczniki i cechy pozostają w migawce walki przy odświeżeniu oraz przewijaniu. Nagrody obejmują wyłącznie podane złoto i EXP.
