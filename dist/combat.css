@@ -34,3 +34,8 @@ dialog.combat-dialog{position:fixed;inset:0;margin:0;padding:0;border:0;border-r
 
 .combat-portrait .combat-figure.monster-magma-golem{--monster-art:url('magma-golem.webp');--monster-grid:100% 100%}
 .combat-water-hit .combat-damage{color:#a9e5ff;text-shadow:0 2px 3px #163e63,0 0 12px #000}
+
+.combat-portrait .combat-figure.monster-centipede{--monster-art:url('venom-centipede.webp');--monster-grid:100% 100%}
+.combat-portrait .combat-figure.monster-chain-troll{--monster-art:url('chain-troll.webp');--monster-grid:100% 100%}
+.combat-portrait .combat-figure.monster-spore-crawler{--monster-art:url('spore-crawler.webp');--monster-grid:100% 100%}
+.combat-effects{margin:8px 0 0;padding:8px;border:1px solid #809650;background:#122114e8;color:#d0e3a6;font-size:11px;line-height:1.6}

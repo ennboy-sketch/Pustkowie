@@ -398,3 +398,18 @@ Przeciwnik poziomu 9 występuje w trudniejszych misjach Branda dla postaci pozio
 ## Golem Magmowy — Stara Kopalnia
 
 Przeciwnik poziomu 15 występuje w trudniejszych misjach Branda dla postaci poziomu 5–15, wyłącznie w Starej Kopalni. Ma 480 HP, cechy 38/8/20/36 oraz obrażenia 39–55. Pochłania 8 obrażeń fizycznych z trafienia (minimum 1 obrażenie); ten pancerz nie redukuje magii. Otrzymuje +50% bazowych obrażeń od wody, z premią zaokrągloną w dół. Zwycięstwo daje dokładnie 100 złota i 300 EXP, bez przedmiotów i odłamków; porażka nie daje nagrody. Awatar `magma-golem.webp` przedstawia olbrzyma z rozgrzanej skały i lawy. Typ ataku (`attackElement`), pancerz i podatność są obsługiwane w migawce walki oraz przy przewijaniu. Kula ognia z maną ma typ ognia; atak różdżką bez many jest fizyczny. Mag obecnie nie ma dostępnego w interfejsie zaklęcia wodnego — podatność jest przygotowana pod przyszłe dodanie takiego ataku.
+
+
+## Specjalne ataki nowych potworów Kopalni
+
+W trudniejszych misjach Starej Kopalni dla postaci poziomu 5–15 pojawiają się trzy nowe potwory z osobnymi awatarami:
+
+| Przeciwnik | Poziom | HP | Obrażenia | EXP | Złoto | Zdolność |
+| --- | ---: | ---: | --- | ---: | ---: | --- |
+| Jadowity Stonóg | 8 | 210 | 18–25 | 90 | 65 | Co 3. własny atak: trucizna 8 × 3 tury; pancerz pochłania 2 obrażenia z trafienia, min. 1 obrażenie. |
+| Łańcuchowy Troll | 13 | 420 | 30–42 | 190 | 155 | Co 5. własny atak: 150% bazowych obrażeń, zaokrąglone w dół przed redukcją pancerza. |
+| Zarodnikowy Pełzacz | 14 | 320 | 28–36 | 205 | 165 | Co 4. własny atak: zarodniki 12 × 2 tury. |
+
+Zatrucie działa na początku kolejnych tur celu i omija pancerz. Sam atak nakładający efekt nadal zadaje zwykłe obrażenia. Ponowne nałożenie odświeża czas, bez kumulowania. Śmierć od zatrucia kończy walkę przed atakiem i zużyciem many zatrutej postaci. Licznik liczy rzeczywiste ataki danego wojownika, nie łączną liczbę tur. Liczniki i efekty pozostają w migawce walki przy zamknięciu i odświeżeniu; przewijanie stosuje te same zasady. Zakończenie walki usuwa efekty razem z jej stanem. Nagrody pozostają w złocie i EXP, bez przedmiotów i odłamków.
+
+Testy mechaniki walki można uruchomić poleceniem `node --test tests/combat-specials.test.cjs` z katalogu repozytorium; nie wymagają instalowania pakietów.
