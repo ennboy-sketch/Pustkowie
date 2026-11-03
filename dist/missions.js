@@ -15,12 +15,22 @@
     if(!Number.isSafeInteger(level)||level<1||level>25)return null;
     return level>=15?15:level>=8?10:level>=3?5:1;
   }
-  function durationFor(level,difficulty){const base=minutes(level);if(!base||difficulty!=='hard')return base;const times=[1,5,10,15];return times[Math.min(3,times.indexOf(base)+1)];}
+  function durationFor(level){return minutes(level);}
+  function savedDuration(mission){
+    const base=minutes(mission.levelAtStart);
+    if(!base)return null;
+    if(mission.durationVersion===2)return base;
+    if(mission.durationVersion!==undefined)return null;
+    // Preserve the deadline and reward of scouts accepted under the old rules.
+    if(mission.difficulty!=='hard')return base;
+    const times=[1,5,10,15];return times[Math.min(3,times.indexOf(base)+1)];
+  }
   const heroLevel=h=>Number.isSafeInteger(h.level)&&h.level>0?h.level:1;
   function active(hero) {
     const m=hero.activeMission;
     if(!m)return null;
-    if((m.reward!==undefined&&!validReward(m.reward,m.durationMs/60000))||(m.sceneId!==undefined&&!Object.hasOwn(SCENES,m.sceneId))||m.type!=='scout'||!Number.isSafeInteger(m.startedAt)||!Number.isSafeInteger(m.endsAt)||m.startedAt<0||!Number.isSafeInteger(m.durationMs)||m.durationMs!==durationFor(m.levelAtStart,m.difficulty)*60000||m.endsAt-m.startedAt!==m.durationMs||!minutes(m.levelAtStart))throw new Error('Zapis aktywnej misji jest niezgodny. Nie rozpoczynaj nowej misji przed naprawą zapisu.');
+    const duration=savedDuration(m);
+    if(!duration||(m.reward!==undefined&&!validReward(m.reward,m.durationMs/60000))||(m.sceneId!==undefined&&!Object.hasOwn(SCENES,m.sceneId))||m.type!=='scout'||!Number.isSafeInteger(m.startedAt)||!Number.isSafeInteger(m.endsAt)||m.startedAt<0||!Number.isSafeInteger(m.durationMs)||m.durationMs!==duration*60000||m.endsAt-m.startedAt!==m.durationMs||!minutes(m.levelAtStart))throw new Error('Zapis aktywnej misji jest niezgodny. Nie rozpoczynaj nowej misji przed naprawą zapisu.');
     return m;
   }
   function status(hero,now=Date.now()) {
@@ -32,12 +42,12 @@
     hero=window.EnergyCycle.apply(hero,now);
     if(hero.activeCombat)throw new Error('Najpierw zakończ walkę z potworem.');
     if(active(hero))throw new Error('Najpierw zakończ obecny zwiad.');
-    const level=heroLevel(hero),duration=durationFor(level,options.difficulty);
+    const level=heroLevel(hero),duration=durationFor(level);
     if(!duration)throw new Error('Zwiad powyżej poziomu 25 ustalimy później.');
     if(hero.energy<cost)throw new Error(`Potrzebujesz ${cost} punktów energii.`);
     const sceneId=draw();if(!Object.hasOwn(SCENES,sceneId))throw new Error('Nieznane miejsce zwiadu.');
     const reward=roll(duration);if(!validReward(reward,duration))throw new Error('Nieprawidłowa nagroda zwiadu.');
-    return {...hero,energy:hero.energy-cost,brandOffers:null,activeMission:{loot:null,cost,difficulty:options.difficulty||null,type:'scout',sceneId,reward:{xp:reward.xp,gold:reward.gold},levelAtStart:level,durationMs:duration*60000,startedAt:now,endsAt:now+duration*60000}};
+    return {...hero,energy:hero.energy-cost,brandOffers:null,activeMission:{durationVersion:2,loot:null,cost,difficulty:options.difficulty||null,type:'scout',sceneId,reward:{xp:reward.xp,gold:reward.gold},levelAtStart:level,durationMs:duration*60000,startedAt:now,endsAt:now+duration*60000}};
   }
   function finish(hero,now=Date.now(),roll=rollReward) {
     const mission=active(hero);

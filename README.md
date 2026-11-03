@@ -348,3 +348,8 @@ Wejście do Kuźni Czarnego Żaru z mapy oraz menu wymaga co najmniej 30. poziom
 ## Nagrody Dowódcy Branda
 
 Zwiady i walki z potworami u Branda przyznają wyłącznie złoto i EXP. Nie losują ani nie dodają przedmiotów, również przy rozliczaniu misji zapisanych przed tą zmianą. Przedmioty już posiadane pozostają w ekwipunku; nagroda z osobnej misji Tauriel pozostaje bez zmian.
+
+
+## Jednakowy czas obu wariantów zwiadu Branda
+
+Nowe zwiady łatwiejsze i trudniejsze trwają tyle samo na danym poziomie: 1–2 → 1 minuta, 3–7 → 5 minut, 8–14 → 10 minut, 15–25 → 15 minut. Oba warianty korzystają z tych samych zakresów nagród dla tego czasu; koszt wynosi odpowiednio 3 lub 5 energii. Trwające zwiady ze starszych zapisów zachowują ustalony wcześniej termin i nagrodę.
