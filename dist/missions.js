@@ -3,6 +3,7 @@
   const COST=5;
   const REWARDS={1:{xp:[5,11],gold:[3,5]},5:{xp:[25,44],gold:[7,15]},10:{xp:[77,101],gold:[17,33]},15:{xp:[125,200],gold:[50,100]}};
   function randomInt(min,max){const range=max-min+1,limit=4294967296-(4294967296%range),value=new Uint32Array(1);do{crypto.getRandomValues(value);}while(value[0]>=limit);return min+value[0]%range;}
+  function shardChance(level){return Number.isSafeInteger(level)&&level>=12?6:Number.isSafeInteger(level)&&level>=8?3:0;}
   function rollReward(duration){const r=REWARDS[duration];if(!r)throw new Error('Nieznany czas misji.');return{xp:randomInt(...r.xp),gold:randomInt(...r.gold)};}
   function validReward(reward,duration,level){const r=REWARDS[duration];return !!r&&!!reward&&Number.isSafeInteger(reward.xp)&&reward.xp>=r.xp[0]&&reward.xp<=r.xp[1]&&Number.isSafeInteger(reward.gold)&&reward.gold>=r.gold[0]&&reward.gold<=r.gold[1]&&(reward.shards===undefined||(Number.isSafeInteger(reward.shards)&&reward.shards>=0&&reward.shards<=(level>=8?1:0)));}
   const SCENES={
@@ -47,8 +48,8 @@
     if(hero.energy<cost)throw new Error(`Potrzebujesz ${cost} punktów energii.`);
     const sceneId=draw();if(!Object.hasOwn(SCENES,sceneId))throw new Error('Nieznane miejsce zwiadu.');
     const reward=roll(duration);if(!validReward(reward,duration,level))throw new Error('Nieprawidłowa nagroda zwiadu.');
-    const shards=level>=8&&randomInt(1,100)<=3?1:0;
-    return {...hero,energy:hero.energy-cost,brandOffers:null,activeMission:{durationVersion:2,loot:null,cost,difficulty:options.difficulty||null,type:'scout',sceneId,reward:{xp:reward.xp,gold:reward.gold,shards},levelAtStart:level,durationMs:duration*60000,startedAt:now,endsAt:now+duration*60000}};
+    const chance=shardChance(level),shards=chance>0&&randomInt(1,100)<=chance?1:0;
+    return {...hero,energy:hero.energy-cost,brandOffers:null,activeMission:{durationVersion:2,shardChance:chance,loot:null,cost,difficulty:options.difficulty||null,type:'scout',sceneId,reward:{xp:reward.xp,gold:reward.gold,shards},levelAtStart:level,durationMs:duration*60000,startedAt:now,endsAt:now+duration*60000}};
   }
   function finish(hero,now=Date.now(),roll=rollReward) {
     const mission=active(hero);
@@ -88,7 +89,8 @@
         $('.scout-duration').textContent=s.mission?`Czas przyjętego zwiadu: ${s.mission.durationMs/60000} min`:s.minutes?`Twój poziom: ${s.level} · Czas: ${s.minutes} min`:`Twój poziom: ${s.level} · Czas powyżej 25. poziomu do ustalenia`;
         $('.scout-cost').textContent=`${s.mission?'Koszt został pobrany przy rozpoczęciu':'Koszt: 5 energii'} · Energia: ${s.energy} / 100`;
         const range=REWARDS[s.mission?s.mission.durationMs/60000:s.minutes];
-        $('.scout-reward-preview').textContent=range?`Nagroda: ${range.xp[0]}–${range.xp[1]} EXP · ${range.gold[0]}–${range.gold[1]} złota${(s.mission?s.mission.levelAtStart>=8&&s.mission.reward?.shards!==undefined:s.level>=8)?' · 3% szansy na 1 odłamek':''}`:'';
+        const chance=s.mission?(s.mission.reward?.shards!==undefined&&s.mission.levelAtStart>=8?s.mission.shardChance??3:0):shardChance(s.level);
+        $('.scout-reward-preview').textContent=range?`Nagroda: ${range.xp[0]}–${range.xp[1]} EXP · ${range.gold[0]}–${range.gold[1]} złota${chance?` · ${chance}% szansy na 1 odłamek`:''}`:'';
         $('.scout-progress').hidden=!s.mission;
         if(s.mission){const sec=Math.ceil(s.remaining/1000);$('.scout-clock').textContent=`${String(Math.floor(sec/60)).padStart(2,'0')}:${String(sec%60).padStart(2,'0')}`;$('.scout-phase').textContent=s.ready?'Zwiad zakończony':'Zwiad trwa';const progress=$('.scout-progress progress');progress.max=s.mission.durationMs;progress.value=Math.min(s.mission.durationMs,Math.max(0,Date.now()-s.mission.startedAt));}
         button.dataset.missionAction=s.mission?'finish':'start';
@@ -127,5 +129,5 @@
     container.addEventListener('click',click);container.addEventListener('keydown',key);refresh();const timer=setInterval(refresh,1000);
     return ()=>{disposed=true;stopCombat();clearInterval(timer);container.removeEventListener('click',click);container.removeEventListener('keydown',key);};
   }
-  window.BrandMissions={durationFor,minutes,status,start,finish,mount,COST,SCENES,REWARDS,rollReward};
+  window.BrandMissions={shardChance,durationFor,minutes,status,start,finish,mount,COST,SCENES,REWARDS,rollReward};
 })();
