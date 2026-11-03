@@ -1,11 +1,11 @@
 'use strict';
 (() => {
   const LOCATIONS=Object.freeze([
-    Object.freeze({id:'graveyard',name:'Cmentarzysko',requiredLevel:10,description:'Między popękanymi nagrobkami snuje się zimna mgła.',art:'<path d="M14 48V24a18 18 0 0 1 36 0v24M8 50h48M32 17v22M24 25h16M10 58h44"/>'}),
-    Object.freeze({id:'gryphon-hills',name:'Wzgórza Gryfów',requiredLevel:20,description:'Nad skalistymi szczytami krążą strażnicy przestworzy.',art:'<path d="m7 55 17-23 12 15 7-10 14 18H7ZM31 29C15 28 9 17 7 8c11 3 19 8 25 16C38 16 46 11 57 8c-2 9-8 20-24 21M28 25l4 9 4-9"/>'}),
-    Object.freeze({id:'catacombs',name:'Katakumby',requiredLevel:30,description:'Pod zamkiem ciągną się korytarze zapomnianych grobowców.',art:'<path d="M10 56V25a22 22 0 0 1 44 0v31M18 56V26a14 14 0 0 1 28 0v30M6 56h52M22 42h20M25 49h14"/><circle cx="27" cy="29" r="2"/><circle cx="37" cy="29" r="2"/><path d="m30 36 2-3 2 3"/>'})
+    Object.freeze({id:'graveyard',name:'Cmentarzysko',requiredLevel:10,description:'Między popękanymi nagrobkami snuje się zimna mgła.',icon:'dungeon-graveyard-icon.webp'}),
+    Object.freeze({id:'gryphon-hills',name:'Wzgórza Gryfów',requiredLevel:20,description:'Nad skalistymi szczytami krążą strażnicy przestworzy.',icon:'dungeon-gryphon-hills-icon.webp'}),
+    Object.freeze({id:'catacombs',name:'Katakumby',requiredLevel:30,description:'Pod zamkiem ciągną się korytarze zapomnianych grobowców.',icon:'dungeon-catacombs-icon.webp'})
   ]);
-  function emblem(location){return `<span class="dungeon-emblem" aria-hidden="true"><svg viewBox="0 0 64 64" focusable="false">${location.art}</svg></span>`;}
+  function emblem(location){return `<span class="dungeon-emblem" aria-hidden="true"><img src="${location.icon}" alt="" width="384" height="384" decoding="async" draggable="false"></span>`;}
   function markup(){return '<section class="dungeons-panel" aria-label="Wybór Lochów"><div class="dungeons-view"></div><p class="dungeons-message" role="status" aria-live="polite"></p></section>';}
   function mount(root,state){
     const panel=root.querySelector('.dungeons-panel'),view=panel.querySelector('.dungeons-view'),message=panel.querySelector('.dungeons-message');

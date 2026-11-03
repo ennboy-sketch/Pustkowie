@@ -1,27 +1,24 @@
 .dungeons-intro{margin:0 0 18px;color:#c1c7b0;font-size:13px;line-height:1.8}
 .dungeons-intro>span{display:block;color:#bca976;font-size:11px;margin-top:5px}
 .dungeons-list{display:grid;gap:12px}
-.dungeon-choice{--dungeon-glow:#748768;display:grid;grid-template-columns:64px minmax(0,1fr);align-items:center;gap:18px;width:100%;min-height:112px;padding:16px 20px;border:1px solid #928054;background:radial-gradient(ellipse at 0 50%,#435f3c40,transparent 70%),#0c1813;color:#ebd4a3;text-align:left;cursor:pointer;transition:border-color .15s,background-color .15s}
+.dungeon-choice{display:grid;grid-template-columns:76px minmax(0,1fr);align-items:center;gap:18px;width:100%;min-height:112px;padding:16px 20px;border:1px solid #928054;background:radial-gradient(ellipse at 0 50%,#435f3c40,transparent 70%),#0c1813;color:#ebd4a3;text-align:left;cursor:pointer;transition:border-color .15s,background-color .15s}
 .dungeon-choice:not(:disabled):hover{border-color:#d4b571;background-color:#192b1e}
 .dungeon-choice:focus-visible{outline:2px solid #eed09a;outline-offset:3px}
-.dungeon-gryphon-hills{--dungeon-glow:#b39a60}
-.dungeon-catacombs{--dungeon-glow:#6e8b9b}
-.dungeon-emblem{display:grid;place-items:center;width:64px;height:72px;border:1px solid var(--dungeon-glow,#8c8055);background:radial-gradient(ellipse,#374638,#09130e);border-radius:32px 32px 5px 5px;box-shadow:inset 0 0 0 3px #0a150e,0 3px 9px #0006}
-.dungeon-emblem svg{width:46px;height:46px;fill:none;stroke:#d8bd82;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.dungeon-emblem{display:block;width:76px;height:76px;flex-shrink:0}
+.dungeon-emblem img{display:block;width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 3px 5px #0009)}
 .dungeon-choice-body{display:flex;flex-direction:column;align-items:flex-start;min-width:0;gap:7px}
 .dungeon-choice-body>strong{font:600 19px 'Cinzel',Georgia,serif;overflow-wrap:anywhere}
 .dungeon-required{color:#b6bba3;font-size:11px}
 .dungeon-availability{color:#c2d39b;font-size:10px;letter-spacing:.5px}
 .dungeon-choice:disabled{cursor:not-allowed;border-color:#4c5140;background:#101812;color:#a5a58f}
-.dungeon-choice:disabled .dungeon-emblem{opacity:.45;filter:grayscale(.8)}
+.dungeon-choice:disabled .dungeon-emblem{opacity:.6;filter:grayscale(.75)}
 .dungeon-choice:disabled .dungeon-availability{color:#ac9277}
 .dungeons-message{font-size:12px;line-height:1.8;color:#e1bd93;margin:16px 0 0}
 .dungeons-message:empty{display:none}
 .dungeon-detail{text-align:center;padding:5px 0 0}
-.dungeon-detail .dungeon-emblem{margin:0 auto 22px;width:84px;height:96px;border-radius:42px 42px 6px 6px}
-.dungeon-detail .dungeon-emblem svg{width:58px;height:58px}
+.dungeon-detail .dungeon-emblem{margin:0 auto 22px;width:132px;height:132px}
 .dungeon-detail h3{overflow-wrap:anywhere}
 .dungeon-detail>p{font-size:13px;color:#bec5ae;line-height:1.9;margin:14px 0 20px}
 .dungeon-detail>button{display:block;margin:25px auto 0;max-width:100%}
-@media(max-width:480px){.dungeon-choice{grid-template-columns:52px minmax(0,1fr);gap:13px;padding:14px 12px;min-height:108px}.dungeon-emblem{width:52px;height:64px}.dungeon-emblem svg{width:38px;height:38px}.dungeon-choice-body>strong{font-size:17px}.dungeons-intro{font-size:12px}}
+@media(max-width:480px){.dungeon-choice{grid-template-columns:64px minmax(0,1fr);gap:13px;padding:14px 12px;min-height:108px}.dungeon-emblem{width:64px;height:64px}.dungeon-choice-body>strong{font-size:17px}.dungeons-intro{font-size:12px}}
 @media(prefers-reduced-motion:reduce){.dungeon-choice{transition:none}}
