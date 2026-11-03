@@ -19,3 +19,5 @@ dialog.combat-dialog{position:fixed;inset:0;margin:0;padding:0;border:0;border-r
 .combat-portrait .combat-figure.monster-whisperer{--monster-art:url('tree-whisperer.webp');--monster-grid:100% 100%}
 
 .combat-portrait .combat-figure.monster-demoness{--monster-art:url('forest-demoness.webp');--monster-grid:100% 100%}
+
+.combat-portrait .combat-figure.monster-spectral-knight{--monster-art:url('spectral-knight.webp');--monster-grid:100% 100%}

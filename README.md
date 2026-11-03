@@ -363,3 +363,8 @@ Nowy przeciwnik poziomu 8 pojawia się w trudniejszych zleceniach walki Branda d
 ## Demonica Puszczy — Mroczny Las
 
 Przeciwniczka poziomu 9 występuje w trudniejszych misjach Branda dla postaci poziomu 5–15, wyłącznie w Mrocznym Lesie. Ma 235 HP, cechy 15/22/20/16 oraz obrażenia 20–27. Zwycięstwo daje dokładnie 35 złota i 190 EXP, bez przedmiotów; porażka nie daje nagrody. Awatar `forest-demoness.webp` przedstawia dorosłą błękitnoskórą demonicę o czarnych chitynowych rogach, w czarnej łuskowej zbroi i ze złożonymi skórzastymi skrzydłami.
+
+
+## Widmowy Rycerz — Mroczny Las
+
+Przeciwnik poziomu 10 występuje w trudniejszych misjach Branda dla postaci poziomu 5–15, wyłącznie w Mrocznym Lesie. Ma 260 HP, cechy 24/20/12/18 oraz obrażenia 23–30. Zwycięstwo daje dokładnie 55 złota i 230 EXP, bez przedmiotów; porażka nie daje nagrody. Awatar `spectral-knight.webp` przedstawia pustą, zniszczoną zbroję pełną czerwonego dymu i iskier oraz wyszczerbiony miecz dwuręczny.
