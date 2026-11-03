@@ -353,3 +353,8 @@ Zwiady i walki z potworami u Branda przyznają wyłącznie złoto i EXP. Nie los
 ## Jednakowy czas obu wariantów zwiadu Branda
 
 Nowe zwiady łatwiejsze i trudniejsze trwają tyle samo na danym poziomie: 1–2 → 1 minuta, 3–7 → 5 minut, 8–14 → 10 minut, 15–25 → 15 minut. Oba warianty korzystają z tych samych zakresów nagród dla tego czasu; koszt wynosi odpowiednio 3 lub 5 energii. Trwające zwiady ze starszych zapisów zachowują ustalony wcześniej termin i nagrodę.
+
+
+## Szeptun drzewny — Mroczny Las
+
+Nowy przeciwnik poziomu 8 pojawia się w trudniejszych zleceniach walki Branda dla postaci poziomu 5–15, wyłącznie w Mrocznym Lesie. Ma 210 HP, cechy 18/8/16/14 oraz obrażenia 18–25. Zwycięstwo daje dokładnie 25 złota i 150 EXP, bez przedmiotów; porażka nie daje nagrody. Awatar `tree-whisperer.webp` przedstawia spróchniałe drzewo z twarzami w korze i pnączami przypominającymi ramiona. Dotychczasowe potwory pozostają dostępne na poziomach postaci 1–5. Rozpoczęte walki zachowują zapis przeciwnika i nagrody.

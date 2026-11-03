@@ -4,10 +4,10 @@
   function random(max){const a=new Uint32Array(1),limit=4294967296-4294967296%max;do{crypto.getRandomValues(a);}while(a[0]>=limit);return a[0]%max;}
   function prepare(hero){
     if(hero.activeMission||hero.activeCombat||hero.brandOffers)return hero;
-    const ids=Object.keys(window.BrandMissions.SCENES),level=window.Progression.level(hero);
+    const ids=Object.keys(window.BrandMissions.SCENES);
     const offers=Object.keys(TIERS).map(tier=>{
-      const sceneId=ids[random(ids.length)],combat=level<=5&&random(2)===1;
-      const pool=window.BrandCombat.opponents(sceneId).filter(m=>tier==='easy'?m.level<=2:m.level>=3);
+      const sceneId=ids[random(ids.length)];
+      const pool=window.BrandCombat.availableOpponents(hero,sceneId,tier),combat=pool.length>0&&random(2)===1;
       return {id:crypto.randomUUID(),tier,type:combat?'combat':'scout',sceneId,enemyId:combat?pool[random(pool.length)].id:null};
     });
     return {...hero,brandOffers:offers};
@@ -18,7 +18,7 @@
     if(!tier)throw new Error('Oferta została już wykorzystana. Otwórz panel ponownie.');
     if(offer.type==='scout')return window.BrandMissions.start(hero,Date.now(),()=>offer.sceneId,window.BrandMissions.rollReward,{cost:tier.cost,difficulty:offer.tier});
     if(offer.type!=='combat')throw new Error('Nieprawidłowy rodzaj misji.');
-    const enemy=window.BrandCombat.opponents(offer.sceneId).find(m=>m.id===offer.enemyId);
+    const enemy=window.BrandCombat.availableOpponents(hero,offer.sceneId,offer.tier).find(m=>m.id===offer.enemyId);
     if(!enemy||(offer.tier==='easy'?enemy.level>2:enemy.level<3))throw new Error('Nieprawidłowy przeciwnik.');
     return window.BrandCombat.start({...hero,combatOffer:{sceneId:offer.sceneId,enemyId:offer.enemyId}},Date.now(),{cost:tier.cost,difficulty:offer.tier});
   }
@@ -35,7 +35,7 @@
       list.innerHTML=(hero.brandOffers||[]).map(o=>{
         const t=TIERS[o.tier],scene=window.BrandMissions.SCENES[o.sceneId],enemy=o.type==='combat'?window.BrandCombat.opponents(o.sceneId).find(m=>m.id===o.enemyId):null;
         const duration=window.BrandMissions.durationFor(window.Progression.level(hero),o.tier);
-        return `<article class="brand-choice-card"><div class="choice-art" style="background-image:url('${scene.image}')"><span class="rpg-icon icon-${enemy?'arena':'journal'}" aria-hidden="true"></span><span>${t.label}</span></div><div class="choice-body"><h3>${t.name}</h3><p class="choice-location">${scene.short}</p><p class="choice-kind">${enemy?`Walka · ${enemy.name} · Poziom ${enemy.level}`:`Zwiad czasowy · ${duration??'—'} min`}</p><p>${t.description}</p><button type="button" class="primary" data-accept-choice="${o.id}" ${busy||window.EnergyCycle.info(hero).energy<t.cost||(!enemy&&!duration)?'disabled':''}>Podejmij misję · ${t.cost} energii</button></div></article>`;
+        return `<article class="brand-choice-card"><div class="choice-art" style="background-image:url('${scene.image}')"><span class="rpg-icon icon-${enemy?'arena':'journal'}" aria-hidden="true"></span><span>${t.label}</span></div><div class="choice-body"><h3>${t.name}</h3><p class="choice-location">${scene.short}</p><p class="choice-kind">${enemy?`Walka · ${enemy.name} · Poziom ${enemy.level}`:`Zwiad czasowy · ${duration??'—'} min`}</p><p>${t.description}</p>${enemy?.reward?`<p class="choice-location">Nagroda: ${enemy.reward.gold} złota · ${enemy.reward.xp} EXP</p>`:''}<button type="button" class="primary" data-accept-choice="${o.id}" ${busy||window.EnergyCycle.info(hero).energy<t.cost||(!enemy&&!duration)?'disabled':''}>Podejmij misję · ${t.cost} energii</button></div></article>`;
       }).join('');
     }
     async function refresh(){
