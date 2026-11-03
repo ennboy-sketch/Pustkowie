@@ -22,6 +22,7 @@
   };
   const HERO_KEY = 'pustkowie.hero.v2';
   const FORGE_LEVEL = 30;
+  const DUNGEON_LEVEL = 10;
   // Nazwy i umiejętności trzech osobnych profesji każdej klasy ustalimy później.
   const PROFESSIONS = Object.fromEntries(
     Object.entries({warrior:'arena',mage:'alchemy',elf:'guild',dwarf:'forge'}).map(([classId,symbol]) => [
@@ -58,10 +59,12 @@
     $('.map-caption small').textContent = `Poziom ${level()}`;
     $('#hero-profession').textContent = profession()?.name || '';
     $('#hero-profession').hidden = !profession();
-    document.querySelectorAll('[data-place="forge"]').forEach(button=>{
-      const label=level()<FORGE_LEVEL?`Kuźnia · Wymagany poziom ${FORGE_LEVEL}`:'Kuźnia';
-      button.title=label;button.setAttribute('aria-label',label);
-    });
+    for(const [id,requiredLevel] of [['forge',FORGE_LEVEL],['dungeon',DUNGEON_LEVEL]]){
+      document.querySelectorAll(`[data-place="${id}"]`).forEach(button=>{
+        const name=places[id].name,label=level()<requiredLevel?`${name} · Wymagany poziom ${requiredLevel}`:name;
+        button.title=label;button.setAttribute('aria-label',label);
+      });
+    }
   }
   function readSavedHero() {
     const saved=JSON.parse(localStorage.getItem(HERO_KEY));
@@ -113,11 +116,12 @@
   let stopHeroSheet=()=>{};
   function openPlace(id) {
     if (!places[id] || !hero) return;
-    if(id==='forge'){
+    if(id==='forge'||id==='dungeon'){
       try{readCurrentHero();}
-      catch{$('#status').textContent='Nie można odczytać poziomu postaci. Odśwież grę, aby wejść do kuźni.';return;}
+      catch{$('#status').textContent=`Nie można odczytać poziomu postaci. Odśwież grę, aby wejść do ${id==='forge'?'kuźni':'Lochów'}.`;return;}
     }
     const forgeLocked=id==='forge'&&level()<FORGE_LEVEL;
+    const dungeonLocked=id==='dungeon'&&level()<DUNGEON_LEVEL;
     if(['tavern','hero','inventory','market'].includes(id)){try{readCurrentHero();}catch{}}
     stopActiveScout();stopHeroSheet();
     window.FateWheel.cancel();
@@ -141,6 +145,8 @@
       content = scouting?'<div class="scout-active-view" aria-label="Aktywny zwiad"></div>':window.TavernPanel.markup();
     } else if (id === 'alchemy') {
       content = window.AlchemistPanel.markup();
+    } else if (dungeonLocked) {
+      content = `<div class="place-emblem">${icon('dungeon')}</div><p class="place-text" role="status">Wejście do Lochów jest dostępne od ${DUNGEON_LEVEL}. poziomu postaci.</p><p class="panel-note">Twój poziom: ${level()} · Wymagany poziom: ${DUNGEON_LEVEL}</p>`;
     } else if (id === 'forge') {
       content = forgeLocked?`<div class="place-emblem">${icon('forge')}</div><p class="place-text" role="status">Wejście do kuźni jest dostępne od ${FORGE_LEVEL}. poziomu postaci.</p><p class="panel-note">Twój poziom: ${level()} · Wymagany poziom: ${FORGE_LEVEL}</p>`:window.ForgePanel.markup();
     } else if (id === 'market') {
