@@ -31,3 +31,6 @@ dialog.combat-dialog{position:fixed;inset:0;margin:0;padding:0;border:0;border-r
 
 .combat-portrait .combat-figure.monster-undead-miner{--monster-art:url('undead-miner.webp');--monster-grid:100% 100%}
 .combat-piercing-hit .combat-damage{color:#ffd39a;text-shadow:0 2px 3px #61360e,0 0 12px #000}
+
+.combat-portrait .combat-figure.monster-magma-golem{--monster-art:url('magma-golem.webp');--monster-grid:100% 100%}
+.combat-water-hit .combat-damage{color:#a9e5ff;text-shadow:0 2px 3px #163e63,0 0 12px #000}

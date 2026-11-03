@@ -393,3 +393,8 @@ Przeciwnik poziomu 7 występuje w trudniejszych misjach Branda dla postaci pozio
 ## Nieumarły Górnik — Stara Kopalnia
 
 Przeciwnik poziomu 9 występuje w trudniejszych misjach Branda dla postaci poziomu 5–15, wyłącznie w Starej Kopalni. Ma 230 HP, cechy 24/10/5/20 i kilof zadający 26–35 obrażeń. Cios ignoruje 50% redukcji obrażeń z pancerza celu (pomijana wartość jest zaokrąglana w dół); pozostały pancerz nadal działa, a trafienie zadaje co najmniej 1 obrażenie. Zwycięstwo daje dokładnie 25 złota i 150 EXP, bez przedmiotów i odłamków; porażka nie daje nagrody. Awatar `undead-miner.webp` przedstawia szkielet dawnego górnika z kilofem. Przebicie pancerza, obrażenia i nagroda są zapisywane w migawce walki i stosowane również przy przewijaniu. Ekwipunek bohatera obecnie zwiększa cechy i HP, a nie pole redukcji `armor`; przebicie działa na redukcję pancerza, gdy cel ją posiada.
+
+
+## Golem Magmowy — Stara Kopalnia
+
+Przeciwnik poziomu 15 występuje w trudniejszych misjach Branda dla postaci poziomu 5–15, wyłącznie w Starej Kopalni. Ma 480 HP, cechy 38/8/20/36 oraz obrażenia 39–55. Pochłania 8 obrażeń fizycznych z trafienia (minimum 1 obrażenie); ten pancerz nie redukuje magii. Otrzymuje +50% bazowych obrażeń od wody, z premią zaokrągloną w dół. Zwycięstwo daje dokładnie 100 złota i 300 EXP, bez przedmiotów i odłamków; porażka nie daje nagrody. Awatar `magma-golem.webp` przedstawia olbrzyma z rozgrzanej skały i lawy. Typ ataku (`attackElement`), pancerz i podatność są obsługiwane w migawce walki oraz przy przewijaniu. Kula ognia z maną ma typ ognia; atak różdżką bez many jest fizyczny. Mag obecnie nie ma dostępnego w interfejsie zaklęcia wodnego — podatność jest przygotowana pod przyszłe dodanie takiego ataku.
