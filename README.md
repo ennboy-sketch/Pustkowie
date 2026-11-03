@@ -439,4 +439,17 @@ Echo Zagłady co czwarty własny atak dodaje osobną falę 12 bazowych obrażeń
 
 ## Lochy od poziomu 10
 
-Wejście do Lochów z mapy oraz menu wymaga co najmniej 10. poziomu postaci. Poniżej tego progu wyświetla się informacja o wymaganym i obecnym poziomie. Etykiety przycisków w menu i na mapie wskazują wymaganie. Poziom jest odczytywany z aktualnego zapisu przy każdej próbie wejścia; brak lub nieprawidłowy poziom jest traktowany jako poziom 1, a błąd odczytu zapisu blokuje wejście. Po osiągnięciu poziomu 10 otwiera się dotychczasowy panel Lochów; ich zawartość pozostaje w przygotowaniu.
+Wejście do Lochów z mapy oraz menu wymaga co najmniej 10. poziomu postaci. Poniżej tego progu wyświetla się informacja o wymaganym i obecnym poziomie. Etykiety przycisków w menu i na mapie wskazują wymaganie. Poziom jest odczytywany z aktualnego zapisu przy każdej próbie wejścia; brak lub nieprawidłowy poziom jest traktowany jako poziom 1, a błąd odczytu zapisu blokuje wejście. Po osiągnięciu poziomu 10 otwiera się okno wyboru trzech Lochów.
+
+
+## Wybór Lochów
+
+Kliknięcie Lochów na mapie lub w menu otwiera wybór trzech lokacji:
+
+| Loch | Wymagany poziom postaci |
+| --- | ---: |
+| Cmentarzysko | 10 |
+| Wzgórza Gryfów | 20 |
+| Katakumby | 30 |
+
+Każda pozycja ma osobny emblemat, wymagany poziom oraz informację o dostępności. Przyciski lokacji powyżej poziomu bohatera są zablokowane. Wybór dostępnej lokacji otwiera jej nazwany widok z przyciskiem powrotu; wnętrza i walki w tych Lochach pozostają w przygotowaniu. Przy każdej próbie wyboru poziom jest odczytywany z aktualnego zapisu. Zmiany zapisu w innej karcie oraz powrót do okna odświeżają dostępność, a błąd odczytu blokuje wybór. Oglądanie i wybór Lochów nie zmieniają postaci, energii ani nagród.
