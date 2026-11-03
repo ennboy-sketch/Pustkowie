@@ -368,3 +368,8 @@ Przeciwniczka poziomu 9 występuje w trudniejszych misjach Branda dla postaci po
 ## Widmowy Rycerz — Mroczny Las
 
 Przeciwnik poziomu 10 występuje w trudniejszych misjach Branda dla postaci poziomu 5–15, wyłącznie w Mrocznym Lesie. Ma 260 HP, cechy 24/20/12/18 oraz obrażenia 23–30. Zwycięstwo daje dokładnie 55 złota i 230 EXP, bez przedmiotów; porażka nie daje nagrody. Awatar `spectral-knight.webp` przedstawia pustą, zniszczoną zbroję pełną czerwonego dymu i iskier oraz wyszczerbiony miecz dwuręczny.
+
+
+## Leśny Pożeracz — Mroczny Las
+
+Przeciwnik poziomu 15 występuje w trudniejszych misjach Branda dla postaci poziomu 5–15, wyłącznie w Mrocznym Lesie. Ma 400 HP, cechy 32/12/25/30 oraz obrażenia 30–40. Zwycięstwo daje dokładnie 99 złota i 500 EXP, bez przedmiotów; porażka nie daje nagrody. Awatar `forest-devourer.webp` przedstawia bezkształtną masę czarnego szlamu i gnijących liści, z czaszkami i kośćmi zawieszonymi wewnątrz półprzezroczystego ciała.
