@@ -29,6 +29,7 @@
     {id:'venom-centipede',name:'Jadowity Stonóg',level:8,maxHp:210,stats:[18,20,3,20],attack:[18,25],tile:0,atlas:'centipede',minPlayerLevel:5,maxPlayerLevel:15,armor:2,special:{type:'dot',every:3,damage:8,turns:3,label:'Trucizna',ability:'venom-bite'},traits:'Twardy pancerz: pochłania 2 obrażenia z trafienia. Co trzeci atak zatruwa: 8 obrażeń na początku 3 kolejnych tur celu.',reward:{gold:65,xp:90}},
     {id:'chain-troll',name:'Łańcuchowy Troll',level:13,maxHp:420,stats:[36,10,4,32],attack:[30,42],tile:0,atlas:'chain-troll',minPlayerLevel:5,maxPlayerLevel:15,special:{type:'power',every:5,multiplier:150,ability:'chain-slam'},traits:'Co piąty atak: potężne uderzenie łańcuchami zadaje 150% bazowych obrażeń (zaokrąglenie w dół).',reward:{gold:155,xp:190}},
     {id:'spore-crawler',name:'Zarodnikowy Pełzacz',level:14,maxHp:320,stats:[20,12,28,24],attack:[28,36],tile:0,atlas:'spore-crawler',minPlayerLevel:5,maxPlayerLevel:15,special:{type:'dot',every:4,damage:12,turns:2,label:'Trujące zarodniki',ability:'spores'},traits:'Co czwarty atak: trujące zarodniki zadają 12 obrażeń na początku 2 kolejnych tur celu.',reward:{gold:165,xp:205}},
+    {id:'abyss-bellringer',name:'Dzwonnik Otchłani',level:14,maxHp:390,stats:[34,10,24,30],attack:[32,43],tile:0,atlas:'abyss-bellringer',minPlayerLevel:5,maxPlayerLevel:15,special:{type:'magic-wave',every:4,damage:12,ability:'abyss-echo'},traits:'Echo Zagłady: co czwarty atak dodaje falę zadającą 12 bazowych obrażeń magicznych. Fala omija obronę fizyczną.',reward:{gold:90,xp:280}},
     {id:'magma-golem',name:'Golem Magmowy',level:15,maxHp:480,stats:[38,8,20,36],attack:[39,55],tile:0,atlas:'magma-golem',minPlayerLevel:5,maxPlayerLevel:15,physicalArmor:8,waterWeakness:50,traits:'Skalna obrona: pochłania 8 obrażeń fizycznych (minimum 1 obrażenie). Podatność na magię wody: +50% obrażeń.',reward:{gold:100,xp:300}}
   ],undercity:[
     {id:'mud-snake',name:'Wąż błotny',level:1,maxHp:70,stats:[6,8,1,5],attack:[7,10],tile:0,atlas:'undercity'},
@@ -159,12 +160,22 @@
     const resistance=element==='physical'&&Number.isSafeInteger(current[target].physicalResistance)?Math.min(100,Math.max(0,current[target].physicalResistance)):0;
     const resistanceIgnored=Math.floor(resistance*piercing/100);
     const damage=Math.max(1,Math.floor(afterArmor*(100-resistance+resistanceIgnored)/100)),resisted=afterArmor-damage;
+    let magicWave=null;
+    if(triggered&&special.type==='magic-wave'){
+      if(!Number.isSafeInteger(special.damage)||special.damage<1)throw new Error('Nieprawidłowe obrażenia fali magicznej.');
+      const vulnerability=Number.isSafeInteger(current[target].magicVulnerability)?Math.max(0,current[target].magicVulnerability):0;
+      const bonus=Math.floor(special.damage*vulnerability/100),waveRaw=special.damage+bonus;
+      if(!Number.isSafeInteger(waveRaw))throw new Error('Nieprawidłowe obrażenia fali magicznej.');
+      const waveAbsorbed=Math.min(waveRaw-1,generalArmor),remainingHp=Math.max(0,current[target].hp-damage);
+      magicWave={damage:Math.min(waveRaw-waveAbsorbed,remainingHp),absorbed:remainingHp>0?waveAbsorbed:0,bonus:remainingHp>0?bonus:0};
+    }
+    const totalDamage=Math.min(damage,current[target].hp)+(magicWave?.damage||0);
     const attacker={...current[actor],attackCount,...(mana?{maxMana:mana.max,mana:mana.current-(fireball?FIREBALL.manaCost:0)}:{})};
-    const hp=Math.max(0,current[target].hp-damage);
+    const hp=Math.max(0,current[target].hp-totalDamage);
     const poisonApplied=triggered&&special.type==='dot'&&hp>0?{damage:special.damage,turns:special.turns,label:special.label}:null;
     const defender={...current[target],hp,poisonEffect:hp===0?null:poisonApplied||current[target].poisonEffect||null};
     const ability=triggered?special.ability:fireball?'fireball':element==='water'?'water':mage?'wand':poison?'poison':piercing?'piercing':'attack';
-    return {...current,[actor]:attacker,[target]:defender,next:target,hits:battle.hits+1,winner:hp===0?actor:null,lastHit:{actor,target,damage:Math.min(damage,current[target].hp),ability,absorbed,ignoredArmor,element,weaknessBonus,magicBonus,resisted,resistanceIgnored,powerBonus,rageBonus,ragePercent:rage,poisonTick,poisonApplied,manaCost:fireball?FIREBALL.manaCost:0}};
+    return {...current,[actor]:attacker,[target]:defender,next:target,hits:battle.hits+1,winner:hp===0?actor:null,lastHit:{actor,target,damage:totalDamage,magicWave,ability,absorbed,ignoredArmor,element,weaknessBonus,magicBonus,resisted,resistanceIgnored,powerBonus,rageBonus,ragePercent:rage,poisonTick,poisonApplied,manaCost:fireball?FIREBALL.manaCost:0}};
   }
   function fighterMarkup(side){return `<article class="combat-fighter" data-fighter="${side}"><div class="combat-portrait"><div class="combat-figure"></div><span class="combat-empty-icon rpg-icon icon-arena" aria-hidden="true"></span><span class="combat-damage" aria-hidden="true"></span><div class="combat-identity"><h3></h3><span class="combat-level"></span></div></div><div class="combat-health"><progress max="1" value="0" aria-label="Punkty życia"></progress><strong></strong></div><div class="combat-mana" hidden><progress max="1" value="0" aria-label="Punkty many"></progress><strong></strong></div><dl class="combat-stats">${LABELS.map(label=>`<div><dt>${label}</dt><dd>—</dd></div>`).join('')}</dl><p class="combat-traits" hidden></p><p class="combat-effects" hidden role="status"></p></article>`;}
   function renderFighter(root,fighter){
@@ -173,7 +184,7 @@
     const figure=root.querySelector('.combat-figure');
     figure.className='combat-figure';
     figure.style.cssText='';
-    if(Number.isInteger(fighter?.tile)){figure.classList.add('monster-avatar');if(fighter.atlas==='bloodthirsty-flower')figure.classList.add('monster-bloodthirsty-flower');if(fighter.atlas==='cursed-stag')figure.classList.add('monster-cursed-stag');if(fighter.atlas==='ancient-forest-spirit')figure.classList.add('monster-ancient-forest-spirit');if(fighter.atlas==='birch-werewolf')figure.classList.add('monster-birch-werewolf');if(fighter.atlas==='wraith-archer')figure.classList.add('monster-wraith-archer');if(fighter.atlas==='centipede')figure.classList.add('monster-centipede');if(fighter.atlas==='chain-troll')figure.classList.add('monster-chain-troll');if(fighter.atlas==='spore-crawler')figure.classList.add('monster-spore-crawler');if(fighter.atlas==='magma-golem')figure.classList.add('monster-magma-golem');if(fighter.atlas==='undead-miner')figure.classList.add('monster-undead-miner');if(fighter.atlas==='scorpion')figure.classList.add('monster-scorpion');if(fighter.atlas==='aelira')figure.classList.add('monster-aelira');if(fighter.atlas==='devourer')figure.classList.add('monster-devourer');if(fighter.atlas==='spectral-knight')figure.classList.add('monster-spectral-knight');if(fighter.atlas==='demoness')figure.classList.add('monster-demoness');if(fighter.atlas==='whisperer')figure.classList.add('monster-whisperer');if(fighter.atlas==='mine')figure.classList.add('monster-mine');if(fighter.atlas==='undercity')figure.classList.add('monster-undercity');if(fighter.atlas==='tauriel')figure.classList.add('monster-tauriel');figure.style.setProperty('--monster-position',fighter.atlas==='tauriel'?`${fighter.tile*50}% 0%`:`${fighter.tile%2*100}% ${Math.floor(fighter.tile/2)*100}%`);}
+    if(Number.isInteger(fighter?.tile)){figure.classList.add('monster-avatar');if(fighter.atlas==='abyss-bellringer')figure.classList.add('monster-abyss-bellringer');if(fighter.atlas==='bloodthirsty-flower')figure.classList.add('monster-bloodthirsty-flower');if(fighter.atlas==='cursed-stag')figure.classList.add('monster-cursed-stag');if(fighter.atlas==='ancient-forest-spirit')figure.classList.add('monster-ancient-forest-spirit');if(fighter.atlas==='birch-werewolf')figure.classList.add('monster-birch-werewolf');if(fighter.atlas==='wraith-archer')figure.classList.add('monster-wraith-archer');if(fighter.atlas==='centipede')figure.classList.add('monster-centipede');if(fighter.atlas==='chain-troll')figure.classList.add('monster-chain-troll');if(fighter.atlas==='spore-crawler')figure.classList.add('monster-spore-crawler');if(fighter.atlas==='magma-golem')figure.classList.add('monster-magma-golem');if(fighter.atlas==='undead-miner')figure.classList.add('monster-undead-miner');if(fighter.atlas==='scorpion')figure.classList.add('monster-scorpion');if(fighter.atlas==='aelira')figure.classList.add('monster-aelira');if(fighter.atlas==='devourer')figure.classList.add('monster-devourer');if(fighter.atlas==='spectral-knight')figure.classList.add('monster-spectral-knight');if(fighter.atlas==='demoness')figure.classList.add('monster-demoness');if(fighter.atlas==='whisperer')figure.classList.add('monster-whisperer');if(fighter.atlas==='mine')figure.classList.add('monster-mine');if(fighter.atlas==='undercity')figure.classList.add('monster-undercity');if(fighter.atlas==='tauriel')figure.classList.add('monster-tauriel');figure.style.setProperty('--monster-position',fighter.atlas==='tauriel'?`${fighter.tile*50}% 0%`:`${fighter.tile%2*100}% ${Math.floor(fighter.tile/2)*100}%`);}
     if(fighter&&Object.hasOwn(BASE_STATS,fighter.classId)&&['male','female'].includes(fighter.gender))figure.className+=` character ${fighter.gender} ${fighter.classId}`;
     root.classList.toggle('combat-empty',!fighter);
     const hp=fighter?(fighter.hp??fighter.maxHp):0,bar=root.querySelector('progress');
@@ -201,6 +212,7 @@
       card.classList.toggle('combat-struck',battle.lastHit?.target===side||battle.lastHit?.poisonTick?.target===side);
       card.classList.toggle('combat-poison-hit',(battle.lastHit?.target===side&&['poison','poison-tick'].includes(battle.lastHit?.ability))||battle.lastHit?.poisonTick?.target===side);
       card.classList.toggle('combat-piercing-hit',battle.lastHit?.target===side&&['piercing','piercing-arrow'].includes(battle.lastHit?.ability));
+      card.classList.toggle('combat-echo-hit',battle.lastHit?.target===side&&battle.lastHit?.magicWave?.damage>0);
       card.classList.toggle('combat-water-hit',battle.lastHit?.target===side&&battle.lastHit?.element==='water');
       const damage=(battle.lastHit?.target===side?battle.lastHit.damage:0)+(battle.lastHit?.poisonTick?.target===side?battle.lastHit.poisonTick.damage:0);
       card.querySelector('.combat-damage').textContent=damage?`−${damage}`:'';
@@ -210,10 +222,11 @@
     let message='Przeciwnicy stają naprzeciw siebie.';
     if(hit?.ability==='poison-tick')message=`${hit.poisonName}: ${battle[hit.target].name} otrzymuje ${hit.damage} obrażeń.`;
     else if(hit){
-      const verbs={fireball:'rzuca Kulę ognia (−10 many) i zadaje',water:'atakuje magią wody i zadaje',wand:'atakuje różdżką i zadaje',poison:'uderza zatrutym żądłem i zadaje',piercing:'wyprowadza potężny cios kilofem i zadaje','venom-bite':'wykonuje jadowite ukąszenie i zadaje',spores:'wypuszcza trujące zarodniki i zadaje','chain-slam':'wykonuje potężne uderzenie łańcuchami (150%) i zadaje','thorn-grab':'wykonuje Ciernisty Chwyt (+10) i zadaje','cursed-charge':'wykonuje szarżę (150%) i zadaje','piercing-arrow':'wypuszcza Przeszywającą Strzałę i zadaje'};
+      const verbs={fireball:'rzuca Kulę ognia (−10 many) i zadaje',water:'atakuje magią wody i zadaje',wand:'atakuje różdżką i zadaje',poison:'uderza zatrutym żądłem i zadaje',piercing:'wyprowadza potężny cios kilofem i zadaje','venom-bite':'wykonuje jadowite ukąszenie i zadaje',spores:'wypuszcza trujące zarodniki i zadaje','chain-slam':'wykonuje potężne uderzenie łańcuchami (150%) i zadaje','thorn-grab':'wykonuje Ciernisty Chwyt (+10) i zadaje','cursed-charge':'wykonuje szarżę (150%) i zadaje','piercing-arrow':'wypuszcza Przeszywającą Strzałę i zadaje','abyss-echo':'wywołuje Echo Zagłady i zadaje'};
       message=`${battle[hit.actor].name} ${verbs[hit.ability]||'zadaje'} ${hit.damage} obrażeń${hit.ability==='poison'?' od trucizny':''}.`;
       if(hit.poisonTick)message=`${hit.poisonTick.label}: ${battle[hit.poisonTick.target].name} otrzymuje ${hit.poisonTick.damage} obrażeń. `+message;
       if(hit.poisonApplied)message+=` ${hit.poisonApplied.label}: ${hit.poisonApplied.damage} obrażeń przez ${hit.poisonApplied.turns} tury celu.`;
+      if(hit.magicWave){message+=` W tym ${hit.damage-hit.magicWave.damage} obrażeń fizycznych i ${hit.magicWave.damage} magicznych od fali.`;if(hit.magicWave.bonus)message+=` Podatność na magię fali: +${hit.magicWave.bonus} obrażeń.`;if(hit.magicWave.absorbed)message+=` Pancerz pochłania ${hit.magicWave.absorbed} obrażenia fali.`;}
       if(hit.ragePercent)message+=` Furia: +${hit.ragePercent}% obrażeń.`;
       if(hit.magicBonus)message+=` Podatność na magię: +${hit.magicBonus} obrażeń.`;
       if(hit.resisted)message+=` Odporność fizyczna pochłania ${hit.resisted} obrażeń.`;
@@ -238,7 +251,7 @@
     return stop;
   }
   function markup(){
-    return '<p class="combat-availability">Potwory podstawowe: poziomy postaci 1–5. Wzmocnione potwory Mrocznego Lasu: poziomy postaci 5–15. Wzmocnione potwory Starej Kopalni (Skorpion, Stonóg, Górnik, Troll, Pełzacz i Golem): poziomy postaci 5–15. Brand przydziela przeciwnika automatycznie. Podgląd jest bezpłatny.</p><p class="combat-entry-error" role="status"></p>';
+    return '<p class="combat-availability">Potwory podstawowe: poziomy postaci 1–5. Wzmocnione potwory Mrocznego Lasu: poziomy postaci 5–15. Wzmocnione potwory Starej Kopalni (Skorpion, Stonóg, Górnik, Troll, Pełzacz, Dzwonnik i Golem): poziomy postaci 5–15. Brand przydziela przeciwnika automatycznie. Podgląd jest bezpłatny.</p><p class="combat-entry-error" role="status"></p>';
   }
   function mount(container,state){
     container.innerHTML=markup();

@@ -428,3 +428,10 @@ Pięć nowych potworów z osobnymi awatarami występuje w trudniejszych zlecenia
 | Upiorny Łucznik | 13 | 330 | 30–41 | 75 | 370 | Przeszywająca Strzała co 3. własny atak: pomija 30% pancerza i odporności fizycznej celu. |
 
 Premie do ataku są naliczane przed obroną; procentowe zwiększenia i końcowe obrażenia po odporności są zaokrąglane w dół, z minimum 1 obrażeniem. Odporność procentowa działa po redukcji pancerza. Furia jest obliczana z aktualnego HP na początku ataku, także po obrażeniach od zatrucia; dokładnie 30% HP nie uruchamia furii. Przebicie pomija zaokrągloną w dół część pancerza i odporności. Obecne wyposażenie bohatera zwiększa cechy i HP, a nie redukcję pancerza — dodatkowy efekt Przeszywającej Strzały ma znaczenie, gdy cel taką redukcję posiada. Liczniki i cechy pozostają w migawce walki przy odświeżeniu oraz przewijaniu. Nagrody obejmują wyłącznie podane złoto i EXP.
+
+
+## Dzwonnik Otchłani — Stara Kopalnia
+
+Przeciwnik poziomu 14 występuje w trudniejszych misjach Branda dla postaci poziomu 5–15, wyłącznie w Starej Kopalni. Ma 390 HP, cechy 34/10/24/30 i atak fizyczny 32–43. Nagroda za zwycięstwo: dokładnie 90 złota i 280 EXP, bez przedmiotów i odłamków; porażka nie daje nagrody. Awatar `abyss-bellringer.webp` przedstawia przygarbionego olbrzyma z czarną szczeliną zamiast twarzy i pękniętym dzwonem przykutym do pleców.
+
+Echo Zagłady co czwarty własny atak dodaje osobną falę 12 bazowych obrażeń magicznych (bez kosztu many). Bez obrony czwarty cios zadaje łącznie 44–55 obrażeń. Podstawowy cios jest fizyczny; fala omija `physicalArmor` i procentową `physicalResistance`, lecz nadal podlega ogólnej redukcji `armor` oraz podatności `magicVulnerability`. Ogólny pancerz działa osobno na oba składniki, z minimum 1 obrażeniem na składnik. Fala nie zadaje obrażeń celowi już zabitemu przez podstawowy cios; komunikat i liczba nad portretem pokazują faktyczną utratę HP. Licznik ataków i zasady fali zapisują się z walką, a przewijanie korzysta z tego samego silnika. HP i podstawowy atak są niższe niż u Golema Magmowego; premia do czwartego ciosu wyróżnia Dzwonnika na tle Trolla i Pełzacza.

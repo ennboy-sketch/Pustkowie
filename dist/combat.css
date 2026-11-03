@@ -50,3 +50,6 @@ dialog.combat-dialog{position:fixed;inset:0;margin:0;padding:0;border:0;border-r
 
 .combat-portrait .combat-figure.monster-wraith-archer{--monster-art:url('wraith-archer.webp');--monster-grid:100% 100%}
 .combat-enraged .combat-portrait{border-color:#e08b62;box-shadow:0 0 16px #d94a2b66}
+
+.combat-portrait .combat-figure.monster-abyss-bellringer{--monster-art:url('abyss-bellringer.webp');--monster-grid:100% 100%}
+.combat-echo-hit .combat-damage{color:#a6f0e5;text-shadow:0 2px 3px #164c4a,0 0 12px #000}
