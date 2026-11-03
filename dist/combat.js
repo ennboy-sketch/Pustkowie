@@ -9,7 +9,8 @@
     {id:'wolf',name:'Wilk',level:2,maxHp:90,stats:[8,10,2,6],attack:[9,13],tile:1},
     {id:'dryad',name:'Driada',level:3,maxHp:110,stats:[5,8,13,7],attack:[11,16],tile:2},
     {id:'goblin',name:'Goblin',level:5,maxHp:135,stats:[11,12,5,9],attack:[13,19],tile:3},
-    {id:'tree-whisperer',name:'Szeptun drzewny',level:8,maxHp:210,stats:[18,8,16,14],attack:[18,25],tile:0,atlas:'whisperer',minPlayerLevel:5,maxPlayerLevel:15,reward:{gold:25,xp:150}}
+    {id:'tree-whisperer',name:'Szeptun drzewny',level:8,maxHp:210,stats:[18,8,16,14],attack:[18,25],tile:0,atlas:'whisperer',minPlayerLevel:5,maxPlayerLevel:15,reward:{gold:25,xp:150}},
+    {id:'forest-demoness',name:'Demonica Puszczy',level:9,maxHp:235,stats:[15,22,20,16],attack:[20,27],tile:0,atlas:'demoness',minPlayerLevel:5,maxPlayerLevel:15,reward:{gold:35,xp:190}}
   ],mine:[
     {id:'ghost',name:'Duch',level:1,maxHp:70,stats:[2,6,9,5],attack:[7,10],tile:0,atlas:'mine'},
     {id:'bandit',name:'Rozbójnik',level:2,maxHp:90,stats:[9,8,3,6],attack:[9,13],tile:1,atlas:'mine'},
@@ -115,7 +116,7 @@
     const figure=root.querySelector('.combat-figure');
     figure.className='combat-figure';
     figure.style.cssText='';
-    if(Number.isInteger(fighter?.tile)){figure.classList.add('monster-avatar');if(fighter.atlas==='whisperer')figure.classList.add('monster-whisperer');if(fighter.atlas==='mine')figure.classList.add('monster-mine');if(fighter.atlas==='undercity')figure.classList.add('monster-undercity');if(fighter.atlas==='tauriel')figure.classList.add('monster-tauriel');figure.style.setProperty('--monster-position',fighter.atlas==='tauriel'?`${fighter.tile*50}% 0%`:`${fighter.tile%2*100}% ${Math.floor(fighter.tile/2)*100}%`);}
+    if(Number.isInteger(fighter?.tile)){figure.classList.add('monster-avatar');if(fighter.atlas==='demoness')figure.classList.add('monster-demoness');if(fighter.atlas==='whisperer')figure.classList.add('monster-whisperer');if(fighter.atlas==='mine')figure.classList.add('monster-mine');if(fighter.atlas==='undercity')figure.classList.add('monster-undercity');if(fighter.atlas==='tauriel')figure.classList.add('monster-tauriel');figure.style.setProperty('--monster-position',fighter.atlas==='tauriel'?`${fighter.tile*50}% 0%`:`${fighter.tile%2*100}% ${Math.floor(fighter.tile/2)*100}%`);}
     if(fighter&&Object.hasOwn(BASE_STATS,fighter.classId)&&['male','female'].includes(fighter.gender))figure.className+=` character ${fighter.gender} ${fighter.classId}`;
     root.classList.toggle('combat-empty',!fighter);
     const hp=fighter?(fighter.hp??fighter.maxHp):0,bar=root.querySelector('progress');
@@ -153,7 +154,7 @@
     return stop;
   }
   function markup(){
-    return '<p class="combat-availability">Potwory podstawowe: poziomy postaci 1–5. Szeptun drzewny w Mrocznym Lesie: poziomy postaci 5–15. Brand przydziela przeciwnika automatycznie. Podgląd jest bezpłatny.</p><p class="combat-entry-error" role="status"></p>';
+    return '<p class="combat-availability">Potwory podstawowe: poziomy postaci 1–5. Szeptun drzewny i Demonica Puszczy w Mrocznym Lesie: poziomy postaci 5–15. Brand przydziela przeciwnika automatycznie. Podgląd jest bezpłatny.</p><p class="combat-entry-error" role="status"></p>';
   }
   function mount(container,state){
     container.innerHTML=markup();

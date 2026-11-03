@@ -17,3 +17,5 @@ dialog.combat-dialog{position:fixed;inset:0;margin:0;padding:0;border:0;border-r
 .casting-fireball .combat-portrait{border-color:#edaf5f;box-shadow:0 0 22px #e7793999,inset 0 0 15px #d8702533}.casting-fireball .combat-mana{border-color:#b6c7e5}
 
 .combat-portrait .combat-figure.monster-whisperer{--monster-art:url('tree-whisperer.webp');--monster-grid:100% 100%}
+
+.combat-portrait .combat-figure.monster-demoness{--monster-art:url('forest-demoness.webp');--monster-grid:100% 100%}

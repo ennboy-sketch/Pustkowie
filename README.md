@@ -358,3 +358,8 @@ Nowe zwiady łatwiejsze i trudniejsze trwają tyle samo na danym poziomie: 1–2
 ## Szeptun drzewny — Mroczny Las
 
 Nowy przeciwnik poziomu 8 pojawia się w trudniejszych zleceniach walki Branda dla postaci poziomu 5–15, wyłącznie w Mrocznym Lesie. Ma 210 HP, cechy 18/8/16/14 oraz obrażenia 18–25. Zwycięstwo daje dokładnie 25 złota i 150 EXP, bez przedmiotów; porażka nie daje nagrody. Awatar `tree-whisperer.webp` przedstawia spróchniałe drzewo z twarzami w korze i pnączami przypominającymi ramiona. Dotychczasowe potwory pozostają dostępne na poziomach postaci 1–5. Rozpoczęte walki zachowują zapis przeciwnika i nagrody.
+
+
+## Demonica Puszczy — Mroczny Las
+
+Przeciwniczka poziomu 9 występuje w trudniejszych misjach Branda dla postaci poziomu 5–15, wyłącznie w Mrocznym Lesie. Ma 235 HP, cechy 15/22/20/16 oraz obrażenia 20–27. Zwycięstwo daje dokładnie 35 złota i 190 EXP, bez przedmiotów; porażka nie daje nagrody. Awatar `forest-demoness.webp` przedstawia dorosłą błękitnoskórą demonicę o czarnych chitynowych rogach, w czarnej łuskowej zbroi i ze złożonymi skórzastymi skrzydłami.
