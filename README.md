@@ -38,7 +38,7 @@ Menu, znaczniki mapy i panele korzystają z lokalnego atlasu `dist/rpg-icons.web
 
 ## Koło Losu przy fontannie
 
-Centralna fontanna ma znacznik Koło Losu. Panel zawiera 12 nieodkrytych pól, animowany obrót podglądowy i roboczy koszt 10 odłamków. Nagrody nie są jeszcze zdefiniowane, dlatego płatny obrót pozostaje zablokowany. Darmowy podgląd nie pobiera waluty, nie przyznaje nagród i nie zmienia zapisu postaci. Zamknięcie panelu przerywa animację. Koszt w `wheel.js` można zmienić po ustaleniu zasad; pole `hero.shards` (nieujemna liczba całkowita) określa saldo wyświetlane w kole, starsze zapisy domyślnie mają 0.
+Centralna fontanna ma znacznik Koło Losu. Panel zawiera 12 nieodkrytych pól, animowany obrót podglądowy i koszt obrotu: 1 odłamek lub 100 złota, z osobnymi przyciskami obu opcji i saldami walut. Nagrody nie są jeszcze zdefiniowane, dlatego płatny obrót pozostaje zablokowany. Darmowy podgląd nie pobiera złota ani odłamków, nie przyznaje nagród i nie zmienia zapisu postaci. Zamknięcie panelu przerywa animację. Ceny definiuje stała `FateWheel.COSTS` w `wheel.js` (odłamki: 1, złoto: 100); pole `hero.shards` (nieujemna liczba całkowita) określa saldo wyświetlane w kole, starsze zapisy domyślnie mają 0.
 
 ## Karczma
 

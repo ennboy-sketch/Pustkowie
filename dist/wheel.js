@@ -1,12 +1,13 @@
 'use strict';
 (() => {
-  const COST = 10;
+  const COSTS = Object.freeze({shards:1,gold:100});
   const SLOTS = 12;
   let activeAnimation = null;
   function cancel() { if (activeAnimation) { activeAnimation.cancel(); activeAnimation = null; } }
   function markup(hero) {
     const shards = Number.isSafeInteger(hero.shards) && hero.shards >= 0 ? hero.shards : 0;
-    return `<section class="fate-wheel" aria-label="Koło Losu przy fontannie"><div class="wheel-balances"><span>Twoje odłamki <b><i class="rpg-icon icon-shard" aria-hidden="true"></i> ${shards}</b></span><span>Koszt obrotu <b><i class="rpg-icon icon-shard" aria-hidden="true"></i> ${COST}</b></span></div><div class="wheel-board" role="img" aria-label="Koło z dwunastoma nieodkrytymi polami nagród"><div class="wheel-pointer" aria-hidden="true"></div><div class="wheel-rim" aria-hidden="true"></div><div class="wheel-disc" aria-hidden="true">${Array.from({length:SLOTS},(_,i)=>`<span class="wheel-slot" style="--angle:${i*30+15}deg">?</span>`).join('')}</div><div class="wheel-hub" aria-hidden="true"><span>✦</span></div></div><p class="wheel-caption">Nagrody ustalimy później</p><button class="primary paid-spin" type="button" disabled>Zakręć · ${COST} odłamków</button><button class="secondary preview-spin" type="button">Obróć podgląd za darmo</button><p class="wheel-result" role="status" aria-live="polite"></p><p class="panel-note wheel-note">Płatne obroty będą dostępne po dodaniu nagród. Podgląd nie pobiera odłamków i nie przyznaje nagród.</p></section>`;
+    const gold = Number.isSafeInteger(hero.gold) && hero.gold >= 0 ? hero.gold : 25;
+    return `<section class="fate-wheel" aria-label="Koło Losu przy fontannie"><div class="wheel-balances"><span>Twoje odłamki <b><i class="rpg-icon icon-shard" aria-hidden="true"></i> ${shards}</b></span><span>Twoje złoto <b><i class="rpg-icon icon-coin" aria-hidden="true"></i> ${gold}</b></span></div><div class="wheel-board" role="img" aria-label="Koło z dwunastoma nieodkrytymi polami nagród"><div class="wheel-pointer" aria-hidden="true"></div><div class="wheel-rim" aria-hidden="true"></div><div class="wheel-disc" aria-hidden="true">${Array.from({length:SLOTS},(_,i)=>`<span class="wheel-slot" style="--angle:${i*30+15}deg">?</span>`).join('')}</div><div class="wheel-hub" aria-hidden="true"><span>✦</span></div></div><p class="wheel-caption">Nagrody ustalimy później</p><p class="wheel-cost">Koszt obrotu: ${COSTS.shards} odłamek lub ${COSTS.gold} złota</p><button class="primary paid-spin" type="button" data-spin-currency="shards" disabled>Zakręć · ${COSTS.shards} odłamek</button><button class="primary paid-spin" type="button" data-spin-currency="gold" disabled>Zakręć · ${COSTS.gold} złota</button><button class="secondary preview-spin" type="button">Obróć podgląd za darmo</button><p class="wheel-result" role="status" aria-live="polite"></p><p class="panel-note wheel-note">Płatne obroty będą dostępne po dodaniu nagród. Podgląd nie pobiera złota ani odłamków i nie przyznaje nagród.</p></section>`;
   }
   function mount(container) {
     cancel();
@@ -27,9 +28,9 @@
         if (activeAnimation !== animation || !disc.isConnected) return;
         rotation = end; disc.style.transform = `rotate(${end}deg)`;
         activeAnimation = null; animation.cancel(); button.disabled = false;
-        status.textContent = 'Podgląd zakończony. Nie pobrano odłamków.';
+        status.textContent = 'Podgląd zakończony. Nie pobrano złota ani odłamków.';
       }, () => { if (activeAnimation === animation) activeAnimation = null; });
     });
   }
-  window.FateWheel = {markup,mount,cancel};
+  window.FateWheel = {markup,mount,cancel,COSTS};
 })();
