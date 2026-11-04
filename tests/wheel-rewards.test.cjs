@@ -1,6 +1,6 @@
 const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm'),path=require('node:path'),{webcrypto}=require('node:crypto');
 function run(){const r=vm.createContext({crypto:webcrypto});r.window=r;for(const n of ['progression','energy','gear-catalog','hero','wheel','combat','missions'])vm.runInContext(fs.readFileSync(path.join(__dirname,'../dist',n+'.js'),'utf8'),r);return r}
-const hero=()=>({version:2,name:'Test',classId:'warrior',gender:'male',level:10,gold:1000,shards:20,energy:50,nextEnergyResetAt:Date.now()+86400000});
+const hero=()=>({version:2,name:'Test',classId:'warrior',gender:'male',level:9,gold:1000,shards:20,energy:50,nextEnergyResetAt:Date.now()+86400000});
 function win(r,h,id,currency='shards'){return r.FateWheel.spin(h,currency,()=>r.FateWheel.pool(h).findIndex(x=>x.id===id))}
 for(const id of ['energy','pony','rare','potion','gem','xp','scroll'])test('wheel reward '+id+' is saved once with the selected cost',()=>{const r=run(),h=hero(),before=JSON.stringify(h);for(const currency of ['gold','shards']){const n=win(r,h,id,currency);assert.equal(JSON.stringify(h),before);assert.equal(n.gold,h.gold-(currency==='gold'?100:0));assert.equal(n.shards,h.shards-(currency==='shards'?1:0));assert.equal(n.lastWheel.reward,id);if(id==='energy')assert.equal(n.energy,75);if(id==='pony')assert.equal(n.warPony,true);if(id==='rare')assert.equal(n.rareMaterial,1);if(id==='gem')assert.equal(n.gemFragments,1);if(id==='scroll')assert.equal(n.spellScrolls,1);if(id==='xp')assert.equal(n.xp,250);if(id==='potion')assert.equal(n.lootInventory.filter(i=>i.kind==='power-potion').length,1)}});
 test('unaffordable spins and invalid draws cannot charge or award',()=>{const r=run();for(const h of [{...hero(),gold:99},{...hero(),shards:0}]){const before=JSON.stringify(h);assert.throws(()=>r.FateWheel.spin(h,h.gold===99?'gold':'shards'));assert.equal(JSON.stringify(h),before)}assert.throws(()=>r.FateWheel.spin(hero(),'gold',()=>999));assert.throws(()=>r.FateWheel.spin(hero(),'wrong'))});
@@ -27,4 +27,19 @@ test('previously equipped potion gets one saved deadline; unused potions remain 
  const worn={...base,equipment:{special:item.id}},next=r.HeroSheet.activatePotion(worn,1000);
  assert.equal(next.lootInventory[0].powerExpiresAt,10801000);assert.equal(item.powerExpiresAt,undefined);
  assert.equal(r.HeroSheet.activatePotion(next,5000),next);
+});
+test('wheel upgrades five rewards exactly at level 10 and retains costs and inventory stacking',()=>{
+ const r=run();for(const level of [9,10,11,119])for(const currency of ['gold','shards']){
+  const base={...hero(),level},high=level>=10;
+  for(const [id,key,amount] of [['energy','energy',high?40:25],['xp','xp',high?10000:250],['scroll','spellScrolls',high?3:1],['gem','gemFragments',high?3:1],['rare','rareMaterial',high?3:1]]){
+   const h=win(r,base,id,currency);assert.equal(h[key],(base[key]||0)+amount);assert.equal(h.gold,base.gold-(currency==='gold'?100:0));assert.equal(h.shards,base.shards-(currency==='shards'?1:0));
+   assert.ok(h.lastWheel.name.endsWith(String(amount)));assert.ok(r.FateWheel.markup(base).includes(h.lastWheel.name));
+   if(['scroll','gem','rare'].includes(id))assert.equal(r.HeroSheet.bagItems(h).filter(i=>i.slot==='material').length,1);
+  }
+ }
+ assert.equal(win(r,{...hero(),level:10,energy:90},'energy').energy,100);
+ const full={...hero(),level:10,spellScrolls:5,lootInventory:Array.from({length:24},(_,i)=>({id:'item'+i,slot:'helmet'})),equipment:{}};
+ assert.equal(r.HeroSheet.bagItems(full).length,25);const n=win(r,full,'scroll');assert.equal(n.spellScrolls,8);assert.equal(r.HeroSheet.bagItems(n).length,25);
+ const promoted=win(r,{...hero(),level:9,xp:23900},'xp');assert.equal(promoted.level,10);assert.equal(promoted.xp,150);assert.equal(promoted.lastWheel.name,'EXP +250');
+ assert.equal(r.FateWheel.rewardsFor(promoted).find(x=>x.id==='xp').amount,10000);
 });

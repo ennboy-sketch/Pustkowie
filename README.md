@@ -660,3 +660,7 @@ Po zakończeniu animacji obrotu małe okno pokazuje ikonę i nazwę wylosowanej 
 ## Mikstura mocy — 3 godziny
 
 Pierwsze założenie mikstury do slotu specjalnego zapisuje jej termin ważności: 3 godziny czasu rzeczywistego. W plecaku nieużywana mikstura nie traci czasu. Zdjęcie, ponowne założenie i odświeżenie nie przedłużają działania. Po terminie premia +10 obrażeń znika, a opis oznacza miksturę jako zużytą; ponowne użycie jest zablokowane. Nowe walki odczytują bieżącą premię, rozpoczęte zachowują zapisane parametry. Mikstura założona w starszym zapisie otrzymuje termin przy pierwszej synchronizacji postaci po aktualizacji.
+
+## Większe nagrody koła od poziomu 10
+
+Poziom jest odczytywany przy opłaceniu obrotu. Od poziomu 10 nagrody wynoszą: 10 000 EXP, 3 zwoje zaklęć, 3 kawałki klejnotu, 3 rzadkie materiały lub 40 energii (do limitu 100). Poniżej poziomu 10 pozostają 250 EXP, materiały po 1 sztuce i 25 energii. Kuc i mikstura zachowują swoje zasady. Lista nagród oraz okienko wygranej pokazują właściwe ilości; awans uzyskany z obrotu nie zmienia już przyznanej nagrody.
