@@ -652,3 +652,7 @@ Rozbójnicy Tauriel przyznają teraz także złoto i EXP za każdy nowy wygrany 
 
 Dane kontrolne importu: `tests/monster-balance.expected.json`; testy porównują każdy ID, obliczenie premii oraz wypłaty po zwycięstwie i porażce.
 Test interfejsu nagród Tauriel: `node tests/tauriel-rewards.browser.cjs http://127.0.0.1:8000/`. Sprawdza trzy kolejne walki na komputerze i telefonie.
+
+## Okno wygranej w Kole Losu
+
+Po zakończeniu animacji obrotu małe okno pokazuje ikonę i nazwę wylosowanej nagrody. Przycisk „Zamknij” wraca do koła; nagroda jest już zapisana i zamknięcie nie przyznaje jej ponownie. Wyjście z koła usuwa też okno wygranej. Test siedmiu nagród na komputerze i telefonie: `node tests/wheel-win.browser.cjs http://127.0.0.1:8000/`.
