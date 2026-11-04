@@ -75,7 +75,7 @@
     hero=window.EnergyCycle.apply(readSavedHero());updateProfile();return hero;
   }
   function updateCurrentHero(change) {
-    const updated=change(readCurrentHero());
+    const updated=window.HeroSheet.activatePotion(change(readCurrentHero()));
     localStorage.setItem(HERO_KEY,JSON.stringify(updated));
     hero=updated;updateProfile();return updated;
   }
@@ -85,7 +85,7 @@
     energySyncBusy=true;
     try {
       const sync=()=>{
-        const saved=readSavedHero(),updated=window.EnergyCycle.apply(saved);
+        const saved=readSavedHero(),updated=window.HeroSheet.activatePotion(window.EnergyCycle.apply(saved));
         if(updated!==saved)localStorage.setItem(HERO_KEY,JSON.stringify(updated));
         hero=updated;updateProfile();
       };

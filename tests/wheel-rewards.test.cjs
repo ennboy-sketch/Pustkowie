@@ -9,3 +9,22 @@ test('pony and equipped potion add attack and armor only to new snapshots, with 
 test('pony shortens only new missions by 10%, retains original rewards, survives reload and finishes at its saved deadline',()=>{const r=run(),now=Date.now(),base=hero(),old=r.BrandMissions.start(base,now,()=> 'forest',()=>({xp:77,gold:17}));const n=r.BrandMissions.start({...base,warPony:true},now,()=> 'forest',()=>({xp:77,gold:17}));assert.equal(n.activeMission.durationMs,540000);assert.equal(old.activeMission.durationMs,600000);assert.equal(r.BrandMissions.durationFor(10,'hard',n),9);assert.doesNotThrow(()=>r.BrandMissions.status(JSON.parse(JSON.stringify(n)),now));assert.throws(()=>r.BrandMissions.finish(n,now+539999));assert.equal(r.BrandMissions.finish(n,now+540000).xp,77);assert.equal(r.BrandMissions.status({...old,warPony:true},now).mission.durationMs,600000)});
 test('10 scrolls exchange for 1000 EXP preserving leftovers, other currencies, old heroes and level-up logic',()=>{const r=run();assert.throws(()=>r.FateWheel.exchangeScrolls({...hero(),spellScrolls:9}));const h={...hero(),level:1,xp:0,spellScrolls:13},n=r.FateWheel.exchangeScrolls(h);assert.equal(n.spellScrolls,3);assert.equal(n.level,2);assert.equal(n.xp,700);assert.equal(n.gold,h.gold);assert.equal(n.shards,h.shards);assert.equal(h.spellScrolls,13);assert.throws(()=>r.FateWheel.exchangeScrolls(n))});
 test('full bags exclude new material stacks but accept existing stacks without consuming another slot',()=>{const r=run(),full={...hero(),lootInventory:Array.from({length:25},(_,i)=>({id:'bag-'+i,slot:'helmet'})),equipment:{}};assert.ok(r.FateWheel.pool(full).every(x=>!['rare','gem','scroll','potion'].includes(x.id)));for(const [id,key] of [['rare','rareMaterial'],['gem','gemFragments'],['scroll','spellScrolls']]){const h={...full,lootInventory:full.lootInventory.slice(0,24),[key]:5};assert.equal(r.HeroSheet.bagItems(h).length,25);const n=win(r,h,id);assert.equal(n[key],6);assert.equal(r.HeroSheet.bagItems(n).length,25)}const empty={...hero(),rareMaterial:1,gemFragments:2,spellScrolls:10};assert.equal(r.HeroSheet.bagItems(empty).length,3);assert.equal(r.HeroSheet.bagItems(r.FateWheel.exchangeScrolls(empty)).length,2)});
+test('power potion starts only on equip, expires at exactly three hours and never restarts after reload or unequip',()=>{
+ const r=run(),start=1700000000000;r.Date=vm.runInContext('Date',r);r.Date.now=()=>start;
+ const won=win(r,hero(),'potion'),id=won.lootInventory.find(i=>i.kind==='power-potion').id;
+ assert.equal(won.lootInventory.find(i=>i.id===id).powerExpiresAt,undefined);assert.equal(r.FateWheel.bonuses(won).damage,0);
+ let h=r.HeroSheet.equip(won,'special',id);const expiry=start+10800000;
+ assert.equal(h.lootInventory.find(i=>i.id===id).powerExpiresAt,expiry);assert.equal(r.FateWheel.bonuses(h).damage,10);
+ r.Date.now=()=>start+3600000;h=r.HeroSheet.equip(h,'special',null);assert.equal(r.FateWheel.bonuses(h).damage,0);
+ h=r.HeroSheet.equip(JSON.parse(JSON.stringify(h)),'special',id);assert.equal(h.lootInventory.find(i=>i.id===id).powerExpiresAt,expiry);
+ r.Date.now=()=>expiry-1;assert.equal(r.FateWheel.bonuses(h).damage,10);
+ r.Date.now=()=>expiry;assert.equal(r.FateWheel.bonuses(h).damage,0);assert.throws(()=>r.HeroSheet.equip(h,'special',id),/zużyta/);
+ assert.equal(r.HeroSheet.activatePotion(h),h);
+});
+test('previously equipped potion gets one saved deadline; unused potions remain inactive',()=>{
+ const r=run(),item={id:'legacy',kind:'power-potion',slot:'special',name:'Mikstura mocy'},base={...hero(),lootInventory:[item]};
+ assert.equal(r.HeroSheet.activatePotion(base,1000),base);
+ const worn={...base,equipment:{special:item.id}},next=r.HeroSheet.activatePotion(worn,1000);
+ assert.equal(next.lootInventory[0].powerExpiresAt,10801000);assert.equal(item.powerExpiresAt,undefined);
+ assert.equal(r.HeroSheet.activatePotion(next,5000),next);
+});

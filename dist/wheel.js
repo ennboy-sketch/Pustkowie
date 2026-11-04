@@ -4,7 +4,7 @@
  const REWARDS=[{id:'energy',name:'Energia +25',icon:'energy'},{id:'pony',name:'Kuc Bojowy',image:'war-pony.webp'},{id:'rare',name:'Rzadki Materiał ×1',image:'rare-material.webp'},{id:'potion',name:'Mikstura mocy',image:'power-potion.webp'},{id:'gem',name:'Kawałek klejnotu ×1',image:'gem-fragment.webp'},{id:'xp',name:'EXP +250',icon:'exp'},{id:'scroll',name:'Zwój zaklęć ×1',image:'spell-scroll.webp'}];
  let stop=()=>{};function cancel(){stop();stop=()=>{};}
  function count(h,key){const n=h[key]??0;if(!Number.isSafeInteger(n)||n<0)throw Error('Nieprawidłowy zapis materiałów.');return n;}
- function bonuses(h){return {damage:(h.warPony?5:0)+(window.HeroSheet.inventory(h).some(i=>i.id===window.HeroSheet.equipment(h).special&&i.kind==='power-potion')?10:0),armor:h.warPony?5:0};}
+ function bonuses(h){return {damage:(h.warPony?5:0)+(window.HeroSheet.inventory(h).some(i=>i.id===window.HeroSheet.equipment(h).special&&window.HeroSheet.potionActive(i))?10:0),armor:h.warPony?5:0};}
  function pool(h){const full=window.HeroSheet.bagItems(h).length>=25;return REWARDS.filter(r=>!full||!['rare','gem','scroll'].includes(r.id)||count(h,{rare:'rareMaterial',gem:'gemFragments',scroll:'spellScrolls'}[r.id])>0).filter(r=>r.id!=='pony'||!h.warPony).filter(r=>r.id!=='potion'||window.HeroSheet.bagItems(h).length<25).filter(r=>r.id!=='energy'||window.EnergyCycle.info(h).energy<100);}
  function spin(hero,currency,draw){
   if(!Object.hasOwn(COSTS,currency))throw Error('Nieznana waluta.');

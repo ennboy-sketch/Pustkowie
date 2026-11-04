@@ -656,3 +656,7 @@ Test interfejsu nagród Tauriel: `node tests/tauriel-rewards.browser.cjs http://
 ## Okno wygranej w Kole Losu
 
 Po zakończeniu animacji obrotu małe okno pokazuje ikonę i nazwę wylosowanej nagrody. Przycisk „Zamknij” wraca do koła; nagroda jest już zapisana i zamknięcie nie przyznaje jej ponownie. Wyjście z koła usuwa też okno wygranej. Test siedmiu nagród na komputerze i telefonie: `node tests/wheel-win.browser.cjs http://127.0.0.1:8000/`.
+
+## Mikstura mocy — 3 godziny
+
+Pierwsze założenie mikstury do slotu specjalnego zapisuje jej termin ważności: 3 godziny czasu rzeczywistego. W plecaku nieużywana mikstura nie traci czasu. Zdjęcie, ponowne założenie i odświeżenie nie przedłużają działania. Po terminie premia +10 obrażeń znika, a opis oznacza miksturę jako zużytą; ponowne użycie jest zablokowane. Nowe walki odczytują bieżącą premię, rozpoczęte zachowują zapisane parametry. Mikstura założona w starszym zapisie otrzymuje termin przy pierwszej synchronizacji postaci po aktualizacji.

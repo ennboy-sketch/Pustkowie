@@ -36,6 +36,16 @@
     if(available(hero)<1)throw new Error('Nie masz wolnych punktów cech.');
     const next=allocations(hero);next[id]++;return {...hero,statAllocations:next};
   }
+  const POTION_DURATION=3*60*60*1000;
+  function activatePotion(hero,now=Date.now()){
+    const id=hero.equipment?.special;
+    if(!id)return hero;
+    const items=inventory(hero),item=items.find(i=>i.id===id&&i.kind==='power-potion');
+    if(!item||item.powerExpiresAt!==undefined)return hero;
+    return {...hero,lootInventory:items.map(i=>i.id===id?{...i,powerExpiresAt:now+POTION_DURATION}:i)};
+  }
+  function potionActive(item,now=Date.now()){return item?.kind==='power-potion'&&Number.isSafeInteger(item.powerExpiresAt)&&item.powerExpiresAt>now;}
+  function potionDetails(item){if(item.powerExpiresAt===undefined)return '+10 obrażeń · 3 godziny od pierwszego założenia';if(!potionActive(item))return 'Zużyta · działanie zakończone';const minutes=Math.ceil((item.powerExpiresAt-Date.now())/60000);return `+10 obrażeń · pozostało ${Math.floor(minutes/60)} godz. ${minutes%60} min`;}
   function inventory(hero){
     const items=hero.lootInventory??['weapon','armor'].map((slot,i)=>({id:`starter-${slot}`,slot,name:STARTERS[hero.classId][i]}));
     const stack=MATERIALS.flatMap(([key,id,name])=>{const quantity=hero[key]??0;if(!Number.isSafeInteger(quantity)||quantity<0)throw new Error('Nieprawidłowy zapis materiałów.');return quantity>0?[{id,kind:key==='magicDust'?'magic-dust':'craft-material',slot:'material',materialKey:key,name,quantity}]:[];});
@@ -56,9 +66,10 @@
     if(!SLOTS.some(([key])=>key===slot))throw new Error('Nieznane miejsce wyposażenia.');
     const item=id?inventory(hero).find(item=>item.id===id&&item.slot===slot):null;
     if(id&&!item)throw new Error('Nie masz tego przedmiotu.');
+    if(item?.kind==='power-potion'&&item.powerExpiresAt!==undefined&&!potionActive(item))throw new Error('Ta mikstura jest już zużyta.');
     if(item&&!canEquip(hero,item))throw new Error(window.GearCatalog.reason(hero,item)||'Twoja klasa nie może założyć tego przedmiotu.');
     if(!id&&equipment(hero)[slot]&&bagItems(hero).length>=25)throw new Error('Ekwipunek jest pełny. Najpierw zwolnij miejsce.');
-    return {...hero,lootInventory:inventory(hero),equipment:{...equipment(hero),[slot]:id||null}};
+    return activatePotion({...hero,lootInventory:inventory(hero),equipment:{...equipment(hero),[slot]:id||null}});
   }
   function rollLoot(hero,draw=random){
     if(bagItems(hero).length>=25)return null;
@@ -73,7 +84,7 @@
     if(items.some(i=>i.id===item.id)||bagItems(hero).length>=25)return hero;
     return {...hero,lootInventory:[...items,item]};
   }
-  function itemDetails(item){const bonus=item?.kind==='power-potion'?'+10 obrażeń po założeniu':item?.id==='tauriel-emerald-necklace'?'+100 HP':window.MarketPanel?.describeItem(item)||'',restriction=window.GearCatalog.details(item)||(item?.slot==='armor'?BODY_TYPES[armorType(item)]?.restriction||'':'');return [bonus,restriction].filter(Boolean).map(text=>' · '+text).join('');}
+  function itemDetails(item){const bonus=item?.kind==='power-potion'?potionDetails(item):item?.id==='tauriel-emerald-necklace'?'+100 HP':window.MarketPanel?.describeItem(item)||'',restriction=window.GearCatalog.details(item)||(item?.slot==='armor'?BODY_TYPES[armorType(item)]?.restriction||'':'');return [bonus,restriction].filter(Boolean).map(text=>' · '+text).join('');}
   function starterIconClass(item,hero){
     if(!item||!hero)return null;
     if(item.id==='starter-weapon'&&item.slot==='weapon'){
@@ -174,5 +185,5 @@
     root.addEventListener('click',click);picker.addEventListener('click',pick);window.addEventListener('storage',storage);render();
     return ()=>{disposed=true;stopBag();bag.removeEventListener('click',closeBag);if(bag.open)bag.close();bag.remove();root.removeEventListener('click',click);picker.removeEventListener('click',pick);window.removeEventListener('storage',storage);if(picker.open)picker.close();picker.remove();};
   }
-  window.HeroSheet={art,iconClass,starterIconClass,canEquip,armorType,slotLabel,itemSlotLabel,manaCapacity,mount,mountBag,bagItems,hpBonus,bonuses,luck,chance,available,allocate,rollLoot,receiveLoot,inventory,equipment,equip,inventoryMarkup,SLOTS};
+  window.HeroSheet={POTION_DURATION,activatePotion,potionActive,art,iconClass,starterIconClass,canEquip,armorType,slotLabel,itemSlotLabel,manaCapacity,mount,mountBag,bagItems,hpBonus,bonuses,luck,chance,available,allocate,rollLoot,receiveLoot,inventory,equipment,equip,inventoryMarkup,SLOTS};
 })();
