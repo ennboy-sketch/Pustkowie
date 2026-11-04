@@ -1,6 +1,6 @@
 'use strict';
 (() => {
-  const MATERIALS=[['magicDust','magic-dust-stack','Magiczny pył','magic-dust.webp','Wymiana u Lilith: 25 szt. za 1 odłamek.'],['rareMaterial','material-rare','Rzadki Materiał','rare-material.webp','Do wytwarzania rzadkiego ekwipunku.'],['gemFragments','material-gem','Kawałek klejnotu','gem-fragment.webp','Do wytwarzania biżuterii.'],['spellScrolls','material-scroll','Zwój zaklęć','spell-scroll.webp','Wymiana u Lilith: 10 zwojów za 1000 EXP.']];
+  const MATERIALS=[['magicDust','magic-dust-stack','Magiczny pył','magic-dust.webp','Wymiana u Lilith: 25 szt. za 1 odłamek.'],['rareMaterial','material-rare','Rzadki Materiał','rare-material.webp','Do wytwarzania rzadkiego ekwipunku.'],['gemFragments','material-gem','Kawałek klejnotu','gem-fragment.webp','Do wytwarzania biżuterii.'],['spellScrolls','material-scroll','Zwój zaklęć','spell-scroll.webp','Wymiana u Lilith: nagroda EXP za 10 zwojów zależy od poziomu.']];
   const SLOTS=[['helmet','Hełm'],['armor','Zbroja'],['boots','Buty'],['shield','Tarcza'],['weapon','Broń'],['necklace','Naszyjnik'],['earrings','Kolczyki'],['special','Przedmiot specjalny']];
   const STATS=[['strength','Siła'],['agility','Zręczność'],['intelligence','Inteligencja'],['endurance','Wytrzymałość'],['luck','Szczęście']];
   const DROPS=['Hełm żelaznej straży','Zbroja wędrowca','Buty tropiciela','Tarcza czarnej stali','Ostrze wygnańca','Naszyjnik zielonego płomienia','Kolczyki starego srebra'];
@@ -123,7 +123,7 @@
         grid.append(button);
       }
       const item=items.find(i=>i.id===selected);
-      if(item?.slot==='material'){detail.innerHTML=`<strong>${item.name} ×${item.quantity}</strong><small>${MATERIALS.find(([key])=>key===item.materialKey)?.[4]||'Materiał'}</small>`;}
+      if(item?.slot==='material'){detail.innerHTML=`<strong>${item.name} ×${item.quantity}</strong><small>${item.materialKey==='spellScrolls'?`Wymiana u Lilith: 10 zwojów za ${window.FateWheel?.scrollXp(hero)??1000} EXP.`:MATERIALS.find(([key])=>key===item.materialKey)?.[4]||'Materiał'}</small>`;}
       else if(item){detail.innerHTML='<strong></strong><small></small><button type="button" class="secondary" data-bag-equip>Załóż przedmiot</button>';detail.querySelector('strong').textContent=item.name;detail.querySelector('small').textContent=(itemSlotLabel(item))+itemDetails(item);detail.querySelector('button').disabled=busy||!canEquip(hero,item);if(!canEquip(hero,item))detail.querySelector('button').textContent=window.GearCatalog.reason(hero,item)||'Niedostępne dla tej klasy';}
       else{selected=null;detail.innerHTML='<p>Wybierz przedmiot, aby go obejrzeć lub założyć.</p>';}
     }

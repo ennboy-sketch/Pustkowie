@@ -664,3 +664,7 @@ Pierwsze założenie mikstury do slotu specjalnego zapisuje jej termin ważnośc
 ## Większe nagrody koła od poziomu 10
 
 Poziom jest odczytywany przy opłaceniu obrotu. Od poziomu 10 nagrody wynoszą: 10 000 EXP, 3 zwoje zaklęć, 3 kawałki klejnotu, 3 rzadkie materiały lub 40 energii (do limitu 100). Poniżej poziomu 10 pozostają 250 EXP, materiały po 1 sztuce i 25 energii. Kuc i mikstura zachowują swoje zasady. Lista nagród oraz okienko wygranej pokazują właściwe ilości; awans uzyskany z obrotu nie zmienia już przyznanej nagrody.
+
+## Wymiana zwojów u Lilith według poziomu
+
+Koszt jednej wymiany nadal wynosi 10 zwojów. Nagroda EXP zależy od poziomu postaci przed wymianą: poziomy 1–9 → 1000 EXP, 10–19 → 30 000 EXP, od 20 → 120 000 EXP. Awans po wymianie aktualizuje stawkę następnej wymiany. Opis w ekwipunku, stół alchemiczny i komunikat potwierdzenia korzystają z tych samych zasad.

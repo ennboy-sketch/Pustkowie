@@ -43,3 +43,12 @@ test('wheel upgrades five rewards exactly at level 10 and retains costs and inve
  const promoted=win(r,{...hero(),level:9,xp:23900},'xp');assert.equal(promoted.level,10);assert.equal(promoted.xp,150);assert.equal(promoted.lastWheel.name,'EXP +250');
  assert.equal(r.FateWheel.rewardsFor(promoted).find(x=>x.id==='xp').amount,10000);
 });
+test('Lilith exchanges ten scrolls at the pre-exchange level: 1000 below 10, 30000 from 10, 120000 from 20',()=>{
+ const r=run();for(const [level,xp] of [[1,1000],[9,1000],[10,30000],[19,30000],[20,120000],[21,120000]]){
+  const h={...hero(),level,xp:0,spellScrolls:13},n=r.FateWheel.exchangeScrolls(h),expected=r.Progression.award(h,xp);
+  assert.equal(r.FateWheel.scrollXp(h),xp);assert.equal(n.level,expected.level);assert.equal(n.xp,expected.xp);assert.equal(n.spellScrolls,3);assert.equal(h.spellScrolls,13);assert.equal(n.gold,h.gold);assert.equal(n.shards,h.shards);assert.throws(()=>r.FateWheel.exchangeScrolls(n));
+ }
+ const h={...hero(),level:19,xp:364999,spellScrolls:20},n=r.FateWheel.exchangeScrolls(h);
+ assert.equal(n.level,20);assert.equal(n.xp,29999);assert.equal(r.FateWheel.scrollXp(n),120000);
+ assert.equal(r.FateWheel.exchangeScrolls(n).xp,149999);
+});
