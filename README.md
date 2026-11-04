@@ -11,6 +11,8 @@ Strzałki pozwalają również przełączać klasy. Powrót z ekranu nazwy zacho
 
 ## Uruchomienie
 
+Gra online: [Pustkowie](https://ennboy-sketch.github.io/Pustkowie/dist/). Adres główny `https://ennboy-sketch.github.io/Pustkowie/` automatycznie przekierowuje do gry w `dist/` dzięki plikowi `index.html` w katalogu głównym repozytorium. Plik jest również punktem wejścia GitHub Pages, aby serwis nie wyświetlał README zamiast gry. Przekierowanie zachowuje parametry i fragment adresu, zastępuje wpis w historii oraz nie zmienia domeny ani zapisu postaci w localStorage.
+
 Otwórz `dist/index.html` lub uruchom `python3 -m http.server 8000 --directory dist` i przejdź do `http://localhost:8000`.
 
 Brak zależności i etapu budowania. Fonty Google są opcjonalne. Ilustracje postaci i ikony są oryginalnymi grafikami wygenerowanymi dla Pustkowia; tło kreatora jest lokalnym SVG. Atlas ma 4 kolumny i 2 wiersze: wojownik, mag, elf, krasnolud; najpierw mężczyźni, potem kobiety. Obraz wyświetlany przez CSS bez zewnętrznego serwera.
