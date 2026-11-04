@@ -1,0 +1,15 @@
+const {chromium}=require('playwright'),assert=require('node:assert/strict');
+(async()=>{const browser=await chromium.launch({executablePath:'/usr/bin/chromium',headless:true,args:['--no-sandbox','--disable-dev-shm-usage']});try{for(const width of [1280,390]){
+ const p=await browser.newPage({viewport:{width,height:900}}),errors=[];p.on('pageerror',e=>errors.push(e.message));await p.route('https://fonts.googleapis.com/**',r=>r.abort());await p.goto(process.argv[2]||'http://127.0.0.1:8020/',{waitUntil:'load'});
+ await p.evaluate(()=>localStorage.setItem('pustkowie.hero.v2',JSON.stringify({version:2,name:'Test',classId:'warrior',gender:'female',level:5,xp:0,gold:100,energy:100})));await p.reload({waitUntil:'load'});
+ const entry=p.locator('#map-pins [data-place="glade"]');assert.equal(await entry.innerText(),'Polana');
+ const coords=await entry.evaluate(e=>({x:parseFloat(e.style.getPropertyValue('--x')),y:parseFloat(e.style.getPropertyValue('--y'))}));assert.ok(coords.y>76&&coords.x>48);
+ await entry.scrollIntoViewIfNeeded();await entry.click();await p.waitForFunction(()=>document.querySelector('#town-map').classList.contains('is-glade'));
+ assert.equal(await p.locator('#settlement-title').innerText(),'Polana');assert.equal(await p.locator('.glade-path').count(),3);assert.equal(await p.locator('#place-dialog').isVisible(),false);
+ await p.evaluate(async()=>{const img=new Image();img.src='glade.webp';await img.decode();if(img.naturalWidth<1000)throw Error('Missing panorama');});
+ const view=p.locator('.world-viewport');await view.hover();await p.mouse.wheel(0,-350);await p.waitForTimeout(150);assert.ok(Number(await view.getAttribute('data-zoom-scale'))>1);
+ const box=await view.boundingBox(),before=await view.evaluate(e=>e.scrollLeft);await p.mouse.move(box.x+box.width*.6,box.y+box.height*.6);await p.mouse.down();await p.mouse.move(box.x+box.width*.6-110,box.y+box.height*.6,{steps:12});await p.mouse.up();await p.waitForTimeout(150);assert.ok(await view.evaluate(e=>e.scrollLeft)>before);
+ for(let i=1;i<=3;i++){await p.locator(`[data-place="glade-path-${i}"]`).evaluate(e=>e.click());await p.locator('#place-dialog').waitFor({state:'visible'});assert.match(await p.locator('#place-title').innerText(),/Ścieżka/);await p.locator('#close-place').click();}
+ await p.screenshot({path:`/tmp/glade-${width}.png`});await p.locator('.glade-return').evaluate(e=>e.click());assert.equal(await p.locator('#settlement-title').innerText(),'Zamek Czarnej Stali');assert.equal(await p.locator('.pin-market').count(),1);assert.equal(await p.locator('.pin-glade').count(),1);
+ assert.deepEqual(errors,[]);console.log(`PASS ${width}px: map entrance, panorama, three paths, zoom, dragging, return to castle`);await p.close();
+}}finally{await browser.close();}})().catch(e=>{console.error(e);process.exit(1)});

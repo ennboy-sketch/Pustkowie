@@ -6,3 +6,7 @@ body.playing{background:#080e0c}body.playing:before{opacity:.3}body.playing .gam
 @media(max-width:600px){.profession-grid{grid-template-columns:1fr}}
 
 .xp-info{flex-wrap:wrap;gap:6px}
+
+.town-map.is-glade{background-image:url('glade.webp');background-color:#142519}.pin-glade .pin-medallion{background:#1c3523 url('glade.webp') center/cover no-repeat}.glade-path .pin-medallion{background:radial-gradient(circle,#566341,#13251a)}.glade-return .pin-medallion{background:radial-gradient(circle,#6c6042,#17251b)}
+
+.pin-glade .rpg-icon,.nav-tile[data-place="glade"] .rpg-icon{background-image:url('glade.webp');background-size:cover;background-position:center;border-radius:50%}.glade-path-number{font:600 24px 'Cinzel',Georgia,serif;color:#ead39a;text-shadow:0 2px 4px #000}

@@ -668,3 +668,9 @@ Poziom jest odczytywany przy opłaceniu obrotu. Od poziomu 10 nagrody wynoszą: 
 ## Wymiana zwojów u Lilith według poziomu
 
 Koszt jednej wymiany nadal wynosi 10 zwojów. Nagroda EXP zależy od poziomu postaci przed wymianą: poziomy 1–9 → 1000 EXP, 10–19 → 30 000 EXP, od 20 → 120 000 EXP. Awans po wymianie aktualizuje stawkę następnej wymiany. Opis w ekwipunku, stół alchemiczny i komunikat potwierdzenia korzystają z tych samych zasad.
+
+## Polana — przejście za mury
+
+Na mapie zamku pod Czarnym Targiem i dolnymi schodami znajduje się przejście „Polana” (65%, 94%). Jest też dostępne w menu ŚWIAT. Przenosi do pełnego widoku nowej lokacji z autorską panoramą `glade.webp`, trzema ścieżkami I–III oraz powrotem do zamku. Cele ścieżek pozostają do ustalenia; ich okna informują o niedostępnej dalszej drodze. Samo wejście nie pobiera energii.
+
+Polana używa tego samego mechanizmu przeciągania, bezwładności, gestów dotykowych i przybliżania co miasto. Panorama zachowuje proporcje, a powrót odtwarza położenie mapy zamku. Zmiana mapy resetuje przybliżenie i usuwa poprzedni kontroler gestów. Test: `node tests/glade.browser.cjs http://127.0.0.1:8000/` — wejście z mapy, grafika, ścieżki, przesuwanie, zoom i powrót na szerokościach 1280 i 390 px.

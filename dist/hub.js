@@ -17,6 +17,10 @@
     market:{name:'Czarny Targ',title:'Czarny Targ',category:'Handel',icon:'market',x:48,y:76,text:'Każda rzecz ma tu cenę. Każda moneta swoją historię.',future:'Kupno i sprzedaż'},
     guild:{name:'Zamek',title:'Komnaty z Czarnej Stali',category:'Świat',icon:'castle',x:77,y:12},
     wheel:{name:'Koło Losu',title:'Koło Losu',category:'Fontanna Czarnej Stali',icon:'wheel',x:50,y:39},
+    glade:{name:'Polana',title:'Polana',category:'Świat',icon:'map',x:65,y:94},
+    'glade-path-1':{name:'Ścieżka I',category:'Polana',icon:'map',text:'Ścieżka znika między starymi drzewami. Dalsza droga jest na razie niedostępna.',future:'Dalsza droga'},
+    'glade-path-2':{name:'Ścieżka II',category:'Polana',icon:'map',text:'Kamienny łuk wyznacza początek ścieżki. Dalsza droga jest na razie niedostępna.',future:'Dalsza droga'},
+    'glade-path-3':{name:'Ścieżka III',category:'Polana',icon:'map',text:'Wąska ścieżka prowadzi ku strumieniowi. Dalsza droga jest na razie niedostępna.',future:'Dalsza droga'},
     mount:{name:'Wierzchowiec',category:'Bohater',icon:'mount'},
     help:{name:'Pomoc',category:'Pustkowie',icon:'help'}
   };
@@ -120,6 +124,21 @@
   let stopActiveScout=()=>{};
   let stopHeroSheet=()=>{};
   let stopDungeons=()=>{};
+  let worldLocation='map',townPosition=null;
+  function showWorld(id){
+    const view=$('.world-viewport'),map=$('#town-map'),glade=id==='glade';
+    if(glade&&worldLocation==='map')townPosition={left:view.scrollLeft,top:view.scrollTop};
+    worldLocation=id;map.classList.toggle('is-glade',glade);
+    $('#settlement-title').textContent=glade?'Polana':'Zamek Czarnej Stali';
+    $('.world-kicker').textContent=glade?'ZA MURAMI ZAMKU':'OSTATNIE SCHRONIENIE';
+    $('.world-bottom>span').innerHTML=glade?'<i></i> Na leśnej polanie':'<i></i> W bezpiecznym zamku';
+    $('.map-caption').innerHTML=`<span>✦</span> ${glade?'Polana':'Zamek Czarnej Stali'} <small>Poziom ${level()}</small>`;
+    view.setAttribute('aria-label',glade?'Polana z trzema ścieżkami — przeciągnij, aby przesunąć widok':'Mapa zamku — przeciągnij, aby przesunąć widok');
+    $('#map-pins').innerHTML=glade?[[1,25,35],[2,50,22],[3,78,35]].map(([n,x,y])=>`<button type="button" class="map-pin glade-path" data-place="glade-path-${n}" style="--x:${x}%;--y:${y}%"><span class="pin-medallion"><span class="glade-path-number">${['I','II','III'][n-1]}</span></span><span class="pin-label">Ścieżka ${['I','II','III'][n-1]}</span></button>`).join('')+'<button type="button" class="map-pin glade-return" data-place="map" style="--x:50%;--y:86%"><span class="pin-medallion">'+icon('castle')+'</span><span class="pin-label">Powrót do zamku</span></button>':townPins();
+    window.SceneZoom?.reset(view);
+    requestAnimationFrame(()=>{view.scrollLeft=glade?Math.max(0,(view.scrollWidth-view.clientWidth)/2):townPosition?.left??Math.max(0,(view.scrollWidth-view.clientWidth)/2);view.scrollTop=glade?Math.max(0,(view.scrollHeight-view.clientHeight)/2):townPosition?.top??0;});
+    $('#place-dialog').close();$('#settlement-title').focus({preventScroll:true});
+  }
   function openPlace(id) {
     if (!places[id] || !hero) return;
     if(id==='forge'||id==='dungeon'){
@@ -136,9 +155,8 @@
     window.ForgePanel.cancel();
     window.BarracksPanel.cancel();window.MarketPanel.cancel();
     toggleMenu(false);
-    requestAnimationFrame(() => { const view = $('.world-viewport'); view.scrollLeft = Math.max(0,(view.scrollWidth-view.clientWidth)/2); });
     document.querySelectorAll('.nav-tile').forEach(el => el.setAttribute('aria-current',el.dataset.place === id ? 'page' : 'false'));
-    if (id === 'map') { $('#place-dialog').close(); return; }
+    if (id === 'map'||id==='glade') {showWorld(id);return;}
     const place = places[id];
     $('#place-title').textContent = place.title || place.name;
     $('#place-category').textContent = place.category;
@@ -196,11 +214,12 @@
     if (!dialog.open) dialog.showModal();
   }
   $('#hub-navigation').innerHTML = [
-    ['ŚWIAT',['map','tavern','barracks','arena','dungeon']],
+    ['ŚWIAT',['map','glade','tavern','barracks','arena','dungeon']],
     ['HANDEL',['forge','alchemy','market']],
     ['BOHATER',['hero','inventory','journal','guild','mount']]
   ].map(([name,ids])=>`<div class="nav-group"><h2>${name}</h2><div class="nav-grid">${ids.map(id=>`<button type="button" class="nav-tile" data-place="${id}" aria-current="${id==='map'?'page':'false'}" title="${places[id].name}">${icon(places[id].icon)}<span>${places[id].name}</span></button>`).join('')}</div></div>`).join('');
-  $('#map-pins').innerHTML = Object.entries(places).filter(([,p])=>p.x).map(([id,p])=>`<button type="button" class="map-pin pin-${id}" data-place="${id}" style="--x:${p.x}%;--y:${p.y}%" aria-label="${p.name}"><span class="pin-medallion">${icon(p.icon)}</span><span class="pin-label">${p.name}</span></button>`).join('');
+  function townPins(){return Object.entries(places).filter(([,p])=>p.x).map(([id,p])=>`<button type="button" class="map-pin pin-${id}" data-place="${id}" style="--x:${p.x}%;--y:${p.y}%" aria-label="${p.name}"><span class="pin-medallion">${icon(p.icon)}</span><span class="pin-label">${p.name}</span></button>`).join('');}
+  $('#map-pins').innerHTML=townPins();
   $('#ready').addEventListener('click',e=>{const button=e.target.closest('[data-place]');if(button)openPlace(button.dataset.place);});
   $('#place-content').addEventListener('submit', e => {
     if (e.target.id !== 'profession-form') return;
