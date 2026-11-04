@@ -16,9 +16,9 @@
     if(item?.slot!=='armor')return null;
     return window.MarketPanel?.armorType(item)||item.armorType||(/^(Płaszcz|Szata) /u.test(item.name)?'cloak':/^Pancerz /u.test(item.name)?'light':'heavy');
   }
-  function canEquip(hero,item){if(!item||window.GearCatalog.reason(hero,item))return false;return item.slot!=='armor'||!!BODY_TYPES[armorType(item)]?.classes.includes(hero.classId);}
+  function canEquip(hero,item){if(!item||item.kind==='magic-dust'||window.GearCatalog.reason(hero,item))return false;return item.slot!=='armor'||!!BODY_TYPES[armorType(item)]?.classes.includes(hero.classId);}
   function slotLabel(slot,hero){return slot==='armor'?BODY_TYPES[bodyTypeFor(hero.classId)].label:SLOTS.find(([id])=>id===slot)?.[1]||'';}
-  function itemSlotLabel(item){return item?.slot==='armor'?BODY_TYPES[armorType(item)]?.label||'Ochrona ciała':SLOTS.find(([id])=>id===item?.slot)?.[1]||'';}
+  function itemSlotLabel(item){if(item?.kind==='magic-dust')return 'Materiał alchemiczny';return item?.slot==='armor'?BODY_TYPES[armorType(item)]?.label||'Ochrona ciała':SLOTS.find(([id])=>id===item?.slot)?.[1]||'';}
   function manaCapacity(classId,intelligence){return classId==='mage'?Math.max(0,intelligence)*10:0;}
   function random(max){const a=new Uint32Array(1),limit=4294967296-4294967296%max;do{crypto.getRandomValues(a);}while(a[0]>=limit);return a[0]%max;}
   function allocations(hero){
@@ -37,7 +37,9 @@
   }
   function inventory(hero){
     const items=hero.lootInventory??['weapon','armor'].map((slot,i)=>({id:`starter-${slot}`,slot,name:STARTERS[hero.classId][i]}));
-    return items.map(item=>{
+    const dust=window.MagicDust?window.MagicDust.count(hero):hero.magicDust??0;
+    const stack=dust>0?[{id:'magic-dust-stack',kind:'magic-dust',slot:'material',name:'Magiczny pył',quantity:dust}]:[];
+    return [...stack,...items.filter(item=>item.id!=='magic-dust-stack')].map(item=>{
       if(item.id==='starter-weapon'&&item.slot==='weapon'&&item.name===LEGACY_WEAPONS[hero.classId])return {...item,name:STARTERS[hero.classId][0]};
       if(item.id==='starter-armor'&&item.slot==='armor'&&[LEGACY_ARMOR[hero.classId],STARTERS[hero.classId][1]].includes(item.name))return {...item,name:STARTERS[hero.classId][1],armorType:bodyTypeFor(hero.classId)};
       return item;
@@ -84,7 +86,7 @@
     }
     return null;
   }
-  function iconClass(item,hero){if(item?.kind==='power-potion')return 'gear-art power-potion-art';return window.GearCatalog.iconClass(item)||starterIconClass(item,hero)||(item?.id==='tauriel-emerald-necklace'?'gear-art tauriel-necklace':`gear-art gear-${SLOTS.findIndex(([id])=>id===item?.slot)}`);}
+  function iconClass(item,hero){if(item?.kind==='magic-dust')return 'gear-art magic-dust-art';if(item?.kind==='power-potion')return 'gear-art power-potion-art';return window.GearCatalog.iconClass(item)||starterIconClass(item,hero)||(item?.id==='tauriel-emerald-necklace'?'gear-art tauriel-necklace':`gear-art gear-${SLOTS.findIndex(([id])=>id===item?.slot)}`);}
   function art(i,item,hero){
     if(item)return `<span class="${iconClass(item,hero)}" aria-hidden="true"></span>`;
     return i===7?'<span class="special-slot-mark" aria-hidden="true"></span>':`<span class="gear-art gear-${i}" aria-hidden="true"></span>`;
@@ -101,16 +103,17 @@
       const hero=state.read(),items=bagItems(hero),overflow=Math.max(0,items.length-25);
       root.querySelector('.backpack-count').textContent=`Zajęte miejsca: ${Math.min(25,items.length)} / 25`;
       root.querySelector('.backpack-pending').textContent=overflow?`Dodatkowe przedmioty ze starszego zapisu: ${overflow}. Możesz je założyć przez miejsca wyposażenia postaci.`:items.length>=25?'Ekwipunek pełny — zdobywanie przedmiotów jest zablokowane. Złoto i EXP nadal otrzymujesz.':'';
-      root.querySelector('.backpack-materials').innerHTML=window.MagicDust.markup(hero)+(window.FateWheel?.materialsMarkup(hero)||'');
+      root.querySelector('.backpack-materials').innerHTML=window.FateWheel?.materialsMarkup(hero)||'';
       grid.replaceChildren();
       for(let i=0;i<25;i++){
         const item=items[i],button=document.createElement('button');button.type='button';button.className='backpack-cell';button.dataset.bagIndex=String(i);
-        if(item){button.classList.add('has-item');button.innerHTML=art(SLOTS.findIndex(([slot])=>slot===item.slot),item,hero);button.setAttribute('aria-label',`Miejsce ${i+1}: ${item.name}`);button.title=item.name;}
+        if(item){button.classList.add('has-item');button.innerHTML=art(SLOTS.findIndex(([slot])=>slot===item.slot),item,hero);button.setAttribute('aria-label',`Miejsce ${i+1}: ${item.name}`);button.title=item.name;if(item.kind==='magic-dust'){button.insertAdjacentHTML('beforeend',`<b class="backpack-stack-count">${item.quantity}</b>`);button.setAttribute('aria-label',`Miejsce ${i+1}: Magiczny pył ×${item.quantity}`);}}
         else{button.innerHTML='<span aria-hidden="true">'+(i+1)+'</span>';button.setAttribute('aria-label',`Miejsce ${i+1}: puste`);button.disabled=true;}
         grid.append(button);
       }
       const item=items.find(i=>i.id===selected);
-      if(item){detail.innerHTML='<strong></strong><small></small><button type="button" class="secondary" data-bag-equip>Załóż przedmiot</button>';detail.querySelector('strong').textContent=item.name;detail.querySelector('small').textContent=(itemSlotLabel(item))+itemDetails(item);detail.querySelector('button').disabled=busy||!canEquip(hero,item);if(!canEquip(hero,item))detail.querySelector('button').textContent=window.GearCatalog.reason(hero,item)||'Niedostępne dla tej klasy';}
+      if(item?.kind==='magic-dust'){detail.innerHTML=`<strong>Magiczny pył ×${item.quantity}</strong><small>Materiał alchemiczny. Wymiana u Lilith: 25 szt. za 1 odłamek.</small>`;}
+      else if(item){detail.innerHTML='<strong></strong><small></small><button type="button" class="secondary" data-bag-equip>Załóż przedmiot</button>';detail.querySelector('strong').textContent=item.name;detail.querySelector('small').textContent=(itemSlotLabel(item))+itemDetails(item);detail.querySelector('button').disabled=busy||!canEquip(hero,item);if(!canEquip(hero,item))detail.querySelector('button').textContent=window.GearCatalog.reason(hero,item)||'Niedostępne dla tej klasy';}
       else{selected=null;detail.innerHTML='<p>Wybierz przedmiot, aby go obejrzeć lub założyć.</p>';}
     }
     async function click(e){
