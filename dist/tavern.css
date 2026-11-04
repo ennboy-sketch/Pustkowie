@@ -26,3 +26,5 @@
 @media(max-width:420px){.tavern-npc-dialog.is-mission-reward{padding:25px 18px 21px}.tavern-npc-dialog.is-mission-reward h2{font-size:22px}.mission-reward-items{gap:10px;margin-bottom:20px}.mission-reward-item{padding:15px 8px 13px}.mission-reward-item .rpg-icon{width:59px;height:59px}.mission-reward-item dd{font-size:29px}.reward-ornament{margin:13px 0 20px}}
 
 .mission-reward-shards{grid-column:1 / -1}
+
+.npc-teo{left:46%;top:88%}.teo-profile{display:grid;grid-template-columns:minmax(0,180px) minmax(0,1fr);gap:20px;margin:20px 0;align-items:center}.teo-portrait{aspect-ratio:3/4;border:1px solid #9c844e;background:#152018 url('tavern-with-teo.webp') 41% 43%/360% auto no-repeat;box-shadow:inset 0 0 25px #0008}.tavern-npc-dialog .teo-profile h3{font:600 19px 'Cinzel',Georgia,serif;color:#dec48c}.tavern-npc-dialog .teo-profile p{font-size:12px;line-height:1.8;color:#c4c6ad}.teo-service[hidden]{display:none}@media(max-width:480px){.teo-profile{grid-template-columns:1fr;gap:15px}.teo-portrait{width:190px;max-width:100%;margin:auto}}

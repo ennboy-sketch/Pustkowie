@@ -674,3 +674,9 @@ Koszt jednej wymiany nadal wynosi 10 zwojów. Nagroda EXP zależy od poziomu pos
 Na mapie zamku pod Czarnym Targiem i dolnymi schodami znajduje się przejście „Polana” (65%, 94%). Jest też dostępne w menu ŚWIAT. Przenosi do pełnego widoku nowej lokacji z autorską panoramą `glade.webp`, trzema ścieżkami I–III oraz powrotem do zamku. Cele ścieżek pozostają do ustalenia; ich okna informują o niedostępnej dalszej drodze. Samo wejście nie pobiera energii.
 
 Polana używa tego samego mechanizmu przeciągania, bezwładności, gestów dotykowych i przybliżania co miasto. Panorama zachowuje proporcje, a powrót odtwarza położenie mapy zamku. Zmiana mapy resetuje przybliżenie i usuwa poprzedni kontroler gestów. Test: `node tests/glade.browser.cjs http://127.0.0.1:8000/` — wejście z mapy, grafika, ścieżki, przesuwanie, zoom i powrót na szerokościach 1280 i 390 px.
+
+## Myśliwy Teo po zadaniu Tauriel
+
+Po trzech zwycięstwach w zadaniu Tauriel (status `ready` lub `completed`) jej miejsce przy filarze w dolnej sali zajmuje Myśliwy Teo w skórzanym stroju, z łukiem i kołczanem. Wnętrze zmienia ilustrację na `tavern-with-teo.webp`. Teo ma znacznik rozmowy i portret oraz zapowiedź skupu trofeów z potworów. Lista trofeów, ceny i sprzedaż zostaną dodane później; obecny ekwipunek i nagrody Branda nie zmieniają się. Przed ukończeniem zadania Teo jest ukryty i niedostępny. Tauriel pozostaje na piętrze, gdzie można odebrać naszyjnik.
+
+Test stanów zadania i rozmów: `node tests/teo.browser.cjs http://127.0.0.1:8000/`. Test pełnej misji `tests/tauriel-rewards.browser.cjs` sprawdza też pojawienie się Teo bez przeładowania po trzecim zwycięstwie.

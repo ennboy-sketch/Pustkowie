@@ -30,6 +30,8 @@ const url=process.argv[2]||'http://127.0.0.1:8000/';
       assert.equal(done.energy,100);assert.equal(done.taurielQuest.defeated.length,i+1);
       if(i<2)assert.match(await page.locator('.tauriel-quest-body').innerText(),new RegExp(`Ostatnia wygrana: \\+${rewards[i].gold} złota · \\+${rewards[i].xp} EXP`));
     }
+    assert.equal(await page.locator('[data-npc=teo]').isVisible(),true);
+    assert.equal(await page.locator('[data-npc=tauriel]').isVisible(),false);
     assert.deepEqual(errors,[]);console.log(`PASS ${width}px: all three Tauriel wins, rewards in UI and saved gold/EXP`);
     await page.close();
   }}finally{await browser.close();}
