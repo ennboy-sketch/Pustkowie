@@ -462,3 +462,9 @@ Każda pozycja ma osobny emblemat, wymagany poziom oraz informację o dostępno�
 ## Ikony trzech Lochów
 
 Okno wyboru i widoki lokacji korzystają z osobnych malowanych ikon w stylistyce medalionów Pustkowia: czarna stal, stare złoto i ciemna zieleń. Cmentarzysko przedstawia omszały nagrobek we mgle (`dungeon-graveyard-icon.webp`), Wzgórza Gryfów — gryfa na skalistym szczycie (`dungeon-gryphon-hills-icon.webp`), a Katakumby — wejście do podziemnego grobowca (`dungeon-catacombs-icon.webp`). Grafiki WebP mają 384 × 384 px i przezroczyste tło poza medalionem. Zastępują robocze symbole SVG, zachowują proporcje i są dekoracyjne dla czytników ekranu. Zablokowane lokacje mają przygaszoną ikonę oraz tekst o wymaganym poziomie; wymagania 10/20/30 i zasady wyboru pozostają bez zmian.
+
+## Magiczny pył i wymiana u alchemiczki
+
+Magiczny pył ma osobną ikonę `magic-dust.webp` i licznik `hero.magicDust` (starsze zapisy: 0). Jest zbieranym w stos materiałem widocznym w sekcji materiałów Ekwipunku, również w plecaku otwieranym z karty Bohatera; nie jest wyposażeniem i nie zajmuje jednego z 25 miejsc na uzbrojenie. `MagicDust.award(hero, amount)` przygotowuje dopisanie nagrody do zapisu; nie dodaje niczego automatycznie. Lochy nie mają jeszcze walk ani tabel nagród, dlatego zdobywanie pyłu w Lochach wymaga późniejszego podłączenia ich nagród — nie dodano nieustalonych szans ani darmowego odbierania pyłu.
+
+Stół alchemiczki wymienia dokładnie 25 pyłu na 1 odłamek, jedną wymianę na kliknięcie. Reszta materiału pozostaje w ekwipunku. Przycisk jest blokowany poniżej 25 sztuk i podczas operacji. Odczyt aktualnego zapisu, odjęcie pyłu i dodanie odłamka odbywają się pod wspólną blokadą Web Locks z innymi operacjami postaci. Nieudany zapis nie zużywa materiałów; błędne i przepełnione liczniki są odrzucane. Zmiana zapisu w innej karcie aktualizuje stół, a saldo odłamków w menu odświeża się od razu po wymianie.

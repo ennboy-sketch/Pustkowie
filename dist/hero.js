@@ -93,7 +93,7 @@
     return `<div class="hero-bag">${inventory(hero).map(item=>`<article>${art(SLOTS.findIndex(([slot])=>slot===item.slot),item,hero)}<strong></strong><small>${itemSlotLabel(item)}</small></article>`).join('')}</div><p class="panel-note">Przedmioty zakładasz w oknie Bohater.</p>`;
   }
   function mountBag(root,state){
-    root.innerHTML='<div class="backpack-heading"><span class="backpack-icon" aria-hidden="true"></span><div><h3>Ekwipunek</h3><p class="backpack-count"></p></div></div><div class="backpack-grid" aria-label="25 miejsc na przedmioty"></div><div class="backpack-detail"><p>Wybierz przedmiot, aby go obejrzeć lub założyć.</p></div><p class="backpack-pending"></p><p class="backpack-message" role="status" aria-live="polite"></p>';
+    root.innerHTML='<div class="backpack-heading"><span class="backpack-icon" aria-hidden="true"></span><div><h3>Ekwipunek</h3><p class="backpack-count"></p></div></div><div class="backpack-materials"></div><div class="backpack-grid" aria-label="25 miejsc na przedmioty"></div><div class="backpack-detail"><p>Wybierz przedmiot, aby go obejrzeć lub założyć.</p></div><p class="backpack-pending"></p><p class="backpack-message" role="status" aria-live="polite"></p>';
     let disposed=false,busy=false,selected=null;
     const grid=root.querySelector('.backpack-grid'),detail=root.querySelector('.backpack-detail');
     function render(){
@@ -101,6 +101,7 @@
       const hero=state.read(),items=bagItems(hero),overflow=Math.max(0,items.length-25);
       root.querySelector('.backpack-count').textContent=`Zajęte miejsca: ${Math.min(25,items.length)} / 25`;
       root.querySelector('.backpack-pending').textContent=overflow?`Dodatkowe przedmioty ze starszego zapisu: ${overflow}. Możesz je założyć przez miejsca wyposażenia postaci.`:items.length>=25?'Ekwipunek pełny — zdobywanie przedmiotów jest zablokowane. Złoto i EXP nadal otrzymujesz.':'';
+      root.querySelector('.backpack-materials').innerHTML=window.MagicDust.markup(hero);
       grid.replaceChildren();
       for(let i=0;i<25;i++){
         const item=items[i],button=document.createElement('button');button.type='button';button.className='backpack-cell';button.dataset.bagIndex=String(i);

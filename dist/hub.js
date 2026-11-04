@@ -174,7 +174,7 @@
     if (id === 'inventory') stopHeroSheet=window.HeroSheet.mountBag($('.backpack-root'),{read:readCurrentHero,update:updateCurrentHero});
     if (id === 'dungeon' && !dungeonLocked) stopDungeons=window.DungeonsPanel.mount($('#place-content'),{read:readCurrentHero,onTitle:title=>{$('#place-title').textContent=title;}});
     if (id === 'wheel') window.FateWheel.mount($('#place-content'));
-    if (id === 'alchemy') window.AlchemistPanel.mount($('#place-content'));
+    if (id === 'alchemy') window.AlchemistPanel.mount($('#place-content'),{read:readCurrentHero,update:updateCurrentHero});
     if (id === 'forge' && !forgeLocked) window.ForgePanel.mount($('#place-content'));
     if (id === 'market') window.MarketPanel.mount($('#place-content'),{read:readCurrentHero,update:updateCurrentHero});
     if (id === 'barracks') window.BarracksPanel.mount($('#place-content'),{professionMarkup:barracksPanel});
