@@ -247,7 +247,7 @@ Podczas zwiadu i walki przycisk lupy otwiera osobny pełnoekranowy podgląd loka
 
 Koszary Żelaznej Przysięgi otwierają panoramiczny plac treningowy (`barracks-training.webp`). Paladyn Gabriel jest człowiekiem w lśniącej srebrnej zbroi ze złotymi detalami, bez hełmu. Otaczają go manekiny, stojaki z bronią, tarcze i sztandary. Plac obsługuje przesuwanie i wspólne przybliżanie 100–300%.
 
-Kliknięcie Gabriela otwiera powitanie i dostęp do wcześniejszego panelu profesji; zachowane są jego wymagania poziomu 10 i blokada profesji czekających na ustalenie. Drzwi do zbrojowni oraz gabinetu dowódcy paladynów mają osobne znaczniki i informują o zamkniętym wejściu. Nie dodano jeszcze postaci dowódcy, wnętrz ani mechaniki treningu. Oglądanie placu i rozmowy nie pobierają zasobów i nie zmieniają zapisu postaci.
+Kliknięcie Gabriela otwiera powitanie i panel profesji Wojownika oraz Krasnoluda; pozostałe klasy otrzymują wskazówkę o swoim nauczycielu; zachowane są jego wymagania poziomu 10 i blokada profesji czekających na ustalenie. Drzwi do zbrojowni oraz gabinetu dowódcy paladynów mają osobne znaczniki i informują o zamkniętym wejściu. Nie dodano jeszcze postaci dowódcy, wnętrz ani mechaniki treningu. Oglądanie placu i rozmowy nie pobierają zasobów i nie zmieniają zapisu postaci.
 
 
 ## Gringo i Czarny Targ
@@ -468,3 +468,8 @@ Okno wyboru i widoki lokacji korzystają z osobnych malowanych ikon w stylistyce
 Magiczny pył ma osobną ikonę `magic-dust.webp` i licznik `hero.magicDust` (starsze zapisy: 0). Jest zbieranym w stos materiałem widocznym w sekcji materiałów Ekwipunku, również w plecaku otwieranym z karty Bohatera; nie jest wyposażeniem i nie zajmuje jednego z 25 miejsc na uzbrojenie. `MagicDust.award(hero, amount)` przygotowuje dopisanie nagrody do zapisu; nie dodaje niczego automatycznie. Lochy nie mają jeszcze walk ani tabel nagród, dlatego zdobywanie pyłu w Lochach wymaga późniejszego podłączenia ich nagród — nie dodano nieustalonych szans ani darmowego odbierania pyłu.
 
 Stół alchemiczki wymienia dokładnie 25 pyłu na 1 odłamek, jedną wymianę na kliknięcie. Reszta materiału pozostaje w ekwipunku. Przycisk jest blokowany poniżej 25 sztuk i podczas operacji. Odczyt aktualnego zapisu, odjęcie pyłu i dodanie odłamka odbywają się pod wspólną blokadą Web Locks z innymi operacjami postaci. Nieudany zapis nie zużywa materiałów; błędne i przepełnione liczniki są odrzucane. Zmiana zapisu w innej karcie aktualizuje stół, a saldo odłamków w menu odświeża się od razu po wymianie.
+
+
+## Nauczyciele profesji według klasy
+
+Wojownik i Krasnolud szkolą się u Paladyna Gabriela w koszarach, Mag u Alchemiczki w Wieży Zielonego Płomienia. Obie rozmowy mają przycisk „Porozmawiaj o profesjach”. Niewłaściwy nauczyciel wskazuje właściwą postać, bez dostępu do formularza szkolenia. Elf otrzymuje informację, że jego nowy nauczyciel pojawi się później. Wymagany poziom 10 zostaje zachowany. Nazwy i umiejętności trzech profesji każdej klasy nadal są do ustalenia; robocze profesje pozostają zablokowane. Obsługa formularza ponownie odczytuje zapis i sprawdza klasę, nauczyciela oraz poziom. Nie zmieniono istniejących profesji w zapisie ani walut.

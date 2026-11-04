@@ -97,14 +97,19 @@
   document.addEventListener('visibilitychange',()=>{if(!document.hidden)void refreshEnergy();});
   window.addEventListener('focus',()=>void refreshEnergy());
   window.addEventListener('storage',e=>{if(e.key===HERO_KEY)void refreshEnergy();});
-  function barracksPanel() {
+  function professionTeacher(){return ['warrior','dwarf'].includes(hero.classId)?'gabriel':hero.classId==='mage'?'alchemist':null;}
+  function barracksPanel(trainer='gabriel') {
+    try{readCurrentHero();}catch{return '<p role="status">Nie można odczytać postaci. Odśwież grę.</p>';}
+    const teacher=professionTeacher();
+    if(!teacher)return '<p class="place-text">Nauczyciel profesji Elfa pojawi się później.</p>';
+    if(teacher!==trainer)return `<p class="place-text">${teacher==='alchemist'?'Mag szkoli się w profesji u Alchemiczki w Wieży Zielonego Płomienia.':'Wojownik i Krasnolud szkolą się w profesji u Paladyna Gabriela w koszarach.'}</p>`;
     const unlocked = level() >= 10;
     const current = profession();
     const canChoose = unlocked && PROFESSIONS[hero.classId].some(p=>!p.pending);
-    return `<div class="barracks-banner">${icon('barracks')}<div><h3>Wybierz swoją profesję</h3><p>${unlocked ? 'Poziom wymagany do wyboru został osiągnięty.' : 'Wybór odblokuje się na 10. poziomie.'}</p></div></div>
+    return `<div class="barracks-banner">${icon(trainer==='alchemist'?'alchemy':'barracks')}<div><h3>Wybierz swoją profesję</h3><p>${unlocked ? 'Poziom wymagany do wyboru został osiągnięty.' : 'Wybór odblokuje się na 10. poziomie.'}</p></div></div>
       <div class="profession-unlock"><div><span>${unlocked ? 'Wymagany poziom osiągnięty' : 'Wymagany poziom 10'}</span><b>Twój poziom: ${level()}</b></div><progress max="10" value="${Math.min(level(),10)}" aria-label="Postęp do odblokowania profesji"></progress></div>
       ${current ? `<p class="current-profession">Obecna profesja: <strong>${current.name}</strong></p>` : ''}
-      <form id="profession-form"><fieldset ${canChoose ? '' : 'disabled'}><legend class="sr-only">Profesje dla twojej klasy</legend><div class="profession-grid">${PROFESSIONS[hero.classId].map(p=>`<label class="profession-card"><input type="radio" name="profession" value="${p.id}" ${current?.id===p.id ? 'checked' : ''} ${p.pending ? 'disabled' : ''} required><span class="profession-symbol">${icon(p.icon)}</span><strong>${p.name}</strong><span class="profession-role">${p.role}</span><span class="profession-state">${p.pending ? 'Do ustalenia' : unlocked ? 'Dostępna' : 'Od poziomu 10'}</span></label>`).join('')}</div><button type="submit" class="primary profession-submit">${unlocked ? canChoose ? current ? 'Zmień profesję' : 'Wybierz profesję' : 'Profesje w przygotowaniu' : 'Odblokowanie na poziomie 10'}</button></fieldset><p id="profession-status" role="status" aria-live="polite"></p></form><p class="panel-note">Każda klasa otrzyma trzy własne profesje do wyboru od poziomu 10. Nazwy i umiejętności ustalimy później.</p>`;
+      <form id="profession-form" data-profession-trainer="${trainer}"><fieldset ${canChoose ? '' : 'disabled'}><legend class="sr-only">Profesje dla twojej klasy</legend><div class="profession-grid">${PROFESSIONS[hero.classId].map(p=>`<label class="profession-card"><input type="radio" name="profession" value="${p.id}" ${current?.id===p.id ? 'checked' : ''} ${p.pending ? 'disabled' : ''} required><span class="profession-symbol">${icon(p.icon)}</span><strong>${p.name}</strong><span class="profession-role">${p.role}</span><span class="profession-state">${p.pending ? 'Do ustalenia' : unlocked ? 'Dostępna' : 'Od poziomu 10'}</span></label>`).join('')}</div><button type="submit" class="primary profession-submit">${unlocked ? canChoose ? current ? 'Zmień profesję' : 'Wybierz profesję' : 'Profesje w przygotowaniu' : 'Odblokowanie na poziomie 10'}</button></fieldset><p id="profession-status" role="status" aria-live="polite"></p></form><p class="panel-note">${trainer==='alchemist'?'Nauczyciel: Alchemiczka.':'Nauczyciel: Paladyn Gabriel.'} Szkolenie od poziomu 10. Nazwy i umiejętności profesji ustalimy później.</p>`;
   }
   const labels = ['Siła','Zręczność','Inteligencja','Wytrzymałość'];
   function toggleMenu(open) {
@@ -174,10 +179,10 @@
     if (id === 'inventory') stopHeroSheet=window.HeroSheet.mountBag($('.backpack-root'),{read:readCurrentHero,update:updateCurrentHero});
     if (id === 'dungeon' && !dungeonLocked) stopDungeons=window.DungeonsPanel.mount($('#place-content'),{read:readCurrentHero,onTitle:title=>{$('#place-title').textContent=title;}});
     if (id === 'wheel') window.FateWheel.mount($('#place-content'));
-    if (id === 'alchemy') window.AlchemistPanel.mount($('#place-content'),{read:readCurrentHero,update:updateCurrentHero});
+    if (id === 'alchemy') window.AlchemistPanel.mount($('#place-content'),{read:readCurrentHero,update:updateCurrentHero,professionMarkup:()=>barracksPanel('alchemist')});
     if (id === 'forge' && !forgeLocked) window.ForgePanel.mount($('#place-content'));
     if (id === 'market') window.MarketPanel.mount($('#place-content'),{read:readCurrentHero,update:updateCurrentHero});
-    if (id === 'barracks') window.BarracksPanel.mount($('#place-content'),{professionMarkup:barracksPanel});
+    if (id === 'barracks') window.BarracksPanel.mount($('#place-content'),{professionMarkup:()=>barracksPanel('gabriel')});
     if(id==='tavern'){
       if(scouting){
         const scene=window.BrandMissions.SCENES[hero.activeMission.sceneId];
@@ -199,6 +204,8 @@
     if (e.target.id !== 'profession-form') return;
     e.preventDefault();
     const status = $('#profession-status');
+    try{readCurrentHero();}catch{status.textContent='Nie można odczytać postaci. Odśwież grę.';return;}
+    if(!professionTeacher()||e.target.dataset.professionTrainer!==professionTeacher()){status.textContent='Ta postać szkoli się u innego nauczyciela.';return;}
     if (level() < 10) { status.textContent = 'Wybór profesji wymaga poziomu 10.'; return; }
     if (PROFESSIONS[hero.classId].every(p=>p.pending)) { status.textContent = 'Profesje tej klasy są jeszcze do ustalenia.'; return; }
     const chosen = new FormData(e.target).get('profession');
@@ -215,7 +222,8 @@
       localStorage.setItem(HERO_KEY,JSON.stringify(updated));
     } catch { status.textContent = 'Nie udało się zapisać profesji. Sprawdź ustawienia zapisu w przeglądarce.'; return; }
     hero = updated; updateProfile();
-    openPlace('barracks');window.BarracksPanel.openProfessions();
+    const teacher=professionTeacher();openPlace(teacher==='alchemist'?'alchemy':'barracks');
+    if(teacher==='alchemist')window.AlchemistPanel.openProfessions();else window.BarracksPanel.openProfessions();
     $('#profession-status').textContent = `Wybrano profesję: ${profession().name}.`;
   });
   $('#place-dialog').addEventListener('close', () => {stopHeroSheet();stopActiveScout();stopDungeons();window.FateWheel.cancel();window.TavernPanel.cancel();window.AlchemistPanel.cancel();window.ForgePanel.cancel();window.BarracksPanel.cancel();window.MarketPanel.cancel();});
