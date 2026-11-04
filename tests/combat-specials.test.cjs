@@ -16,9 +16,9 @@ function runtime() {
 const plain = value => JSON.parse(JSON.stringify(value));
 const player = { name: 'Bohater', classId: 'warrior', maxHp: 10000, attack: [1, 1], stats: [12, 5, 3, 10] };
 const expected = [
-  ['venom-centipede', 8, 210, [18, 25], 65, 90],
-  ['chain-troll', 13, 420, [30, 42], 155, 190],
-  ['spore-crawler', 14, 320, [28, 36], 165, 205]
+  ["venom-centipede", 8, 231, [20, 28], 65, 2777],
+  ["chain-troll", 13, 462, [33, 47], 155, 9200],
+  ["spore-crawler", 14, 352, [31, 40], 165, 17000]
 ];
 const minimumHit = actor => actor.attack[0];
 
@@ -103,7 +103,7 @@ test('surviving poison bypasses armor, consumes one turn, then allows one mage a
   const before = JSON.stringify(b), hit = c.advance(b, () => 20);
   assert.equal(JSON.stringify(b), before); assert.equal(hit.hero.hp, player.maxHp - 8);
   assert.equal(hit.hero.mana, 20); assert.equal(hit.hero.attackCount, 1); assert.equal(hit.hero.poisonEffect.turns, 2);
-  assert.equal(hit.enemy.hp, 50); assert.equal(hit.lastHit.ability, 'fireball');
+  assert.equal(hit.enemy.hp, 57); assert.equal(hit.lastHit.ability, 'fireball');
 });
 
 test('reapplying the same poison refreshes its duration without stacking damage', () => {
@@ -159,7 +159,7 @@ test('old saves without counters remain playable; existing armor, piercing and e
   hit = c.advance(c.createBattle(player, scorpion, 'enemy'), () => 25); assert.equal(hit.lastHit.ability, 'poison');
   const old = c.createBattle(player, c.opponents('mine')[0], 'hero');
   delete old.hero.attackCount; delete old.enemy.attackCount; delete old.hero.poisonEffect; delete old.enemy.poisonEffect;
-  hit = c.advance(old, () => 20); assert.equal(hit.enemy.hp, 50); assert.equal(hit.hero.attackCount, 1);
+  hit = c.advance(old, () => 20); assert.equal(hit.enemy.hp, 57); assert.equal(hit.hero.attackCount, 1);
 });
 
 test('Brand can randomly offer all three new monsters in the mine', () => {

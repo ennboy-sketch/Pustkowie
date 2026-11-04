@@ -3,9 +3,9 @@
   const TITLE='Przepędź nieproszonych gości';
   const NECKLACE={id:'tauriel-emerald-necklace',slot:'necklace',name:'Szmaragdowy naszyjnik Tauriel'};
   const BANDITS=[
-    {id:'tauriel-cutthroat',name:'Rozbójnik spod barykady',level:5,maxHp:125,stats:[11,10,3,8],attack:[11,15],tile:0,atlas:'tauriel'},
-    {id:'tauriel-bruiser',name:'Rozbójnik Żelazna Pięść',level:5,maxHp:140,stats:[15,5,2,10],attack:[12,17],tile:1,atlas:'tauriel'},
-    {id:'tauriel-leader',name:'Przywódca rozbójników',level:5,maxHp:160,stats:[13,12,6,11],attack:[14,19],tile:2,atlas:'tauriel'}
+    {id:'tauriel-cutthroat',name:'Rozbójnik spod barykady',level:5,maxHp:138,stats:[11,10,3,8],attack:[13,17],reward:{gold:50,xp:1200},tile:0,atlas:'tauriel'},
+    {id:'tauriel-bruiser',name:'Rozbójnik Żelazna Pięść',level:5,maxHp:154,stats:[15,5,2,10],attack:[14,19],reward:{gold:100,xp:1500},tile:1,atlas:'tauriel'},
+    {id:'tauriel-leader',name:'Przywódca rozbójników',level:5,maxHp:176,stats:[13,12,6,11],attack:[16,21],reward:{gold:50,xp:1000},tile:2,atlas:'tauriel'}
   ];
   function quest(hero){return hero.taurielQuest||null;}
   function count(hero){return quest(hero)?.defeated?.length||0;}
@@ -22,13 +22,15 @@
     if(index!==count(hero)||!BANDITS[index])throw new Error('Etap misji zmienił się. Otwórz panel ponownie.');
     const player=window.BrandCombat.profile(hero),power=Math.max(...player.stats)+player.level*2+(player.damageBonus||0);
     player.attack=[Math.max(1,power-3),power+3];
-    return {...hero,activeCombat:{id:crypto.randomUUID(),source:'tauriel',questIndex:index,cost:0,sceneId:'tavern-upstairs',battle:window.BrandCombat.createBattle(player,BANDITS[index],'hero'),reward:{gold:0,xp:0},loot:null,nextHitAt:Date.now()+1100}};
+    return {...hero,activeCombat:{id:crypto.randomUUID(),source:'tauriel',questIndex:index,cost:0,sceneId:'tavern-upstairs',battle:window.BrandCombat.createBattle(player,BANDITS[index],'hero'),reward:{...BANDITS[index].reward},loot:null,nextHitAt:Date.now()+1100}};
   }
   function resolve(hero,id){
     const fight=hero.activeCombat,index=count(hero);
     if(!fight||fight.id!==id||fight.source!=='tauriel'||!fight.battle.winner||fight.questIndex!==index||quest(hero)?.status!=='active'||fight.battle.enemy.id!==BANDITS[index]?.id)throw new Error('Ta walka trwa lub została już rozliczona.');
     const won=fight.battle.winner==='hero',defeated=won?[...quest(hero).defeated,BANDITS[index].id]:[...quest(hero).defeated];
-    return {...hero,activeCombat:null,taurielQuest:{...quest(hero),defeated,status:defeated.length===3?'ready':'active'},lastTaurielBattle:{id,won,index}};
+    const reward=won?fight.reward:{gold:0,xp:0},progressed=window.Progression.award(hero,reward.xp),gold=(hero.gold??25)+reward.gold;
+    if(!Number.isSafeInteger(gold)||gold<0)throw new Error('Nieprawidłowa ilość złota.');
+    return {...progressed,gold,activeCombat:null,taurielQuest:{...quest(hero),defeated,status:defeated.length===3?'ready':'active'},lastTaurielBattle:{id,won,index,reward:{...reward}}};
   }
   function claim(hero){
     if(quest(hero)?.status!=='ready'||!canEnter(hero))throw new Error('Najpierw pokonaj wszystkich trzech rozbójników.');
@@ -50,7 +52,7 @@
       else if(q?.status==='ready'){action='claim';label='Odbierz szmaragdowy naszyjnik';disabled=false;}
       else if(hero.activeCombat?.source==='tauriel'){action='resume';label='Wróć do walki';disabled=false;}
       else if(q){action='fight';label=`Przepędź rozbójnika ${n+1} / 3`;disabled=other;}
-      body.innerHTML=`<h3>${TITLE}</h3><p class="tauriel-story">Trzej rozbójnicy zabarykadowali się na górze. Przepędź ich, aby goście znów mogli bezpiecznie korzystać z pokoi.</p><div class="tauriel-bandits">${BANDITS.map((b,i)=>`<article class="${i<n?'is-defeated':''}"><div class="tauriel-bandit-art" style="background-position:${i*50}% 0"></div><strong>${b.name}</strong><span>${i<n?'Pokonany':`Poziom ${b.level}`}</span></article>`).join('')}</div><p class="tauriel-progress">${eligible?`Pokonani rozbójnicy: ${n} / 3`:'Wymagany poziom postaci: 5'}</p><div class="tauriel-prize"><span class="tauriel-necklace-art" aria-hidden="true"></span><div><strong>Szmaragdowy naszyjnik Tauriel</strong><span>+100 HP po założeniu</span></div></div><p class="tauriel-state">${canEnter(hero)?'Górne piętro odblokowane.':other?'Zakończ obecną misję, aby pomóc Tauriel.':'Nagroda: naszyjnik i dostęp do górnego piętra.'}</p><button type="button" class="primary" data-tauriel-action="${action}" data-quest-index="${n}" ${disabled||busy?'disabled':''}>${label}</button>${q?.status==='completed'?'<p class="tauriel-completed">Tauriel dziękuje Ci za pomoc. Naszyjnik znajdziesz w ekwipunku.</p>':''}`;
+      body.innerHTML=`<h3>${TITLE}</h3><p class="tauriel-story">Trzej rozbójnicy zabarykadowali się na górze. Przepędź ich, aby goście znów mogli bezpiecznie korzystać z pokoi.</p><div class="tauriel-bandits">${BANDITS.map((b,i)=>`<article class="${i<n?'is-defeated':''}"><div class="tauriel-bandit-art" style="background-position:${i*50}% 0"></div><strong>${b.name}</strong><span>${i<n?'Pokonany':`Poziom ${b.level} · ${b.reward.gold} złota · ${b.reward.xp} EXP`}</span></article>`).join('')}</div>${hero.lastTaurielBattle?.won?`<p class="tauriel-progress">Ostatnia wygrana: +${hero.lastTaurielBattle.reward?.gold??0} złota · +${hero.lastTaurielBattle.reward?.xp??0} EXP</p>`:''}<p class="tauriel-progress">${eligible?`Pokonani rozbójnicy: ${n} / 3`:'Wymagany poziom postaci: 5'}</p><div class="tauriel-prize"><span class="tauriel-necklace-art" aria-hidden="true"></span><div><strong>Szmaragdowy naszyjnik Tauriel</strong><span>+100 HP po założeniu</span></div></div><p class="tauriel-state">${canEnter(hero)?'Górne piętro odblokowane.':other?'Zakończ obecną misję, aby pomóc Tauriel.':'Nagroda: naszyjnik i dostęp do górnego piętra.'}</p><button type="button" class="primary" data-tauriel-action="${action}" data-quest-index="${n}" ${disabled||busy?'disabled':''}>${label}</button>${q?.status==='completed'?'<p class="tauriel-completed">Tauriel dziękuje Ci za pomoc. Naszyjnik znajdziesz w ekwipunku.</p>':''}`;
     }
     async function click(e){
       const button=e.target.closest('[data-tauriel-action]');if(!button||busy||!button.dataset.taurielAction)return;

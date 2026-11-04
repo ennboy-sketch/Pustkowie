@@ -1,0 +1,642 @@
+[
+  {
+    "id": "ghost",
+    "name": "Duch",
+    "level": 1,
+    "location": "Stara Kopalnia",
+    "hp": 77,
+    "attack": [
+      8,
+      11
+    ],
+    "reward": {
+      "gold": 18,
+      "xp": 100
+    },
+    "baseHp": 70,
+    "baseAttack": [
+      7,
+      10
+    ]
+  },
+  {
+    "id": "boar",
+    "name": "Dzik",
+    "level": 1,
+    "location": "Mroczny Las",
+    "hp": 77,
+    "attack": [
+      8,
+      11
+    ],
+    "reward": {
+      "gold": 18,
+      "xp": 100
+    },
+    "baseHp": 70,
+    "baseAttack": [
+      7,
+      10
+    ]
+  },
+  {
+    "id": "mud-snake",
+    "name": "Wąż błotny",
+    "level": 1,
+    "location": "Podziemia Miasta",
+    "hp": 77,
+    "attack": [
+      8,
+      11
+    ],
+    "reward": {
+      "gold": 18,
+      "xp": 100
+    },
+    "baseHp": 70,
+    "baseAttack": [
+      7,
+      10
+    ]
+  },
+  {
+    "id": "wild-dog",
+    "name": "Dziki Pies",
+    "level": 2,
+    "location": "Podziemia Miasta",
+    "hp": 99,
+    "attack": [
+      10,
+      15
+    ],
+    "reward": {
+      "gold": 30,
+      "xp": 200
+    },
+    "baseHp": 90,
+    "baseAttack": [
+      9,
+      13
+    ]
+  },
+  {
+    "id": "bandit",
+    "name": "Rozbójnik",
+    "level": 2,
+    "location": "Stara Kopalnia",
+    "hp": 99,
+    "attack": [
+      10,
+      15
+    ],
+    "reward": {
+      "gold": 35,
+      "xp": 250
+    },
+    "baseHp": 90,
+    "baseAttack": [
+      9,
+      13
+    ]
+  },
+  {
+    "id": "wolf",
+    "name": "Wilk",
+    "level": 2,
+    "location": "Mroczny Las",
+    "hp": 99,
+    "attack": [
+      10,
+      15
+    ],
+    "reward": {
+      "gold": 34,
+      "xp": 233
+    },
+    "baseHp": 90,
+    "baseAttack": [
+      9,
+      13
+    ]
+  },
+  {
+    "id": "dryad",
+    "name": "Driada",
+    "level": 3,
+    "location": "Mroczny Las",
+    "hp": 121,
+    "attack": [
+      13,
+      18
+    ],
+    "reward": {
+      "gold": 36,
+      "xp": 500
+    },
+    "baseHp": 110,
+    "baseAttack": [
+      11,
+      16
+    ]
+  },
+  {
+    "id": "giant-rat",
+    "name": "Ogromny szczur",
+    "level": 3,
+    "location": "Stara Kopalnia",
+    "hp": 121,
+    "attack": [
+      13,
+      18
+    ],
+    "reward": {
+      "gold": 33,
+      "xp": 550
+    },
+    "baseHp": 110,
+    "baseAttack": [
+      11,
+      16
+    ]
+  },
+  {
+    "id": "lost-human",
+    "name": "Zbłąkany człowiek",
+    "level": 3,
+    "location": "Podziemia Miasta",
+    "hp": 121,
+    "attack": [
+      13,
+      18
+    ],
+    "reward": {
+      "gold": 40,
+      "xp": 489
+    },
+    "baseHp": 110,
+    "baseAttack": [
+      11,
+      16
+    ]
+  },
+  {
+    "id": "goblin",
+    "name": "Goblin",
+    "level": 5,
+    "location": "Mroczny Las",
+    "hp": 149,
+    "attack": [
+      15,
+      21
+    ],
+    "reward": {
+      "gold": 40,
+      "xp": 820
+    },
+    "baseHp": 135,
+    "baseAttack": [
+      13,
+      19
+    ]
+  },
+  {
+    "id": "crystal-ogre",
+    "name": "Kryształowy ogr",
+    "level": 5,
+    "location": "Stara Kopalnia",
+    "hp": 149,
+    "attack": [
+      15,
+      21
+    ],
+    "reward": {
+      "gold": 40,
+      "xp": 900
+    },
+    "baseHp": 135,
+    "baseAttack": [
+      13,
+      19
+    ]
+  },
+  {
+    "id": "tauriel-leader",
+    "name": "Przywódca rozbójników",
+    "level": 5,
+    "location": "Zadanie Tauriel",
+    "hp": 176,
+    "attack": [
+      16,
+      21
+    ],
+    "reward": {
+      "gold": 50,
+      "xp": 1000
+    },
+    "baseHp": 160,
+    "baseAttack": [
+      14,
+      19
+    ]
+  },
+  {
+    "id": "tauriel-cutthroat",
+    "name": "Rozbójnik spod barykady",
+    "level": 5,
+    "location": "Zadanie Tauriel",
+    "hp": 138,
+    "attack": [
+      13,
+      17
+    ],
+    "reward": {
+      "gold": 50,
+      "xp": 1200
+    },
+    "baseHp": 125,
+    "baseAttack": [
+      11,
+      15
+    ]
+  },
+  {
+    "id": "tauriel-bruiser",
+    "name": "Rozbójnik Żelazna Pięść",
+    "level": 5,
+    "location": "Zadanie Tauriel",
+    "hp": 154,
+    "attack": [
+      14,
+      19
+    ],
+    "reward": {
+      "gold": 100,
+      "xp": 1500
+    },
+    "baseHp": 140,
+    "baseAttack": [
+      12,
+      17
+    ]
+  },
+  {
+    "id": "trolgotyta",
+    "name": "Trolgotyta",
+    "level": 5,
+    "location": "Podziemia Miasta",
+    "hp": 149,
+    "attack": [
+      15,
+      21
+    ],
+    "reward": {
+      "gold": 50,
+      "xp": 920
+    },
+    "baseHp": 135,
+    "baseAttack": [
+      13,
+      19
+    ]
+  },
+  {
+    "id": "bloodthirsty-flower",
+    "name": "Krwiożerczy Kwiat",
+    "level": 6,
+    "location": "Mroczny Las",
+    "hp": 182,
+    "attack": [
+      17,
+      25
+    ],
+    "reward": {
+      "gold": 52,
+      "xp": 1350
+    },
+    "baseHp": 165,
+    "baseAttack": [
+      15,
+      22
+    ]
+  },
+  {
+    "id": "birch-werewolf",
+    "name": "Wilkołak Brzeziny",
+    "level": 6,
+    "location": "Mroczny Las",
+    "hp": 193,
+    "attack": [
+      22,
+      25
+    ],
+    "reward": {
+      "gold": 53,
+      "xp": 1388
+    },
+    "baseHp": 175,
+    "baseAttack": [
+      20,
+      22
+    ]
+  },
+  {
+    "id": "crystal-scorpion",
+    "name": "Kryształowy Skorpion",
+    "level": 7,
+    "location": "Stara Kopalnia",
+    "hp": 215,
+    "attack": [
+      28,
+      33
+    ],
+    "reward": {
+      "gold": 60,
+      "xp": 1700
+    },
+    "baseHp": 195,
+    "baseAttack": [
+      25,
+      30
+    ]
+  },
+  {
+    "id": "cursed-stag",
+    "name": "Przeklęty Jeleń",
+    "level": 7,
+    "location": "Mroczny Las",
+    "hp": 209,
+    "attack": [
+      19,
+      27
+    ],
+    "reward": {
+      "gold": 61,
+      "xp": 1900
+    },
+    "baseHp": 190,
+    "baseAttack": [
+      17,
+      24
+    ]
+  },
+  {
+    "id": "venom-centipede",
+    "name": "Jadowity Stonóg",
+    "level": 8,
+    "location": "Stara Kopalnia",
+    "hp": 231,
+    "attack": [
+      20,
+      28
+    ],
+    "reward": {
+      "gold": 65,
+      "xp": 2777
+    },
+    "baseHp": 210,
+    "baseAttack": [
+      18,
+      25
+    ]
+  },
+  {
+    "id": "tree-whisperer",
+    "name": "Szeptun drzewny",
+    "level": 8,
+    "location": "Mroczny Las",
+    "hp": 231,
+    "attack": [
+      20,
+      28
+    ],
+    "reward": {
+      "gold": 25,
+      "xp": 2500
+    },
+    "baseHp": 210,
+    "baseAttack": [
+      18,
+      25
+    ]
+  },
+  {
+    "id": "forest-demoness",
+    "name": "Demonica Puszczy",
+    "level": 9,
+    "location": "Mroczny Las",
+    "hp": 259,
+    "attack": [
+      22,
+      30
+    ],
+    "reward": {
+      "gold": 35,
+      "xp": 3300
+    },
+    "baseHp": 235,
+    "baseAttack": [
+      20,
+      27
+    ]
+  },
+  {
+    "id": "undead-miner",
+    "name": "Nieumarły Górnik",
+    "level": 9,
+    "location": "Stara Kopalnia",
+    "hp": 253,
+    "attack": [
+      29,
+      39
+    ],
+    "reward": {
+      "gold": 25,
+      "xp": 3500
+    },
+    "baseHp": 230,
+    "baseAttack": [
+      26,
+      35
+    ]
+  },
+  {
+    "id": "spectral-knight",
+    "name": "Widmowy Rycerz",
+    "level": 10,
+    "location": "Mroczny Las",
+    "hp": 286,
+    "attack": [
+      26,
+      33
+    ],
+    "reward": {
+      "gold": 55,
+      "xp": 5100
+    },
+    "baseHp": 260,
+    "baseAttack": [
+      23,
+      30
+    ]
+  },
+  {
+    "id": "chain-troll",
+    "name": "Łańcuchowy Troll",
+    "level": 13,
+    "location": "Stara Kopalnia",
+    "hp": 462,
+    "attack": [
+      33,
+      47
+    ],
+    "reward": {
+      "gold": 155,
+      "xp": 9200
+    },
+    "baseHp": 420,
+    "baseAttack": [
+      30,
+      42
+    ]
+  },
+  {
+    "id": "wraith-archer",
+    "name": "Upiorny Łucznik",
+    "level": 13,
+    "location": "Mroczny Las",
+    "hp": 363,
+    "attack": [
+      33,
+      46
+    ],
+    "reward": {
+      "gold": 75,
+      "xp": 10333
+    },
+    "baseHp": 330,
+    "baseAttack": [
+      30,
+      41
+    ]
+  },
+  {
+    "id": "aelira",
+    "name": "Aelira",
+    "level": 14,
+    "location": "Mroczny Las",
+    "hp": 396,
+    "attack": [
+      31,
+      42
+    ],
+    "reward": {
+      "gold": 75,
+      "xp": 15300
+    },
+    "baseHp": 360,
+    "baseAttack": [
+      28,
+      38
+    ]
+  },
+  {
+    "id": "ancient-forest-spirit",
+    "name": "Duch Starego Boru",
+    "level": 14,
+    "location": "Mroczny Las",
+    "hp": 391,
+    "attack": [
+      32,
+      42
+    ],
+    "reward": {
+      "gold": 85,
+      "xp": 16400
+    },
+    "baseHp": 355,
+    "baseAttack": [
+      29,
+      38
+    ]
+  },
+  {
+    "id": "abyss-bellringer",
+    "name": "Dzwonnik Otchłani",
+    "level": 14,
+    "location": "Stara Kopalnia",
+    "hp": 429,
+    "attack": [
+      36,
+      48
+    ],
+    "reward": {
+      "gold": 90,
+      "xp": 17555
+    },
+    "baseHp": 390,
+    "baseAttack": [
+      32,
+      43
+    ]
+  },
+  {
+    "id": "spore-crawler",
+    "name": "Zarodnikowy Pełzacz",
+    "level": 14,
+    "location": "Stara Kopalnia",
+    "hp": 352,
+    "attack": [
+      31,
+      40
+    ],
+    "reward": {
+      "gold": 165,
+      "xp": 17000
+    },
+    "baseHp": 320,
+    "baseAttack": [
+      28,
+      36
+    ]
+  },
+  {
+    "id": "magma-golem",
+    "name": "Golem Magmowy",
+    "level": 15,
+    "location": "Stara Kopalnia",
+    "hp": 528,
+    "attack": [
+      43,
+      61
+    ],
+    "reward": {
+      "gold": 100,
+      "xp": 25000
+    },
+    "baseHp": 480,
+    "baseAttack": [
+      39,
+      55
+    ]
+  },
+  {
+    "id": "forest-devourer",
+    "name": "Leśny Pożeracz",
+    "level": 15,
+    "location": "Mroczny Las",
+    "hp": 440,
+    "attack": [
+      33,
+      44
+    ],
+    "reward": {
+      "gold": 99,
+      "xp": 25000
+    },
+    "baseHp": 400,
+    "baseAttack": [
+      30,
+      40
+    ]
+  }
+]

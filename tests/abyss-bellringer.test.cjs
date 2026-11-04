@@ -27,8 +27,8 @@ function fourthAttack(c, target = player, raw = 32) {
 
 test('bellringer: balanced stats, fixed rewards and existing mine/level/difficulty rules', () => {
   const r = runtime(), c = r.BrandCombat, m = monster(c);
-  assert.equal(m.name, 'Dzwonnik Otchłani'); assert.equal(m.level, 14); assert.equal(m.maxHp, 390);
-  assert.deepEqual(plain(m.attack), [32, 43]); assert.deepEqual(plain(m.reward), { gold: 90, xp: 280 });
+  assert.equal(m.name, 'Dzwonnik Otchłani'); assert.equal(m.level, 14); assert.equal(m.maxHp, 429);
+  assert.deepEqual(plain(m.attack), [36, 48]); assert.deepEqual(plain(m.reward), { gold: 90, xp: 17555 });
   for (const scene of ['forest', 'undercity']) assert.equal(c.opponents(scene).some(m => m.id === 'abyss-bellringer'), false);
   for (let level = 1; level <= 26; level++) {
     const hero = { version: 2, name: 'Test', classId: 'warrior', gender: 'male', level, gold: 25, energy: 100,
@@ -39,7 +39,7 @@ test('bellringer: balanced stats, fixed rewards and existing mine/level/difficul
     hero.brandOffers[0].tier = tier;
     if (!available) { assert.throws(() => r.BrandChoices.accept(hero, 'offer')); continue; }
     const started = r.BrandChoices.accept(hero, 'offer');
-    assert.equal(started.energy, tier === 'hard' ? 95 : 97); assert.deepEqual(plain(started.activeCombat.reward), { gold: 90, xp: 280 });
+    assert.equal(started.energy, tier === 'hard' ? 95 : 97); assert.deepEqual(plain(started.activeCombat.reward), { gold: 90, xp: 17555 });
   }
 });
 
@@ -52,7 +52,7 @@ test('echo: every fourth own attack adds exactly 12 magic damage without another
       const manaBefore = b.hero.mana, hpBefore = b.hero.hp;
       b = c.advance(b, minimumHit);
       assert.equal(b.enemy.attackCount, n); assert.equal(b.hero.mana, manaBefore);
-      assert.equal(b.lastHit.damage, n % 4 === 0 ? 44 : 32);
+      assert.equal(b.lastHit.damage, n % 4 === 0 ? 48 : 36);
       assert.equal(b.hero.hp, hpBefore - b.lastHit.damage);
       assert.equal(b.lastHit.magicWave?.damage ?? 0, n % 4 === 0 ? 12 : 0);
       assert.equal(b.lastHit.ability === 'abyss-echo', n % 4 === 0);
@@ -118,11 +118,11 @@ test('bellringer: saving before/after the echo, normal play and skip agree on wi
     while (!normal.activeCombat.battle.winner) { normal = c.tick(normal, normal.activeCombat.nextHitAt); assert.ok(++steps < 1000); }
     const a = c.finish(normal, fightId), skipped = c.skip(restored, fightId);
     assert.deepEqual(plain(a), plain(skipped)); assert.equal(a.lastCombat.won, win);
-    assert.equal(a.gold, 25 + (win ? 90 : 0)); assert.equal(a.xp, win ? 280 : 0);
+    assert.equal(a.gold, 25 + (win ? 90 : 0)); assert.equal(a.xp, win ? 17555 : 0);
     assert.equal(a.energy, 95); assert.equal(a.shards, 4); assert.equal(a.lastCombat.loot, null); assert.equal(a.activeCombat, null);
     assert.throws(() => c.finish(a, fightId)); assert.throws(() => c.skip(a, fightId));
     const next = c.start({ ...a, combatOffer: { sceneId: 'mine', enemyId: 'abyss-bellringer' } });
-    assert.equal(next.activeCombat.battle.enemy.attackCount, 0); assert.equal(next.activeCombat.battle.enemy.hp, 390);
+    assert.equal(next.activeCombat.battle.enemy.attackCount, 0); assert.equal(next.activeCombat.battle.enemy.hp, 429);
     assert.equal(next.activeCombat.battle.lastHit, null);
   }
 });

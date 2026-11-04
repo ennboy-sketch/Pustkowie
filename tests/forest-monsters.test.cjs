@@ -16,11 +16,11 @@ function runtime() {
 const plain = value => JSON.parse(JSON.stringify(value));
 const player = { name: 'Bohater', classId: 'warrior', maxHp: 10000, attack: [1, 1], stats: [12, 5, 3, 10] };
 const expected = [
-  ['bloodthirsty-flower', 6, 165, [15, 22], 20, 90],
-  ['cursed-stag', 7, 190, [17, 24], 25, 110],
-  ['ancient-forest-spirit', 14, 355, [29, 38], 85, 420],
-  ['birch-werewolf', 6, 175, [20, 22], 15, 90],
-  ['wraith-archer', 13, 330, [30, 41], 75, 370]
+  ["bloodthirsty-flower", 6, 182, [17, 25], 52, 1350],
+  ["cursed-stag", 7, 209, [19, 27], 61, 1900],
+  ["ancient-forest-spirit", 14, 391, [32, 42], 85, 16400],
+  ["birch-werewolf", 6, 193, [22, 25], 53, 1388],
+  ["wraith-archer", 13, 363, [33, 46], 75, 10333]
 ];
 const minimumHit = actor => actor.attack[0];
 const monster = (c, id) => c.opponents('forest').find(m => m.id === id);
@@ -46,7 +46,7 @@ for (const [id, level, hp, attack, gold, xp] of expected) {
 }
 
 for (const [id, normal, special, ability] of [
-  ['bloodthirsty-flower', 15, 25, 'thorn-grab'], ['cursed-stag', 17, 25, 'cursed-charge']
+  ['bloodthirsty-flower', 17, 27, 'thorn-grab'], ['cursed-stag', 19, 28, 'cursed-charge']
 ]) {
   test(id + ': every fourth own attack, before armor, including the next cycle', () => {
     const c = runtime().BrandCombat;
@@ -60,7 +60,7 @@ for (const [id, normal, special, ability] of [
     }
     b.next = 'enemy'; b.enemy.attackCount = 3;
     b = c.advance(b, () => b.enemy.attack[1]);
-    assert.equal(b.lastHit.damage, id === 'cursed-stag' ? 33 : 29);
+    assert.equal(b.lastHit.damage, id === 'cursed-stag' ? 37 : 32);
   });
 }
 
@@ -85,7 +85,7 @@ test('forest spirit: physical reduction, magical vulnerability, rounding and min
   const poisoned = c.createBattle(player, spirit, 'enemy');
   poisoned.enemy.poisonEffect = { damage: 8, turns: 1, label: 'Trucizna' };
   hit = c.advance(poisoned, minimumHit);
-  assert.equal(hit.enemy.hp, 347); // Neither resistance nor vulnerability changes periodic poison.
+  assert.equal(hit.enemy.hp, 383); // Neither resistance nor vulnerability changes periodic poison.
 });
 
 test('werewolf: strict 30% threshold, 20% bonus rounding and recovery above threshold', () => {
