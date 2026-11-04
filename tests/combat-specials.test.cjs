@@ -29,14 +29,14 @@ for (const [id, level, hp, attack, gold, xp] of expected) {
     assert.deepEqual(plain(monster.reward), { gold, xp });
     for (let atLevel = 1; atLevel <= 26; atLevel++) {
       const hero = { version: 2, name: 'Test', classId: 'warrior', gender: 'male', level: atLevel, xp: 0, gold: 25, energy: 100 };
-      const available = atLevel >= 5 && atLevel <= 15;
-      assert.equal(c.availableOpponents(hero, 'mine', 'hard').some(m => m.id === id), available);
+      const available = Math.abs(atLevel - level) <= 3;
+      assert.equal(c.availableOpponents(hero, 'mine').some(m => m.id === id), available);
       for (const scene of ['forest', 'undercity']) assert.equal(c.opponents(scene).some(m => m.id === id), false);
-      assert.equal(c.availableOpponents(hero, 'mine', 'easy').some(m => m.id === id), false);
-      hero.brandOffers = [{ id: 'offer', type: 'combat', sceneId: 'mine', tier: 'hard', enemyId: id }];
+      const tier = c.availableOpponents(hero, 'mine', 'hard').some(m => m.id === id) ? 'hard' : 'easy';
+      hero.brandOffers = [{ id: 'offer', type: 'combat', sceneId: 'mine', tier, enemyId: id }];
       if (!available) { assert.throws(() => r.BrandChoices.accept(hero, 'offer')); continue; }
       const started = r.BrandChoices.accept(hero, 'offer');
-      assert.equal(started.energy, 95); assert.deepEqual(plain(started.activeCombat.reward), { gold, xp });
+      assert.equal(started.energy, tier === 'hard' ? 95 : 97); assert.deepEqual(plain(started.activeCombat.reward), { gold, xp });
     }
   });
 }
@@ -118,7 +118,7 @@ test('reapplying the same poison refreshes its duration without stacking damage'
 for (const [id, , , , gold, xp] of expected) {
   test(id + ': reloading, normal play and skip retain effects and pay only once', () => {
     const r = runtime(), c = r.BrandCombat;
-    const hero = { version: 2, name: 'Test', classId: 'warrior', gender: 'male', level: 8, xp: 0, gold: 25, shards: 4, energy: 100, combatOffer: { sceneId: 'mine', enemyId: id } };
+    const hero = { version: 2, name: 'Test', classId: 'warrior', gender: 'male', level: c.opponents('mine').find(m => m.id === id).level, xp: 0, gold: 25, shards: 4, energy: 100, combatOffer: { sceneId: 'mine', enemyId: id } };
     for (const win of [true, false]) {
       let normal = c.start(hero);
       normal.activeCombat.battle.hero.maxHp = normal.activeCombat.battle.hero.hp = win ? 10000 : 160;
@@ -163,10 +163,13 @@ test('old saves without counters remain playable; existing armor, piercing and e
 });
 
 test('Brand can randomly offer all three new monsters in the mine', () => {
-  for (const [index, id] of [[2, 'venom-centipede'], [3, 'chain-troll'], [4, 'spore-crawler']]) {
-    const r = runtime(), values = [1, 1, 1, index];
+  for (const [id, level] of expected) {
+    const r = runtime();
+    const hero = { version: 2, name: 'Test', classId: 'warrior', gender: 'male', level: level - 1, gold: 25, energy: 100 };
+    const index = r.BrandCombat.availableOpponents(hero, 'mine', 'hard').findIndex(m => m.id === id);
+    assert.ok(index >= 0);
+    const values = [99, 0, 0, 1, index];
     r.crypto.getRandomValues = a => { assert.ok(values.length); a[0] = values.shift(); return a; };
-    const hero = { version: 2, name: 'Test', classId: 'warrior', gender: 'male', level: 15, gold: 25, energy: 100 };
     const offer = r.BrandChoices.prepare(hero).brandOffers[1];
     assert.equal(offer.sceneId, 'mine'); assert.equal(offer.type, 'combat'); assert.equal(offer.enemyId, id);
     assert.equal(values.length, 0);

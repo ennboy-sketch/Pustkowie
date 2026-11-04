@@ -34,12 +34,13 @@ for (const [id, level, hp, attack, gold, xp] of expected) {
     for (let level = 1; level <= 26; level++) {
       const hero = { version: 2, name: 'Test', classId: 'warrior', gender: 'male', level, xp: 0, gold: 25, energy: 100,
         brandOffers: [{ id: 'offer', type: 'combat', sceneId: 'forest', tier: 'hard', enemyId: id }] };
-      const available = level >= 5 && level <= 15;
-      assert.equal(c.availableOpponents(hero, 'forest', 'hard').some(m => m.id === id), available);
-      assert.equal(c.availableOpponents(hero, 'forest', 'easy').some(m => m.id === id), false);
+      const available = Math.abs(level - m.level) <= 3;
+      assert.equal(c.availableOpponents(hero, 'forest').some(m => m.id === id), available);
+      const tier = c.availableOpponents(hero, 'forest', 'hard').some(m => m.id === id) ? 'hard' : 'easy';
+      hero.brandOffers[0].tier = tier;
       if (!available) { assert.throws(() => r.BrandChoices.accept(hero, 'offer')); continue; }
       const started = r.BrandChoices.accept(hero, 'offer');
-      assert.equal(started.energy, 95); assert.deepEqual(plain(started.activeCombat.reward), { gold, xp });
+      assert.equal(started.energy, tier === 'hard' ? 95 : 97); assert.deepEqual(plain(started.activeCombat.reward), { gold, xp });
     }
   });
 }
@@ -127,7 +128,7 @@ test('archer: every third physical attack ignores 30% of defense, without invent
 for (const [id, , , , gold, xp] of expected) {
   test(id + ': reload and skip match normal play, with exact once-only rewards and clean next fights', () => {
     const c = runtime().BrandCombat;
-    const hero = { version: 2, name: 'Test', classId: 'warrior', gender: 'male', level: 8, xp: 0, gold: 25, shards: 4, energy: 100,
+    const hero = { version: 2, name: 'Test', classId: 'warrior', gender: 'male', level: monster(c, id).level, xp: 0, gold: 25, shards: 4, energy: 100,
       combatOffer: { sceneId: 'forest', enemyId: id } };
     for (const win of [true, false]) {
       let normal = c.start(hero);
@@ -151,11 +152,12 @@ for (const [id, , , , gold, xp] of expected) {
 }
 
 test('Brand offers all five new forest monsters through its real random selection', () => {
-  for (const [id] of expected) {
+  for (const [id, level] of expected) {
     const r = runtime();
-    const hero = { version: 2, name: 'Test', classId: 'warrior', gender: 'male', level: 15, gold: 25, energy: 100 };
+    const hero = { version: 2, name: 'Test', classId: 'warrior', gender: 'male', level: level - 1, gold: 25, energy: 100 };
     const index = r.BrandCombat.availableOpponents(hero, 'forest', 'hard').findIndex(m => m.id === id);
-    const values = [0, 0, 1, index];
+    assert.ok(index >= 0);
+    const values = [99, 0, 0, 0, index];
     r.crypto.getRandomValues = a => { assert.ok(values.length); a[0] = values.shift(); return a; };
     const offer = r.BrandChoices.prepare(hero).brandOffers[1];
     assert.equal(offer.sceneId, 'forest'); assert.equal(offer.type, 'combat'); assert.equal(offer.enemyId, id); assert.equal(values.length, 0);

@@ -9,28 +9,28 @@
     {id:'wolf',name:'Wilk',level:2,maxHp:90,stats:[8,10,2,6],attack:[9,13],tile:1},
     {id:'dryad',name:'Driada',level:3,maxHp:110,stats:[5,8,13,7],attack:[11,16],tile:2},
     {id:'goblin',name:'Goblin',level:5,maxHp:135,stats:[11,12,5,9],attack:[13,19],tile:3},
-    {id:'tree-whisperer',name:'Szeptun drzewny',level:8,maxHp:210,stats:[18,8,16,14],attack:[18,25],tile:0,atlas:'whisperer',minPlayerLevel:5,maxPlayerLevel:15,reward:{gold:25,xp:150}},
-    {id:'forest-demoness',name:'Demonica Puszczy',level:9,maxHp:235,stats:[15,22,20,16],attack:[20,27],tile:0,atlas:'demoness',minPlayerLevel:5,maxPlayerLevel:15,reward:{gold:35,xp:190}},
-    {id:'spectral-knight',name:'Widmowy Rycerz',level:10,maxHp:260,stats:[24,20,12,18],attack:[23,30],tile:0,atlas:'spectral-knight',minPlayerLevel:5,maxPlayerLevel:15,reward:{gold:55,xp:230}},
-    {id:'aelira',name:'Aelira',level:14,maxHp:360,stats:[16,26,34,24],attack:[28,38],tile:0,atlas:'aelira',minPlayerLevel:5,maxPlayerLevel:15,reward:{gold:75,xp:450}},
-    {id:'forest-devourer',name:'Leśny Pożeracz',level:15,maxHp:400,stats:[32,12,25,30],attack:[30,40],tile:0,atlas:'devourer',minPlayerLevel:5,maxPlayerLevel:15,reward:{gold:99,xp:500}},
-    {id:'bloodthirsty-flower',name:'Krwiożerczy Kwiat',level:6,maxHp:165,stats:[17,8,4,15],attack:[15,22],tile:0,atlas:'bloodthirsty-flower',minPlayerLevel:5,maxPlayerLevel:15,special:{type:'flat',every:4,bonus:10,ability:'thorn-grab'},traits:'Ciernisty Chwyt: co czwarty atak zadaje dodatkowe 10 bazowych obrażeń.',reward:{gold:20,xp:90}},
-    {id:'cursed-stag',name:'Przeklęty Jeleń',level:7,maxHp:190,stats:[18,20,6,16],attack:[17,24],tile:0,atlas:'cursed-stag',minPlayerLevel:5,maxPlayerLevel:15,special:{type:'power',every:4,multiplier:150,ability:'cursed-charge'},traits:'Co czwarty atak: szarża zadaje 150% bazowych obrażeń (zaokrąglenie w dół).',reward:{gold:25,xp:110}},
-    {id:'ancient-forest-spirit',name:'Duch Starego Boru',level:14,maxHp:355,stats:[15,18,32,26],attack:[29,38],tile:0,atlas:'ancient-forest-spirit',minPlayerLevel:5,maxPlayerLevel:15,physicalResistance:15,magicVulnerability:20,traits:'Odporność: otrzymuje 15% mniej obrażeń fizycznych. Podatność: otrzymuje 20% więcej obrażeń magicznych (ogień i woda).',reward:{gold:85,xp:420}},
-    {id:'birch-werewolf',name:'Wilkołak Brzeziny',level:6,maxHp:175,stats:[22,25,4,16],attack:[20,22],tile:0,atlas:'birch-werewolf',minPlayerLevel:5,maxPlayerLevel:15,enrage:{threshold:30,bonus:20},traits:'Furia: poniżej 30% HP zadaje o 20% więcej bazowych obrażeń (zaokrąglenie w dół).',reward:{gold:15,xp:90}},
-    {id:'wraith-archer',name:'Upiorny Łucznik',level:13,maxHp:330,stats:[14,32,15,24],attack:[30,41],tile:0,atlas:'wraith-archer',minPlayerLevel:5,maxPlayerLevel:15,special:{type:'piercing',every:3,piercing:30,ability:'piercing-arrow'},traits:'Przeszywająca Strzała: co trzeci atak ignoruje 30% redukcji pancerza i odporności fizycznej celu.',reward:{gold:75,xp:370}}
+    {id:'tree-whisperer',name:'Szeptun drzewny',level:8,maxHp:210,stats:[18,8,16,14],attack:[18,25],tile:0,atlas:'whisperer',reward:{gold:25,xp:150}},
+    {id:'forest-demoness',name:'Demonica Puszczy',level:9,maxHp:235,stats:[15,22,20,16],attack:[20,27],tile:0,atlas:'demoness',reward:{gold:35,xp:190}},
+    {id:'spectral-knight',name:'Widmowy Rycerz',level:10,maxHp:260,stats:[24,20,12,18],attack:[23,30],tile:0,atlas:'spectral-knight',reward:{gold:55,xp:230}},
+    {id:'aelira',name:'Aelira',level:14,maxHp:360,stats:[16,26,34,24],attack:[28,38],tile:0,atlas:'aelira',reward:{gold:75,xp:450}},
+    {id:'forest-devourer',name:'Leśny Pożeracz',level:15,maxHp:400,stats:[32,12,25,30],attack:[30,40],tile:0,atlas:'devourer',reward:{gold:99,xp:500}},
+    {id:'bloodthirsty-flower',name:'Krwiożerczy Kwiat',level:6,maxHp:165,stats:[17,8,4,15],attack:[15,22],tile:0,atlas:'bloodthirsty-flower',special:{type:'flat',every:4,bonus:10,ability:'thorn-grab'},traits:'Ciernisty Chwyt: co czwarty atak zadaje dodatkowe 10 bazowych obrażeń.',reward:{gold:20,xp:90}},
+    {id:'cursed-stag',name:'Przeklęty Jeleń',level:7,maxHp:190,stats:[18,20,6,16],attack:[17,24],tile:0,atlas:'cursed-stag',special:{type:'power',every:4,multiplier:150,ability:'cursed-charge'},traits:'Co czwarty atak: szarża zadaje 150% bazowych obrażeń (zaokrąglenie w dół).',reward:{gold:25,xp:110}},
+    {id:'ancient-forest-spirit',name:'Duch Starego Boru',level:14,maxHp:355,stats:[15,18,32,26],attack:[29,38],tile:0,atlas:'ancient-forest-spirit',physicalResistance:15,magicVulnerability:20,traits:'Odporność: otrzymuje 15% mniej obrażeń fizycznych. Podatność: otrzymuje 20% więcej obrażeń magicznych (ogień i woda).',reward:{gold:85,xp:420}},
+    {id:'birch-werewolf',name:'Wilkołak Brzeziny',level:6,maxHp:175,stats:[22,25,4,16],attack:[20,22],tile:0,atlas:'birch-werewolf',enrage:{threshold:30,bonus:20},traits:'Furia: poniżej 30% HP zadaje o 20% więcej bazowych obrażeń (zaokrąglenie w dół).',reward:{gold:15,xp:90}},
+    {id:'wraith-archer',name:'Upiorny Łucznik',level:13,maxHp:330,stats:[14,32,15,24],attack:[30,41],tile:0,atlas:'wraith-archer',special:{type:'piercing',every:3,piercing:30,ability:'piercing-arrow'},traits:'Przeszywająca Strzała: co trzeci atak ignoruje 30% redukcji pancerza i odporności fizycznej celu.',reward:{gold:75,xp:370}}
   ],mine:[
     {id:'ghost',name:'Duch',level:1,maxHp:70,stats:[2,6,9,5],attack:[7,10],tile:0,atlas:'mine'},
     {id:'bandit',name:'Rozbójnik',level:2,maxHp:90,stats:[9,8,3,6],attack:[9,13],tile:1,atlas:'mine'},
     {id:'giant-rat',name:'Ogromny szczur',level:3,maxHp:110,stats:[10,12,1,7],attack:[11,16],tile:2,atlas:'mine'},
     {id:'crystal-ogre',name:'Kryształowy ogr',level:5,maxHp:135,stats:[16,4,5,9],attack:[13,19],tile:3,atlas:'mine'},
-    {id:'crystal-scorpion',name:'Kryształowy Skorpion',level:7,maxHp:195,stats:[16,12,4,22],attack:[25,30],tile:0,atlas:'scorpion',minPlayerLevel:5,maxPlayerLevel:15,armor:2,attackType:'poison',traits:'Kryształowy pancerz: pochłania 2 obrażenia z trafienia (minimum 1 obrażenie). Zatrute żądło: 25–30 obrażeń od trucizny.',reward:{gold:15,xp:100}},
-    {id:'undead-miner',name:'Nieumarły Górnik',level:9,maxHp:230,stats:[24,10,5,20],attack:[26,35],tile:0,atlas:'undead-miner',minPlayerLevel:5,maxPlayerLevel:15,armorPiercing:50,traits:'Potężny cios kilofem: 26–35 obrażeń. Ignoruje 50% redukcji obrażeń z pancerza.',reward:{gold:25,xp:150}},
-    {id:'venom-centipede',name:'Jadowity Stonóg',level:8,maxHp:210,stats:[18,20,3,20],attack:[18,25],tile:0,atlas:'centipede',minPlayerLevel:5,maxPlayerLevel:15,armor:2,special:{type:'dot',every:3,damage:8,turns:3,label:'Trucizna',ability:'venom-bite'},traits:'Twardy pancerz: pochłania 2 obrażenia z trafienia. Co trzeci atak zatruwa: 8 obrażeń na początku 3 kolejnych tur celu.',reward:{gold:65,xp:90}},
-    {id:'chain-troll',name:'Łańcuchowy Troll',level:13,maxHp:420,stats:[36,10,4,32],attack:[30,42],tile:0,atlas:'chain-troll',minPlayerLevel:5,maxPlayerLevel:15,special:{type:'power',every:5,multiplier:150,ability:'chain-slam'},traits:'Co piąty atak: potężne uderzenie łańcuchami zadaje 150% bazowych obrażeń (zaokrąglenie w dół).',reward:{gold:155,xp:190}},
-    {id:'spore-crawler',name:'Zarodnikowy Pełzacz',level:14,maxHp:320,stats:[20,12,28,24],attack:[28,36],tile:0,atlas:'spore-crawler',minPlayerLevel:5,maxPlayerLevel:15,special:{type:'dot',every:4,damage:12,turns:2,label:'Trujące zarodniki',ability:'spores'},traits:'Co czwarty atak: trujące zarodniki zadają 12 obrażeń na początku 2 kolejnych tur celu.',reward:{gold:165,xp:205}},
-    {id:'abyss-bellringer',name:'Dzwonnik Otchłani',level:14,maxHp:390,stats:[34,10,24,30],attack:[32,43],tile:0,atlas:'abyss-bellringer',minPlayerLevel:5,maxPlayerLevel:15,special:{type:'magic-wave',every:4,damage:12,ability:'abyss-echo'},traits:'Echo Zagłady: co czwarty atak dodaje falę zadającą 12 bazowych obrażeń magicznych. Fala omija obronę fizyczną.',reward:{gold:90,xp:280}},
-    {id:'magma-golem',name:'Golem Magmowy',level:15,maxHp:480,stats:[38,8,20,36],attack:[39,55],tile:0,atlas:'magma-golem',minPlayerLevel:5,maxPlayerLevel:15,physicalArmor:8,waterWeakness:50,traits:'Skalna obrona: pochłania 8 obrażeń fizycznych (minimum 1 obrażenie). Podatność na magię wody: +50% obrażeń.',reward:{gold:100,xp:300}}
+    {id:'crystal-scorpion',name:'Kryształowy Skorpion',level:7,maxHp:195,stats:[16,12,4,22],attack:[25,30],tile:0,atlas:'scorpion',armor:2,attackType:'poison',traits:'Kryształowy pancerz: pochłania 2 obrażenia z trafienia (minimum 1 obrażenie). Zatrute żądło: 25–30 obrażeń od trucizny.',reward:{gold:15,xp:100}},
+    {id:'undead-miner',name:'Nieumarły Górnik',level:9,maxHp:230,stats:[24,10,5,20],attack:[26,35],tile:0,atlas:'undead-miner',armorPiercing:50,traits:'Potężny cios kilofem: 26–35 obrażeń. Ignoruje 50% redukcji obrażeń z pancerza.',reward:{gold:25,xp:150}},
+    {id:'venom-centipede',name:'Jadowity Stonóg',level:8,maxHp:210,stats:[18,20,3,20],attack:[18,25],tile:0,atlas:'centipede',armor:2,special:{type:'dot',every:3,damage:8,turns:3,label:'Trucizna',ability:'venom-bite'},traits:'Twardy pancerz: pochłania 2 obrażenia z trafienia. Co trzeci atak zatruwa: 8 obrażeń na początku 3 kolejnych tur celu.',reward:{gold:65,xp:90}},
+    {id:'chain-troll',name:'Łańcuchowy Troll',level:13,maxHp:420,stats:[36,10,4,32],attack:[30,42],tile:0,atlas:'chain-troll',special:{type:'power',every:5,multiplier:150,ability:'chain-slam'},traits:'Co piąty atak: potężne uderzenie łańcuchami zadaje 150% bazowych obrażeń (zaokrąglenie w dół).',reward:{gold:155,xp:190}},
+    {id:'spore-crawler',name:'Zarodnikowy Pełzacz',level:14,maxHp:320,stats:[20,12,28,24],attack:[28,36],tile:0,atlas:'spore-crawler',special:{type:'dot',every:4,damage:12,turns:2,label:'Trujące zarodniki',ability:'spores'},traits:'Co czwarty atak: trujące zarodniki zadają 12 obrażeń na początku 2 kolejnych tur celu.',reward:{gold:165,xp:205}},
+    {id:'abyss-bellringer',name:'Dzwonnik Otchłani',level:14,maxHp:390,stats:[34,10,24,30],attack:[32,43],tile:0,atlas:'abyss-bellringer',special:{type:'magic-wave',every:4,damage:12,ability:'abyss-echo'},traits:'Echo Zagłady: co czwarty atak dodaje falę zadającą 12 bazowych obrażeń magicznych. Fala omija obronę fizyczną.',reward:{gold:90,xp:280}},
+    {id:'magma-golem',name:'Golem Magmowy',level:15,maxHp:480,stats:[38,8,20,36],attack:[39,55],tile:0,atlas:'magma-golem',physicalArmor:8,waterWeakness:50,traits:'Skalna obrona: pochłania 8 obrażeń fizycznych (minimum 1 obrażenie). Podatność na magię wody: +50% obrażeń.',reward:{gold:100,xp:300}}
   ],undercity:[
     {id:'mud-snake',name:'Wąż błotny',level:1,maxHp:70,stats:[6,8,1,5],attack:[7,10],tile:0,atlas:'undercity'},
     {id:'wild-dog',name:'Dziki Pies',level:2,maxHp:90,stats:[8,10,2,6],attack:[9,13],tile:1,atlas:'undercity'},
@@ -40,7 +40,14 @@
   function random(min,max){const a=new Uint32Array(1),range=max-min+1,limit=4294967296-4294967296%range;do{crypto.getRandomValues(a);}while(a[0]>=limit);return min+a[0]%range;}
   function availableOpponents(hero,sceneId,tier){
     const level=window.Progression.level(hero);
-    return opponents(sceneId).filter(enemy=>level>=(enemy.minPlayerLevel??1)&&level<=(enemy.maxPlayerLevel??5)&&(!tier||(tier==='easy'?enemy.level<=2:enemy.level>=3)));
+    const pool=opponents(sceneId).filter(enemy=>Math.abs(enemy.level-level)<=3);
+    if(!tier||!pool.length)return pool;
+    if(!['easy','hard'].includes(tier))return [];
+    const preferred=pool.filter(enemy=>tier==='easy'?enemy.level<=level:enemy.level>level);
+    if(preferred.length)return preferred;
+    // A sparse roster must not remove all combat offers for one difficulty.
+    const edge=tier==='easy'?Math.min(...pool.map(enemy=>enemy.level)):Math.max(...pool.map(enemy=>enemy.level));
+    return pool.filter(enemy=>enemy.level===edge);
   }
   function eligible(hero){return Object.keys(ROSTERS).some(id=>availableOpponents(hero,id).length>0);}
   function prepare(hero){
@@ -251,7 +258,7 @@
     return stop;
   }
   function markup(){
-    return '<p class="combat-availability">Potwory podstawowe: poziomy postaci 1–5. Wzmocnione potwory Mrocznego Lasu: poziomy postaci 5–15. Wzmocnione potwory Starej Kopalni (Skorpion, Stonóg, Górnik, Troll, Pełzacz, Dzwonnik i Golem): poziomy postaci 5–15. Brand przydziela przeciwnika automatycznie. Podgląd jest bezpłatny.</p><p class="combat-entry-error" role="status"></p>';
+    return '<p class="combat-availability">Brand dobiera przeciwników maksymalnie 3 poziomy słabszych lub silniejszych od Twojej postaci. Losuje tylko tereny z pasującymi potworami. Podgląd jest bezpłatny.</p><p class="combat-entry-error" role="status"></p>';
   }
   function mount(container,state){
     container.innerHTML=markup();

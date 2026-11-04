@@ -144,7 +144,7 @@ Po odebraniu zwiadu otwiera się ramka „Nagroda za misję” z ornamentami z c
 
 ## Potwory Mrocznego Lasu
 
-Dla postaci poziomu 1–5 losowany jest Dzik (1), Wilk (2), Driada (3) lub Goblin (5). Portrety znajdują się w atlasie `forest-monsters.webp` (2×2: dzik, wilk / driada, goblin). Pozostałe tereny nie mają jeszcze potworów; dawne puste przydziały dla poziomów 1–5 są jednorazowo zastępowane dostępną walką w lesie. Przeciwnik jest zapisywany w `combatOffer.enemyId` i nie zmienia się przy ponownym otwarciu.
+W podstawowej puli lasu dostępny jest Dzik (1), Wilk (2), Driada (3) lub Goblin (5). Portrety znajdują się w atlasie `forest-monsters.webp` (2×2: dzik, wilk / driada, goblin). Każdy teren ma obecnie własną pulę; nowe walki korzystają wyłącznie z przeciwników w zakresie ±3 poziomów postaci. Przeciwnik jest zapisywany w `combatOffer.enemyId` i nie zmienia się przy ponownym otwarciu.
 
 Koszt rozpoczęcia to 5 energii. Walka pokazuje naprzemienne ciosy co 1,1 sekundy; każdy zapisany cios i aktualne życie znajdują się w `activeCombat`. Zamknięta walka czeka na ponowne otwarcie; odświeżenie nie zmienia przeciwnika ani nagrody. Zwiadu nie można rozpocząć przed rozliczeniem walki. Zwycięstwo daje niezależnie losowane 10–30 złota i 33–55 EXP, porażka nie daje nagród. Rozliczenie atomowo zapisuje nagrodę i usuwa walkę oraz ofertę pod blokadą Web Locks; błąd zapisu nie przyznaje częściowej nagrody.
 
@@ -153,14 +153,14 @@ Początkowy balans do dalszego dostrojenia: życie potworów 70/90/110/135; obra
 
 ## Potwory Starej Kopalni
 
-Dla postaci poziomu 1–5 dodano Ducha (1), Rozbójnika (2), Ogromnego szczura (3) i Kryształowego ogra (5). Atlas `mine-monsters.webp` ma układ 2×2: duch, rozbójnik / ogromny szczur, kryształowy ogr. Każdy przeciwnik używa własnego awatara również po odświeżeniu walki. Początkowy balans życia i obrażeń według poziomu jest taki sam jak dla potworów lasu.
+Do podstawowej puli Kopalni dodano Ducha (1), Rozbójnika (2), Ogromnego szczura (3) i Kryształowego ogra (5). Atlas `mine-monsters.webp` ma układ 2×2: duch, rozbójnik / ogromny szczur, kryształowy ogr. Każdy przeciwnik używa własnego awatara również po odświeżeniu walki. Początkowy balans życia i obrażeń według poziomu jest taki sam jak dla potworów lasu.
 
 Nowa oferta losuje jeden z dwóch dostępnych terenów (Mroczny Las albo Stara Kopalnia), a potem jednego z czterech przeciwników danego terenu. Zapisane oferty i rozpoczęte walki pozostają bez zmian. Stary przydział kopalni bez przeciwnika otrzymuje potwora z kopalni; podziemia czekają na własną pulę. Nie ma ręcznego ponawiania losowania. Koszt rozpoczęcia nadal wynosi 5 energii; nagroda za zwycięstwo to niezależnie losowane 10–30 złota i 33–55 EXP. Porażka nie daje nagrody. Odbiór pozostaje jednorazowy i atomowy, pod wspólną blokadą zapisu.
 
 
 ## Potwory Podziemi Miasta
 
-Dla postaci poziomu 1–5 dodano Węża błotnego (1), Dzikiego Psa (2), Zbłąkanego człowieka (3) i Trolgotytę (5), zachowując podaną nazwę. Atlas `undercity-monsters.webp` ma układ 2×2: wąż, pies / człowiek, Trolgotyta. Portrety pokazują przeciwników na tle wilgotnych kanałów i podziemnych kamiennych korytarzy. Życie i zakresy obrażeń według poziomu odpowiadają początkowemu balansowi pozostałych terenów.
+Do podstawowej puli Podziemi dodano Węża błotnego (1), Dzikiego Psa (2), Zbłąkanego człowieka (3) i Trolgotytę (5), zachowując podaną nazwę. Atlas `undercity-monsters.webp` ma układ 2×2: wąż, pies / człowiek, Trolgotyta. Portrety pokazują przeciwników na tle wilgotnych kanałów i podziemnych kamiennych korytarzy. Życie i zakresy obrażeń według poziomu odpowiadają początkowemu balansowi pozostałych terenów.
 
 Nowe oferty losują teraz jeden z trzech terenów, a następnie potwora z jego własnej puli. Istniejące oferty i aktywne walki nie są ponownie losowane. Dawny pusty przydział Podziemi otrzymuje potwora z tej lokacji. Nadal obowiązują koszt 5 energii, automatyczne tury, zapis postępu i jednorazowa nagroda za zwycięstwo: niezależnie losowane 10–30 złota i 33–55 EXP.
 
@@ -172,9 +172,11 @@ Każdy kwadratowy kadr atlasu jest wyświetlany w oryginalnych proporcjach i w c
 
 ## Dwie oferty Branda
 
-Rozmowa z Brandem pokazuje dwie pionowe karty misji: Szlak wędrowca (łatwiejsza, 3 energii) i Próba śmiałka (trudniejsza, 5 energii). Każda niezależnie losuje zwiad lub walkę, teren i odpowiedniego przeciwnika. Oferty zapisują się w `brandOffers`; ponowne otwarcie, odświeżenie lub druga karta przeglądarki ich nie zmieniają. Przyjęcie jednej zużywa cały zestaw i atomowo pobiera jej koszt. Kolejny zestaw pojawia się dopiero po zakończeniu obecnej misji.
+Rozmowa z Brandem pokazuje dwie pionowe karty misji: Szlak wędrowca (łatwiejsza, 3 energii) i Próba śmiałka (trudniejsza, 5 energii). Każda losuje walkę z prawdopodobieństwem 80%. Jeśli oba losowania wskażą zwiad, trudniejsza oferta zostaje zamieniona na walkę, o ile istnieje pasujący przeciwnik. W rezultacie zawsze jest co najmniej jedna oferta walki, gdy aktualny zestaw potworów na to pozwala. Teren walki jest losowany wyłącznie spośród miejsc z pasującymi przeciwnikami; zwiady nadal mogą prowadzić do wszystkich trzech lokacji.
 
-Łatwe walki losują przeciwników poziomu 1–2, trudne poziomu 3–5. Obowiązują wcześniejsze nagrody za walkę. Łatwy zwiad korzysta z dotychczasowego czasu dla poziomu gracza; trudny z kolejnego ustalonego przedziału czasu (1→5→10→15 minut, maksymalnie 15). Nagrody zwiadu pozostają zgodne z tabelą dla jego rzeczywistego czasu. Powyżej poziomu 5, do ustalenia dalszych potworów, losowane są zwiady; powyżej 25 czasu nadal nie określono. Stare aktywne misje zachowują swój czas, przeciwnika i już opłacony koszt.
+Na każdym poziomie postaci przeciwnik musi mieścić się w zakresie ±3 poziomów, z dolną granicą 1. Przykłady: gracz 5 → potwory 2–8, gracz 10 → 7–13, gracz 15 → 12–18. Łatwiejsza oferta wybiera potwory nie silniejsze poziomem od gracza; trudniejsza preferuje silniejsze. Jeśli dany teren nie ma potworów w preferowanej części zakresu, łatwiejsza oferta korzysta z najniższego, a trudniejsza z najwyższego dostępnego poziomu w zakresie ±3. Reguły zastępują dawne stałe przedziały 1–5 i 5–15 oraz podział potworów 1–2 / 3+. Poziomy, statystyki i nagrody samych potworów nie są skalowane ani zmieniane. Obecne potwory mają najwyżej poziom 15, więc od poziomu gracza 19 nie ma pasujących przeciwników; oferowane są wtedy wyłącznie dostępne zwiady (czas zwiadów powyżej poziomu 25 nadal jest do ustalenia).
+
+Oferty zapisują się w `brandOffers`, z `brandOffersVersion` i `brandOffersLevel`. Stare, jeszcze nieprzyjęte oferty są jednorazowo zastępowane nowymi po aktualizacji zasad, a zmiana poziomu postaci odświeża zestaw. Ponowne otwarcie, odświeżenie lub druga karta nie zmieniają aktualnych ofert na tym samym poziomie. Przyjęcie jednej zużywa cały zestaw i atomowo pobiera jej koszt. Aktywne walki i zwiady zachowują zapisany przebieg, termin, koszt oraz nagrodę. Przyjęcie walki ponownie sprawdza aktualny poziom i odrzuca niepasującego przeciwnika bez pobrania energii. Łatwe i trudne zwiady na tym samym poziomie mają taki sam czas; różni je koszt energii.
 
 Usunięto ręczny wybór typu misji, napis o losowaniu kierunków oraz rozwijaną tabelę czasu według poziomu. Aktywny zwiad i walka zachowują dotychczasowe pełnoekranowe widoki i jednorazowe nagrody.
 
@@ -359,27 +361,27 @@ Nowe zwiady łatwiejsze i trudniejsze trwają tyle samo na danym poziomie: 1–2
 
 ## Szeptun drzewny — Mroczny Las
 
-Nowy przeciwnik poziomu 8 pojawia się w trudniejszych zleceniach walki Branda dla postaci poziomu 5–15, wyłącznie w Mrocznym Lesie. Ma 210 HP, cechy 18/8/16/14 oraz obrażenia 18–25. Zwycięstwo daje dokładnie 25 złota i 150 EXP, bez przedmiotów; porażka nie daje nagrody. Awatar `tree-whisperer.webp` przedstawia spróchniałe drzewo z twarzami w korze i pnączami przypominającymi ramiona. Dotychczasowe potwory pozostają dostępne na poziomach postaci 1–5. Rozpoczęte walki zachowują zapis przeciwnika i nagrody.
+Nowy przeciwnik poziomu 8 pojawia się w zleceniach walki Branda przy różnicy do 3 poziomów między nim a postacią, wyłącznie w Mrocznym Lesie. Ma 210 HP, cechy 18/8/16/14 oraz obrażenia 18–25. Zwycięstwo daje dokładnie 25 złota i 150 EXP, bez przedmiotów; porażka nie daje nagrody. Awatar `tree-whisperer.webp` przedstawia spróchniałe drzewo z twarzami w korze i pnączami przypominającymi ramiona. Wszystkie potwory są teraz dobierane w zakresie ±3 poziomów postaci. Rozpoczęte walki zachowują zapis przeciwnika i nagrody.
 
 
 ## Demonica Puszczy — Mroczny Las
 
-Przeciwniczka poziomu 9 występuje w trudniejszych misjach Branda dla postaci poziomu 5–15, wyłącznie w Mrocznym Lesie. Ma 235 HP, cechy 15/22/20/16 oraz obrażenia 20–27. Zwycięstwo daje dokładnie 35 złota i 190 EXP, bez przedmiotów; porażka nie daje nagrody. Awatar `forest-demoness.webp` przedstawia dorosłą błękitnoskórą demonicę o czarnych chitynowych rogach, w czarnej łuskowej zbroi i ze złożonymi skórzastymi skrzydłami.
+Przeciwniczka poziomu 9 występuje w misjach Branda przy różnicy do 3 poziomów między przeciwnikiem a postacią, wyłącznie w Mrocznym Lesie. Ma 235 HP, cechy 15/22/20/16 oraz obrażenia 20–27. Zwycięstwo daje dokładnie 35 złota i 190 EXP, bez przedmiotów; porażka nie daje nagrody. Awatar `forest-demoness.webp` przedstawia dorosłą błękitnoskórą demonicę o czarnych chitynowych rogach, w czarnej łuskowej zbroi i ze złożonymi skórzastymi skrzydłami.
 
 
 ## Widmowy Rycerz — Mroczny Las
 
-Przeciwnik poziomu 10 występuje w trudniejszych misjach Branda dla postaci poziomu 5–15, wyłącznie w Mrocznym Lesie. Ma 260 HP, cechy 24/20/12/18 oraz obrażenia 23–30. Zwycięstwo daje dokładnie 55 złota i 230 EXP, bez przedmiotów; porażka nie daje nagrody. Awatar `spectral-knight.webp` przedstawia pustą, zniszczoną zbroję pełną czerwonego dymu i iskier oraz wyszczerbiony miecz dwuręczny.
+Przeciwnik poziomu 10 występuje w misjach Branda przy różnicy do 3 poziomów między przeciwnikiem a postacią, wyłącznie w Mrocznym Lesie. Ma 260 HP, cechy 24/20/12/18 oraz obrażenia 23–30. Zwycięstwo daje dokładnie 55 złota i 230 EXP, bez przedmiotów; porażka nie daje nagrody. Awatar `spectral-knight.webp` przedstawia pustą, zniszczoną zbroję pełną czerwonego dymu i iskier oraz wyszczerbiony miecz dwuręczny.
 
 
 ## Leśny Pożeracz — Mroczny Las
 
-Przeciwnik poziomu 15 występuje w trudniejszych misjach Branda dla postaci poziomu 5–15, wyłącznie w Mrocznym Lesie. Ma 400 HP, cechy 32/12/25/30 oraz obrażenia 30–40. Zwycięstwo daje dokładnie 99 złota i 500 EXP, bez przedmiotów; porażka nie daje nagrody. Awatar `forest-devourer.webp` przedstawia bezkształtną masę czarnego szlamu i gnijących liści, z czaszkami i kośćmi zawieszonymi wewnątrz półprzezroczystego ciała.
+Przeciwnik poziomu 15 występuje w misjach Branda przy różnicy do 3 poziomów między przeciwnikiem a postacią, wyłącznie w Mrocznym Lesie. Ma 400 HP, cechy 32/12/25/30 oraz obrażenia 30–40. Zwycięstwo daje dokładnie 99 złota i 500 EXP, bez przedmiotów; porażka nie daje nagrody. Awatar `forest-devourer.webp` przedstawia bezkształtną masę czarnego szlamu i gnijących liści, z czaszkami i kośćmi zawieszonymi wewnątrz półprzezroczystego ciała.
 
 
 ## Aelira — Mroczny Las
 
-Czarodziejka poziomu 14 występuje w trudniejszych misjach Branda dla postaci poziomu 5–15, wyłącznie w Mrocznym Lesie. Ma 360 HP, cechy 16/26/34/24 oraz obrażenia 28–38. Zwycięstwo daje dokładnie 75 złota i 450 EXP, bez przedmiotów; porażka nie daje nagrody. Awatar `aelira.webp` przedstawia dorosłą czarodziejkę o oliwkowozielonej skórze, bursztynowych oczach, ciemnych włosach z mchem i kwiatami, organicznych szatach, paprociowej pelerynie oraz sękatym kosturze z leśnym ognikiem.
+Czarodziejka poziomu 14 występuje w misjach Branda przy różnicy do 3 poziomów między przeciwnikiem a postacią, wyłącznie w Mrocznym Lesie. Ma 360 HP, cechy 16/26/34/24 oraz obrażenia 28–38. Zwycięstwo daje dokładnie 75 złota i 450 EXP, bez przedmiotów; porażka nie daje nagrody. Awatar `aelira.webp` przedstawia dorosłą czarodziejkę o oliwkowozielonej skórze, bursztynowych oczach, ciemnych włosach z mchem i kwiatami, organicznych szatach, paprociowej pelerynie oraz sękatym kosturze z leśnym ognikiem.
 
 
 ## Odłamki ze zwiadów od poziomu 8
@@ -389,22 +391,22 @@ Nowy zwiad czasowy przyjęty na poziomie 8–11 ma 3% szansy na dodatkowy 1 odł
 
 ## Kryształowy Skorpion — Stara Kopalnia
 
-Przeciwnik poziomu 7 występuje w trudniejszych misjach Branda dla postaci poziomu 5–15, wyłącznie w Starej Kopalni. Ma 195 HP, cechy 16/12/4/22 i żądło zadające 25–30 obrażeń od trucizny. Kryształowy pancerz pochłania 2 punkty obrażeń przy każdym trafieniu; trafienie zawsze zadaje co najmniej 1 obrażenie. Zwycięstwo daje dokładnie 15 złota i 100 EXP, bez przedmiotów i odłamków; porażka nie daje nagrody. Awatar `crystal-scorpion.webp` przedstawia skorpiona o kryształowym pancerzu i jadowitym żądle. Pancerz, rodzaj ataku, obrażenia i wynik są zapisywane w migawce walki; przewijanie korzysta z tych samych zasad.
+Przeciwnik poziomu 7 występuje w misjach Branda przy różnicy do 3 poziomów między przeciwnikiem a postacią, wyłącznie w Starej Kopalni. Ma 195 HP, cechy 16/12/4/22 i żądło zadające 25–30 obrażeń od trucizny. Kryształowy pancerz pochłania 2 punkty obrażeń przy każdym trafieniu; trafienie zawsze zadaje co najmniej 1 obrażenie. Zwycięstwo daje dokładnie 15 złota i 100 EXP, bez przedmiotów i odłamków; porażka nie daje nagrody. Awatar `crystal-scorpion.webp` przedstawia skorpiona o kryształowym pancerzu i jadowitym żądle. Pancerz, rodzaj ataku, obrażenia i wynik są zapisywane w migawce walki; przewijanie korzysta z tych samych zasad.
 
 
 ## Nieumarły Górnik — Stara Kopalnia
 
-Przeciwnik poziomu 9 występuje w trudniejszych misjach Branda dla postaci poziomu 5–15, wyłącznie w Starej Kopalni. Ma 230 HP, cechy 24/10/5/20 i kilof zadający 26–35 obrażeń. Cios ignoruje 50% redukcji obrażeń z pancerza celu (pomijana wartość jest zaokrąglana w dół); pozostały pancerz nadal działa, a trafienie zadaje co najmniej 1 obrażenie. Zwycięstwo daje dokładnie 25 złota i 150 EXP, bez przedmiotów i odłamków; porażka nie daje nagrody. Awatar `undead-miner.webp` przedstawia szkielet dawnego górnika z kilofem. Przebicie pancerza, obrażenia i nagroda są zapisywane w migawce walki i stosowane również przy przewijaniu. Ekwipunek bohatera obecnie zwiększa cechy i HP, a nie pole redukcji `armor`; przebicie działa na redukcję pancerza, gdy cel ją posiada.
+Przeciwnik poziomu 9 występuje w misjach Branda przy różnicy do 3 poziomów między przeciwnikiem a postacią, wyłącznie w Starej Kopalni. Ma 230 HP, cechy 24/10/5/20 i kilof zadający 26–35 obrażeń. Cios ignoruje 50% redukcji obrażeń z pancerza celu (pomijana wartość jest zaokrąglana w dół); pozostały pancerz nadal działa, a trafienie zadaje co najmniej 1 obrażenie. Zwycięstwo daje dokładnie 25 złota i 150 EXP, bez przedmiotów i odłamków; porażka nie daje nagrody. Awatar `undead-miner.webp` przedstawia szkielet dawnego górnika z kilofem. Przebicie pancerza, obrażenia i nagroda są zapisywane w migawce walki i stosowane również przy przewijaniu. Ekwipunek bohatera obecnie zwiększa cechy i HP, a nie pole redukcji `armor`; przebicie działa na redukcję pancerza, gdy cel ją posiada.
 
 
 ## Golem Magmowy — Stara Kopalnia
 
-Przeciwnik poziomu 15 występuje w trudniejszych misjach Branda dla postaci poziomu 5–15, wyłącznie w Starej Kopalni. Ma 480 HP, cechy 38/8/20/36 oraz obrażenia 39–55. Pochłania 8 obrażeń fizycznych z trafienia (minimum 1 obrażenie); ten pancerz nie redukuje magii. Otrzymuje +50% bazowych obrażeń od wody, z premią zaokrągloną w dół. Zwycięstwo daje dokładnie 100 złota i 300 EXP, bez przedmiotów i odłamków; porażka nie daje nagrody. Awatar `magma-golem.webp` przedstawia olbrzyma z rozgrzanej skały i lawy. Typ ataku (`attackElement`), pancerz i podatność są obsługiwane w migawce walki oraz przy przewijaniu. Kula ognia z maną ma typ ognia; atak różdżką bez many jest fizyczny. Mag obecnie nie ma dostępnego w interfejsie zaklęcia wodnego — podatność jest przygotowana pod przyszłe dodanie takiego ataku.
+Przeciwnik poziomu 15 występuje w misjach Branda przy różnicy do 3 poziomów między przeciwnikiem a postacią, wyłącznie w Starej Kopalni. Ma 480 HP, cechy 38/8/20/36 oraz obrażenia 39–55. Pochłania 8 obrażeń fizycznych z trafienia (minimum 1 obrażenie); ten pancerz nie redukuje magii. Otrzymuje +50% bazowych obrażeń od wody, z premią zaokrągloną w dół. Zwycięstwo daje dokładnie 100 złota i 300 EXP, bez przedmiotów i odłamków; porażka nie daje nagrody. Awatar `magma-golem.webp` przedstawia olbrzyma z rozgrzanej skały i lawy. Typ ataku (`attackElement`), pancerz i podatność są obsługiwane w migawce walki oraz przy przewijaniu. Kula ognia z maną ma typ ognia; atak różdżką bez many jest fizyczny. Mag obecnie nie ma dostępnego w interfejsie zaklęcia wodnego — podatność jest przygotowana pod przyszłe dodanie takiego ataku.
 
 
 ## Specjalne ataki nowych potworów Kopalni
 
-W trudniejszych misjach Starej Kopalni dla postaci poziomu 5–15 pojawiają się trzy nowe potwory z osobnymi awatarami:
+W misjach Starej Kopalni, z doborem przeciwników w zakresie ±3 poziomów postaci, pojawiają się trzy nowe potwory z osobnymi awatarami:
 
 | Przeciwnik | Poziom | HP | Obrażenia | EXP | Złoto | Zdolność |
 | --- | ---: | ---: | --- | ---: | ---: | --- |
@@ -419,7 +421,7 @@ Testy mechaniki walki można uruchomić poleceniem `node --test tests/*.test.cjs
 
 ## Kolejni przeciwnicy Mrocznego Lasu
 
-Pięć nowych potworów z osobnymi awatarami występuje w trudniejszych zleceniach Branda dla postaci poziomu 5–15:
+Pięć nowych potworów z osobnymi awatarami występuje w zleceniach Branda z doborem ±3 poziomy postaci:
 
 | Potwór | Poziom | HP | Atak | Złoto | EXP | Zdolność |
 | --- | ---: | ---: | --- | ---: | ---: | --- |
@@ -434,7 +436,7 @@ Premie do ataku są naliczane przed obroną; procentowe zwiększenia i końcowe 
 
 ## Dzwonnik Otchłani — Stara Kopalnia
 
-Przeciwnik poziomu 14 występuje w trudniejszych misjach Branda dla postaci poziomu 5–15, wyłącznie w Starej Kopalni. Ma 390 HP, cechy 34/10/24/30 i atak fizyczny 32–43. Nagroda za zwycięstwo: dokładnie 90 złota i 280 EXP, bez przedmiotów i odłamków; porażka nie daje nagrody. Awatar `abyss-bellringer.webp` przedstawia przygarbionego olbrzyma z czarną szczeliną zamiast twarzy i pękniętym dzwonem przykutym do pleców.
+Przeciwnik poziomu 14 występuje w misjach Branda przy różnicy do 3 poziomów między przeciwnikiem a postacią, wyłącznie w Starej Kopalni. Ma 390 HP, cechy 34/10/24/30 i atak fizyczny 32–43. Nagroda za zwycięstwo: dokładnie 90 złota i 280 EXP, bez przedmiotów i odłamków; porażka nie daje nagrody. Awatar `abyss-bellringer.webp` przedstawia przygarbionego olbrzyma z czarną szczeliną zamiast twarzy i pękniętym dzwonem przykutym do pleców.
 
 Echo Zagłady co czwarty własny atak dodaje osobną falę 12 bazowych obrażeń magicznych (bez kosztu many). Bez obrony czwarty cios zadaje łącznie 44–55 obrażeń. Podstawowy cios jest fizyczny; fala omija `physicalArmor` i procentową `physicalResistance`, lecz nadal podlega ogólnej redukcji `armor` oraz podatności `magicVulnerability`. Ogólny pancerz działa osobno na oba składniki, z minimum 1 obrażeniem na składnik. Fala nie zadaje obrażeń celowi już zabitemu przez podstawowy cios; komunikat i liczba nad portretem pokazują faktyczną utratę HP. Licznik ataków i zasady fali zapisują się z walką, a przewijanie korzysta z tego samego silnika. HP i podstawowy atak są niższe niż u Golema Magmowego; premia do czwartego ciosu wyróżnia Dzwonnika na tle Trolla i Pełzacza.
 

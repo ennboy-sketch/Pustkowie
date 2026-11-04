@@ -33,12 +33,13 @@ test('bellringer: balanced stats, fixed rewards and existing mine/level/difficul
   for (let level = 1; level <= 26; level++) {
     const hero = { version: 2, name: 'Test', classId: 'warrior', gender: 'male', level, gold: 25, energy: 100,
       brandOffers: [{ id: 'offer', type: 'combat', sceneId: 'mine', tier: 'hard', enemyId: m.id }] };
-    const available = level >= 5 && level <= 15;
-    assert.equal(c.availableOpponents(hero, 'mine', 'hard').some(m => m.id === 'abyss-bellringer'), available);
-    assert.equal(c.availableOpponents(hero, 'mine', 'easy').some(m => m.id === 'abyss-bellringer'), false);
+    const available = Math.abs(level - m.level) <= 3;
+    assert.equal(c.availableOpponents(hero, 'mine').some(m => m.id === 'abyss-bellringer'), available);
+    const tier = c.availableOpponents(hero, 'mine', 'hard').some(enemy => enemy.id === 'abyss-bellringer') ? 'hard' : 'easy';
+    hero.brandOffers[0].tier = tier;
     if (!available) { assert.throws(() => r.BrandChoices.accept(hero, 'offer')); continue; }
     const started = r.BrandChoices.accept(hero, 'offer');
-    assert.equal(started.energy, 95); assert.deepEqual(plain(started.activeCombat.reward), { gold: 90, xp: 280 });
+    assert.equal(started.energy, tier === 'hard' ? 95 : 97); assert.deepEqual(plain(started.activeCombat.reward), { gold: 90, xp: 280 });
   }
 });
 
@@ -105,7 +106,7 @@ test('echo: poison resolves first and can prevent the fourth attack entirely', (
 test('bellringer: saving before/after the echo, normal play and skip agree on wins/losses and exact once-only rewards', () => {
   const c = runtime().BrandCombat;
   for (const win of [true, false]) for (const stopAfter of [6, 8]) {
-    const hero = { version: 2, name: 'Test', classId: 'warrior', gender: 'male', level: 8, xp: 0, gold: 25, shards: 4, energy: 100,
+    const hero = { version: 2, name: 'Test', classId: 'warrior', gender: 'male', level: 14, xp: 0, gold: 25, shards: 4, energy: 100,
       combatOffer: { sceneId: 'mine', enemyId: 'abyss-bellringer' } };
     let normal = c.start(hero), b = normal.activeCombat.battle;
     b.hero.maxHp = b.hero.hp = win ? 10000 : 150;
@@ -127,9 +128,10 @@ test('bellringer: saving before/after the echo, normal play and skip agree on wi
 });
 
 test('Brand can select the bellringer through the real mission offer generator', () => {
-  const r = runtime(), hero = { version: 2, name: 'Test', classId: 'warrior', gender: 'male', level: 15, gold: 25, energy: 100 };
+  const r = runtime(), hero = { version: 2, name: 'Test', classId: 'warrior', gender: 'male', level: 13, gold: 25, energy: 100 };
   const index = r.BrandCombat.availableOpponents(hero, 'mine', 'hard').findIndex(m => m.id === 'abyss-bellringer');
-  const values = [1, 1, 1, index];
+  assert.ok(index >= 0);
+  const values = [99, 0, 0, 1, index];
   r.crypto.getRandomValues = a => { assert.ok(values.length); a[0] = values.shift(); return a; };
   const offer = r.BrandChoices.prepare(hero).brandOffers[1];
   assert.equal(offer.sceneId, 'mine'); assert.equal(offer.type, 'combat'); assert.equal(offer.enemyId, 'abyss-bellringer');
