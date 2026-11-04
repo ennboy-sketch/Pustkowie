@@ -488,3 +488,10 @@ Wojownik i Krasnolud szkolą się u Paladyna Gabriela w koszarach, Mag u Alchemi
 Dostępne nagrody mają równe szanse. Z puli odpada już zdobyty kuc, energia przy pełnym pasku i mikstura przy pełnym plecaku, aby nie pobierać opłaty za niedostępną nagrodę. Pozostałe materiały są zliczane w ekwipunku, bez zajmowania miejsc na uzbrojenie. Wytwarzanie sprzętu i biżuterii nie jest jeszcze aktywne. Materiały mają osobne grafiki WebP: rare-material, power-potion, gem-fragment, spell-scroll; awatar kuca: war-pony.webp.
 
 Bonusy walki są utrwalane w nowej migawce walki; zdobycie kuca lub zmiana mikstury nie zmienia już trwającej walki. Przyspieszony zwiad zapisuje durationVersion 3, bazowy czas i premię; nagroda nadal odpowiada bazowemu czasowi, a dawne aktywne misje zachowują termin. Testy obejmują wszystkie nagrody, obie waluty, niedostateczne środki, pojemność plecaka, bonusy wyposażenia, zapis skróconych misji i wymianę zwojów.
+
+
+## Podsumowanie porażki u Branda
+
+Po rozliczeniu przegranej walki zamykane jest pole walki, a rozmowa z Brandem pokazuje tytuł „Porażka” i informację o braku nagrody. Nie otwiera się ponownie pusty podgląd po wyczyszczeniu activeCombat/combatOffer. Dzięki temu cykliczne odświeżanie nie zastępuje wyniku komunikatem „Brak dostępnych przeciwników”. Przy ponownym wejściu do Branda powstają normalne nowe oferty zgodnie z zakresem ±3 poziomów; porażka nie dodaje nagród ani nie pobiera energii ponownie.
+
+Test przeglądarkowy wszystkich przeciwników Branda i regresji porażki: `node tests/all-monsters.browser.cjs http://127.0.0.1:8000/` przy lokalnym serwerze katalogu `dist`. Wymaga Playwright i Chromium (`/usr/bin/chromium`). Sprawdza portrety, zwycięstwa, nagrody, kolejne oferty oraz porażki ze wszystkich terenów na szerokościach 1280 i 390 px. Osobno dostępne są testy mechaniki `node --test tests/*.test.cjs`.

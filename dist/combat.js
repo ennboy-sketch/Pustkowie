@@ -317,8 +317,7 @@
         if(intent==='finish'||intent==='skip'){
           dialog.close();shownId=null;
           if(isQuest){state.onQuestResolved?.(next);return;}
-          if(next.lastCombat.won)window.TavernPanel.showReward(next.lastCombat,window.Progression.level(next));
-          else{dialog.querySelector('.combat-status').textContent='Porażka. Nie otrzymujesz nagrody.';render(next);dialog.querySelector('.combat-status').textContent='Porażka. Nie otrzymujesz nagrody.';dialog.showModal();}
+          window.TavernPanel.showReward(next.lastCombat,window.Progression.level(next));
         }else{busy=false;render(next);}
       }catch(error){if(!disposed)dialog.querySelector('.combat-status').textContent=error.message;}
       finally{busy=false;if(!disposed){const current=state.read();action.disabled=current.activeCombat?false:!current.combatOffer?.enemyId||!eligible(current);}}

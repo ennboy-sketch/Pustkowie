@@ -18,10 +18,12 @@
     dialog.querySelector('.brand-service').hidden=true;
     dialog.querySelector('.beer-service').hidden=true;
     dialog.querySelector('.tauriel-service').hidden=true;
-    dialog.querySelector('#tavern-speaker').textContent='Nagroda za misję';
-    dialog.querySelector('.tavern-dialogue-line').hidden=true;
+    const lost=completed.won===false;
+    dialog.querySelector('#tavern-speaker').textContent=lost?'Porażka':'Nagroda za misję';
+    dialog.querySelector('.tavern-dialogue-line').hidden=!lost;
+    dialog.querySelector('.tavern-dialogue-line').textContent=lost?'Przegrałeś walkę. Nie otrzymujesz nagrody. Wróć do karczmy, aby wybrać kolejne zlecenie.':'';
     const reward=dialog.querySelector('.mission-reward');
-    reward.hidden=false;
+    reward.hidden=lost;
     reward.querySelector('[data-reward-gold]').textContent=completed.reward.gold;
     reward.querySelector('[data-reward-xp]').textContent=completed.reward.xp;
     const shards=reward.querySelector('[data-reward-shards-item]');
