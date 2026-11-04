@@ -29,6 +29,7 @@
       }else if(part==='table'){
         title.textContent='Stół alchemiczny';
         content.innerHTML=window.MagicDust.markup(state.read())+'<p>Wymień 25 szt. magicznego pyłu na 1 odłamek.</p><button type="button" class="primary" data-exchange-dust>Wymień 25 pyłu → 1 odłamek</button><p class="dust-exchange-message" role="status" aria-live="polite"></p>';
+        content.insertAdjacentHTML('beforeend',`<section class="magic-dust-material"><img src="spell-scroll.webp" alt=""><div><strong>Zwój zaklęć</strong><p>Posiadasz: <b data-scroll-count>${window.FateWheel.count(state.read(),'spellScrolls')}</b></p><small>10 zwojów = 1000 EXP</small></div></section><button type="button" class="primary" data-exchange-scrolls>Wymień 10 zwojów → 1000 EXP</button><p class="scroll-exchange-message" role="status"></p>`);
         refreshTable();
       }else if(part==='stairs'){
         title.textContent='Wejście na górę';
@@ -39,13 +40,14 @@
     showProfessions=()=>show('professions');
     function refreshTable(){
       const button=panel.querySelector('[data-exchange-dust]');if(!button)return;
-      try{const amount=window.MagicDust.count(state.read());panel.querySelector('[data-magic-dust-count]').textContent=amount;button.disabled=busy||amount<window.MagicDust.COST;}
+      try{const h=state.read(),amount=window.MagicDust.count(h);const scroll=panel.querySelector('[data-exchange-scrolls]');if(scroll){scroll.disabled=busy||window.FateWheel.count(h,'spellScrolls')<10;panel.querySelector('[data-scroll-count]').textContent=window.FateWheel.count(h,'spellScrolls');}panel.querySelector('[data-magic-dust-count]').textContent=amount;button.disabled=busy||amount<window.MagicDust.COST;}
       catch{button.disabled=true;panel.querySelector('.dust-exchange-message').textContent='Nie udało się odczytać materiałów. Zamknij okno i spróbuj ponownie.';}
     }
     async function click(e){
-      if(e.target.closest('[data-exchange-dust]')){
-        if(busy)return;busy=true;refreshTable();const message=panel.querySelector('.dust-exchange-message');message.textContent='';
-        try{const change=()=>state.update(hero=>window.MagicDust.exchange(hero));if(navigator.locks)await navigator.locks.request('pustkowie-hero-v2',change);else change();if(!disposed)message.textContent='Wymieniono 25 szt. magicznego pyłu. Otrzymujesz 1 odłamek.';}
+      if(e.target.closest('[data-exchange-dust]')||e.target.closest('[data-exchange-scrolls]')){
+        const scrolls=!!e.target.closest('[data-exchange-scrolls]');
+        if(busy)return;busy=true;refreshTable();const message=panel.querySelector(scrolls?'.scroll-exchange-message':'.dust-exchange-message');message.textContent='';
+        try{const change=()=>state.update(hero=>scrolls?window.FateWheel.exchangeScrolls(hero):window.MagicDust.exchange(hero));if(navigator.locks)await navigator.locks.request('pustkowie-hero-v2',change);else change();if(!disposed)message.textContent=scrolls?'Wymieniono 10 zwojów. Otrzymujesz 1000 EXP.':'Wymieniono 25 szt. magicznego pyłu. Otrzymujesz 1 odłamek.';}
         catch(error){if(!disposed)message.textContent=error.name==='QuotaExceededError'||error.name==='SecurityError'?'Nie udało się zapisać wymiany. Materiały nie zostały pobrane.':error.message;}
         finally{busy=false;if(!disposed)refreshTable();}return;
       }

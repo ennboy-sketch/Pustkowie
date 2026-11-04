@@ -163,7 +163,9 @@
       content = window.BarracksPanel.markup();
     } else if (id === 'wheel') {
       content = window.FateWheel.markup(hero);
-    } else if (id === 'mount' || id === 'guild') {
+    } else if (id === 'mount') {
+      content = window.FateWheel.mountMarkup(readCurrentHero());
+    } else if (id === 'guild') {
       content = '';
     } else if (id === 'inventory') {
       content = '<div class="backpack-root"></div>';
@@ -178,7 +180,7 @@
     if (id === 'hero') stopHeroSheet=window.HeroSheet.mount($('.hero-sheet-root'),{read:readCurrentHero,update:updateCurrentHero});
     if (id === 'inventory') stopHeroSheet=window.HeroSheet.mountBag($('.backpack-root'),{read:readCurrentHero,update:updateCurrentHero});
     if (id === 'dungeon' && !dungeonLocked) stopDungeons=window.DungeonsPanel.mount($('#place-content'),{read:readCurrentHero,onTitle:title=>{$('#place-title').textContent=title;}});
-    if (id === 'wheel') window.FateWheel.mount($('#place-content'));
+    if (id === 'wheel') window.FateWheel.mount($('#place-content'),{read:readCurrentHero,update:updateCurrentHero});
     if (id === 'alchemy') window.AlchemistPanel.mount($('#place-content'),{read:readCurrentHero,update:updateCurrentHero,professionMarkup:()=>barracksPanel('alchemist')});
     if (id === 'forge' && !forgeLocked) window.ForgePanel.mount($('#place-content'));
     if (id === 'market') window.MarketPanel.mount($('#place-content'),{read:readCurrentHero,update:updateCurrentHero});

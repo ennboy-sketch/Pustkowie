@@ -38,7 +38,7 @@ Menu, znaczniki mapy i panele korzystają z lokalnego atlasu `dist/rpg-icons.web
 
 ## Koło Losu przy fontannie
 
-Centralna fontanna ma znacznik Koło Losu. Panel zawiera 12 nieodkrytych pól, animowany obrót podglądowy i koszt obrotu: 1 odłamek lub 100 złota, z osobnymi przyciskami obu opcji i saldami walut. Nagrody nie są jeszcze zdefiniowane, dlatego płatny obrót pozostaje zablokowany. Darmowy podgląd nie pobiera złota ani odłamków, nie przyznaje nagród i nie zmienia zapisu postaci. Zamknięcie panelu przerywa animację. Ceny definiuje stała `FateWheel.COSTS` w `wheel.js` (odłamki: 1, złoto: 100); pole `hero.shards` (nieujemna liczba całkowita) określa saldo wyświetlane w kole, starsze zapisy domyślnie mają 0.
+Centralna fontanna otwiera Koło Losu z siedmioma nagrodami. Obrót kosztuje 1 odłamek lub 100 złota, z osobnymi przyciskami i saldami obu walut. Nagroda i koszt zapisują się atomowo przed animacją pod wspólną blokadą postaci: zamknięcie okna lub odświeżenie nie kasuje nagrody ani nie przyznaje jej ponownie. Ostatni wynik jest widoczny po powrocie do koła. Płatne obroty są aktywne; dawny darmowy podgląd został zastąpiony grą o nagrody.
 
 ## Karczma
 
@@ -473,3 +473,18 @@ Stół alchemiczki wymienia dokładnie 25 pyłu na 1 odłamek, jedną wymianę n
 ## Nauczyciele profesji według klasy
 
 Wojownik i Krasnolud szkolą się u Paladyna Gabriela w koszarach, Mag u Alchemiczki w Wieży Zielonego Płomienia. Obie rozmowy mają przycisk „Porozmawiaj o profesjach”. Niewłaściwy nauczyciel wskazuje właściwą postać, bez dostępu do formularza szkolenia. Elf otrzymuje informację, że jego nowy nauczyciel pojawi się później. Wymagany poziom 10 zostaje zachowany. Nazwy i umiejętności trzech profesji każdej klasy nadal są do ustalenia; robocze profesje pozostają zablokowane. Obsługa formularza ponownie odczytuje zapis i sprawdza klasę, nauczyciela oraz poziom. Nie zmieniono istniejących profesji w zapisie ani walut.
+
+
+## Siedem nagród Koła Losu
+
+- Energia +25, do obecnego limitu 100.
+- Kuc Bojowy: jednorazowe odblokowanie, awatar w oknie Wierzchowiec, automatycznie +5 obrażeń i +5 ogólnej obrony w nowych walkach (także Tauriel), nowe zwiady krótsze o 10%.
+- Rzadki Materiał ×1: materiał w ekwipunku do przyszłego wytwarzania rzadkiego sprzętu.
+- Mikstura mocy: czerwony flakon, przedmiot do slotu specjalnego, +10 obrażeń wyłącznie po założeniu; kolejne mikstury nie zwiększają premii jednocześnie.
+- Kawałek klejnotu ×1: materiał do przyszłego wytwarzania biżuterii.
+- EXP +250: natychmiast przyznawane postaci, z normalnymi awansami.
+- Zwój zaklęć ×1: materiał; stół Lilith wymienia 10 zwojów na 1000 EXP.
+
+Dostępne nagrody mają równe szanse. Z puli odpada już zdobyty kuc, energia przy pełnym pasku i mikstura przy pełnym plecaku, aby nie pobierać opłaty za niedostępną nagrodę. Pozostałe materiały są zliczane w ekwipunku, bez zajmowania miejsc na uzbrojenie. Wytwarzanie sprzętu i biżuterii nie jest jeszcze aktywne. Materiały mają osobne grafiki WebP: rare-material, power-potion, gem-fragment, spell-scroll; awatar kuca: war-pony.webp.
+
+Bonusy walki są utrwalane w nowej migawce walki; zdobycie kuca lub zmiana mikstury nie zmienia już trwającej walki. Przyspieszony zwiad zapisuje durationVersion 3, bazowy czas i premię; nagroda nadal odpowiada bazowemu czasowi, a dawne aktywne misje zachowują termin. Testy obejmują wszystkie nagrody, obie waluty, niedostateczne środki, pojemność plecaka, bonusy wyposażenia, zapis skróconych misji i wymianę zwojów.

@@ -1,36 +1,33 @@
 'use strict';
 (() => {
-  const COSTS = Object.freeze({shards:1,gold:100});
-  const SLOTS = 12;
-  let activeAnimation = null;
-  function cancel() { if (activeAnimation) { activeAnimation.cancel(); activeAnimation = null; } }
-  function markup(hero) {
-    const shards = Number.isSafeInteger(hero.shards) && hero.shards >= 0 ? hero.shards : 0;
-    const gold = Number.isSafeInteger(hero.gold) && hero.gold >= 0 ? hero.gold : 25;
-    return `<section class="fate-wheel" aria-label="Koło Losu przy fontannie"><div class="wheel-balances"><span>Twoje odłamki <b><i class="rpg-icon icon-shard" aria-hidden="true"></i> ${shards}</b></span><span>Twoje złoto <b><i class="rpg-icon icon-coin" aria-hidden="true"></i> ${gold}</b></span></div><div class="wheel-board" role="img" aria-label="Koło z dwunastoma nieodkrytymi polami nagród"><div class="wheel-pointer" aria-hidden="true"></div><div class="wheel-rim" aria-hidden="true"></div><div class="wheel-disc" aria-hidden="true">${Array.from({length:SLOTS},(_,i)=>`<span class="wheel-slot" style="--angle:${i*30+15}deg">?</span>`).join('')}</div><div class="wheel-hub" aria-hidden="true"><span>✦</span></div></div><p class="wheel-caption">Nagrody ustalimy później</p><p class="wheel-cost">Koszt obrotu: ${COSTS.shards} odłamek lub ${COSTS.gold} złota</p><button class="primary paid-spin" type="button" data-spin-currency="shards" disabled>Zakręć · ${COSTS.shards} odłamek</button><button class="primary paid-spin" type="button" data-spin-currency="gold" disabled>Zakręć · ${COSTS.gold} złota</button><button class="secondary preview-spin" type="button">Obróć podgląd za darmo</button><p class="wheel-result" role="status" aria-live="polite"></p><p class="panel-note wheel-note">Płatne obroty będą dostępne po dodaniu nagród. Podgląd nie pobiera złota ani odłamków i nie przyznaje nagród.</p></section>`;
-  }
-  function mount(container) {
-    cancel();
-    const button = container.querySelector('.preview-spin');
-    const disc = container.querySelector('.wheel-disc');
-    const status = container.querySelector('.wheel-result');
-    let rotation = 0;
-    button.addEventListener('click', () => {
-      if (button.disabled || activeAnimation) return;
-      button.disabled = true; status.textContent = 'Koło się obraca…';
-      const random = new Uint32Array(1); crypto.getRandomValues(random);
-      const sector = Math.floor(random[0] / 4294967296 * SLOTS);
-      const end = Math.ceil(rotation/360)*360+5*360+360-(sector*30+15);
-      const duration = matchMedia('(prefers-reduced-motion: reduce)').matches ? 120 : 3200;
-      const animation = disc.animate([{transform:`rotate(${rotation}deg)`},{transform:`rotate(${end}deg)`}],{duration,easing:'cubic-bezier(.12,.65,.15,1)',fill:'forwards'});
-      activeAnimation = animation;
-      animation.finished.then(() => {
-        if (activeAnimation !== animation || !disc.isConnected) return;
-        rotation = end; disc.style.transform = `rotate(${end}deg)`;
-        activeAnimation = null; animation.cancel(); button.disabled = false;
-        status.textContent = 'Podgląd zakończony. Nie pobrano złota ani odłamków.';
-      }, () => { if (activeAnimation === animation) activeAnimation = null; });
-    });
-  }
-  window.FateWheel = {markup,mount,cancel,COSTS};
+ const COSTS=Object.freeze({shards:1,gold:100});
+ const REWARDS=[{id:'energy',name:'Energia +25',icon:'energy'},{id:'pony',name:'Kuc Bojowy',image:'war-pony.webp'},{id:'rare',name:'Rzadki Materiał ×1',image:'rare-material.webp'},{id:'potion',name:'Mikstura mocy',image:'power-potion.webp'},{id:'gem',name:'Kawałek klejnotu ×1',image:'gem-fragment.webp'},{id:'xp',name:'EXP +250',icon:'exp'},{id:'scroll',name:'Zwój zaklęć ×1',image:'spell-scroll.webp'}];
+ let stop=()=>{};function cancel(){stop();stop=()=>{};}
+ function count(h,key){const n=h[key]??0;if(!Number.isSafeInteger(n)||n<0)throw Error('Nieprawidłowy zapis materiałów.');return n;}
+ function bonuses(h){return {damage:(h.warPony?5:0)+(window.HeroSheet.inventory(h).some(i=>i.id===window.HeroSheet.equipment(h).special&&i.kind==='power-potion')?10:0),armor:h.warPony?5:0};}
+ function pool(h){return REWARDS.filter(r=>r.id!=='pony'||!h.warPony).filter(r=>r.id!=='potion'||window.HeroSheet.bagItems(h).length<25).filter(r=>r.id!=='energy'||window.EnergyCycle.info(h).energy<100);}
+ function spin(hero,currency,draw){
+  if(!Object.hasOwn(COSTS,currency))throw Error('Nieznana waluta.');
+  let h=window.EnergyCycle.apply(hero);const balance=currency==='gold'?(h.gold??25):count(h,'shards');
+  if(!Number.isSafeInteger(balance)||balance<COSTS[currency])throw Error(currency==='gold'?'Potrzebujesz 100 złota.':'Potrzebujesz 1 odłamka.');
+  const choices=pool(h),index=draw?draw(choices.length):random(choices.length);if(!Number.isSafeInteger(index)||index<0||index>=choices.length)throw Error('Nieprawidłowe losowanie.');const reward=choices[index];
+  h={...h,[currency]:balance-COSTS[currency]};
+  if(reward.id==='energy')h.energy=Math.min(100,h.energy+25);
+  else if(reward.id==='pony')h.warPony=true;
+  else if(reward.id==='xp')h=window.Progression.award(h,250);
+  else if(reward.id==='potion')h.lootInventory=[...window.HeroSheet.inventory(h),{id:'power-potion-'+crypto.randomUUID(),slot:'special',kind:'power-potion',name:'Mikstura mocy'}];
+  else{const key={rare:'rareMaterial',gem:'gemFragments',scroll:'spellScrolls'}[reward.id];const n=count(h,key)+1;if(!Number.isSafeInteger(n))throw Error('Za dużo materiałów.');h[key]=n;}
+  return {...h,lastWheel:{id:crypto.randomUUID(),reward:reward.id,name:reward.name,currency,at:Date.now()}};
+ }
+ function random(max){const a=new Uint32Array(1),limit=4294967296-4294967296%max;do{crypto.getRandomValues(a)}while(a[0]>=limit);return a[0]%max;}
+ function exchangeScrolls(h){if(count(h,'spellScrolls')<10)throw Error('Potrzebujesz 10 zwojów zaklęć.');return window.Progression.award({...h,spellScrolls:h.spellScrolls-10},1000);}
+ function materialsMarkup(h){return [['rareMaterial','Rzadki Materiał','rare-material.webp','Do wytwarzania rzadkiego ekwipunku'],['gemFragments','Kawałek klejnotu','gem-fragment.webp','Do wytwarzania biżuterii'],['spellScrolls','Zwój zaklęć','spell-scroll.webp','10 zwojów = 1000 EXP u Lilith']].map(([key,name,image,note])=>`<section class="magic-dust-material"><img src="${image}" alt=""><div><strong>${name}</strong><p>Posiadasz: <b data-material="${key}">${count(h,key)}</b></p><small>${note}</small></div></section>`).join('');}
+ function mountMarkup(h){return h.warPony?'<section class="pony-panel"><img src="war-pony.webp" alt="Kuc Bojowy w zbroi"><h3>Kuc Bojowy</h3><p>Obrażenia +5 · Obrona +5</p><p>Misje czasowe krótsze o 10%. Bonusy są aktywne.</p></section>':'<p class="place-text">Nie masz jeszcze wierzchowca. Kuca Bojowego możesz zdobyć w Kole Losu.</p>';}
+ function markup(h){return `<section class="fate-wheel"><div class="wheel-balances"><span>Odłamki <b data-wheel-shards>${h.shards??0}</b></span><span>Złoto <b data-wheel-gold>${h.gold??25}</b></span></div><div class="wheel-board"><div class="wheel-pointer"></div><div class="wheel-rim"></div><div class="wheel-disc">${REWARDS.map((r,i)=>`<span class="wheel-slot" style="--angle:${i*360/7+360/14}deg">${r.image?`<img src="${r.image}" alt="">`:`<i class="rpg-icon icon-${r.icon}"></i>`}</span>`).join('')}</div><div class="wheel-hub">✦</div></div><p class="wheel-cost">Koszt: 1 odłamek lub 100 złota</p><button type="button" class="primary paid-spin" data-spin-currency="shards">Zakręć · 1 odłamek</button><button type="button" class="primary paid-spin" data-spin-currency="gold">Zakręć · 100 złota</button><p class="wheel-result" role="status" aria-live="polite">${h.lastWheel?'Ostatnia nagroda: '+h.lastWheel.name:''}</p><ul class="wheel-prizes">${REWARDS.map(r=>`<li>${r.name}</li>`).join('')}</ul><p class="panel-note">Równe szanse dostępnych nagród. Zdobyty kuc, energia przy pełnym pasku i mikstura przy pełnym plecaku nie są ponownie losowane.</p></section>`;}
+ function mount(root,state){cancel();let busy=false,disposed=false,animation=null;const status=root.querySelector('.wheel-result');
+  function refresh(){if(disposed)return;try{const h=state.read();root.querySelector('[data-wheel-shards]').textContent=h.shards??0;root.querySelector('[data-wheel-gold]').textContent=h.gold??25;root.querySelectorAll('[data-spin-currency]').forEach(b=>b.disabled=busy||(b.dataset.spinCurrency==='gold'?(h.gold??25):h.shards??0)<COSTS[b.dataset.spinCurrency]);}catch{root.querySelectorAll('button').forEach(b=>b.disabled=true)}}
+  async function click(e){const b=e.target.closest('[data-spin-currency]');if(!b||busy)return;busy=true;refresh();status.textContent='Koło się obraca…';try{const update=()=>state.update(h=>spin(h,b.dataset.spinCurrency));const h=navigator.locks?await navigator.locks.request('pustkowie-hero-v2',update):update();if(disposed)return;const index=REWARDS.findIndex(r=>r.id===h.lastWheel.reward),end=1800+360-(index*360/7+360/14),disc=root.querySelector('.wheel-disc');animation=disc.animate([{transform:'rotate(0deg)'},{transform:`rotate(${end}deg)`}],{duration:matchMedia('(prefers-reduced-motion: reduce)').matches?100:3200,easing:'cubic-bezier(.12,.65,.15,1)',fill:'forwards'});await animation.finished;if(!disposed)status.textContent='Wygrana: '+h.lastWheel.name;}catch(e){if(!disposed)status.textContent=e.name==='QuotaExceededError'?'Nie udało się zapisać obrotu. Nie pobrano opłaty.':e.message;}finally{busy=false;refresh()}}
+  function storage(e){if(e.key==='pustkowie.hero.v2')refresh()}root.addEventListener('click',click);window.addEventListener('storage',storage);refresh();stop=()=>{disposed=true;animation?.cancel();root.removeEventListener('click',click);window.removeEventListener('storage',storage)};
+ }
+ window.FateWheel={COSTS,REWARDS,count,bonuses,pool,spin,exchangeScrolls,materialsMarkup,mountMarkup,markup,mount,cancel};
 })();

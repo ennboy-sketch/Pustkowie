@@ -70,7 +70,7 @@
     const enemy=sceneId&&Object.hasOwn(ROSTERS,sceneId)?availableOpponents(hero,sceneId).find(m=>m.id===hero.combatOffer.enemyId):null;
     if(!enemy)throw new Error('Brak przydzielonego przeciwnika.');
     if(hero.energy<cost)throw new Error(`Potrzebujesz ${cost} energii.`);
-    const player=profile(hero),power=Math.max(...player.stats)+player.level*2;
+    const player=profile(hero),power=Math.max(...player.stats)+player.level*2+(player.damageBonus||0);
     player.attack=[Math.max(1,power-3),power+3];
     return {...hero,energy:hero.energy-cost,brandOffers:null,activeCombat:{cost,difficulty:options.difficulty||null,id:crypto.randomUUID(),sceneId,battle:createBattle(player,enemy,'hero'),loot:null,reward:enemy.reward?{...enemy.reward}:{gold:random(10,30),xp:random(33,55)},nextHitAt:now+1100}};
   }
@@ -100,7 +100,8 @@
     const base=BASE_STATS[hero.classId];
     if(!base)throw new Error('Nieznana klasa postaci.');
     const added=window.HeroSheet.bonuses(hero),stats=base.map((n,i)=>n+added[i]);
-    return {name:hero.name,level:window.Progression.level(hero),maxHp:50+stats[3]*10+window.HeroSheet.hpBonus(hero),maxMana:window.HeroSheet.manaCapacity(hero.classId,stats[2]),stats:[...stats],classId:hero.classId,gender:hero.gender};
+    const bonuses=window.FateWheel?.bonuses(hero)||{damage:0,armor:0};
+    return {damageBonus:bonuses.damage,armor:bonuses.armor,name:hero.name,level:window.Progression.level(hero),maxHp:50+stats[3]*10+window.HeroSheet.hpBonus(hero),maxMana:window.HeroSheet.manaCapacity(hero.classId,stats[2]),stats:[...stats],classId:hero.classId,gender:hero.gender};
   }
   function drawLocation(hero){
     const ids=Object.keys(ROSTERS).filter(id=>hero?availableOpponents(hero,id).length:ROSTERS[id].length),value=new Uint32Array(1),limit=4294967296-(4294967296%ids.length);

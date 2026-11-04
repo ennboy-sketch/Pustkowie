@@ -71,7 +71,7 @@
     if(items.some(i=>i.id===item.id)||bagItems(hero).length>=25)return hero;
     return {...hero,lootInventory:[...items,item]};
   }
-  function itemDetails(item){const bonus=item?.id==='tauriel-emerald-necklace'?'+100 HP':window.MarketPanel?.describeItem(item)||'',restriction=window.GearCatalog.details(item)||(item?.slot==='armor'?BODY_TYPES[armorType(item)]?.restriction||'':'');return [bonus,restriction].filter(Boolean).map(text=>' · '+text).join('');}
+  function itemDetails(item){const bonus=item?.kind==='power-potion'?'+10 obrażeń po założeniu':item?.id==='tauriel-emerald-necklace'?'+100 HP':window.MarketPanel?.describeItem(item)||'',restriction=window.GearCatalog.details(item)||(item?.slot==='armor'?BODY_TYPES[armorType(item)]?.restriction||'':'');return [bonus,restriction].filter(Boolean).map(text=>' · '+text).join('');}
   function starterIconClass(item,hero){
     if(!item||!hero)return null;
     if(item.id==='starter-weapon'&&item.slot==='weapon'){
@@ -84,7 +84,7 @@
     }
     return null;
   }
-  function iconClass(item,hero){return window.GearCatalog.iconClass(item)||starterIconClass(item,hero)||(item?.id==='tauriel-emerald-necklace'?'gear-art tauriel-necklace':`gear-art gear-${SLOTS.findIndex(([id])=>id===item?.slot)}`);}
+  function iconClass(item,hero){if(item?.kind==='power-potion')return 'gear-art power-potion-art';return window.GearCatalog.iconClass(item)||starterIconClass(item,hero)||(item?.id==='tauriel-emerald-necklace'?'gear-art tauriel-necklace':`gear-art gear-${SLOTS.findIndex(([id])=>id===item?.slot)}`);}
   function art(i,item,hero){
     if(item)return `<span class="${iconClass(item,hero)}" aria-hidden="true"></span>`;
     return i===7?'<span class="special-slot-mark" aria-hidden="true"></span>':`<span class="gear-art gear-${i}" aria-hidden="true"></span>`;
@@ -101,7 +101,7 @@
       const hero=state.read(),items=bagItems(hero),overflow=Math.max(0,items.length-25);
       root.querySelector('.backpack-count').textContent=`Zajęte miejsca: ${Math.min(25,items.length)} / 25`;
       root.querySelector('.backpack-pending').textContent=overflow?`Dodatkowe przedmioty ze starszego zapisu: ${overflow}. Możesz je założyć przez miejsca wyposażenia postaci.`:items.length>=25?'Ekwipunek pełny — zdobywanie przedmiotów jest zablokowane. Złoto i EXP nadal otrzymujesz.':'';
-      root.querySelector('.backpack-materials').innerHTML=window.MagicDust.markup(hero);
+      root.querySelector('.backpack-materials').innerHTML=window.MagicDust.markup(hero)+(window.FateWheel?.materialsMarkup(hero)||'');
       grid.replaceChildren();
       for(let i=0;i<25;i++){
         const item=items[i],button=document.createElement('button');button.type='button';button.className='backpack-cell';button.dataset.bagIndex=String(i);

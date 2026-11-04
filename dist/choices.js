@@ -46,7 +46,7 @@
       const range=`Potwory: poziomy ${Math.max(1,level-3)}–${level+3}.`;
       list.innerHTML=`<p class="brand-matchmaking-note">${range}${hasCombat?'':' Brak przeciwników w tym przedziale.'}</p>`+(hero.brandOffers||[]).map(o=>{
         const t=TIERS[o.tier],scene=window.BrandMissions.SCENES[o.sceneId],enemy=o.type==='combat'?window.BrandCombat.opponents(o.sceneId).find(m=>m.id===o.enemyId):null;
-        const duration=window.BrandMissions.durationFor(window.Progression.level(hero),o.tier);
+        const duration=window.BrandMissions.durationFor(window.Progression.level(hero),o.tier,hero);
         return `<article class="brand-choice-card"><div class="choice-art" style="background-image:url('${scene.image}')"><span class="rpg-icon icon-${enemy?'arena':'journal'}" aria-hidden="true"></span><span>${t.label}</span></div><div class="choice-body"><h3>${t.name}</h3><p class="choice-location">${scene.short}</p><p class="choice-kind">${enemy?`Walka · ${enemy.name} · Poziom ${enemy.level}`:`Zwiad czasowy · ${duration??'—'} min`}</p><p>${t.description}</p>${!enemy&&duration&&window.Progression.level(hero)>=8?`<p class="choice-location">${window.BrandMissions.shardChance(window.Progression.level(hero))}% szansy na 1 odłamek</p>`:''}${enemy?.reward?`<p class="choice-location">Nagroda: ${enemy.reward.gold} złota · ${enemy.reward.xp} EXP</p>`:''}<button type="button" class="primary" data-accept-choice="${o.id}" ${busy||window.EnergyCycle.info(hero).energy<t.cost||(!enemy&&!duration)?'disabled':''}>Podejmij misję · ${t.cost} energii</button></div></article>`;
       }).join('');
     }
