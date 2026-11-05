@@ -10,7 +10,12 @@
   function mount(root,state){
     const panel=root.querySelector('.dungeons-panel'),view=panel.querySelector('.dungeons-view'),message=panel.querySelector('.dungeons-message');
     let selected=state.read().activeCombat?.source==='graveyard'?LOCATIONS[0]:null,disposed=false,busy=false;
-    const combat=window.BrandCombat.mount(panel.querySelector('.dungeon-combat'),{...state,onQuestResolved:next=>{render(next);requestAnimationFrame(()=>{if(!disposed)panel.querySelector('.grave-reward')?.scrollIntoView({block:'start'});});}});
+    const result=document.createElement('dialog');result.className='grave-result-dialog';result.setAttribute('aria-labelledby','grave-result-title');document.body.append(result);
+    const labels={gold:'Złoto',xp:'EXP',shards:'Odłamki',magicDust:'Magiczny pył',rareMaterial:'Rzadki Materiał',deadBones:'Kość truposza',blackSteel:'Czarny kawałek stali',axe:'Topór Minotaura'};
+    function rewardIcon(key){if(['gold','xp','shards'].includes(key))return `<span class="rpg-icon icon-${{gold:'coin',xp:'exp',shards:'shard'}[key]}" aria-hidden="true"></span>`;if(['magicDust','rareMaterial'].includes(key))return `<img src="${key==='magicDust'?'magic-dust.webp':'rare-material.webp'}" alt="">`;return `<span class="gear-art ${key==='axe'?'minotaur-axe-art':'material-'+key}" aria-hidden="true"></span>`;}
+    function showResult(last){if(!last)return;result.innerHTML=`<h2 id="grave-result-title">${last.won?'Nagroda za pokonanie bossa':'Porażka'}</h2><p class="grave-result-boss">${window.Graveyard.BOSSES[last.index].name}</p>${last.won?`<dl class="grave-result-items">${Object.entries(last.reward).filter(([,amount])=>amount>0).map(([key,amount])=>`<div data-boss-reward="${key}"><dt>${rewardIcon(key)}<span>${labels[key]}</span></dt><dd>${amount}</dd></div>`).join('')}</dl>${last.levelsGained>0?`<p>Awans! Zdobyte poziomy: ${last.levelsGained}</p>`:''}`:'<p>Nie otrzymujesz nagrody. Możesz ponowić walkę.</p>'}<button type="button" class="primary" data-close-grave-result autofocus>Wróć do Cmentarzyska</button>`;if(!result.open)result.showModal();}
+    function closeResult(e){if(e.target.closest('[data-close-grave-result]'))result.close();}result.addEventListener('click',closeResult);
+    const combat=window.BrandCombat.mount(panel.querySelector('.dungeon-combat'),{...state,onQuestResolved:next=>{render(next);showResult(next.lastGraveyard);}});
     function render(hero){
       const level=window.Progression.level(hero);
       if(selected&&level<selected.requiredLevel)selected=null;
@@ -44,7 +49,7 @@
     }
     function storage(event){if(event.key==='pustkowie.hero.v2'||event.key===null)refresh();}
     panel.addEventListener('click',click);window.addEventListener('storage',storage);window.addEventListener('focus',refresh);refresh();
-    return ()=>{disposed=true;combat();panel.removeEventListener('click',click);window.removeEventListener('storage',storage);window.removeEventListener('focus',refresh);};
+    return ()=>{disposed=true;combat();result.removeEventListener('click',closeResult);if(result.open)result.close();result.remove();panel.removeEventListener('click',click);window.removeEventListener('storage',storage);window.removeEventListener('focus',refresh);};
   }
   window.DungeonsPanel={LOCATIONS,markup,mount};
 })();

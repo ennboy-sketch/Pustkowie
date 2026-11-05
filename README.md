@@ -694,3 +694,7 @@ Od poziomu 10 Cmentarzysko udostępnia jednorazową kolejność: Upiór → Szki
 | Minotaur | 20 | 1200 | 150 | 2000 | 250000 | Odłamki ×10, Topór Minotaura ×1 |
 
 Kości i stal są stosami zajmującymi po jednym miejscu w plecaku. Nagrody są zapisywane atomowo, bez powtórnego odbioru. Pełny plecak blokuje rozpoczęcie, jeśli brakuje miejsca na nagrody; w przypadku zapełnienia podczas walki wynik pozostaje do odbioru po zwolnieniu miejsca. Topór jest bronią od poziomu 20, bez bonusu do statystyk — zgodnie z ustaleniem. Ilustracje bossów i przedmiotów są zapisane w atlasach `graveyard-bosses.webp` oraz `graveyard-items.webp`. Testy: `node --test tests/*.test.cjs` oraz `node tests/graveyard.browser.cjs http://127.0.0.1:8000/`.
+
+## Okno nagród po walce z bossem
+
+Po rozliczeniu walki Cmentarzyska, również po przewinięciu, otwiera się osobne okno z nazwą bossa, ikonami, nazwami i ilościami wszystkich zapisanych nagród oraz informacją o awansie. Po porażce pokazuje wynik bez nagród. Przycisk „Wróć do Cmentarzyska” zamyka okno; wyświetlanie i zamknięcie nie naliczają niczego ponownie. Starsze podsumowanie nie otwiera się samo przy ponownym wejściu do Lochów. Test przeglądarkowy pięciu bossów obejmuje oba sposoby zakończenia, wznowienie, zawartość okienka i porażkę na komputerze i telefonie.
