@@ -69,9 +69,9 @@ Przedziały z nakładającymi się granicami zostały zinterpretowane jako zmian
 Widok walki i mechanizm tur są przygotowane; listy potworów pozostają puste. Rozpoczęcie zwiadu kosztuje 5 energii, a zgłoszenie powrotu nie kosztuje dodatkowej energii. Zwiad przyznaje losowe złoto i EXP po zgłoszeniu powrotu. Reguły i panel znajdują się w `missions.js` oraz `missions.css`; zapis korzysta z tej samej transakcji localStorage i blokady Web Locks co zakupy piwa. Ukończenie zwiadu Branda nie odblokowuje schodów związanych z osobną misją Tauriel.
 
 
-## Dzienne odnowienie energii
+## Odnowienie energii co 12 godzin
 
-Energia odnawia się do 100 punktów w stałym cyklu co 24 godziny. Nowa postać ma termin `nextEnergyResetAt` liczony od utworzenia; stary zapis otrzymuje termin 24 godziny po pierwszym wczytaniu po aktualizacji, z zachowaniem obecnej energii. Powrót po dłuższej przerwie uzupełnia energię raz, bez sumowania ponad 100. Termin przesuwa się o pełne doby, zachowując cykl. Zakupy piwa i misje nie przesuwają odnowienia. Limit piwa pozostaje niezależny.
+Energia odnawia się do 100 punktów w stałym cyklu co 12 godzin. Nowa postać ma termin liczony od utworzenia. Starszy zapis cyklu 24-godzinnego jednorazowo przesuwa termin o 12 godzin wcześniej, zachowując rytm odnowienia. Jeżeli skrócony termin już upłynął, energia odnawia się przy wczytaniu. Zapis bez terminu rozpoczyna cykl 12-godzinny z zachowaniem posiadanej energii. Powrót po dłuższej przerwie uzupełnia energię raz, bez sumowania ponad 100. Pole `energyCycleHours: 12` zapobiega ponownej migracji. Zakupy piwa i misje nie przesuwają terminu, a limit piwa jest niezależny.
 
 Panel energii pokazuje czas do odnowienia. Gra sprawdza termin podczas działania, po powrocie do karty i przy operacjach na postaci. Aktualizacja energii korzysta z tej samej blokady zapisu co piwo i misje; przy błędzie zapisu surowe dane pozostają bez zmian. Czas pochodzi z zegara urządzenia. Reguły są w `energy.js`.
 
