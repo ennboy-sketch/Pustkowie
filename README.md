@@ -678,7 +678,7 @@ Polana używa tego samego mechanizmu przeciągania, bezwładności, gestów doty
 
 ## Myśliwy Teo po zadaniu Tauriel
 
-Po trzech zwycięstwach w zadaniu Tauriel (status `ready` lub `completed`) jej miejsce przy filarze w dolnej sali zajmuje Myśliwy Teo w skórzanym stroju, z łukiem i kołczanem. Wnętrze zmienia ilustrację na `tavern-with-teo.webp`. Teo ma znacznik rozmowy i portret oraz zapowiedź skupu trofeów z potworów. Lista trofeów, ceny i sprzedaż zostaną dodane później; obecny ekwipunek i nagrody Branda nie zmieniają się. Przed ukończeniem zadania Teo jest ukryty i niedostępny. Tauriel pozostaje na piętrze, gdzie można odebrać naszyjnik.
+Po trzech zwycięstwach w zadaniu Tauriel (status `ready` lub `completed`) jej miejsce przy filarze w dolnej sali zajmuje Myśliwy Teo w skórzanym stroju, z łukiem i kołczanem. Wnętrze zmienia ilustrację na `tavern-with-teo.webp`. Teo ma znacznik rozmowy, portret i skup nagród przedmiotowych z Cmentarzyska. Za każdą kość truposza, czarny kawałek stali, sztukę magicznego pyłu, rzadkiego materiału oraz Topór Minotaura płaci 100 złota. Nagrody Branda nie zmieniają się. Przed ukończeniem zadania Teo jest ukryty i niedostępny. Tauriel pozostaje na piętrze, gdzie można odebrać naszyjnik.
 
 Test stanów zadania i rozmów: `node tests/teo.browser.cjs http://127.0.0.1:8000/`. Test pełnej misji `tests/tauriel-rewards.browser.cjs` sprawdza też pojawienie się Teo bez przeładowania po trzecim zwycięstwie.
 
@@ -748,3 +748,8 @@ Bieżące nagrody EXP zwiadów zwiększono jeszcze 50-krotnie: 1 minuta → 1000
 ## Zwiady czasowe na poziomach 26–35
 
 Nowy przedział trwa 20 minut i daje zawsze 150 000 EXP oraz 500 złota. Szansa na dodatkowy 1 odłamek wynosi 10%, z losowaniem zapisywanym przy rozpoczęciu. Koszty obu wariantów nadal wynoszą 3 lub 5 energii; Kuc Bojowy skraca czas do 18 minut. Poziomy 1–25 zachowują dotychczasowe wartości. Od poziomu 36 czas i nagrody pozostają do ustalenia.
+
+
+## Sprzedaż u Myśliwego Teo
+
+Skup obejmuje kości truposza, czarne kawałki stali, magiczny pył, rzadki materiał i Topór Minotaura. Gracz wybiera liczbę sztuk, a Teo płaci 100 złota za każdą sztukę. Założoną broń trzeba najpierw zdjąć. Cena dotyczy typu przedmiotu niezależnie od źródła zdobycia; odłamki pozostają walutą. Sprzedaż pod blokadą Web Locks ponownie sprawdza aktualny zapis i zapisuje usunięcie przedmiotów ze złotem w jednej operacji. Błąd zapisu nie zabiera przedmiotów ani nie dopisuje złota. Zużycie ostatniej sztuki materiału zwalnia jego miejsce w plecaku. Teo pozostaje dostępny dopiero po wykonaniu zadania Tauriel. Testy: `node --test tests/*.test.cjs`, `node tests/teo-trade.browser.cjs http://127.0.0.1:8000/`.

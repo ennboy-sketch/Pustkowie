@@ -6,7 +6,7 @@ const{chromium}=require('playwright'),assert=require('node:assert/strict');
   await page.reload({waitUntil:'load'});if(width===390)await page.locator('#menu-toggle').click();await page.locator('#hub-navigation [data-place="tavern"]').click();
   assert.equal(await page.locator('[data-npc="teo"]').isVisible(),unlocked);assert.equal(await page.locator('[data-npc="tauriel"]').isVisible(),!unlocked);
   if(unlocked){
-   await page.locator('[data-npc="teo"]').scrollIntoViewIfNeeded();await page.locator('[data-npc="teo"]').click();assert.equal(await page.locator('#tavern-speaker').innerText(),'Myśliwy Teo');assert.equal(await page.locator('.teo-service').isVisible(),true);assert.match(await page.locator('.teo-service').innerText(),/Skup trofeów zostanie wkrótce otwarty/);
+   await page.locator('[data-npc="teo"]').scrollIntoViewIfNeeded();await page.locator('[data-npc="teo"]').click();assert.equal(await page.locator('#tavern-speaker').innerText(),'Myśliwy Teo');assert.equal(await page.locator('.teo-service').isVisible(),true);assert.match(await page.locator('.teo-service').innerText(),/100 złota za sztukę/);
    await page.evaluate(async()=>{const img=new Image();img.src='tavern-with-teo.webp';await img.decode();if(!img.naturalWidth)throw Error('Missing Teo art');});
    if(state==='completed')await page.screenshot({path:`/tmp/teo-${width}.png`});await page.locator('[data-close-npc]').click();
    await page.locator('[data-npc="brand"]').click();assert.equal(await page.locator('.teo-service').isVisible(),false);await page.locator('[data-close-npc]').click();
