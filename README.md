@@ -728,3 +728,7 @@ Dodano 15 przeciwników Branda z przesłanego arkusza. HP, bazowe obrażenia i s
 | 30 | Bazyliszek | Podziemia Miasta | 900 | 150–150 | 400000 | 250 |
 
 Awatary są zapisane w trzech atlasach 3×2: `monsters-level-16.webp`, `monsters-level-21.webp`, `monsters-level-26.webp`. Testy importu, zakresów poziomów, magii oraz normalnej i przewiniętej walki: `node --test tests/*.test.cjs`. Test przeglądarkowy nowych przeciwników na komputerze i telefonie, z regresjami porażek: `node tests/all-monsters.browser.cjs http://127.0.0.1:8000/ --new-monsters`.
+
+## Lochy — wspólne odnowienie walk co 3 godziny
+
+Każde nowe rozliczenie walki z bossem, wygrane lub przegrane, zapisuje `dungeonNextFightAt` na 3 godziny od zakończenia. Zwycięstwo zachowuje postęp i blokuje kolejną walkę; porażka blokuje ponowną próbę na ten sam czas. Nie resetuje to pokonanych bossów. Termin jest wspólny dla walk w lochach i pozostaje po zamknięciu gry oraz odświeżeniu. Wznowienie już rozpoczętego starcia jest dozwolone. Lista bossów i okno wyniku pokazują pozostały czas, a przycisk odblokowuje się automatycznie po terminie. Stare zapisy bez tego pola nie otrzymują wstecznej blokady.

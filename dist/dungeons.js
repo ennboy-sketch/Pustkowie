@@ -13,7 +13,7 @@
     const result=document.createElement('dialog');result.className='grave-result-dialog';result.setAttribute('aria-labelledby','grave-result-title');document.body.append(result);
     const labels={gold:'Złoto',xp:'EXP',shards:'Odłamki',magicDust:'Magiczny pył',rareMaterial:'Rzadki Materiał',deadBones:'Kość truposza',blackSteel:'Czarny kawałek stali',axe:'Topór Minotaura'};
     function rewardIcon(key){if(['gold','xp','shards'].includes(key))return `<span class="rpg-icon icon-${{gold:'coin',xp:'exp',shards:'shard'}[key]}" aria-hidden="true"></span>`;if(['magicDust','rareMaterial'].includes(key))return `<img src="${key==='magicDust'?'magic-dust.webp':'rare-material.webp'}" alt="">`;return `<span class="gear-art ${key==='axe'?'minotaur-axe-art':'material-'+key}" aria-hidden="true"></span>`;}
-    function showResult(last){if(!last)return;result.innerHTML=`<h2 id="grave-result-title">${last.won?'Nagroda za pokonanie bossa':'Porażka'}</h2><p class="grave-result-boss">${window.Graveyard.BOSSES[last.index].name}</p>${last.won?`<dl class="grave-result-items">${Object.entries(last.reward).filter(([,amount])=>amount>0).map(([key,amount])=>`<div data-boss-reward="${key}"><dt>${rewardIcon(key)}<span>${labels[key]}</span></dt><dd>${amount}</dd></div>`).join('')}</dl>${last.levelsGained>0?`<p>Awans! Zdobyte poziomy: ${last.levelsGained}</p>`:''}`:'<p>Nie otrzymujesz nagrody. Możesz ponowić walkę.</p>'}<button type="button" class="primary" data-close-grave-result autofocus>Wróć do Cmentarzyska</button>`;if(!result.open)result.showModal();}
+    function showResult(last){if(!last)return;result.innerHTML=`<h2 id="grave-result-title">${last.won?'Nagroda za pokonanie bossa':'Porażka'}</h2><p class="grave-result-boss">${window.Graveyard.BOSSES[last.index].name}</p>${last.won?`<dl class="grave-result-items">${Object.entries(last.reward).filter(([,amount])=>amount>0).map(([key,amount])=>`<div data-boss-reward="${key}"><dt>${rewardIcon(key)}<span>${labels[key]}</span></dt><dd>${amount}</dd></div>`).join('')}</dl>${last.levelsGained>0?`<p>Awans! Zdobyte poziomy: ${last.levelsGained}</p>`:''}`:'<p>Nie otrzymujesz nagrody. Kolejna próba po 3 godzinach.</p>'}<p class="dungeon-cooldown" data-dungeon-cooldown></p><button type="button" class="primary" data-close-grave-result autofocus>Wróć do Cmentarzyska</button>`;refreshCooldown();if(!result.open)result.showModal();}
     function closeResult(e){if(e.target.closest('[data-close-grave-result]'))result.close();}result.addEventListener('click',closeResult);
     const combat=window.BrandCombat.mount(panel.querySelector('.dungeon-combat'),{...state,onQuestResolved:next=>{render(next);showResult(next.lastGraveyard);}});
     function render(hero){
@@ -34,6 +34,12 @@
         return null;
       }
     }
+    function refreshCooldown(){
+      if(disposed)return;
+      try{const h=state.read(),clock=window.Graveyard.cooldown(h),n=window.Graveyard.count(h);for(const container of [panel,result])container.querySelectorAll('[data-dungeon-cooldown]').forEach(el=>el.textContent=clock.remaining?'Kolejna walka w lochach za '+clock.text:'Walka w lochach dostępna.');view.querySelectorAll('[data-grave-boss]').forEach(button=>button.disabled=busy||Number(button.dataset.graveBoss)!==n||!!h.activeCombat||!!h.activeMission||clock.remaining>0);}
+      catch{view.querySelectorAll('[data-grave-boss]').forEach(button=>button.disabled=true);}
+    }
+    const cooldownTimer=setInterval(refreshCooldown,1000);
     function refresh(){if(disposed)return;const hero=read();if(hero)render(hero);}
     async function click(event){
       const boss=event.target.closest('[data-grave-boss]'),resume=event.target.closest('[data-resume-graveyard]');
@@ -49,7 +55,7 @@
     }
     function storage(event){if(event.key==='pustkowie.hero.v2'||event.key===null)refresh();}
     panel.addEventListener('click',click);window.addEventListener('storage',storage);window.addEventListener('focus',refresh);refresh();
-    return ()=>{disposed=true;combat();result.removeEventListener('click',closeResult);if(result.open)result.close();result.remove();panel.removeEventListener('click',click);window.removeEventListener('storage',storage);window.removeEventListener('focus',refresh);};
+    return ()=>{disposed=true;clearInterval(cooldownTimer);combat();result.removeEventListener('click',closeResult);if(result.open)result.close();result.remove();panel.removeEventListener('click',click);window.removeEventListener('storage',storage);window.removeEventListener('focus',refresh);};
   }
   window.DungeonsPanel={LOCATIONS,markup,mount};
 })();

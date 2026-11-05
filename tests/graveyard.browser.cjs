@@ -3,6 +3,7 @@ const{chromium}=require('playwright'),assert=require('node:assert/strict');
 async function open(){if(width===390)await p.locator('#menu-toggle').click();await p.locator('#hub-navigation [data-place="dungeon"]').click();await p.locator('[data-dungeon="graveyard"]').click();}
 await open();assert.equal(await p.locator('.grave-boss').count(),5);assert.equal(await p.locator('[data-grave-boss="1"]').isDisabled(),true);
 for(let i=0;i<5;i++){
+ if(i>0){assert.equal(await p.locator(`[data-grave-boss="${i}"]`).isDisabled(),true);await p.evaluate(()=>{const deadline=JSON.parse(localStorage.getItem('pustkowie.hero.v2')).dungeonNextFightAt;Date.now=()=>deadline;});await p.waitForFunction(i=>!document.querySelector(`[data-grave-boss="${i}"]`).disabled,i);}
  await p.locator(`[data-grave-boss="${i}"]`).click();await p.locator('.combat-dialog').waitFor({state:'visible'});assert.equal(await p.locator('[data-fighter=enemy] .monster-graveyard').count(),1);
  await p.evaluate(()=>{const key='pustkowie.hero.v2',h=JSON.parse(localStorage.getItem(key));h.activeCombat.battle.hero.hp=h.activeCombat.battle.hero.maxHp=10000;h.activeCombat.battle.hero.attack=[10000,10000];localStorage.setItem(key,JSON.stringify(h));});
  if(i===1){await p.reload({waitUntil:'load'});if(width===390)await p.locator('#menu-toggle').click();await p.locator('#hub-navigation [data-place="dungeon"]').click();await p.locator('[data-resume-graveyard]').click();}
