@@ -1,6 +1,6 @@
 'use strict';
 (() => {
-  const MATERIALS=[['magicDust','magic-dust-stack','Magiczny pył','magic-dust.webp','Wymiana u Lilith: 25 szt. za 1 odłamek.'],['rareMaterial','material-rare','Rzadki Materiał','rare-material.webp','Do wytwarzania rzadkiego ekwipunku.'],['gemFragments','material-gem','Kawałek klejnotu','gem-fragment.webp','Do wytwarzania biżuterii.'],['spellScrolls','material-scroll','Zwój zaklęć','spell-scroll.webp','Wymiana u Lilith: nagroda EXP za 10 zwojów zależy od poziomu.']];
+  const MATERIALS=[['deadBones','material-dead-bone','Kość truposza','graveyard-items.webp','Trofeum z Cmentarzyska.'],['blackSteel','material-black-steel','Czarny kawałek stali','graveyard-items.webp','Materiał z Cmentarzyska.'],['magicDust','magic-dust-stack','Magiczny pył','magic-dust.webp','Wymiana u Lilith: 25 szt. za 1 odłamek.'],['rareMaterial','material-rare','Rzadki Materiał','rare-material.webp','Do wytwarzania rzadkiego ekwipunku.'],['gemFragments','material-gem','Kawałek klejnotu','gem-fragment.webp','Do wytwarzania biżuterii.'],['spellScrolls','material-scroll','Zwój zaklęć','spell-scroll.webp','Wymiana u Lilith: nagroda EXP za 10 zwojów zależy od poziomu.']];
   const SLOTS=[['helmet','Hełm'],['armor','Zbroja'],['boots','Buty'],['shield','Tarcza'],['weapon','Broń'],['necklace','Naszyjnik'],['earrings','Kolczyki'],['special','Przedmiot specjalny']];
   const STATS=[['strength','Siła'],['agility','Zręczność'],['intelligence','Inteligencja'],['endurance','Wytrzymałość'],['luck','Szczęście']];
   const DROPS=['Hełm żelaznej straży','Zbroja wędrowca','Buty tropiciela','Tarcza czarnej stali','Ostrze wygnańca','Naszyjnik zielonego płomienia','Kolczyki starego srebra'];
@@ -17,7 +17,7 @@
     if(item?.slot!=='armor')return null;
     return window.MarketPanel?.armorType(item)||item.armorType||(/^(Płaszcz|Szata) /u.test(item.name)?'cloak':/^Pancerz /u.test(item.name)?'light':'heavy');
   }
-  function canEquip(hero,item){if(!item||item.slot==='material'||window.GearCatalog.reason(hero,item))return false;return item.slot!=='armor'||!!BODY_TYPES[armorType(item)]?.classes.includes(hero.classId);}
+  function canEquip(hero,item){if(item?.kind==='minotaur-axe'&&window.Progression.level(hero)<20)return false;if(!item||item.slot==='material'||window.GearCatalog.reason(hero,item))return false;return item.slot!=='armor'||!!BODY_TYPES[armorType(item)]?.classes.includes(hero.classId);}
   function slotLabel(slot,hero){return slot==='armor'?BODY_TYPES[bodyTypeFor(hero.classId)].label:SLOTS.find(([id])=>id===slot)?.[1]||'';}
   function itemSlotLabel(item){if(item?.slot==='material')return 'Materiał';return item?.slot==='armor'?BODY_TYPES[armorType(item)]?.label||'Ochrona ciała':SLOTS.find(([id])=>id===item?.slot)?.[1]||'';}
   function manaCapacity(classId,intelligence){return classId==='mage'?Math.max(0,intelligence)*10:0;}
@@ -84,7 +84,7 @@
     if(items.some(i=>i.id===item.id)||bagItems(hero).length>=25)return hero;
     return {...hero,lootInventory:[...items,item]};
   }
-  function itemDetails(item){const bonus=item?.kind==='power-potion'?potionDetails(item):item?.id==='tauriel-emerald-necklace'?'+100 HP':window.MarketPanel?.describeItem(item)||'',restriction=window.GearCatalog.details(item)||(item?.slot==='armor'?BODY_TYPES[armorType(item)]?.restriction||'':'');return [bonus,restriction].filter(Boolean).map(text=>' · '+text).join('');}
+  function itemDetails(item){const bonus=item?.kind==='minotaur-axe'?'Poziom 20 · Bonus do ustalenia':item?.kind==='power-potion'?potionDetails(item):item?.id==='tauriel-emerald-necklace'?'+100 HP':window.MarketPanel?.describeItem(item)||'',restriction=window.GearCatalog.details(item)||(item?.slot==='armor'?BODY_TYPES[armorType(item)]?.restriction||'':'');return [bonus,restriction].filter(Boolean).map(text=>' · '+text).join('');}
   function starterIconClass(item,hero){
     if(!item||!hero)return null;
     if(item.id==='starter-weapon'&&item.slot==='weapon'){
@@ -97,7 +97,7 @@
     }
     return null;
   }
-  function iconClass(item,hero){if(item?.slot==='material')return 'gear-art material-'+item.materialKey;if(item?.kind==='power-potion')return 'gear-art power-potion-art';return window.GearCatalog.iconClass(item)||starterIconClass(item,hero)||(item?.id==='tauriel-emerald-necklace'?'gear-art tauriel-necklace':`gear-art gear-${SLOTS.findIndex(([id])=>id===item?.slot)}`);}
+  function iconClass(item,hero){if(item?.slot==='material')return 'gear-art material-'+item.materialKey;if(item?.kind==='minotaur-axe')return 'gear-art minotaur-axe-art';if(item?.kind==='power-potion')return 'gear-art power-potion-art';return window.GearCatalog.iconClass(item)||starterIconClass(item,hero)||(item?.id==='tauriel-emerald-necklace'?'gear-art tauriel-necklace':`gear-art gear-${SLOTS.findIndex(([id])=>id===item?.slot)}`);}
   function art(i,item,hero){
     if(item)return `<span class="${iconClass(item,hero)}" aria-hidden="true"></span>`;
     return i===7?'<span class="special-slot-mark" aria-hidden="true"></span>':`<span class="gear-art gear-${i}" aria-hidden="true"></span>`;

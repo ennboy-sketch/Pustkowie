@@ -6,16 +6,17 @@
     Object.freeze({id:'catacombs',name:'Katakumby',requiredLevel:30,description:'Pod zamkiem ciągną się korytarze zapomnianych grobowców.',icon:'dungeon-catacombs-icon.webp'})
   ]);
   function emblem(location){return `<span class="dungeon-emblem" aria-hidden="true"><img src="${location.icon}" alt="" width="384" height="384" decoding="async" draggable="false"></span>`;}
-  function markup(){return '<section class="dungeons-panel" aria-label="Wybór Lochów"><div class="dungeons-view"></div><p class="dungeons-message" role="status" aria-live="polite"></p></section>';}
+  function markup(){return '<section class="dungeons-panel" aria-label="Wybór Lochów"><div class="dungeons-view"></div><div class="dungeon-combat"></div><p class="dungeons-message" role="status" aria-live="polite"></p></section>';}
   function mount(root,state){
     const panel=root.querySelector('.dungeons-panel'),view=panel.querySelector('.dungeons-view'),message=panel.querySelector('.dungeons-message');
-    let selected=null,disposed=false;
+    let selected=state.read().activeCombat?.source==='graveyard'?LOCATIONS[0]:null,disposed=false,busy=false;
+    const combat=window.BrandCombat.mount(panel.querySelector('.dungeon-combat'),{...state,onQuestResolved:next=>{render(next);requestAnimationFrame(()=>{if(!disposed)panel.querySelector('.grave-reward')?.scrollIntoView({block:'start'});});}});
     function render(hero){
       const level=window.Progression.level(hero);
       if(selected&&level<selected.requiredLevel)selected=null;
       state.onTitle?.(selected?.name||'Lochy');
       message.textContent='';
-      view.innerHTML=selected?`<div class="dungeon-detail dungeon-${selected.id}">${emblem(selected)}<h3 tabindex="-1">${selected.name}</h3><p>${selected.description}</p><span class="state-badge">W przygotowaniu</span><button type="button" class="secondary" data-dungeons-back>Wróć do wyboru Lochów</button></div>`:`<p class="dungeons-intro">Wybierz loch, do którego chcesz się udać. <span>Twój poziom: ${level}</span></p><div class="dungeons-list">${LOCATIONS.map(location=>{
+      view.innerHTML=selected?`<div class="dungeon-detail dungeon-${selected.id}">${emblem(selected)}<h3 tabindex="-1">${selected.name}</h3><p>${selected.description}</p>${selected.id==='graveyard'?window.Graveyard.markup(hero):'<span class="state-badge">W przygotowaniu</span>'}<button type="button" class="secondary" data-dungeons-back>Wróć do wyboru Lochów</button></div>`:`<p class="dungeons-intro">Wybierz loch, do którego chcesz się udać. <span>Twój poziom: ${level}</span></p><div class="dungeons-list">${LOCATIONS.map(location=>{
         const locked=level<location.requiredLevel;
         return `<button type="button" class="dungeon-choice dungeon-${location.id}" data-dungeon="${location.id}" aria-label="${location.name} · Od poziomu ${location.requiredLevel} · ${locked?'Zablokowane':'Dostępne'}" ${locked?'disabled':''}>${emblem(location)}<span class="dungeon-choice-body"><strong>${location.name}</strong><span class="dungeon-required">Od poziomu ${location.requiredLevel}</span><span class="dungeon-availability">${locked?'Zablokowane':'Dostępne'}</span></span></button>`;
       }).join('')}</div>`;
@@ -29,7 +30,10 @@
       }
     }
     function refresh(){if(disposed)return;const hero=read();if(hero)render(hero);}
-    function click(event){
+    async function click(event){
+      const boss=event.target.closest('[data-grave-boss]'),resume=event.target.closest('[data-resume-graveyard]');
+      if(boss||resume){if(busy)return;busy=true;try{if(boss){const change=()=>state.update(h=>window.Graveyard.start(h,Number(boss.dataset.graveBoss)));const next=navigator.locks?await navigator.locks.request('pustkowie-hero-v2',change):change();if(disposed)return;render(next);}await combat.open();}catch(error){if(!disposed)message.textContent=error.message;}finally{busy=false;}return;}
+
       const back=event.target.closest('[data-dungeons-back]'),button=event.target.closest('[data-dungeon]');
       if(!back&&!button)return;
       const hero=read();if(!hero)return;
@@ -40,7 +44,7 @@
     }
     function storage(event){if(event.key==='pustkowie.hero.v2'||event.key===null)refresh();}
     panel.addEventListener('click',click);window.addEventListener('storage',storage);window.addEventListener('focus',refresh);refresh();
-    return ()=>{disposed=true;panel.removeEventListener('click',click);window.removeEventListener('storage',storage);window.removeEventListener('focus',refresh);};
+    return ()=>{disposed=true;combat();panel.removeEventListener('click',click);window.removeEventListener('storage',storage);window.removeEventListener('focus',refresh);};
   }
   window.DungeonsPanel={LOCATIONS,markup,mount};
 })();

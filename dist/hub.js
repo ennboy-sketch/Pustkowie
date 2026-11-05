@@ -197,7 +197,7 @@
     $('#place-content').innerHTML = content;
     if (id === 'hero') stopHeroSheet=window.HeroSheet.mount($('.hero-sheet-root'),{read:readCurrentHero,update:updateCurrentHero});
     if (id === 'inventory') stopHeroSheet=window.HeroSheet.mountBag($('.backpack-root'),{read:readCurrentHero,update:updateCurrentHero});
-    if (id === 'dungeon' && !dungeonLocked) stopDungeons=window.DungeonsPanel.mount($('#place-content'),{read:readCurrentHero,onTitle:title=>{$('#place-title').textContent=title;}});
+    if (id === 'dungeon' && !dungeonLocked) stopDungeons=window.DungeonsPanel.mount($('#place-content'),{read:readCurrentHero,update:updateCurrentHero,onTitle:title=>{$('#place-title').textContent=title;}});
     if (id === 'wheel') window.FateWheel.mount($('#place-content'),{read:readCurrentHero,update:updateCurrentHero});
     if (id === 'alchemy') window.AlchemistPanel.mount($('#place-content'),{read:readCurrentHero,update:updateCurrentHero,professionMarkup:()=>barracksPanel('alchemist')});
     if (id === 'forge' && !forgeLocked) window.ForgePanel.mount($('#place-content'));

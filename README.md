@@ -680,3 +680,17 @@ Polana używa tego samego mechanizmu przeciągania, bezwładności, gestów doty
 Po trzech zwycięstwach w zadaniu Tauriel (status `ready` lub `completed`) jej miejsce przy filarze w dolnej sali zajmuje Myśliwy Teo w skórzanym stroju, z łukiem i kołczanem. Wnętrze zmienia ilustrację na `tavern-with-teo.webp`. Teo ma znacznik rozmowy i portret oraz zapowiedź skupu trofeów z potworów. Lista trofeów, ceny i sprzedaż zostaną dodane później; obecny ekwipunek i nagrody Branda nie zmieniają się. Przed ukończeniem zadania Teo jest ukryty i niedostępny. Tauriel pozostaje na piętrze, gdzie można odebrać naszyjnik.
 
 Test stanów zadania i rozmów: `node tests/teo.browser.cjs http://127.0.0.1:8000/`. Test pełnej misji `tests/tauriel-rewards.browser.cjs` sprawdza też pojawienie się Teo bez przeładowania po trzecim zwycięstwie.
+
+## Bossowie Cmentarzyska
+
+Od poziomu 10 Cmentarzysko udostępnia jednorazową kolejność: Upiór → Szkielet → Licz → Czarny Rycerz → Minotaur. Kolejny boss odblokowuje się po zwycięstwie. Porażka pozwala ponowić starcie, bez nagrody. Próby nie kosztują energii. Stan starcia i postęp pozostają po odświeżeniu, a przewijanie używa wspólnego silnika walki.
+
+| Boss | Poziom | HP | Obrażenia | Złoto | EXP | Pozostałe nagrody |
+| --- | ---: | ---: | ---: | ---: | ---: | --- |
+| Upiór | 10 | 500 | 60 | 500 | 11100 | Pył ×10, Kość truposza ×1 |
+| Szkielet | 13 | 700 | 50 | 500 | 22000 | Pył ×20, Rzadki Materiał ×5, Kość truposza ×5 |
+| Licz | 15 | 700 | 80 | 500 | 50000 | Pył ×30, Kość truposza ×5 |
+| Czarny Rycerz | 18 | 1000 | 99 | 1000 | 100000 | Pył ×50, Czarny kawałek stali ×5 |
+| Minotaur | 20 | 1200 | 150 | 2000 | 250000 | Odłamki ×10, Topór Minotaura ×1 |
+
+Kości i stal są stosami zajmującymi po jednym miejscu w plecaku. Nagrody są zapisywane atomowo, bez powtórnego odbioru. Pełny plecak blokuje rozpoczęcie, jeśli brakuje miejsca na nagrody; w przypadku zapełnienia podczas walki wynik pozostaje do odbioru po zwolnieniu miejsca. Topór jest bronią od poziomu 20, bez bonusu do statystyk — zgodnie z ustaleniem. Ilustracje bossów i przedmiotów są zapisane w atlasach `graveyard-bosses.webp` oraz `graveyard-items.webp`. Testy: `node --test tests/*.test.cjs` oraz `node tests/graveyard.browser.cjs http://127.0.0.1:8000/`.
