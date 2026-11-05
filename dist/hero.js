@@ -28,7 +28,7 @@
     return out;
   }
   function available(hero){return (5+(window.Progression.level(hero)-1)*3)-Object.values(allocations(hero)).reduce((a,b)=>a+b,0);}
-  function bonuses(hero){const a=allocations(hero),gear=window.MarketPanel?.bonuses(hero)||[0,0,0,0];return STATS.slice(0,4).map(([id],i)=>a[id]+gear[i]);}
+  function bonuses(hero){const a=allocations(hero),gear=window.MarketPanel?.bonuses(hero)||[0,0,0,0];const weapon=equipment(hero).weapon;if(inventory(hero).some(item=>item.id===weapon&&item.kind==='minotaur-axe')){gear[0]+=10;gear[3]+=10;}return STATS.slice(0,4).map(([id],i)=>a[id]+gear[i]);}
   function luck(hero){return allocations(hero).luck;}
   function chance(hero){return Math.min(60,10+luck(hero));}
   function allocate(hero,id){
@@ -91,7 +91,7 @@
     if(items.some(i=>i.id===item.id)||bagItems(hero).length>=25)return hero;
     return {...hero,lootInventory:[...items,item]};
   }
-  function itemDetails(item){const bonus=item?.kind==='minotaur-axe'?'Poziom 20 · Bonus do ustalenia':item?.kind==='power-potion'?potionDetails(item):item?.id==='tauriel-emerald-necklace'?'+100 HP':window.MarketPanel?.describeItem(item)||'',restriction=window.GearCatalog.details(item)||(item?.slot==='armor'?BODY_TYPES[armorType(item)]?.restriction||'':'');return [bonus,restriction].filter(Boolean).map(text=>' · '+text).join('');}
+  function itemDetails(item){const bonus=item?.kind==='minotaur-axe'?'Poziom 20 · +10 Siła · +10 Wytrzymałość':item?.kind==='power-potion'?potionDetails(item):item?.id==='tauriel-emerald-necklace'?'+100 HP':window.MarketPanel?.describeItem(item)||'',restriction=window.GearCatalog.details(item)||(item?.slot==='armor'?BODY_TYPES[armorType(item)]?.restriction||'':'');return [bonus,restriction].filter(Boolean).map(text=>' · '+text).join('');}
   function starterIconClass(item,hero){
     if(!item||!hero)return null;
     if(item.id==='starter-weapon'&&item.slot==='weapon'){

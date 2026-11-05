@@ -693,7 +693,7 @@ Od poziomu 10 Cmentarzysko udostępnia jednorazową kolejność: Upiór → Szki
 | Czarny Rycerz | 18 | 1000 | 99 | 1000 | 100000 | Pył ×50, Czarny kawałek stali ×5 |
 | Minotaur | 20 | 1200 | 150 | 2000 | 250000 | Odłamki ×10, Topór Minotaura ×1 |
 
-Kości i stal są stosami zajmującymi po jednym miejscu w plecaku. Nagrody są zapisywane atomowo, bez powtórnego odbioru. Pełny plecak blokuje rozpoczęcie, jeśli brakuje miejsca na nagrody; w przypadku zapełnienia podczas walki wynik pozostaje do odbioru po zwolnieniu miejsca. Topór jest bronią od poziomu 20, bez bonusu do statystyk — zgodnie z ustaleniem. Ilustracje bossów i przedmiotów są zapisane w atlasach `graveyard-bosses.webp` oraz `graveyard-items.webp`. Testy: `node --test tests/*.test.cjs` oraz `node tests/graveyard.browser.cjs http://127.0.0.1:8000/`.
+Kości i stal są stosami zajmującymi po jednym miejscu w plecaku. Nagrody są zapisywane atomowo, bez powtórnego odbioru. Pełny plecak blokuje rozpoczęcie, jeśli brakuje miejsca na nagrody; w przypadku zapełnienia podczas walki wynik pozostaje do odbioru po zwolnieniu miejsca. Topór jest bronią od poziomu 20 i po założeniu daje +10 siły oraz +10 wytrzymałości. Bonus obejmuje też wcześniej zdobyte egzemplarze, nie kumuluje się po ponownym założeniu i znika po zdjęciu broni. Ilustracje bossów i przedmiotów są zapisane w atlasach `graveyard-bosses.webp` oraz `graveyard-items.webp`. Testy: `node --test tests/*.test.cjs` oraz `node tests/graveyard.browser.cjs http://127.0.0.1:8000/`.
 
 ## Okno nagród po walce z bossem
 
