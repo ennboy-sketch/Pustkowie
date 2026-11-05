@@ -224,10 +224,10 @@ Opis wylosowanego obszaru zwiadu jest widoczny w półprzezroczystej, złoto obr
 
 | Czas | EXP | Złoto |
 | --- | --- | --- |
-| 1 minuta | 5–11 | 3–5 |
-| 5 minut | 25–44 | 7–15 |
-| 10 minut | 77–101 | 17–33 |
-| 15 minut | 125–200 | 50–100 |
+| 1 minuta | 20–44 | 11–18 |
+| 5 minut | 100–176 | 25–53 |
+| 10 minut | 308–404 | 60–116 |
+| 15 minut | 500–800 | 175–350 |
 
 Losowania są niezależne i obejmują obie granice przedziałów. Nowa misja zapisuje nagrodę w `activeMission.reward` przy rozpoczęciu; tytuł, czas, lokacja i nagroda nie zmieniają się po odświeżeniu. Przy zgłoszeniu powrotu EXP, poziom, złoto i usunięcie aktywnej misji zapisują się w jednej transakcji, pod wspólną blokadą Web Locks. Nie ma dodatkowego kosztu energii ani podwójnego odbioru. Podsumowanie nagrody pojawia się po powrocie do karczmy i pozostaje w `lastScout`. Stary zwiad bez zapisanej nagrody otrzymuje ją przy pierwszym skutecznie zapisanym zakończeniu, według swojego czasu. Błąd zapisu nie przyznaje częściowej nagrody ani nie usuwa misji.
 
@@ -732,3 +732,8 @@ Awatary są zapisane w trzech atlasach 3×2: `monsters-level-16.webp`, `monsters
 ## Lochy — wspólne odnowienie walk co 3 godziny
 
 Każde nowe rozliczenie walki z bossem, wygrane lub przegrane, zapisuje `dungeonNextFightAt` na 3 godziny od zakończenia. Zwycięstwo zachowuje postęp i blokuje kolejną walkę; porażka blokuje ponowną próbę na ten sam czas. Nie resetuje to pokonanych bossów. Termin jest wspólny dla walk w lochach i pozostaje po zamknięciu gry oraz odświeżeniu. Wznowienie już rozpoczętego starcia jest dozwolone. Lista bossów i okno wyniku pokazują pozostały czas, a przycisk odblokowuje się automatycznie po terminie. Stare zapisy bez tego pola nie otrzymują wstecznej blokady.
+
+
+## Większe nagrody za zwiady czasowe
+
+Nowe misje czasowe przyznają zakresy złota zwiększone o 250% (×3,5, końce zakresów zaokrąglone w górę) i czterokrotnie większe zakresy EXP. Misja zapisuje wersję nagród przy rozpoczęciu. Starsze zwiady zachowują zapisane nagrody i pozostają prawidłowe; przy dawnym zapisie bez nagrody losowanie używa wcześniejszych zakresów. Odbiór nie mnoży nagród ponownie. Czasy, koszty energii, szansa odłamka i premia wierzchowca pozostają takie same. Testy: `node --test tests/*.test.cjs` i `node tests/scout-rewards.browser.cjs http://127.0.0.1:8000/`.

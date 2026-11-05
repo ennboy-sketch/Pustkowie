@@ -118,7 +118,7 @@ test('old pending scout-only sets migrate once without consuming resources; chan
 
 test('already active scouts and old out-of-range battles keep their saved progress, cost and reward', () => {
   const r = runtime(), c = r.BrandCombat;
-  const scout = r.BrandMissions.start(hero(10), Date.now(), () => 'forest', () => ({ gold: 17, xp: 77 }), { cost: 3, difficulty: 'easy' });
+  const scout = r.BrandMissions.start(hero(10), Date.now(), () => 'forest', () => ({ gold: 60, xp: 308 }), { cost: 3, difficulty: 'easy' });
   assert.equal(r.BrandChoices.prepare(scout), scout);
   const old = { ...hero(5), energy: 95, activeCombat: { id: 'old-fight', cost: 5, sceneId: 'mine', battle: c.createBattle({ name: 'Test', classId: 'warrior', maxHp: 100, attack: [10000, 10000] }, c.opponents('mine').find(m => m.id === 'magma-golem'), 'hero'), reward: { gold: 100, xp: 300 }, nextHitAt: 0 } };
   assert.equal(r.BrandChoices.prepare(old), old);
