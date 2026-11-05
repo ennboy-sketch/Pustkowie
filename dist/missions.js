@@ -4,9 +4,10 @@
   const LEGACY_REWARDS={1:{xp:[5,11],gold:[3,5]},5:{xp:[25,44],gold:[7,15]},10:{xp:[77,101],gold:[17,33]},15:{xp:[125,200],gold:[50,100]}};
   const PREVIOUS_REWARDS=Object.fromEntries(Object.entries(LEGACY_REWARDS).map(([duration,r])=>[duration,{xp:r.xp.map(n=>n*4),gold:r.gold.map(n=>Math.ceil(n*3.5))}]));
   const REWARDS=Object.fromEntries(Object.entries(PREVIOUS_REWARDS).map(([duration,r])=>[duration,{xp:r.xp.map(n=>n*50),gold:[...r.gold]}]));
+  REWARDS[20]={xp:[150000,150000],gold:[500,500]};
   function ranges(duration,version=2){return (version===2?REWARDS:version===1?PREVIOUS_REWARDS:version===0?LEGACY_REWARDS:{})[duration];}
   function randomInt(min,max){const range=max-min+1,limit=4294967296-(4294967296%range),value=new Uint32Array(1);do{crypto.getRandomValues(value);}while(value[0]>=limit);return min+value[0]%range;}
-  function shardChance(level){return Number.isSafeInteger(level)&&level>=12?6:Number.isSafeInteger(level)&&level>=8?3:0;}
+  function shardChance(level){return Number.isSafeInteger(level)&&level>=26?10:Number.isSafeInteger(level)&&level>=12?6:Number.isSafeInteger(level)&&level>=8?3:0;}
   function rollReward(duration,version=2){const r=ranges(duration,version);if(!r)throw new Error('Nieznany czas misji.');return{xp:randomInt(...r.xp),gold:randomInt(...r.gold)};}
   function validReward(reward,duration,level,version=2){const r=ranges(duration,version);return !!r&&!!reward&&Number.isSafeInteger(reward.xp)&&reward.xp>=r.xp[0]&&reward.xp<=r.xp[1]&&Number.isSafeInteger(reward.gold)&&reward.gold>=r.gold[0]&&reward.gold<=r.gold[1]&&(reward.shards===undefined||(Number.isSafeInteger(reward.shards)&&reward.shards>=0&&reward.shards<=(level>=8?1:0)));}
   const SCENES={
@@ -16,8 +17,8 @@
   };
   function drawScene(){const ids=Object.keys(SCENES),random=new Uint32Array(1),limit=4294967296-(4294967296%ids.length);do{crypto.getRandomValues(random);}while(random[0]>=limit);return ids[random[0]%ids.length];}
   function minutes(level) {
-    if(!Number.isSafeInteger(level)||level<1||level>25)return null;
-    return level>=15?15:level>=8?10:level>=3?5:1;
+    if(!Number.isSafeInteger(level)||level<1||level>35)return null;
+    return level>=26?20:level>=15?15:level>=8?10:level>=3?5:1;
   }
   function durationFor(level,tier,hero){const base=minutes(level);return base?base*(hero?.warPony?.9:1):null;}
   function savedDuration(mission){
@@ -48,7 +49,7 @@
     if(hero.activeCombat)throw new Error('Najpierw zakończ walkę z potworem.');
     if(active(hero))throw new Error('Najpierw zakończ obecny zwiad.');
     const level=heroLevel(hero),duration=durationFor(level);
-    if(!duration)throw new Error('Zwiad powyżej poziomu 25 ustalimy później.');
+    if(!duration)throw new Error('Zwiad powyżej poziomu 35 ustalimy później.');
     if(hero.energy<cost)throw new Error(`Potrzebujesz ${cost} punktów energii.`);
     const sceneId=draw();if(!Object.hasOwn(SCENES,sceneId))throw new Error('Nieznane miejsce zwiadu.');
     const durationMs=duration*60000*(hero.warPony?.9:1);
@@ -91,11 +92,11 @@
         $('.scout-heading h3').textContent=scene?scene.name:s.mission?'Zwiad':'Losowy zwiad';
         $('.scout-narrative').textContent=scene?scene.description:s.mission?'Trwa wcześniej rozpoczęty zwiad. Zgłoś powrót po upływie czasu.':'Dowódca Brand wyznaczy jedno z trzech miejsc: Mroczny Las, Starą Kopalnię lub Podziemia Miasta.';
         $('.scout-offers').hidden=!!s.mission;
-        $('.scout-duration').textContent=s.mission?`Czas przyjętego zwiadu: ${s.mission.durationMs/60000} min`:s.minutes?`Twój poziom: ${s.level} · Czas: ${s.minutes*(hero.warPony?.9:1)} min`:`Twój poziom: ${s.level} · Czas powyżej 25. poziomu do ustalenia`;
+        $('.scout-duration').textContent=s.mission?`Czas przyjętego zwiadu: ${s.mission.durationMs/60000} min`:s.minutes?`Twój poziom: ${s.level} · Czas: ${s.minutes*(hero.warPony?.9:1)} min`:`Twój poziom: ${s.level} · Czas powyżej 35. poziomu do ustalenia`;
         $('.scout-cost').textContent=`${s.mission?'Koszt został pobrany przy rozpoczęciu':'Koszt: 5 energii'} · Energia: ${s.energy} / 100`;
         const range=s.mission?ranges(savedDuration(s.mission),s.mission.rewardVersion??0):REWARDS[s.minutes];
         const chance=s.mission?(s.mission.reward?.shards!==undefined&&s.mission.levelAtStart>=8?s.mission.shardChance??3:0):shardChance(s.level);
-        $('.scout-reward-preview').textContent=range?`Nagroda: ${range.xp[0]}–${range.xp[1]} EXP · ${range.gold[0]}–${range.gold[1]} złota${chance?` · ${chance}% szansy na 1 odłamek`:''}`:'';
+        $('.scout-reward-preview').textContent=range?`Nagroda: ${range.xp[0]===range.xp[1]?range.xp[0]:range.xp.join('–')} EXP · ${range.gold[0]===range.gold[1]?range.gold[0]:range.gold.join('–')} złota${chance?` · ${chance}% szansy na 1 odłamek`:''}`:'';
         $('.scout-progress').hidden=!s.mission;
         if(s.mission){const sec=Math.ceil(s.remaining/1000);$('.scout-clock').textContent=`${String(Math.floor(sec/60)).padStart(2,'0')}:${String(sec%60).padStart(2,'0')}`;$('.scout-phase').textContent=s.ready?'Zwiad zakończony':'Zwiad trwa';const progress=$('.scout-progress progress');progress.max=s.mission.durationMs;progress.value=Math.min(s.mission.durationMs,Math.max(0,Date.now()-s.mission.startedAt));}
         button.dataset.missionAction=s.mission?'finish':'start';

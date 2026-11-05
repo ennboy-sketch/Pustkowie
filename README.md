@@ -228,6 +228,7 @@ Opis wylosowanego obszaru zwiadu jest widoczny w półprzezroczystej, złoto obr
 | 5 minut | 5000–8800 | 25–53 |
 | 10 minut | 15400–20200 | 60–116 |
 | 15 minut | 25000–40000 | 175–350 |
+| 20 minut (poziomy 26–35) | 150000 | 500 |
 
 Losowania są niezależne i obejmują obie granice przedziałów. Nowa misja zapisuje nagrodę w `activeMission.reward` przy rozpoczęciu; tytuł, czas, lokacja i nagroda nie zmieniają się po odświeżeniu. Przy zgłoszeniu powrotu EXP, poziom, złoto i usunięcie aktywnej misji zapisują się w jednej transakcji, pod wspólną blokadą Web Locks. Nie ma dodatkowego kosztu energii ani podwójnego odbioru. Podsumowanie nagrody pojawia się po powrocie do karczmy i pozostaje w `lastScout`. Stary zwiad bez zapisanej nagrody otrzymuje ją przy pierwszym skutecznie zapisanym zakończeniu, według swojego czasu. Błąd zapisu nie przyznaje częściowej nagrody ani nie usuwa misji.
 
@@ -742,3 +743,8 @@ Nowe misje czasowe przyznają zakresy złota zwiększone o 250% (×3,5, końce z
 ## EXP ×50 za wszystkie misje czasowe
 
 Bieżące nagrody EXP zwiadów zwiększono jeszcze 50-krotnie: 1 minuta → 1000–2200, 5 minut → 5000–8800, 10 minut → 15400–20200, 15 minut → 25000–40000 EXP. Złoto, czas, koszt energii, szanse odłamków i premia wierzchowca pozostają takie same. Nowe misje zapisują `rewardVersion: 2`. Starsze misje wersji 0 i 1 nadal odczytują wcześniejsze zakresy i zachowują zapisane nagrody; odbiór nie mnoży ich ponownie.
+
+
+## Zwiady czasowe na poziomach 26–35
+
+Nowy przedział trwa 20 minut i daje zawsze 150 000 EXP oraz 500 złota. Szansa na dodatkowy 1 odłamek wynosi 10%, z losowaniem zapisywanym przy rozpoczęciu. Koszty obu wariantów nadal wynoszą 3 lub 5 energii; Kuc Bojowy skraca czas do 18 minut. Poziomy 1–25 zachowują dotychczasowe wartości. Od poziomu 36 czas i nagrody pozostają do ustalenia.
