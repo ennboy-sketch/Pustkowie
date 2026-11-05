@@ -224,10 +224,10 @@ Opis wylosowanego obszaru zwiadu jest widoczny w półprzezroczystej, złoto obr
 
 | Czas | EXP | Złoto |
 | --- | --- | --- |
-| 1 minuta | 20–44 | 11–18 |
-| 5 minut | 100–176 | 25–53 |
-| 10 minut | 308–404 | 60–116 |
-| 15 minut | 500–800 | 175–350 |
+| 1 minuta | 1000–2200 | 11–18 |
+| 5 minut | 5000–8800 | 25–53 |
+| 10 minut | 15400–20200 | 60–116 |
+| 15 minut | 25000–40000 | 175–350 |
 
 Losowania są niezależne i obejmują obie granice przedziałów. Nowa misja zapisuje nagrodę w `activeMission.reward` przy rozpoczęciu; tytuł, czas, lokacja i nagroda nie zmieniają się po odświeżeniu. Przy zgłoszeniu powrotu EXP, poziom, złoto i usunięcie aktywnej misji zapisują się w jednej transakcji, pod wspólną blokadą Web Locks. Nie ma dodatkowego kosztu energii ani podwójnego odbioru. Podsumowanie nagrody pojawia się po powrocie do karczmy i pozostaje w `lastScout`. Stary zwiad bez zapisanej nagrody otrzymuje ją przy pierwszym skutecznie zapisanym zakończeniu, według swojego czasu. Błąd zapisu nie przyznaje częściowej nagrody ani nie usuwa misji.
 
@@ -737,3 +737,8 @@ Każde nowe rozliczenie walki z bossem, wygrane lub przegrane, zapisuje `dungeon
 ## Większe nagrody za zwiady czasowe
 
 Nowe misje czasowe przyznają zakresy złota zwiększone o 250% (×3,5, końce zakresów zaokrąglone w górę) i czterokrotnie większe zakresy EXP. Misja zapisuje wersję nagród przy rozpoczęciu. Starsze zwiady zachowują zapisane nagrody i pozostają prawidłowe; przy dawnym zapisie bez nagrody losowanie używa wcześniejszych zakresów. Odbiór nie mnoży nagród ponownie. Czasy, koszty energii, szansa odłamka i premia wierzchowca pozostają takie same. Testy: `node --test tests/*.test.cjs` i `node tests/scout-rewards.browser.cjs http://127.0.0.1:8000/`.
+
+
+## EXP ×50 za wszystkie misje czasowe
+
+Bieżące nagrody EXP zwiadów zwiększono jeszcze 50-krotnie: 1 minuta → 1000–2200, 5 minut → 5000–8800, 10 minut → 15400–20200, 15 minut → 25000–40000 EXP. Złoto, czas, koszt energii, szanse odłamków i premia wierzchowca pozostają takie same. Nowe misje zapisują `rewardVersion: 2`. Starsze misje wersji 0 i 1 nadal odczytują wcześniejsze zakresy i zachowują zapisane nagrody; odbiór nie mnoży ich ponownie.

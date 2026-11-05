@@ -2,12 +2,13 @@
 (() => {
   const COST=5;
   const LEGACY_REWARDS={1:{xp:[5,11],gold:[3,5]},5:{xp:[25,44],gold:[7,15]},10:{xp:[77,101],gold:[17,33]},15:{xp:[125,200],gold:[50,100]}};
-  const REWARDS=Object.fromEntries(Object.entries(LEGACY_REWARDS).map(([duration,r])=>[duration,{xp:r.xp.map(n=>n*4),gold:r.gold.map(n=>Math.ceil(n*3.5))}]));
-  function ranges(duration,version=1){return (version===1?REWARDS:version===0?LEGACY_REWARDS:{})[duration];}
+  const PREVIOUS_REWARDS=Object.fromEntries(Object.entries(LEGACY_REWARDS).map(([duration,r])=>[duration,{xp:r.xp.map(n=>n*4),gold:r.gold.map(n=>Math.ceil(n*3.5))}]));
+  const REWARDS=Object.fromEntries(Object.entries(PREVIOUS_REWARDS).map(([duration,r])=>[duration,{xp:r.xp.map(n=>n*50),gold:[...r.gold]}]));
+  function ranges(duration,version=2){return (version===2?REWARDS:version===1?PREVIOUS_REWARDS:version===0?LEGACY_REWARDS:{})[duration];}
   function randomInt(min,max){const range=max-min+1,limit=4294967296-(4294967296%range),value=new Uint32Array(1);do{crypto.getRandomValues(value);}while(value[0]>=limit);return min+value[0]%range;}
   function shardChance(level){return Number.isSafeInteger(level)&&level>=12?6:Number.isSafeInteger(level)&&level>=8?3:0;}
-  function rollReward(duration,version=1){const r=ranges(duration,version);if(!r)throw new Error('Nieznany czas misji.');return{xp:randomInt(...r.xp),gold:randomInt(...r.gold)};}
-  function validReward(reward,duration,level,version=1){const r=ranges(duration,version);return !!r&&!!reward&&Number.isSafeInteger(reward.xp)&&reward.xp>=r.xp[0]&&reward.xp<=r.xp[1]&&Number.isSafeInteger(reward.gold)&&reward.gold>=r.gold[0]&&reward.gold<=r.gold[1]&&(reward.shards===undefined||(Number.isSafeInteger(reward.shards)&&reward.shards>=0&&reward.shards<=(level>=8?1:0)));}
+  function rollReward(duration,version=2){const r=ranges(duration,version);if(!r)throw new Error('Nieznany czas misji.');return{xp:randomInt(...r.xp),gold:randomInt(...r.gold)};}
+  function validReward(reward,duration,level,version=2){const r=ranges(duration,version);return !!r&&!!reward&&Number.isSafeInteger(reward.xp)&&reward.xp>=r.xp[0]&&reward.xp<=r.xp[1]&&Number.isSafeInteger(reward.gold)&&reward.gold>=r.gold[0]&&reward.gold<=r.gold[1]&&(reward.shards===undefined||(Number.isSafeInteger(reward.shards)&&reward.shards>=0&&reward.shards<=(level>=8?1:0)));}
   const SCENES={
     forest:{name:'Zwiad w Mrocznym Lesie',short:'Mroczny Las',image:'scout-forest.webp',description:'Nad Mrocznym Lasem gęstnieje mgła. Między splątanymi korzeniami szukasz śladów i obserwujesz trakt, wsłuchując się w trzask gałęzi. Brand czeka na wieści z tej zapomnianej drogi.'},
     mine:{name:'Przeszukiwanie Starej Kopalni',short:'Stara Kopalnia',image:'scout-mine.webp',description:'W Starej Kopalni powietrze pachnie wilgocią i rdzą. Przy świetle latarni sprawdzasz porzucone tory oraz boczne chodniki. Każdy krok odbija się echem pod spróchniałymi belkami.'},
@@ -34,7 +35,7 @@
     const m=hero.activeMission;
     if(!m)return null;
     const duration=savedDuration(m);
-    if(!duration||![0,1].includes(m.rewardVersion??0)||(m.reward!==undefined&&!validReward(m.reward,duration,m.levelAtStart,m.rewardVersion??0))||(m.sceneId!==undefined&&!Object.hasOwn(SCENES,m.sceneId))||m.type!=='scout'||!Number.isSafeInteger(m.startedAt)||!Number.isSafeInteger(m.endsAt)||m.startedAt<0||!Number.isSafeInteger(m.durationMs)||m.durationMs!==duration*60000*(m.durationVersion===3?.9:1)||m.endsAt-m.startedAt!==m.durationMs||!minutes(m.levelAtStart))throw new Error('Zapis aktywnej misji jest niezgodny. Nie rozpoczynaj nowej misji przed naprawą zapisu.');
+    if(!duration||![0,1,2].includes(m.rewardVersion??0)||(m.reward!==undefined&&!validReward(m.reward,duration,m.levelAtStart,m.rewardVersion??0))||(m.sceneId!==undefined&&!Object.hasOwn(SCENES,m.sceneId))||m.type!=='scout'||!Number.isSafeInteger(m.startedAt)||!Number.isSafeInteger(m.endsAt)||m.startedAt<0||!Number.isSafeInteger(m.durationMs)||m.durationMs!==duration*60000*(m.durationVersion===3?.9:1)||m.endsAt-m.startedAt!==m.durationMs||!minutes(m.levelAtStart))throw new Error('Zapis aktywnej misji jest niezgodny. Nie rozpoczynaj nowej misji przed naprawą zapisu.');
     return m;
   }
   function status(hero,now=Date.now()) {
@@ -53,7 +54,7 @@
     const durationMs=duration*60000*(hero.warPony?.9:1);
     const reward=roll(duration);if(!validReward(reward,duration,level))throw new Error('Nieprawidłowa nagroda zwiadu.');
     const chance=shardChance(level),shards=chance>0&&randomInt(1,100)<=chance?1:0;
-    return {...hero,energy:hero.energy-cost,brandOffers:null,activeMission:{rewardVersion:1,...(hero.warPony?{durationVersion:3,baseDurationMinutes:duration,speedBonus:10}:{durationVersion:2}),shardChance:chance,loot:null,cost,difficulty:options.difficulty||null,type:'scout',sceneId,reward:{xp:reward.xp,gold:reward.gold,shards},levelAtStart:level,durationMs,startedAt:now,endsAt:now+durationMs}};
+    return {...hero,energy:hero.energy-cost,brandOffers:null,activeMission:{rewardVersion:2,...(hero.warPony?{durationVersion:3,baseDurationMinutes:duration,speedBonus:10}:{durationVersion:2}),shardChance:chance,loot:null,cost,difficulty:options.difficulty||null,type:'scout',sceneId,reward:{xp:reward.xp,gold:reward.gold,shards},levelAtStart:level,durationMs,startedAt:now,endsAt:now+durationMs}};
   }
   function finish(hero,now=Date.now(),roll=rollReward) {
     const mission=active(hero);
