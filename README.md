@@ -703,3 +703,28 @@ Po rozliczeniu walki Cmentarzyska, również po przewinięciu, otwiera się osob
 ## Ikona i automatyczne usunięcie mikstury
 
 Założona mikstura pokazuje czerwoną ikonę w slocie specjalnym na karcie postaci. Po upływie zapisanych 3 godzin znika ze slotu i plecaka również przy otwartym oknie postaci. Synchronizacja zapisuje usunięcie pod wspólną blokadą i odświeża widok. Nieużywane mikstury oraz inne przedmioty pozostają bez zmian. Test: `node tests/potion-slot.browser.cjs http://127.0.0.1:8000/`.
+
+
+## Nowe potwory z arkusza — poziomy 16–30
+
+Dodano 15 przeciwników Branda z przesłanego arkusza. HP, bazowe obrażenia i stałe nagrody są dokładnie takie jak w nowych wierszach; wcześniejsze 32 wpisy zachowują dotychczasowy balans, w tym wcześniejsze zwiększenie HP i ataku o 10%. Nowym wpisom nadano stałe identyfikatory. Dobór nadal ogranicza się do ±3 poziomów postaci, a rozpoczęte walki zachowują zapisany przebieg. Ork Szaman rzuca magiczny pocisk: pocisk omija obronę fizyczną, lecz ogólny pancerz nadal redukuje jego obrażenia. Nie dodano losowych przedmiotów do nagród Branda.
+
+| Poziom | Potwór | Lokalizacja | HP | Obrażenia | EXP | Złoto |
+| ---: | --- | --- | ---: | --- | ---: | ---: |
+| 16 | Mroczny Rozpruwacz | Mroczny Las | 550 | 88–88 | 48000 | 150 |
+| 17 | Nefrytowa Jaszczurka | Stara Kopalnia | 589 | 88–88 | 55000 | 130 |
+| 18 | Golem | Podziemia Miasta | 599 | 90–90 | 52999 | 166 |
+| 19 | Ent | Mroczny Las | 660 | 90–90 | 75000 | 179 |
+| 20 | Drzewiec | Mroczny Las | 750 | 100–100 | 99000 | 188 |
+| 21 | Zabłąkany Elf | Mroczny Las | 750 | 100–100 | 101000 | 200 |
+| 22 | Leśny Elf | Mroczny Las | 760 | 105–105 | 105000 | 200 |
+| 23 | Mroczny Elf | Mroczny Las | 770 | 110–110 | 130000 | 200 |
+| 24 | Ork | Stara Kopalnia | 800 | 115–115 | 170000 | 200 |
+| 25 | Ork Tropiciel | Stara Kopalnia | 830 | 120–120 | 200000 | 210 |
+| 26 | Ork Szaman | Stara Kopalnia | 845 | 125–125 | 230000 | 250 |
+| 27 | Zombie | Podziemia Miasta | 750 | 100–100 | 270000 | 150 |
+| 28 | Upiór z Bagien | Mroczny Las | 700 | 130–130 | 310000 | 100 |
+| 29 | Gorgon | Podziemia Miasta | 800 | 150–150 | 350000 | 250 |
+| 30 | Bazyliszek | Podziemia Miasta | 900 | 150–150 | 400000 | 250 |
+
+Awatary są zapisane w trzech atlasach 3×2: `monsters-level-16.webp`, `monsters-level-21.webp`, `monsters-level-26.webp`. Testy importu, zakresów poziomów, magii oraz normalnej i przewiniętej walki: `node --test tests/*.test.cjs`. Test przeglądarkowy nowych przeciwników na komputerze i telefonie, z regresjami porażek: `node tests/all-monsters.browser.cjs http://127.0.0.1:8000/ --new-monsters`.

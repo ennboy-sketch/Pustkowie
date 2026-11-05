@@ -54,3 +54,4 @@ dialog.combat-dialog{position:fixed;inset:0;margin:0;padding:0;border:0;border-r
 .combat-portrait .combat-figure.monster-abyss-bellringer{--monster-art:url('abyss-bellringer.webp');--monster-grid:100% 100%}
 .combat-echo-hit .combat-damage{color:#a6f0e5;text-shadow:0 2px 3px #164c4a,0 0 12px #000}
 .combat-portrait .combat-figure.monster-graveyard{--monster-art:url('graveyard-bosses.webp');--monster-grid:300% 200%}
+.combat-portrait .combat-figure.monster-level-16{--monster-art:url('monsters-level-16.webp');--monster-grid:300% 200%}.combat-portrait .combat-figure.monster-level-21{--monster-art:url('monsters-level-21.webp');--monster-grid:300% 200%}.combat-portrait .combat-figure.monster-level-26{--monster-art:url('monsters-level-26.webp');--monster-grid:300% 200%}

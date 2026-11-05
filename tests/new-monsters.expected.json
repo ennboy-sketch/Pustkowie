@@ -1,0 +1,364 @@
+[
+  {
+    "id": "dark-ripper",
+    "name": "Mroczny Rozpruwacz",
+    "scene": "forest",
+    "location": "Mroczny Las",
+    "level": 16,
+    "maxHp": 550,
+    "attack": [
+      88,
+      88
+    ],
+    "reward": {
+      "gold": 150,
+      "xp": 48000
+    },
+    "atlas": "level-16",
+    "tile": 0,
+    "stats": [
+      32,
+      16,
+      16,
+      55
+    ]
+  },
+  {
+    "id": "jade-lizard",
+    "name": "Nefrytowa Jaszczurka",
+    "scene": "mine",
+    "location": "Stara Kopalnia",
+    "level": 17,
+    "maxHp": 589,
+    "attack": [
+      88,
+      88
+    ],
+    "reward": {
+      "gold": 130,
+      "xp": 55000
+    },
+    "atlas": "level-16",
+    "tile": 1,
+    "stats": [
+      34,
+      17,
+      17,
+      59
+    ]
+  },
+  {
+    "id": "sewer-golem",
+    "name": "Golem",
+    "scene": "undercity",
+    "location": "Podziemia Miasta",
+    "level": 18,
+    "maxHp": 599,
+    "attack": [
+      90,
+      90
+    ],
+    "reward": {
+      "gold": 166,
+      "xp": 52999
+    },
+    "atlas": "level-16",
+    "tile": 2,
+    "stats": [
+      36,
+      18,
+      18,
+      60
+    ]
+  },
+  {
+    "id": "ancient-ent",
+    "name": "Ent",
+    "scene": "forest",
+    "location": "Mroczny Las",
+    "level": 19,
+    "maxHp": 660,
+    "attack": [
+      90,
+      90
+    ],
+    "reward": {
+      "gold": 179,
+      "xp": 75000
+    },
+    "atlas": "level-16",
+    "tile": 3,
+    "stats": [
+      38,
+      19,
+      19,
+      66
+    ]
+  },
+  {
+    "id": "oak-treant",
+    "name": "Drzewiec",
+    "scene": "forest",
+    "location": "Mroczny Las",
+    "level": 20,
+    "maxHp": 750,
+    "attack": [
+      100,
+      100
+    ],
+    "reward": {
+      "gold": 188,
+      "xp": 99000
+    },
+    "atlas": "level-16",
+    "tile": 4,
+    "stats": [
+      40,
+      20,
+      20,
+      75
+    ]
+  },
+  {
+    "id": "lost-elf",
+    "name": "Zabłąkany Elf",
+    "scene": "forest",
+    "location": "Mroczny Las",
+    "level": 21,
+    "maxHp": 750,
+    "attack": [
+      100,
+      100
+    ],
+    "reward": {
+      "gold": 200,
+      "xp": 101000
+    },
+    "atlas": "level-21",
+    "tile": 0,
+    "stats": [
+      42,
+      21,
+      21,
+      75
+    ]
+  },
+  {
+    "id": "forest-elf",
+    "name": "Leśny Elf",
+    "scene": "forest",
+    "location": "Mroczny Las",
+    "level": 22,
+    "maxHp": 760,
+    "attack": [
+      105,
+      105
+    ],
+    "reward": {
+      "gold": 200,
+      "xp": 105000
+    },
+    "atlas": "level-21",
+    "tile": 1,
+    "stats": [
+      44,
+      22,
+      22,
+      76
+    ]
+  },
+  {
+    "id": "dark-elf",
+    "name": "Mroczny Elf",
+    "scene": "forest",
+    "location": "Mroczny Las",
+    "level": 23,
+    "maxHp": 770,
+    "attack": [
+      110,
+      110
+    ],
+    "reward": {
+      "gold": 200,
+      "xp": 130000
+    },
+    "atlas": "level-21",
+    "tile": 2,
+    "stats": [
+      46,
+      23,
+      23,
+      77
+    ]
+  },
+  {
+    "id": "mine-orc",
+    "name": "Ork",
+    "scene": "mine",
+    "location": "Stara Kopalnia",
+    "level": 24,
+    "maxHp": 800,
+    "attack": [
+      115,
+      115
+    ],
+    "reward": {
+      "gold": 200,
+      "xp": 170000
+    },
+    "atlas": "level-21",
+    "tile": 3,
+    "stats": [
+      48,
+      24,
+      24,
+      80
+    ]
+  },
+  {
+    "id": "orc-tracker",
+    "name": "Ork Tropiciel",
+    "scene": "mine",
+    "location": "Stara Kopalnia",
+    "level": 25,
+    "maxHp": 830,
+    "attack": [
+      120,
+      120
+    ],
+    "reward": {
+      "gold": 210,
+      "xp": 200000
+    },
+    "atlas": "level-21",
+    "tile": 4,
+    "stats": [
+      50,
+      25,
+      25,
+      83
+    ]
+  },
+  {
+    "id": "orc-shaman",
+    "name": "Ork Szaman",
+    "scene": "mine",
+    "location": "Stara Kopalnia",
+    "level": 26,
+    "maxHp": 845,
+    "attack": [
+      125,
+      125
+    ],
+    "reward": {
+      "gold": 250,
+      "xp": 230000
+    },
+    "atlas": "level-26",
+    "tile": 0,
+    "stats": [
+      52,
+      26,
+      52,
+      85
+    ],
+    "attackElement": "magic",
+    "traits": "Atakuje magicznym pociskiem. Obrażenia magiczne omijają obronę fizyczną."
+  },
+  {
+    "id": "sewer-zombie",
+    "name": "Zombie",
+    "scene": "undercity",
+    "location": "Podziemia Miasta",
+    "level": 27,
+    "maxHp": 750,
+    "attack": [
+      100,
+      100
+    ],
+    "reward": {
+      "gold": 150,
+      "xp": 270000
+    },
+    "atlas": "level-26",
+    "tile": 1,
+    "stats": [
+      54,
+      27,
+      27,
+      75
+    ]
+  },
+  {
+    "id": "swamp-wraith",
+    "name": "Upiór z Bagien",
+    "scene": "forest",
+    "location": "Mroczny Las",
+    "level": 28,
+    "maxHp": 700,
+    "attack": [
+      130,
+      130
+    ],
+    "reward": {
+      "gold": 100,
+      "xp": 310000
+    },
+    "atlas": "level-26",
+    "tile": 2,
+    "stats": [
+      56,
+      28,
+      28,
+      70
+    ]
+  },
+  {
+    "id": "gorgon",
+    "name": "Gorgon",
+    "scene": "undercity",
+    "location": "Podziemia Miasta",
+    "level": 29,
+    "maxHp": 800,
+    "attack": [
+      150,
+      150
+    ],
+    "reward": {
+      "gold": 250,
+      "xp": 350000
+    },
+    "atlas": "level-26",
+    "tile": 3,
+    "stats": [
+      58,
+      29,
+      29,
+      80
+    ]
+  },
+  {
+    "id": "basilisk",
+    "name": "Bazyliszek",
+    "scene": "undercity",
+    "location": "Podziemia Miasta",
+    "level": 30,
+    "maxHp": 900,
+    "attack": [
+      150,
+      150
+    ],
+    "reward": {
+      "gold": 250,
+      "xp": 400000
+    },
+    "atlas": "level-26",
+    "tile": 4,
+    "stats": [
+      60,
+      30,
+      30,
+      90
+    ]
+  }
+]

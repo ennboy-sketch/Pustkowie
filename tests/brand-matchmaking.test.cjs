@@ -55,7 +55,7 @@ test('all player levels 1–250 and all locations obey the same ±3 rule, includ
     }
   }
   assert.equal(c.availableOpponents(hero(18), 'mine').some(m => m.id === 'magma-golem'), true);
-  assert.equal(scenes.flatMap(scene => c.availableOpponents(hero(19), scene)).length, 0);
+  assert.equal(scenes.flatMap(scene => c.availableOpponents(hero(34), scene)).length, 0);
 });
 
 test('difficulty follows the player instead of a permanent level-2 cutoff; sparse pools use their appropriate edge', () => {
@@ -64,8 +64,8 @@ test('difficulty follows the player instead of a permanent level-2 cutoff; spars
   assert.ok(easy5.some(m => m.level === 5)); assert.ok(easy5.every(m => m.level >= 2 && m.level <= 5));
   assert.ok(hard5.every(m => m.level > 5 && m.level <= 8));
   assert.deepEqual(plain(c.availableOpponents(hero(1), 'forest', 'easy').map(m => m.level)), [1]);
-  assert.deepEqual(plain(c.availableOpponents(hero(15), 'mine', 'hard').map(m => m.level)), [15]);
-  assert.deepEqual(plain(c.availableOpponents(hero(18), 'forest', 'hard').map(m => m.level)), [15]);
+  assert.deepEqual(plain(c.availableOpponents(hero(15), 'mine', 'hard').map(m => m.level)), [17]);
+  assert.deepEqual(plain(c.availableOpponents(hero(18), 'forest', 'hard').map(m => m.level)), [19,20,21]);
   assert.deepEqual(plain(c.availableOpponents(hero(8), 'undercity', 'hard').map(m => m.level)), [5]);
 });
 
@@ -85,10 +85,10 @@ test('80% raw combat chance and guaranteed combat are exact for all 10,000 possi
 test('every generated set has a combat wherever any matching opponent exists, and combat never draws an empty terrain', () => {
   const r = runtime(); let seed = 117;
   r.crypto.getRandomValues = a => { seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0; a[0] = seed; return a; };
-  for (let level = 1; level <= 25; level++) for (let draw = 0; draw < 60; draw++) {
+  for (let level = 1; level <= 36; level++) for (let draw = 0; draw < 60; draw++) {
     const h = r.BrandChoices.prepare(hero(level)); verifyOffers(r, h);
-    assert.equal(h.brandOffers.some(o => o.type === 'combat'), level <= 18);
-    if (level >= 9) for (const o of h.brandOffers.filter(o => o.type === 'combat')) assert.notEqual(o.sceneId, 'undercity');
+    assert.equal(h.brandOffers.some(o => o.type === 'combat'), level <= 33);
+    if (!r.BrandCombat.availableOpponents(hero(level), 'undercity').length) for (const o of h.brandOffers.filter(o => o.type === 'combat')) assert.notEqual(o.sceneId, 'undercity');
   }
 });
 
