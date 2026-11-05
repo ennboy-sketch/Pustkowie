@@ -18,8 +18,8 @@ test('power potion starts only on equip, expires at exactly three hours and neve
  r.Date.now=()=>start+3600000;h=r.HeroSheet.equip(h,'special',null);assert.equal(r.FateWheel.bonuses(h).damage,0);
  h=r.HeroSheet.equip(JSON.parse(JSON.stringify(h)),'special',id);assert.equal(h.lootInventory.find(i=>i.id===id).powerExpiresAt,expiry);
  r.Date.now=()=>expiry-1;assert.equal(r.FateWheel.bonuses(h).damage,10);
- r.Date.now=()=>expiry;assert.equal(r.FateWheel.bonuses(h).damage,0);assert.throws(()=>r.HeroSheet.equip(h,'special',id),/zużyta/);
- assert.equal(r.HeroSheet.activatePotion(h),h);
+ r.Date.now=()=>expiry;assert.equal(r.FateWheel.bonuses(h).damage,0);assert.throws(()=>r.HeroSheet.equip(h,'special',id),/Nie masz tego przedmiotu/);
+ const expired=r.HeroSheet.activatePotion(h);assert.equal(expired.equipment.special,null);assert.equal(expired.lootInventory.some(i=>i.id===id),false);assert.equal(r.HeroSheet.activatePotion(expired),expired);
 });
 test('previously equipped potion gets one saved deadline; unused potions remain inactive',()=>{
  const r=run(),item={id:'legacy',kind:'power-potion',slot:'special',name:'Mikstura mocy'},base={...hero(),lootInventory:[item]};
@@ -51,4 +51,10 @@ test('Lilith exchanges ten scrolls at the pre-exchange level: 1000 below 10, 300
  const h={...hero(),level:19,xp:364999,spellScrolls:20},n=r.FateWheel.exchangeScrolls(h);
  assert.equal(n.level,20);assert.equal(n.xp,29999);assert.equal(r.FateWheel.scrollXp(n),120000);
  assert.equal(r.FateWheel.exchangeScrolls(n).xp,149999);
+});
+test('expired potions disappear from equipped slot and bag, preserving unused potions and other equipment even in a full bag',()=>{
+ const r=run(),now=Date.now(),p={id:'expired',kind:'power-potion',slot:'special',powerExpiresAt:now},unused={id:'unused',kind:'power-potion',slot:'special'},gear=Array.from({length:24},(_,i)=>({id:'x'+i,slot:'helmet'}));
+ const h={...hero(),lootInventory:[p,unused,...gear],equipment:{weapon:'saved-weapon',special:p.id}},done=r.HeroSheet.activatePotion(h,now);
+ assert.equal(done.equipment.special,null);assert.equal(done.equipment.weapon,'saved-weapon');assert.equal(done.lootInventory.length,25);assert.ok(done.lootInventory.some(i=>i.id==='unused'));assert.equal(unused.powerExpiresAt,undefined);assert.equal(r.HeroSheet.activatePotion(done,now+1),done);assert.equal(h.lootInventory.length,26);
+ const bag={...hero(),lootInventory:[p,unused]};const cleaned=r.HeroSheet.activatePotion(bag,now);assert.equal(cleaned.equipment,undefined);assert.equal(cleaned.lootInventory.length,1);
 });

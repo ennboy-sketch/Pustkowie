@@ -37,7 +37,14 @@
     const next=allocations(hero);next[id]++;return {...hero,statAllocations:next};
   }
   const POTION_DURATION=3*60*60*1000;
+  function expirePotions(hero,now=Date.now()){
+    const expired=(hero.lootInventory??[]).filter(i=>i.kind==='power-potion'&&Number.isSafeInteger(i.powerExpiresAt)&&i.powerExpiresAt<=now);
+    if(!expired.length)return hero;
+    const ids=new Set(expired.map(i=>i.id));
+    return {...hero,lootInventory:hero.lootInventory.filter(i=>!ids.has(i.id)),...(ids.has(hero.equipment?.special)?{equipment:{...hero.equipment,special:null}}:{})};
+  }
   function activatePotion(hero,now=Date.now()){
+    hero=expirePotions(hero,now);
     const id=hero.equipment?.special;
     if(!id)return hero;
     const items=inventory(hero),item=items.find(i=>i.id===id&&i.kind==='power-potion');
@@ -49,7 +56,7 @@
   function inventory(hero){
     const items=hero.lootInventory??['weapon','armor'].map((slot,i)=>({id:`starter-${slot}`,slot,name:STARTERS[hero.classId][i]}));
     const stack=MATERIALS.flatMap(([key,id,name])=>{const quantity=hero[key]??0;if(!Number.isSafeInteger(quantity)||quantity<0)throw new Error('Nieprawidłowy zapis materiałów.');return quantity>0?[{id,kind:key==='magicDust'?'magic-dust':'craft-material',slot:'material',materialKey:key,name,quantity}]:[];});
-    return [...stack,...items.filter(item=>!MATERIALS.some(([,id])=>id===item.id))].map(item=>{
+    return [...stack,...items.filter(item=>!MATERIALS.some(([,id])=>id===item.id)&&!(item.kind==='power-potion'&&Number.isSafeInteger(item.powerExpiresAt)&&item.powerExpiresAt<=Date.now()))].map(item=>{
       if(item.id==='starter-weapon'&&item.slot==='weapon'&&item.name===LEGACY_WEAPONS[hero.classId])return {...item,name:STARTERS[hero.classId][0]};
       if(item.id==='starter-armor'&&item.slot==='armor'&&[LEGACY_ARMOR[hero.classId],STARTERS[hero.classId][1]].includes(item.name))return {...item,name:STARTERS[hero.classId][1],armorType:bodyTypeFor(hero.classId)};
       return item;
@@ -57,7 +64,7 @@
   }
   function equipment(hero){
     const worn=hero.equipment??{weapon:'starter-weapon',armor:'starter-armor'},items=inventory(hero),valid={...worn};
-    for(const [slot,id] of Object.entries(worn)){const item=items.find(i=>i.id===id&&i.slot===slot);if(item&&!canEquip(hero,item))valid[slot]=null;}
+    for(const [slot,id] of Object.entries(worn)){const item=items.find(i=>i.id===id&&i.slot===slot);if((slot==='special'&&id&&!item)||(item&&!canEquip(hero,item)))valid[slot]=null;}
     return valid;
   }
   function bagItems(hero){const worn=new Set(Object.values(equipment(hero)));return inventory(hero).filter(item=>!worn.has(item.id));}
@@ -139,8 +146,8 @@
       finally{busy=false;render();}
     }
     function storage(e){if(e.key==='pustkowie.hero.v2')render();}
-    root.addEventListener('click',click);window.addEventListener('storage',storage);render();
-    return ()=>{disposed=true;root.removeEventListener('click',click);window.removeEventListener('storage',storage);};
+    root.addEventListener('click',click);window.addEventListener('storage',storage);window.addEventListener('pustkowie-equipment-updated',render);render();
+    return ()=>{disposed=true;root.removeEventListener('click',click);window.removeEventListener('storage',storage);window.removeEventListener('pustkowie-equipment-updated',render);};
   }
   function mount(root,state){
     root.innerHTML=`<section class="hero-v2"><div class="hero-loadout"><div class="hero-portrait"><div class="character" role="img" aria-label="Twoja postać"></div><div class="hero-identity"><h3></h3><span></span></div></div>${SLOTS.map(([id,label],i)=>`<button type="button" class="hero-gear-slot slot-${id}" data-gear-slot="${id}" aria-label="${label}">${art(i)}<span>${label}</span><small>Puste</small></button>`).join('')}</div><button type="button" class="hero-backpack-button" data-open-backpack><span class="backpack-icon" aria-hidden="true"></span><span>Ekwipunek<small>25 miejsc na przedmioty</small></span></button><div class="hero-xp"><span></span><progress max="100" value="0" aria-label="Postęp poziomu"></progress><small></small></div><div class="hero-vitals"><div class="hero-health"><span></span><progress max="1" value="1" aria-label="Punkty życia"></progress></div><div class="hero-mana" hidden><span></span><progress max="1" value="1" aria-label="Punkty many"></progress></div></div><p class="hero-starting-spell" hidden></p><div class="hero-attributes"><div class="hero-points"></div>${STATS.map(([id,label],i)=>`<div class="hero-attribute" data-attribute="${id}"><div><span>${label}</span><small>${id==='luck'?'Szansa na przedmiot':''}</small></div><strong></strong><button type="button" data-stat-add="${id}" aria-label="Zwiększ: ${label}">+</button></div>`).join('')}</div><p class="hero-point-note">5 punktów na start i 3 za każdy kolejny poziom.<br>Szczęście: +1 punkt procentowy szansy na przedmiot za punkt, maks. 60%.</p><p class="hero-message" role="status" aria-live="polite"></p></section>`;
@@ -162,7 +169,7 @@
       root.querySelector('[data-attribute="intelligence"] small').textContent=hero.classId==='mage'?'+10 many za punkt':'';
       root.querySelector('.hero-points').textContent=`Punkty do rozdania: ${available(hero)}`;
       STATS.forEach(([id],i)=>{const row=root.querySelector(`[data-attribute="${id}"]`);row.querySelector('strong').textContent=i<4?profile.stats[i]:luck(hero);row.querySelector('button').disabled=busy||available(hero)<1;if(id==='luck')row.querySelector('small').textContent=`${chance(hero)}% szansy na przedmiot`;});
-      for(const [slot,label] of SLOTS){const button=root.querySelector(`[data-gear-slot="${slot}"]`),item=inventory(hero).find(i=>i.id===equipment(hero)[slot]);button.querySelector('span:not(.gear-art):not(.special-slot-mark)').textContent=slotLabel(slot,hero);button.classList.toggle('is-equipped',!!item);button.querySelector('small').textContent=item?'Założono':'Puste';button.setAttribute('aria-label',`${slotLabel(slot,hero)}: ${item?.name||'Puste'}`);button.title=(item?.name||slotLabel(slot,hero))+itemDetails(item);const icon=button.querySelector('.gear-art');if(icon)icon.className=item?iconClass(item,hero):starterIconClass({id:'starter-'+slot,slot,armorType:bodyTypeFor(hero.classId)},hero)||`gear-art gear-${SLOTS.findIndex(([id])=>id===slot)}`;}
+      for(const [slot,label] of SLOTS){const button=root.querySelector(`[data-gear-slot="${slot}"]`),item=inventory(hero).find(i=>i.id===equipment(hero)[slot]);button.querySelector('span:not(.gear-art):not(.special-slot-mark)').textContent=slotLabel(slot,hero);button.classList.toggle('is-equipped',!!item);button.querySelector('small').textContent=item?'Założono':'Puste';button.setAttribute('aria-label',`${slotLabel(slot,hero)}: ${item?.name||'Puste'}`);button.title=(item?.name||slotLabel(slot,hero))+itemDetails(item);const icon=button.querySelector('.gear-art,.special-slot-mark');if(icon)icon.outerHTML=art(SLOTS.findIndex(([id])=>id===slot),item,hero);}
     }
     function showPicker(slot){
       selectedSlot=slot;const hero=state.read(),items=inventory(hero).filter(i=>i.slot===slot&&canEquip(hero,i));
@@ -182,8 +189,8 @@
     function storage(e){if(e.key==='pustkowie.hero.v2')render();}
     function closeBag(e){if(e.target.closest('[data-close-backpack]'))bag.close();}
     bag.addEventListener('click',closeBag);bag.addEventListener('close',()=>{stopBag();if(!disposed)render();});
-    root.addEventListener('click',click);picker.addEventListener('click',pick);window.addEventListener('storage',storage);render();
-    return ()=>{disposed=true;stopBag();bag.removeEventListener('click',closeBag);if(bag.open)bag.close();bag.remove();root.removeEventListener('click',click);picker.removeEventListener('click',pick);window.removeEventListener('storage',storage);if(picker.open)picker.close();picker.remove();};
+    root.addEventListener('click',click);picker.addEventListener('click',pick);window.addEventListener('storage',storage);window.addEventListener('pustkowie-equipment-updated',render);render();
+    return ()=>{disposed=true;stopBag();bag.removeEventListener('click',closeBag);if(bag.open)bag.close();bag.remove();root.removeEventListener('click',click);picker.removeEventListener('click',pick);window.removeEventListener('storage',storage);window.removeEventListener('pustkowie-equipment-updated',render);if(picker.open)picker.close();picker.remove();};
   }
-  window.HeroSheet={POTION_DURATION,activatePotion,potionActive,art,iconClass,starterIconClass,canEquip,armorType,slotLabel,itemSlotLabel,manaCapacity,mount,mountBag,bagItems,hpBonus,bonuses,luck,chance,available,allocate,rollLoot,receiveLoot,inventory,equipment,equip,inventoryMarkup,SLOTS};
+  window.HeroSheet={POTION_DURATION,expirePotions,activatePotion,potionActive,art,iconClass,starterIconClass,canEquip,armorType,slotLabel,itemSlotLabel,manaCapacity,mount,mountBag,bagItems,hpBonus,bonuses,luck,chance,available,allocate,rollLoot,receiveLoot,inventory,equipment,equip,inventoryMarkup,SLOTS};
 })();

@@ -659,7 +659,7 @@ Po zakończeniu animacji obrotu małe okno pokazuje ikonę i nazwę wylosowanej 
 
 ## Mikstura mocy — 3 godziny
 
-Pierwsze założenie mikstury do slotu specjalnego zapisuje jej termin ważności: 3 godziny czasu rzeczywistego. W plecaku nieużywana mikstura nie traci czasu. Zdjęcie, ponowne założenie i odświeżenie nie przedłużają działania. Po terminie premia +10 obrażeń znika, a opis oznacza miksturę jako zużytą; ponowne użycie jest zablokowane. Nowe walki odczytują bieżącą premię, rozpoczęte zachowują zapisane parametry. Mikstura założona w starszym zapisie otrzymuje termin przy pierwszej synchronizacji postaci po aktualizacji.
+Pierwsze założenie mikstury do slotu specjalnego zapisuje jej termin ważności: 3 godziny czasu rzeczywistego. W plecaku nieużywana mikstura nie traci czasu. Zdjęcie, ponowne założenie i odświeżenie nie przedłużają działania. Po terminie premia +10 obrażeń znika, zużyta mikstura jest automatycznie usuwana z ekwipunku, a slot specjalny zostaje opróżniony. Nowe walki odczytują bieżącą premię, rozpoczęte zachowują zapisane parametry. Mikstura założona w starszym zapisie otrzymuje termin przy pierwszej synchronizacji postaci po aktualizacji.
 
 ## Większe nagrody koła od poziomu 10
 
@@ -698,3 +698,8 @@ Kości i stal są stosami zajmującymi po jednym miejscu w plecaku. Nagrody są 
 ## Okno nagród po walce z bossem
 
 Po rozliczeniu walki Cmentarzyska, również po przewinięciu, otwiera się osobne okno z nazwą bossa, ikonami, nazwami i ilościami wszystkich zapisanych nagród oraz informacją o awansie. Po porażce pokazuje wynik bez nagród. Przycisk „Wróć do Cmentarzyska” zamyka okno; wyświetlanie i zamknięcie nie naliczają niczego ponownie. Starsze podsumowanie nie otwiera się samo przy ponownym wejściu do Lochów. Test przeglądarkowy pięciu bossów obejmuje oba sposoby zakończenia, wznowienie, zawartość okienka i porażkę na komputerze i telefonie.
+
+
+## Ikona i automatyczne usunięcie mikstury
+
+Założona mikstura pokazuje czerwoną ikonę w slocie specjalnym na karcie postaci. Po upływie zapisanych 3 godzin znika ze slotu i plecaka również przy otwartym oknie postaci. Synchronizacja zapisuje usunięcie pod wspólną blokadą i odświeża widok. Nieużywane mikstury oraz inne przedmioty pozostają bez zmian. Test: `node tests/potion-slot.browser.cjs http://127.0.0.1:8000/`.

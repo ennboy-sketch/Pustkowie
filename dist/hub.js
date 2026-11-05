@@ -92,6 +92,7 @@
         const saved=readSavedHero(),updated=window.HeroSheet.activatePotion(window.EnergyCycle.apply(saved));
         if(updated!==saved)localStorage.setItem(HERO_KEY,JSON.stringify(updated));
         hero=updated;updateProfile();
+        if(updated.lootInventory!==saved.lootInventory)window.dispatchEvent(new Event('pustkowie-equipment-updated'));
       };
       if(navigator.locks)await navigator.locks.request('pustkowie-hero-v2',sync);else sync();
     } catch {$('#energy-reset-clock').textContent='Zapis niedostępny';}
