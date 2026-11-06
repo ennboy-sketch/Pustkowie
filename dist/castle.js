@@ -15,8 +15,8 @@
     function show(throne){
       stopZoom();centered=false;
       door.hidden=throne;back.hidden=!throne;
-      art.src=throne?'castle-throne.webp':'castle-antechamber.webp';
-      art.alt=throne?'Sala tronowa: pusty tron z czarnej stali na podwyższeniu, kamienne kolumny, zielone chorągwie i płonące pochodnie.':'Przedsionek zamku z trzema parami drzwi. Dwóch strażników stoi po bokach środkowych drzwi do sali tronowej.';
+      art.src=throne?'castle-throne-queen.webp':'castle-antechamber.webp';
+      art.alt=throne?'Sala tronowa: rudowłosa królowa w złotej koronie z rubinami, bordowych szatach ze złotym haftem i zdobionych butach siedzi ze skrzyżowanymi nogami na tronie z lwimi podłokietnikami. Wokół kamienne kolumny, zielone chorągwie i płonące pochodnie.':'Przedsionek zamku z trzema parami drzwi. Dwóch strażników stoi po bokach środkowych drzwi do sali tronowej.';
       onTitle(throne?'Sala tronowa':'Komnaty z Czarnej Stali');
       stopZoom=window.SceneZoom.mount(view,scene);fit();
       (throne?back:view).focus({preventScroll:true});
