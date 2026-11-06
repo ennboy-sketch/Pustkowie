@@ -1,0 +1,15 @@
+.place-dialog:has(.castle-panel){width:1100px;padding:0;background:#101c15}
+.place-dialog[open]:has(.castle-panel){display:flex;flex-direction:column;height:calc(100svh - 32px);max-height:calc(100svh - 32px);overflow:hidden}
+.place-dialog:has(.castle-panel)>.place-top{padding:15px 20px 0;flex-shrink:0}
+.place-dialog:has(.castle-panel)>h2{margin:6px 20px 15px;padding-bottom:13px;font-size:27px;flex-shrink:0}
+.place-dialog:has(.castle-panel)>#place-content{flex:1;min-height:0;overflow:hidden}
+.castle-panel{position:relative;height:100%;background:#0a130e}
+.castle-viewport{width:100%;height:100%;border-top:1px solid #8d7846;overflow:auto;overscroll-behavior:contain;scrollbar-width:none}
+.castle-panorama{position:relative;isolation:isolate}
+.castle-art{display:block;width:100%;height:100%;object-fit:fill;max-width:none;user-select:none;-webkit-user-drag:none}
+.castle-throne-door{position:absolute;left:40%;top:17%;width:20%;height:55%;padding:0;border:0;background:transparent;color:#ecd3a0;cursor:pointer}
+.castle-throne-door>span{position:absolute;bottom:0;left:50%;transform:translateX(-50%);white-space:nowrap;padding:9px 15px;border:1px solid #b79b59;border-radius:3px;background:linear-gradient(#293a25ee,#0b190ff5);box-shadow:0 4px 15px #000b;font:600 13px 'Cinzel',Georgia,serif}
+.castle-throne-door:hover>span{filter:brightness(1.2);border-color:#efce89}
+.castle-throne-door:focus-visible{outline:2px solid #edcc8d;outline-offset:4px}
+.castle-return{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);z-index:2;white-space:nowrap;background:#122219ed!important;width:auto!important}
+@media(max-width:420px){.place-dialog:has(.castle-panel){max-width:calc(100% - 16px)}.place-dialog:has(.castle-panel)>h2{font-size:21px;margin:5px 15px 12px}.place-dialog:has(.castle-panel)>.place-top{padding:12px 15px 0}}

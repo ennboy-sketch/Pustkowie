@@ -125,6 +125,7 @@
   let stopActiveScout=()=>{};
   let stopHeroSheet=()=>{};
   let stopDungeons=()=>{};
+  let stopCastle=()=>{};
   let worldLocation='map',townPosition=null;
   function showWorld(id){
     const view=$('.world-viewport'),map=$('#town-map'),glade=id==='glade';
@@ -149,7 +150,7 @@
     const forgeLocked=id==='forge'&&level()<FORGE_LEVEL;
     const dungeonLocked=id==='dungeon'&&level()<DUNGEON_LEVEL;
     if(['tavern','hero','inventory','market'].includes(id)){try{readCurrentHero();}catch{}}
-    stopActiveScout();stopHeroSheet();stopDungeons();
+    stopActiveScout();stopHeroSheet();stopDungeons();stopCastle();
     window.FateWheel.cancel();
     window.TavernPanel.cancel();
     window.AlchemistPanel.cancel();
@@ -185,7 +186,7 @@
     } else if (id === 'mount') {
       content = window.FateWheel.mountMarkup(readCurrentHero());
     } else if (id === 'guild') {
-      content = '';
+      content = window.CastlePanel.markup();
     } else if (id === 'inventory') {
       content = '<div class="backpack-root"></div>';
     } else if (id === 'journal') {
@@ -196,6 +197,7 @@
       content = `<div class="place-emblem">${icon(place.icon)}</div><p class="place-text">${place.text}</p><div class="coming-soon"><span>${place.future}</span><span class="state-badge">W przygotowaniu</span></div>`;
     }
     $('#place-content').innerHTML = content;
+    if (id === 'guild') stopCastle=window.CastlePanel.mount($('#place-content'),{onTitle:title=>{$('#place-title').textContent=title;}});
     if (id === 'hero') stopHeroSheet=window.HeroSheet.mount($('.hero-sheet-root'),{read:readCurrentHero,update:updateCurrentHero});
     if (id === 'inventory') stopHeroSheet=window.HeroSheet.mountBag($('.backpack-root'),{read:readCurrentHero,update:updateCurrentHero});
     if (id === 'dungeon' && !dungeonLocked) stopDungeons=window.DungeonsPanel.mount($('#place-content'),{read:readCurrentHero,update:updateCurrentHero,onTitle:title=>{$('#place-title').textContent=title;}});
@@ -248,7 +250,7 @@
     if(teacher==='alchemist')window.AlchemistPanel.openProfessions();else window.BarracksPanel.openProfessions();
     $('#profession-status').textContent = `Wybrano profesję: ${profession().name}.`;
   });
-  $('#place-dialog').addEventListener('close', () => {stopHeroSheet();stopActiveScout();stopDungeons();window.FateWheel.cancel();window.TavernPanel.cancel();window.AlchemistPanel.cancel();window.ForgePanel.cancel();window.BarracksPanel.cancel();window.MarketPanel.cancel();});
+  $('#place-dialog').addEventListener('close', () => {stopHeroSheet();stopActiveScout();stopDungeons();stopCastle();window.FateWheel.cancel();window.TavernPanel.cancel();window.AlchemistPanel.cancel();window.ForgePanel.cancel();window.BarracksPanel.cancel();window.MarketPanel.cancel();});
   $('#close-place').addEventListener('click',()=>$('#place-dialog').close());
   $('#place-dialog').addEventListener('click',e=>{if(e.target===$('#place-dialog')){const r=e.target.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)e.target.close();}});
   $('#menu-toggle').addEventListener('click',()=>toggleMenu(!$('#sidebar').classList.contains('is-open')));
