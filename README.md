@@ -764,3 +764,8 @@ Postać na tronie odtworzono na podstawie przesłanej ilustracji: korona i biżu
 ## Medaliony ścieżek Polany
 
 Znaczniki i okna kierunków używają osobnych ikon WebP 384 × 384 px z przezroczystym tłem: Lodowe Wzgórza — lodowe szczyty (`glade-ice-hills-icon.webp`), Eldor — elficka osada w koronach drzew (`glade-eldor-icon.webp`), Ubocze — szyld złotego kuca i tawerna (`glade-ubocze-icon.webp`). Okrągłe obramowanie z czarnej stali i starego złota pasuje do medalionów lochów. Na mapie ikony mają 64 px, w oknie kierunku 128 px. Zastępują cyfry I–III; nazwy, opisy i przesuwanie Polany działają jak dotychczas.
+
+
+## Poziomy dostępu do kierunków Polany
+
+Eldor od poziomu 10 będzie osadą elfów z nauczycielami ich profesji. Ubocze od poziomu 30 będzie karczmą „Pod złotym Kucem” z nowymi postaciami i misjami. Lodowe Wzgórza od poziomu 75 będą siedzibą zamku krasnoludów. Nazwy i umiejętności profesji, nauczyciele, zadania i wnętrza pozostają do stworzenia. Znaczniki pokazują wymagany poziom; zamknięte kierunki mają przygaszone ikony. Kliknięcie ponownie odczytuje aktualny zapis postaci: poniżej progu pokazuje blokadę, od progu opis przygotowywanej lokacji. Dostęp do Eldoru nie jest ograniczony klasą, planowane szkolenie dotyczy Elfów.

@@ -18,9 +18,9 @@
     guild:{name:'Zamek',title:'Komnaty z Czarnej Stali',category:'Świat',icon:'castle',x:77,y:12},
     wheel:{name:'Koło Losu',title:'Koło Losu',category:'Fontanna Czarnej Stali',icon:'wheel',x:50,y:39},
     glade:{name:'Polana',title:'Polana',category:'Świat',icon:'map',x:65,y:94},
-    'glade-path-1':{name:'Lodowe Wzgórza',art:'glade-ice-hills-icon.webp',category:'Polana',icon:'map',text:'Ta ścieżka prowadzi w góry, ku Lodowym Wzgórzom. Dalsza droga jest na razie niedostępna.',future:'Górska kraina'},
-    'glade-path-2':{name:'Eldor',art:'glade-eldor-icon.webp',category:'Polana',icon:'map',text:'Ta ścieżka prowadzi do Eldoru, osady elfów. Osada będzie dostępna w późniejszym etapie.',future:'Osada elfów'},
-    'glade-path-3':{name:'Ubocze',art:'glade-ubocze-icon.webp',category:'Polana',icon:'map',text:'Droga na Ubocze prowadzi do tawerny „Pod złotym Kucem”. To miejsce będzie dostępne w późniejszym etapie.',future:'Tawerna „Pod złotym Kucem”'},
+    'glade-path-1':{name:'Lodowe Wzgórza',art:'glade-ice-hills-icon.webp',requiredLevel:75,category:'Polana',icon:'map',text:'W Lodowych Wzgórzach wznosi się zamek krasnoludów. Lokację stworzymy w kolejnym etapie.',future:'Zamek krasnoludów'},
+    'glade-path-2':{name:'Eldor',art:'glade-eldor-icon.webp',requiredLevel:10,category:'Polana',icon:'map',text:'Ta ścieżka prowadzi do Eldoru, osady elfów. Elfy będą tu wybierać profesję u odpowiednich nauczycieli. Postacie nauczycieli i profesje dodamy później.',future:'Osada elfów · Nauczyciele profesji'},
+    'glade-path-3':{name:'Ubocze',art:'glade-ubocze-icon.webp',requiredLevel:30,category:'Polana',icon:'map',text:'Na Uboczu mieści się karczma „Pod złotym Kucem”. Spotkasz tu nowe postacie i otrzymasz nowe misje. Wnętrze, postacie i zadania dodamy później.',future:'Tawerna „Pod złotym Kucem”'},
     mount:{name:'Wierzchowiec',category:'Bohater',icon:'mount'},
     help:{name:'Pomoc',category:'Pustkowie',icon:'help'}
   };
@@ -106,7 +106,7 @@
   function barracksPanel(trainer='gabriel') {
     try{readCurrentHero();}catch{return '<p role="status">Nie można odczytać postaci. Odśwież grę.</p>';}
     const teacher=professionTeacher();
-    if(!teacher)return '<p class="place-text">Nauczyciel profesji Elfa pojawi się później.</p>';
+    if(!teacher)return '<p class="place-text">Nauczyciele profesji Elfa pojawią się w Eldorze. Wejście do osady od poziomu 10.</p>';
     if(teacher!==trainer)return `<p class="place-text">${teacher==='alchemist'?'Mag szkoli się w profesji u Alchemiczki w Wieży Zielonego Płomienia.':'Wojownik i Krasnolud szkolą się w profesji u Paladyna Gabriela w koszarach.'}</p>`;
     const unlocked = level() >= 10;
     const current = profession();
@@ -136,16 +136,16 @@
     $('.world-bottom>span').innerHTML=glade?'<i></i> Na leśnej polanie':'<i></i> W bezpiecznym zamku';
     $('.map-caption').innerHTML=`<span>✦</span> ${glade?'Polana':'Zamek Czarnej Stali'} <small>Poziom ${level()}</small>`;
     view.setAttribute('aria-label',glade?'Polana z trzema ścieżkami — przeciągnij, aby przesunąć widok':'Mapa zamku — przeciągnij, aby przesunąć widok');
-    $('#map-pins').innerHTML=glade?[[1,16,36],[2,51.3,16],[3,78,35]].map(([n,x,y])=>`<button type="button" class="map-pin glade-path" data-place="glade-path-${n}" style="--x:${x}%;--y:${y}%"><span class="pin-medallion"><img class="glade-path-art" src="${places['glade-path-'+n].art}" alt="" width="64" height="64" draggable="false"></span><span class="pin-label">${places['glade-path-'+n].name}</span></button>`).join('')+'<button type="button" class="map-pin glade-return" data-place="map" style="--x:50%;--y:86%"><span class="pin-medallion">'+icon('castle')+'</span><span class="pin-label">Powrót do zamku</span></button>':townPins();
+    $('#map-pins').innerHTML=glade?[[1,16,36],[2,51.3,16],[3,78,35]].map(([n,x,y])=>`<button type="button" class="map-pin glade-path ${level()<places['glade-path-'+n].requiredLevel?'is-locked':''}" aria-label="${places['glade-path-'+n].name} · Od poziomu ${places['glade-path-'+n].requiredLevel}" data-place="glade-path-${n}" style="--x:${x}%;--y:${y}%"><span class="pin-medallion"><img class="glade-path-art" src="${places['glade-path-'+n].art}" alt="" width="64" height="64" draggable="false"></span><span class="pin-label">${places['glade-path-'+n].name}</span><span class="glade-level">Od poziomu ${places['glade-path-'+n].requiredLevel}</span></button>`).join('')+'<button type="button" class="map-pin glade-return" data-place="map" style="--x:50%;--y:86%"><span class="pin-medallion">'+icon('castle')+'</span><span class="pin-label">Powrót do zamku</span></button>':townPins();
     window.SceneZoom?.reset(view);
     requestAnimationFrame(()=>{view.scrollLeft=glade?Math.max(0,(view.scrollWidth-view.clientWidth)/2):townPosition?.left??Math.max(0,(view.scrollWidth-view.clientWidth)/2);view.scrollTop=glade?Math.max(0,(view.scrollHeight-view.clientHeight)/2):townPosition?.top??0;});
     $('#place-dialog').close();$('#settlement-title').focus({preventScroll:true});
   }
   function openPlace(id) {
     if (!places[id] || !hero) return;
-    if(id==='forge'||id==='dungeon'){
+    if(id==='forge'||id==='dungeon'||places[id].requiredLevel){
       try{readCurrentHero();}
-      catch{$('#status').textContent=`Nie można odczytać poziomu postaci. Odśwież grę, aby wejść do ${id==='forge'?'kuźni':'Lochów'}.`;return;}
+      catch{$('#status').textContent=`Nie można odczytać poziomu postaci. Odśwież grę, aby wejść do ${id==='forge'?'kuźni':id==='dungeon'?'Lochów':places[id].name}.`;return;}
     }
     const forgeLocked=id==='forge'&&level()<FORGE_LEVEL;
     const dungeonLocked=id==='dungeon'&&level()<DUNGEON_LEVEL;
@@ -165,7 +165,10 @@
     let scouting=false;
     if(id==='tavern'){try{scouting=!!window.BrandMissions.status(hero).mission;}catch{}}
     let content;
-    if (id === 'hero') {
+    if (place.requiredLevel) {
+      const locked=level()<place.requiredLevel;
+      content=`<div class="place-emblem"><img class="glade-location-art" src="${place.art}" alt="" width="128" height="128"></div><p class="place-text" role="status">${locked?'Wejście jest zablokowane.':place.text}</p><p class="panel-note">Twój poziom: ${level()} · Wymagany poziom: ${place.requiredLevel}</p><div class="coming-soon"><span>${place.future}</span><span class="state-badge">${locked?'Od poziomu '+place.requiredLevel:'W przygotowaniu'}</span></div>`;
+    } else if (id === 'hero') {
       content = '<div class="hero-sheet-root"></div>';
     } else if (id === 'tavern') {
       content = scouting?'<div class="scout-active-view" aria-label="Aktywny zwiad"></div>':window.TavernPanel.markup();
