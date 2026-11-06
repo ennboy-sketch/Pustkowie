@@ -69,26 +69,12 @@ test('difficulty follows the player instead of a permanent level-2 cutoff; spars
   assert.deepEqual(plain(c.availableOpponents(hero(8), 'undercity', 'hard').map(m => m.level)), [5]);
 });
 
-test('80% raw combat chance and guaranteed combat are exact for all 10,000 possible roll pairs', () => {
-  const r = runtime(), totals = [0, 0, 0];
-  assert.equal(r.BrandChoices.COMBAT_CHANCE, 80);
-  for (let easy = 0; easy < 100; easy++) for (let hard = 0; hard < 100; hard++) {
-    const values = [easy, 0, ...(easy < 80 ? [0] : []), hard, 0, ...(hard < 80 ? [0] : []), ...(easy >= 80 && hard >= 80 ? [0, 0] : [])];
-    queue(r, values);
-    const h = r.BrandChoices.prepare(hero(10)), count = h.brandOffers.filter(o => o.type === 'combat').length;
-    assert.equal(count, Math.max(1, Number(easy < 80) + Number(hard < 80)));
-    totals[count]++; assert.equal(values.length, 0);
-  }
-  assert.deepEqual(totals, [0, 3600, 6400]);
-});
-
-test('every generated set has a combat wherever any matching opponent exists, and combat never draws an empty terrain', () => {
-  const r = runtime(); let seed = 117;
-  r.crypto.getRandomValues = a => { seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0; a[0] = seed; return a; };
-  for (let level = 1; level <= 36; level++) for (let draw = 0; draw < 60; draw++) {
-    const h = r.BrandChoices.prepare(hero(level)); verifyOffers(r, h);
-    assert.equal(h.brandOffers.some(o => o.type === 'combat'), level <= 33);
-    if (!r.BrandCombat.availableOpponents(hero(level), 'undercity').length) for (const o of h.brandOffers.filter(o => o.type === 'combat')) assert.notEqual(o.sceneId, 'undercity');
+test('every level gets exactly an easy scout and a hard combat offer, even without matching monsters', () => {
+  const r=runtime();
+  for(let level=1;level<=120;level++)for(let draw=0;draw<10;draw++){
+    const h=r.BrandChoices.prepare(hero(level));
+    assert.deepEqual(plain(h.brandOffers.map(o=>[o.tier,o.type])),[['easy','scout'],['hard','combat']]);
+    if(level<=33)verifyOffers(r,h);else{assert.equal(h.brandOffers[1].enemyId,null);assert.throws(()=>r.BrandChoices.accept(h,h.brandOffers[1].id));}
   }
 });
 
@@ -148,12 +134,14 @@ test('legacy preview rerolls an obsolete enemy inside ±3, preserves a valid one
   assert.notEqual(prepared.combatOffer.sceneId, 'undercity'); assert.ok(enemy.level >= 7 && enemy.level <= 13);
   assert.equal(r.BrandCombat.prepare(prepared), prepared);
 });
-test('levels 26–35 always receive two dedicated timed offers even with two cached combat offers',()=>{
- const r=runtime();r.crypto.getRandomValues=a=>{a[0]=0;return a;};
+test('levels 26–35 retain one easy 20-minute scout with fixed rewards; old extra offers migrate once',()=>{
+ const r=runtime();
  for(let level=26;level<=35;level++){
-  const ready=r.BrandChoices.prepare(hero(level));assert.equal(ready.brandTimedOffers.length,2);assert.deepEqual(plain(ready.brandTimedOffers.map(o=>[o.tier,o.type,o.enemyId])),[['easy','scout',null],['hard','scout',null]]);
-  const restored=plain(ready);r.crypto.getRandomValues=()=>{throw Error('Must not reroll stable offers');};assert.equal(r.BrandChoices.prepare(restored),restored);r.crypto.getRandomValues=a=>{a[0]=0;return a;};
-  for(const offer of ready.brandTimedOffers){const active=r.BrandChoices.accept(ready,offer.id),m=active.activeMission;assert.equal(m.durationMs,1200000);assert.equal(m.reward.xp,150000);assert.equal(m.reward.gold,500);assert.equal(m.shardChance,10);assert.equal(active.energy,offer.tier==='easy'?97:95);assert.equal(active.brandTimedOffers,null);const done=r.BrandMissions.finish(active,m.endsAt);assert.throws(()=>r.BrandChoices.accept(done,offer.id));}
+  const ready=r.BrandChoices.prepare(hero(level));assert.equal(ready.brandOffers.length,2);assert.equal(ready.brandTimedOffers,null);
+  const offer=ready.brandOffers[0],active=r.BrandChoices.accept(ready,offer.id),m=active.activeMission;
+  assert.equal(m.durationMs,1200000);assert.equal(m.reward.xp,150000);assert.equal(m.reward.gold,500);assert.equal(m.shardChance,10);assert.equal(active.energy,97);
+  const done=r.BrandMissions.finish(active,m.endsAt);assert.throws(()=>r.BrandChoices.accept(done,offer.id));
  }
- const old={...r.BrandChoices.prepare(hero(26)),brandTimedOffers:undefined,brandTimedOffersLevel:undefined};assert.ok(old.brandOffers.every(o=>o.type==='combat'));const ids=old.brandOffers.map(o=>o.id);const upgraded=r.BrandChoices.prepare(old);assert.deepEqual(upgraded.brandOffers.map(o=>o.id),ids);assert.equal(upgraded.gold,old.gold);assert.equal(upgraded.energy,old.energy);assert.equal(upgraded.brandTimedOffers.length,2);
+ const old={...hero(26),brandOffersVersion:1,brandOffersLevel:26,brandOffers:[{id:'old1',tier:'easy',type:'combat',sceneId:'forest',enemyId:'hill-giant'},{id:'old2',tier:'hard',type:'scout',sceneId:'mine',enemyId:null}],brandTimedOffers:[{id:'extra',tier:'easy',type:'scout',sceneId:'forest',enemyId:null}]};
+ const next=r.BrandChoices.prepare(old);assert.equal(next.brandTimedOffers,null);assert.equal(next.brandOffers.length,2);assert.equal(next.brandOffers[0].type,'scout');assert.equal(next.brandOffers[1].type,'combat');assert.equal(next.energy,100);assert.equal(next.gold,25);assert.equal(r.BrandChoices.prepare(next),next);assert.throws(()=>r.BrandChoices.accept(next,'extra'));
 });

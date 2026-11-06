@@ -168,7 +168,7 @@ test('Brand can randomly offer all three new monsters in the mine', () => {
     const hero = { version: 2, name: 'Test', classId: 'warrior', gender: 'male', level: level - 1, gold: 25, energy: 100 };
     const index = r.BrandCombat.availableOpponents(hero, 'mine', 'hard').findIndex(m => m.id === id);
     assert.ok(index >= 0);
-    const values = [99, 0, 0, 1, index];
+    const values = [0, 1, index];
     r.crypto.getRandomValues = a => { assert.ok(values.length); a[0] = values.shift(); return a; };
     const offer = r.BrandChoices.prepare(hero).brandOffers[1];
     assert.equal(offer.sceneId, 'mine'); assert.equal(offer.type, 'combat'); assert.equal(offer.enemyId, id);

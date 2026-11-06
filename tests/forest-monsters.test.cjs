@@ -157,7 +157,7 @@ test('Brand offers all five new forest monsters through its real random selectio
     const hero = { version: 2, name: 'Test', classId: 'warrior', gender: 'male', level: level - 1, gold: 25, energy: 100 };
     const index = r.BrandCombat.availableOpponents(hero, 'forest', 'hard').findIndex(m => m.id === id);
     assert.ok(index >= 0);
-    const values = [99, 0, 0, 0, index];
+    const values = [0, 0, index];
     r.crypto.getRandomValues = a => { assert.ok(values.length); a[0] = values.shift(); return a; };
     const offer = r.BrandChoices.prepare(hero).brandOffers[1];
     assert.equal(offer.sceneId, 'forest'); assert.equal(offer.type, 'combat'); assert.equal(offer.enemyId, id); assert.equal(values.length, 0);

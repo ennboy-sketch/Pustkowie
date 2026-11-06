@@ -1,35 +1,31 @@
 'use strict';
 (() => {
-  const TIERS={easy:{name:'Szlak wędrowca',label:'Łatwiejsza misja',cost:3,description:'Spokojniejszy zwiad lub starcie ze słabszym przeciwnikiem.'},hard:{name:'Próba śmiałka',label:'Trudniejsza misja',cost:5,description:'Zwiad w nieznane lub starcie z silniejszym przeciwnikiem.'}};
+  const TIERS={easy:{name:'Szlak wędrowca',label:'Łatwiejsza misja',cost:3,description:'Zwiad czasowy z nagrodą za powrót.'},hard:{name:'Próba śmiałka',label:'Trudniejsza misja',cost:5,description:'Walka z potworem dopasowanym do poziomu postaci.'}};
   function random(max){const a=new Uint32Array(1),limit=4294967296-4294967296%max;do{crypto.getRandomValues(a);}while(a[0]>=limit);return a[0]%max;}
-  const OFFERS_VERSION=1,COMBAT_CHANCE=80;
+  const OFFERS_VERSION=2;
   function makeOffer(hero,tier,wantCombat){
     const ids=Object.keys(window.BrandMissions.SCENES);
     const combatIds=ids.filter(id=>window.BrandCombat.availableOpponents(hero,id,tier).length>0);
     const combat=wantCombat&&combatIds.length>0,locations=combat?combatIds:ids;
     const sceneId=locations[random(locations.length)];
     const pool=combat?window.BrandCombat.availableOpponents(hero,sceneId,tier):[];
-    return {id:crypto.randomUUID(),tier,type:combat?'combat':'scout',sceneId,enemyId:combat?pool[random(pool.length)].id:null};
+    return {id:crypto.randomUUID(),tier,type:wantCombat?'combat':'scout',sceneId,enemyId:combat?pool[random(pool.length)].id:null};
   }
   function currentOffers(hero){
     const offers=hero.brandOffers;
-    return hero.brandOffersVersion===OFFERS_VERSION&&hero.brandOffersLevel===window.Progression.level(hero)&&Array.isArray(offers)&&offers.length===2&&offers[0]?.tier==='easy'&&offers[1]?.tier==='hard'&&offers.every(offer=>
-      typeof offer?.id==='string'&&Object.hasOwn(window.BrandMissions.SCENES,offer.sceneId)&&(offer.type==='scout'||offer.type==='combat'&&window.BrandCombat.availableOpponents(hero,offer.sceneId,offer.tier).some(enemy=>enemy.id===offer.enemyId)))&&(offers.some(offer=>offer.type==='combat')||!Object.keys(window.BrandMissions.SCENES).some(id=>window.BrandCombat.availableOpponents(hero,id).length));
+    return hero.brandOffersVersion===OFFERS_VERSION&&hero.brandOffersLevel===window.Progression.level(hero)&&Array.isArray(offers)&&offers.length===2&&offers[0]?.tier==='easy'&&offers[0]?.type==='scout'&&offers[0]?.enemyId===null&&offers[1]?.tier==='hard'&&offers[1]?.type==='combat'&&offers.every(offer=>
+      typeof offer?.id==='string'&&Object.hasOwn(window.BrandMissions.SCENES,offer.sceneId)&&(offer.type==='scout'||window.BrandCombat.availableOpponents(hero,offer.sceneId,'hard').some(enemy=>enemy.id===offer.enemyId)||offer.enemyId===null&&!Object.keys(window.BrandMissions.SCENES).some(id=>window.BrandCombat.availableOpponents(hero,id,'hard').length)));
   }
-  function hasTimedOffers(hero){const level=window.Progression.level(hero);return level>=26&&level<=35;}
-  function validTimedOffers(hero){const offers=hero.brandTimedOffers;return hero.brandTimedOffersLevel===window.Progression.level(hero)&&Array.isArray(offers)&&offers.length===2&&offers[0]?.tier==='easy'&&offers[1]?.tier==='hard'&&offers.every(o=>typeof o.id==='string'&&o.type==='scout'&&o.enemyId===null&&Object.hasOwn(window.BrandMissions.SCENES,o.sceneId));}
-  function timedFields(hero){return hasTimedOffers(hero)?{brandTimedOffers:Object.keys(TIERS).map(tier=>makeOffer(hero,tier,false)),brandTimedOffersLevel:window.Progression.level(hero)}:{};}
   function prepare(hero){
     if(hero.activeMission||hero.activeCombat)return hero;
-    if(currentOffers(hero))return !hasTimedOffers(hero)||validTimedOffers(hero)?hero:{...hero,...timedFields(hero)};
-    const offers=Object.keys(TIERS).map(tier=>makeOffer(hero,tier,random(100)<COMBAT_CHANCE));
-    if(offers.every(offer=>offer.type==='scout')&&Object.keys(window.BrandMissions.SCENES).some(id=>window.BrandCombat.availableOpponents(hero,id,'hard').length))offers[1]=makeOffer(hero,'hard',true);
-    return {...hero,brandOffers:offers,brandOffersVersion:OFFERS_VERSION,brandOffersLevel:window.Progression.level(hero),...timedFields(hero)};
+    if(currentOffers(hero))return hero;
+    const offers=[makeOffer(hero,'easy',false),makeOffer(hero,'hard',true)];
+    return {...hero,brandOffers:offers,brandOffersVersion:OFFERS_VERSION,brandOffersLevel:window.Progression.level(hero),brandTimedOffers:null,brandTimedOffersLevel:null};
   }
   function consumeTimed(next){return next.brandTimedOffers?{...next,brandTimedOffers:null,brandTimedOffersLevel:null}:next;}
   function accept(hero,id){
     if(hero.activeMission||hero.activeCombat)throw new Error('Najpierw zakończ obecną misję.');
-    const offer=hero.brandOffers?.find(o=>o.id===id)||(hasTimedOffers(hero)&&validTimedOffers(hero)?hero.brandTimedOffers.find(o=>o.id===id):null),tier=offer&&TIERS[offer.tier];
+    const offer=hero.brandOffers?.find(o=>o.id===id),tier=offer&&TIERS[offer.tier];
     if(!tier)throw new Error('Oferta została już wykorzystana. Otwórz panel ponownie.');
     if(offer.type==='scout')return consumeTimed(window.BrandMissions.start(hero,Date.now(),()=>offer.sceneId,window.BrandMissions.rollReward,{cost:tier.cost,difficulty:offer.tier}));
     if(offer.type!=='combat')throw new Error('Nieprawidłowy rodzaj misji.');
@@ -49,11 +45,11 @@
       if(hero.activeMission){list.textContent='Zwiad jest w toku.';return;}
       const level=window.Progression.level(hero),hasCombat=Object.keys(window.BrandMissions.SCENES).some(id=>window.BrandCombat.availableOpponents(hero,id).length);
       const range=`Potwory: poziomy ${Math.max(1,level-3)}–${level+3}.`;
-      const offers=hasTimedOffers(hero)&&validTimedOffers(hero)?[...hero.brandTimedOffers,...(hero.brandOffers||[]).filter(o=>o.type==='combat')]:hero.brandOffers||[];
+      const offers=hero.brandOffers||[];
       list.innerHTML=`<p class="brand-matchmaking-note">${range}${hasCombat?'':' Brak przeciwników w tym przedziale.'}</p>`+offers.map(o=>{
         const t=TIERS[o.tier],scene=window.BrandMissions.SCENES[o.sceneId],enemy=o.type==='combat'?window.BrandCombat.opponents(o.sceneId).find(m=>m.id===o.enemyId):null;
-        const duration=window.BrandMissions.durationFor(window.Progression.level(hero),o.tier,hero);
-        return `<article class="brand-choice-card" data-choice-type="${o.type}"><div class="choice-art" style="background-image:url('${scene.image}')"><span class="rpg-icon icon-${enemy?'arena':'journal'}" aria-hidden="true"></span><span>${t.label}</span></div><div class="choice-body"><h3>${t.name}</h3><p class="choice-location">${scene.short}</p><p class="choice-kind">${enemy?`Walka · ${enemy.name} · Poziom ${enemy.level}`:`Zwiad czasowy · ${duration??'—'} min`}</p><p>${t.description}</p>${!enemy&&duration&&window.Progression.level(hero)>=8?`<p class="choice-location">${window.BrandMissions.shardChance(window.Progression.level(hero))}% szansy na 1 odłamek</p>`:''}${!enemy&&level>=26&&duration?'<p class="choice-location">Nagroda: 500 złota · 150000 EXP</p>':''}${enemy?.reward?`<p class="choice-location">Nagroda: ${enemy.reward.gold} złota · ${enemy.reward.xp} EXP</p>`:''}<button type="button" class="primary" data-accept-choice="${o.id}" ${busy||window.EnergyCycle.info(hero).energy<t.cost||(!enemy&&!duration)?'disabled':''}>Podejmij misję · ${t.cost} energii</button></div></article>`;
+        const isCombat=o.type==='combat',duration=window.BrandMissions.durationFor(window.Progression.level(hero),o.tier,hero);
+        return `<article class="brand-choice-card" data-choice-type="${o.type}"><div class="choice-art" style="background-image:url('${scene.image}')"><span class="rpg-icon icon-${isCombat?'arena':'journal'}" aria-hidden="true"></span><span>${t.label}</span></div><div class="choice-body"><h3>${t.name}</h3><p class="choice-location">${scene.short}</p><p class="choice-kind">${isCombat?(enemy?`Walka · ${enemy.name} · Poziom ${enemy.level}`:'Walka z potworem · Brak przeciwników w przedziale poziomów'):`Zwiad czasowy · ${duration??'—'} min`}</p><p>${t.description}</p>${!isCombat&&duration&&window.Progression.level(hero)>=8?`<p class="choice-location">${window.BrandMissions.shardChance(window.Progression.level(hero))}% szansy na 1 odłamek</p>`:''}${!isCombat&&level>=26&&duration?'<p class="choice-location">Nagroda: 500 złota · 150000 EXP</p>':''}${enemy?.reward?`<p class="choice-location">Nagroda: ${enemy.reward.gold} złota · ${enemy.reward.xp} EXP</p>`:''}<button type="button" class="primary" data-accept-choice="${o.id}" ${busy||window.EnergyCycle.info(hero).energy<t.cost||(isCombat?!enemy:!duration)?'disabled':''}>Podejmij misję · ${t.cost} energii</button></div></article>`;
       }).join('');
     }
     async function refresh(){
@@ -76,5 +72,5 @@
     window.addEventListener('storage',storage);
     return ()=>{disposed=true;stopCombat();root.removeEventListener('click',click);window.removeEventListener('storage',storage);};
   }
-  window.BrandChoices={prepare,accept,mount,TIERS,COMBAT_CHANCE};
+  window.BrandChoices={prepare,accept,mount,TIERS};
 })();
