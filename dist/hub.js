@@ -18,9 +18,9 @@
     guild:{name:'Zamek',title:'Komnaty z Czarnej Stali',category:'Świat',icon:'castle',x:77,y:12},
     wheel:{name:'Koło Losu',title:'Koło Losu',category:'Fontanna Czarnej Stali',icon:'wheel',x:50,y:39},
     glade:{name:'Polana',title:'Polana',category:'Świat',icon:'map',x:65,y:94},
-    'glade-path-1':{name:'Ścieżka I',category:'Polana',icon:'map',text:'Ścieżka znika między starymi drzewami. Dalsza droga jest na razie niedostępna.',future:'Dalsza droga'},
-    'glade-path-2':{name:'Ścieżka II',category:'Polana',icon:'map',text:'Kamienny łuk wyznacza początek ścieżki. Dalsza droga jest na razie niedostępna.',future:'Dalsza droga'},
-    'glade-path-3':{name:'Ścieżka III',category:'Polana',icon:'map',text:'Wąska ścieżka prowadzi ku strumieniowi. Dalsza droga jest na razie niedostępna.',future:'Dalsza droga'},
+    'glade-path-1':{name:'Lodowe Wzgórza',category:'Polana',icon:'map',text:'Ta ścieżka prowadzi w góry, ku Lodowym Wzgórzom. Dalsza droga jest na razie niedostępna.',future:'Górska kraina'},
+    'glade-path-2':{name:'Eldor',category:'Polana',icon:'map',text:'Ta ścieżka prowadzi do Eldoru, osady elfów. Osada będzie dostępna w późniejszym etapie.',future:'Osada elfów'},
+    'glade-path-3':{name:'Ubocze',category:'Polana',icon:'map',text:'Droga na Ubocze prowadzi do tawerny „Pod złotym Kucem”. To miejsce będzie dostępne w późniejszym etapie.',future:'Tawerna „Pod złotym Kucem”'},
     mount:{name:'Wierzchowiec',category:'Bohater',icon:'mount'},
     help:{name:'Pomoc',category:'Pustkowie',icon:'help'}
   };
@@ -136,7 +136,7 @@
     $('.world-bottom>span').innerHTML=glade?'<i></i> Na leśnej polanie':'<i></i> W bezpiecznym zamku';
     $('.map-caption').innerHTML=`<span>✦</span> ${glade?'Polana':'Zamek Czarnej Stali'} <small>Poziom ${level()}</small>`;
     view.setAttribute('aria-label',glade?'Polana z trzema ścieżkami — przeciągnij, aby przesunąć widok':'Mapa zamku — przeciągnij, aby przesunąć widok');
-    $('#map-pins').innerHTML=glade?[[1,25,35],[2,50,22],[3,78,35]].map(([n,x,y])=>`<button type="button" class="map-pin glade-path" data-place="glade-path-${n}" style="--x:${x}%;--y:${y}%"><span class="pin-medallion"><span class="glade-path-number">${['I','II','III'][n-1]}</span></span><span class="pin-label">Ścieżka ${['I','II','III'][n-1]}</span></button>`).join('')+'<button type="button" class="map-pin glade-return" data-place="map" style="--x:50%;--y:86%"><span class="pin-medallion">'+icon('castle')+'</span><span class="pin-label">Powrót do zamku</span></button>':townPins();
+    $('#map-pins').innerHTML=glade?[[1,25,35],[2,50,22],[3,78,35]].map(([n,x,y])=>`<button type="button" class="map-pin glade-path" data-place="glade-path-${n}" style="--x:${x}%;--y:${y}%"><span class="pin-medallion"><span class="glade-path-number">${['I','II','III'][n-1]}</span></span><span class="pin-label">${places['glade-path-'+n].name}</span></button>`).join('')+'<button type="button" class="map-pin glade-return" data-place="map" style="--x:50%;--y:86%"><span class="pin-medallion">'+icon('castle')+'</span><span class="pin-label">Powrót do zamku</span></button>':townPins();
     window.SceneZoom?.reset(view);
     requestAnimationFrame(()=>{view.scrollLeft=glade?Math.max(0,(view.scrollWidth-view.clientWidth)/2):townPosition?.left??Math.max(0,(view.scrollWidth-view.clientWidth)/2);view.scrollTop=glade?Math.max(0,(view.scrollHeight-view.clientHeight)/2):townPosition?.top??0;});
     $('#place-dialog').close();$('#settlement-title').focus({preventScroll:true});

@@ -672,7 +672,7 @@ Koszt jednej wymiany nadal wynosi 10 zwojów. Nagroda EXP zależy od poziomu pos
 
 ## Polana — przejście za mury
 
-Na mapie zamku pod Czarnym Targiem i dolnymi schodami znajduje się przejście „Polana” (65%, 94%). Jest też dostępne w menu ŚWIAT. Przenosi do pełnego widoku nowej lokacji z autorską panoramą `glade.webp`, trzema ścieżkami I–III oraz powrotem do zamku. Cele ścieżek pozostają do ustalenia; ich okna informują o niedostępnej dalszej drodze. Samo wejście nie pobiera energii.
+Na mapie zamku pod Czarnym Targiem i dolnymi schodami znajduje się przejście „Polana” (65%, 94%). Jest też dostępne w menu ŚWIAT. Przenosi do pełnego widoku nowej lokacji z autorską panoramą `glade.webp`, trzema ścieżkami I–III oraz powrotem do zamku. Ścieżka I nosi nazwę „Lodowe Wzgórza” i prowadzi w góry, II — „Eldor” (osada elfów), III — „Ubocze” (tawerna „Pod złotym Kucem”). Podpisy mapy i tytuły okien używają tych nazw; dalsze lokacje pozostają do stworzenia. Samo wejście nie pobiera energii.
 
 Polana używa tego samego mechanizmu przeciągania, bezwładności, gestów dotykowych i przybliżania co miasto. Panorama zachowuje proporcje, a powrót odtwarza położenie mapy zamku. Zmiana mapy resetuje przybliżenie i usuwa poprzedni kontroler gestów. Test: `node tests/glade.browser.cjs http://127.0.0.1:8000/` — wejście z mapy, grafika, ścieżki, przesuwanie, zoom i powrót na szerokościach 1280 i 390 px.
 
