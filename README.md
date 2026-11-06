@@ -558,15 +558,15 @@ Kliknięcie Lochów na mapie lub w menu otwiera wybór trzech lokacji:
 | Loch | Wymagany poziom postaci |
 | --- | ---: |
 | Cmentarzysko | 10 |
-| Wzgórza Gryfów | 20 |
-| Katakumby | 30 |
+| Wzgórza Gryfów | 30 |
+| Katakumby | 50 |
 
 Każda pozycja ma osobny emblemat, wymagany poziom oraz informację o dostępności. Przyciski lokacji powyżej poziomu bohatera są zablokowane. Wybór dostępnej lokacji otwiera jej nazwany widok z przyciskiem powrotu; wnętrza i walki w tych Lochach pozostają w przygotowaniu. Przy każdej próbie wyboru poziom jest odczytywany z aktualnego zapisu. Zmiany zapisu w innej karcie oraz powrót do okna odświeżają dostępność, a błąd odczytu blokuje wybór. Oglądanie i wybór Lochów nie zmieniają postaci, energii ani nagród.
 
 
 ## Ikony trzech Lochów
 
-Okno wyboru i widoki lokacji korzystają z osobnych malowanych ikon w stylistyce medalionów Pustkowia: czarna stal, stare złoto i ciemna zieleń. Cmentarzysko przedstawia omszały nagrobek we mgle (`dungeon-graveyard-icon.webp`), Wzgórza Gryfów — gryfa na skalistym szczycie (`dungeon-gryphon-hills-icon.webp`), a Katakumby — wejście do podziemnego grobowca (`dungeon-catacombs-icon.webp`). Grafiki WebP mają 384 × 384 px i przezroczyste tło poza medalionem. Zastępują robocze symbole SVG, zachowują proporcje i są dekoracyjne dla czytników ekranu. Zablokowane lokacje mają przygaszoną ikonę oraz tekst o wymaganym poziomie; wymagania 10/20/30 i zasady wyboru pozostają bez zmian.
+Okno wyboru i widoki lokacji korzystają z osobnych malowanych ikon w stylistyce medalionów Pustkowia: czarna stal, stare złoto i ciemna zieleń. Cmentarzysko przedstawia omszały nagrobek we mgle (`dungeon-graveyard-icon.webp`), Wzgórza Gryfów — gryfa na skalistym szczycie (`dungeon-gryphon-hills-icon.webp`), a Katakumby — wejście do podziemnego grobowca (`dungeon-catacombs-icon.webp`). Grafiki WebP mają 384 × 384 px i przezroczyste tło poza medalionem. Zastępują robocze symbole SVG, zachowują proporcje i są dekoracyjne dla czytników ekranu. Zablokowane lokacje mają przygaszoną ikonę oraz tekst o wymaganym poziomie; wymagania 10/30/50 i zasady wyboru pozostają bez zmian.
 
 ## Magiczny pył i wymiana u alchemiczki
 

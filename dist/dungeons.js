@@ -2,8 +2,8 @@
 (() => {
   const LOCATIONS=Object.freeze([
     Object.freeze({id:'graveyard',name:'Cmentarzysko',requiredLevel:10,description:'Między popękanymi nagrobkami snuje się zimna mgła.',icon:'dungeon-graveyard-icon.webp'}),
-    Object.freeze({id:'gryphon-hills',name:'Wzgórza Gryfów',requiredLevel:20,description:'Nad skalistymi szczytami krążą strażnicy przestworzy.',icon:'dungeon-gryphon-hills-icon.webp'}),
-    Object.freeze({id:'catacombs',name:'Katakumby',requiredLevel:30,description:'Pod zamkiem ciągną się korytarze zapomnianych grobowców.',icon:'dungeon-catacombs-icon.webp'})
+    Object.freeze({id:'gryphon-hills',name:'Wzgórza Gryfów',requiredLevel:30,description:'Nad skalistymi szczytami krążą strażnicy przestworzy.',icon:'dungeon-gryphon-hills-icon.webp'}),
+    Object.freeze({id:'catacombs',name:'Katakumby',requiredLevel:50,description:'Pod zamkiem ciągną się korytarze zapomnianych grobowców.',icon:'dungeon-catacombs-icon.webp'})
   ]);
   function emblem(location){return `<span class="dungeon-emblem" aria-hidden="true"><img src="${location.icon}" alt="" width="384" height="384" decoding="async" draggable="false"></span>`;}
   function markup(){return '<section class="dungeons-panel" aria-label="Wybór Lochów"><div class="dungeons-view"></div><div class="dungeon-combat"></div><p class="dungeons-message" role="status" aria-live="polite"></p></section>';}
