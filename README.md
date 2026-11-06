@@ -747,7 +747,7 @@ Bieżące nagrody EXP zwiadów zwiększono jeszcze 50-krotnie: 1 minuta → 1000
 
 ## Zwiady czasowe na poziomach 26–35
 
-Nowy przedział trwa 20 minut i daje zawsze 150 000 EXP oraz 500 złota. Szansa na dodatkowy 1 odłamek wynosi 10%, z losowaniem zapisywanym przy rozpoczęciu. Koszty obu wariantów nadal wynoszą 3 lub 5 energii; Kuc Bojowy skraca czas do 18 minut. Poziomy 1–25 zachowują dotychczasowe wartości. Od poziomu 36 czas i nagrody pozostają do ustalenia.
+Na poziomach 26–35 Brand zawsze pokazuje dwie osobne oferty zwiadu czasowego obok wylosowanych ofert walk. Starszy zapis z dwiema walkami zostaje automatycznie uzupełniony przy otwarciu rozmowy, bez zmiany zapisanych walk. Oferty pozostają stałe po odświeżeniu, a rozpoczęcie dowolnego zlecenia zużywa cały zestaw ofert. Nowy przedział trwa 20 minut i daje zawsze 150 000 EXP oraz 500 złota. Szansa na dodatkowy 1 odłamek wynosi 10%, z losowaniem zapisywanym przy rozpoczęciu. Koszty obu wariantów nadal wynoszą 3 lub 5 energii; Kuc Bojowy skraca czas do 18 minut. Poziomy 1–25 zachowują dotychczasowe wartości. Od poziomu 36 czas i nagrody pozostają do ustalenia.
 
 
 ## Sprzedaż u Myśliwego Teo

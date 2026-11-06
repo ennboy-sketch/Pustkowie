@@ -148,3 +148,12 @@ test('legacy preview rerolls an obsolete enemy inside ±3, preserves a valid one
   assert.notEqual(prepared.combatOffer.sceneId, 'undercity'); assert.ok(enemy.level >= 7 && enemy.level <= 13);
   assert.equal(r.BrandCombat.prepare(prepared), prepared);
 });
+test('levels 26–35 always receive two dedicated timed offers even with two cached combat offers',()=>{
+ const r=runtime();r.crypto.getRandomValues=a=>{a[0]=0;return a;};
+ for(let level=26;level<=35;level++){
+  const ready=r.BrandChoices.prepare(hero(level));assert.equal(ready.brandTimedOffers.length,2);assert.deepEqual(plain(ready.brandTimedOffers.map(o=>[o.tier,o.type,o.enemyId])),[['easy','scout',null],['hard','scout',null]]);
+  const restored=plain(ready);r.crypto.getRandomValues=()=>{throw Error('Must not reroll stable offers');};assert.equal(r.BrandChoices.prepare(restored),restored);r.crypto.getRandomValues=a=>{a[0]=0;return a;};
+  for(const offer of ready.brandTimedOffers){const active=r.BrandChoices.accept(ready,offer.id),m=active.activeMission;assert.equal(m.durationMs,1200000);assert.equal(m.reward.xp,150000);assert.equal(m.reward.gold,500);assert.equal(m.shardChance,10);assert.equal(active.energy,offer.tier==='easy'?97:95);assert.equal(active.brandTimedOffers,null);const done=r.BrandMissions.finish(active,m.endsAt);assert.throws(()=>r.BrandChoices.accept(done,offer.id));}
+ }
+ const old={...r.BrandChoices.prepare(hero(26)),brandTimedOffers:undefined,brandTimedOffersLevel:undefined};assert.ok(old.brandOffers.every(o=>o.type==='combat'));const ids=old.brandOffers.map(o=>o.id);const upgraded=r.BrandChoices.prepare(old);assert.deepEqual(upgraded.brandOffers.map(o=>o.id),ids);assert.equal(upgraded.gold,old.gold);assert.equal(upgraded.energy,old.energy);assert.equal(upgraded.brandTimedOffers.length,2);
+});
