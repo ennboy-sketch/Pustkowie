@@ -2,6 +2,7 @@
 (() => {
   const BASE_STATS={warrior:[12,5,3,10],mage:[3,5,12,6],elf:[5,12,4,7],dwarf:[10,3,4,12]};
   const FIREBALL=Object.freeze({id:'fireball',name:'Kula ognia',manaCost:10});
+  function isNecromancer(hero){return hero.classId==='mage'&&hero.profession==='mage-profession-1'&&window.Progression.level(hero)>=10;}
   function manaInfo(fighter){const max=fighter.maxMana??window.HeroSheet.manaCapacity(fighter.classId,fighter.stats?.[2]??0);return {max,current:Number.isSafeInteger(fighter.mana)?Math.max(0,Math.min(max,fighter.mana)):max};}
   const LABELS=['Siła','Zręczność','Inteligencja','Wytrzymałość'];
   const ROSTERS={forest:[
@@ -117,7 +118,7 @@
     if(!base)throw new Error('Nieznana klasa postaci.');
     const added=window.HeroSheet.bonuses(hero),stats=base.map((n,i)=>n+added[i]);
     const bonuses=window.FateWheel?.bonuses(hero)||{damage:0,armor:0};
-    return {damageBonus:bonuses.damage,armor:bonuses.armor,name:hero.name,level:window.Progression.level(hero),maxHp:50+stats[3]*10+window.HeroSheet.hpBonus(hero),maxMana:window.HeroSheet.manaCapacity(hero.classId,stats[2]),stats:[...stats],classId:hero.classId,gender:hero.gender};
+    return {necromancer:isNecromancer(hero),damageBonus:bonuses.damage,armor:bonuses.armor,name:hero.name,level:window.Progression.level(hero),maxHp:50+stats[3]*10+window.HeroSheet.hpBonus(hero),maxMana:window.HeroSheet.manaCapacity(hero.classId,stats[2]),stats:[...stats],classId:hero.classId,gender:hero.gender};
   }
   function drawLocation(hero){
     const ids=Object.keys(ROSTERS).filter(id=>hero?availableOpponents(hero,id).length:ROSTERS[id].length),value=new Uint32Array(1),limit=4294967296-(4294967296%ids.length);
@@ -168,11 +169,13 @@
     const mage=actor==='hero'&&current[actor].classId==='mage',mana=mage?manaInfo(current[actor]):null;
     const selectedElement=['physical','fire','water','poison','magic'].includes(current[actor].attackElement)?current[actor].attackElement:null;
     const fireball=!!mana&&mana.current>=FIREBALL.manaCost&&!selectedElement;
-    const element=selectedElement??(fireball?'fire':poison?'poison':'physical');
+    const darkMissile=fireball&&current[actor].necromancer===true;
+    const professionBonus=darkMissile?Math.floor(poweredDamage*10/100):0,spellDamage=poweredDamage+professionBonus;
+    const element=selectedElement??(darkMissile?'magic':fireball?'fire':poison?'poison':'physical');
     const weakness=element==='water'&&Number.isSafeInteger(current[target].waterWeakness)?Math.max(0,current[target].waterWeakness):0;
     const magicVulnerability=['fire','water','magic'].includes(element)&&Number.isSafeInteger(current[target].magicVulnerability)?Math.max(0,current[target].magicVulnerability):0;
-    const magicBonus=Math.floor(poweredDamage*magicVulnerability/100);
-    const weaknessBonus=Math.floor(poweredDamage*weakness/100),elementalDamage=poweredDamage+weaknessBonus+magicBonus;
+    const magicBonus=Math.floor(spellDamage*magicVulnerability/100);
+    const weaknessBonus=Math.floor(spellDamage*weakness/100),elementalDamage=spellDamage+weaknessBonus+magicBonus;
     if(!Number.isSafeInteger(elementalDamage))throw new Error('Nieprawidłowe obrażenia żywiołu.');
     const generalArmor=Number.isSafeInteger(current[target].armor)?Math.max(0,current[target].armor):0;
     const physicalArmor=element==='physical'&&Number.isSafeInteger(current[target].physicalArmor)?Math.max(0,current[target].physicalArmor):0;
@@ -198,8 +201,8 @@
     const hp=Math.max(0,current[target].hp-totalDamage);
     const poisonApplied=triggered&&special.type==='dot'&&hp>0?{damage:special.damage,turns:special.turns,label:special.label}:null;
     const defender={...current[target],hp,poisonEffect:hp===0?null:poisonApplied||current[target].poisonEffect||null};
-    const ability=triggered?special.ability:fireball?'fireball':element==='magic'?'magic-missile':element==='water'?'water':mage?'wand':poison?'poison':piercing?'piercing':'attack';
-    return {...current,[actor]:attacker,[target]:defender,next:target,hits:battle.hits+1,winner:hp===0?actor:null,lastHit:{actor,target,damage:totalDamage,magicWave,ability,absorbed,ignoredArmor,element,weaknessBonus,magicBonus,resisted,resistanceIgnored,powerBonus,rageBonus,ragePercent:rage,poisonTick,poisonApplied,manaCost:fireball?FIREBALL.manaCost:0}};
+    const ability=triggered?special.ability:darkMissile?'dark-missile':fireball?'fireball':element==='magic'?'magic-missile':element==='water'?'water':mage?'wand':poison?'poison':piercing?'piercing':'attack';
+    return {...current,[actor]:attacker,[target]:defender,next:target,hits:battle.hits+1,winner:hp===0?actor:null,lastHit:{actor,target,damage:totalDamage,magicWave,ability,absorbed,ignoredArmor,element,weaknessBonus,magicBonus,professionBonus,resisted,resistanceIgnored,powerBonus,rageBonus,ragePercent:rage,poisonTick,poisonApplied,manaCost:fireball?FIREBALL.manaCost:0}};
   }
   function fighterMarkup(side){return `<article class="combat-fighter" data-fighter="${side}"><div class="combat-portrait"><div class="combat-figure"></div><span class="combat-empty-icon rpg-icon icon-arena" aria-hidden="true"></span><span class="combat-damage" aria-hidden="true"></span><div class="combat-identity"><h3></h3><span class="combat-level"></span></div></div><div class="combat-health"><progress max="1" value="0" aria-label="Punkty życia"></progress><strong></strong></div><div class="combat-mana" hidden><progress max="1" value="0" aria-label="Punkty many"></progress><strong></strong></div><dl class="combat-stats">${LABELS.map(label=>`<div><dt>${label}</dt><dd>—</dd></div>`).join('')}</dl><p class="combat-traits" hidden></p><p class="combat-effects" hidden role="status"></p></article>`;}
   function renderFighter(root,fighter){
@@ -231,6 +234,7 @@
     for(const side of ['hero','enemy']){
       const card=root.querySelector(`[data-fighter="${side}"]`);
       renderFighter(card,battle[side]);
+      card.classList.toggle('casting-dark-missile',battle.lastHit?.actor===side&&battle.lastHit?.ability==='dark-missile');
       card.classList.toggle('casting-fireball',battle.lastHit?.actor===side&&battle.lastHit?.ability==='fireball');
       card.classList.toggle('combat-attacking',!battle.winner&&battle.lastHit?.actor===side);
       card.classList.toggle('combat-struck',battle.lastHit?.target===side||battle.lastHit?.poisonTick?.target===side);
@@ -246,7 +250,7 @@
     let message='Przeciwnicy stają naprzeciw siebie.';
     if(hit?.ability==='poison-tick')message=`${hit.poisonName}: ${battle[hit.target].name} otrzymuje ${hit.damage} obrażeń.`;
     else if(hit){
-      const verbs={'magic-missile':'rzuca magiczny pocisk i zadaje',fireball:'rzuca Kulę ognia (−10 many) i zadaje',water:'atakuje magią wody i zadaje',wand:'atakuje różdżką i zadaje',poison:'uderza zatrutym żądłem i zadaje',piercing:'wyprowadza potężny cios kilofem i zadaje','venom-bite':'wykonuje jadowite ukąszenie i zadaje',spores:'wypuszcza trujące zarodniki i zadaje','chain-slam':'wykonuje potężne uderzenie łańcuchami (150%) i zadaje','thorn-grab':'wykonuje Ciernisty Chwyt (+10) i zadaje','cursed-charge':'wykonuje szarżę (150%) i zadaje','piercing-arrow':'wypuszcza Przeszywającą Strzałę i zadaje','abyss-echo':'wywołuje Echo Zagłady i zadaje'};
+      const verbs={'dark-missile':'rzuca Mroczny pocisk (−10 many, +10% obrażeń) i zadaje','magic-missile':'rzuca magiczny pocisk i zadaje',fireball:'rzuca Kulę ognia (−10 many) i zadaje',water:'atakuje magią wody i zadaje',wand:'atakuje różdżką i zadaje',poison:'uderza zatrutym żądłem i zadaje',piercing:'wyprowadza potężny cios kilofem i zadaje','venom-bite':'wykonuje jadowite ukąszenie i zadaje',spores:'wypuszcza trujące zarodniki i zadaje','chain-slam':'wykonuje potężne uderzenie łańcuchami (150%) i zadaje','thorn-grab':'wykonuje Ciernisty Chwyt (+10) i zadaje','cursed-charge':'wykonuje szarżę (150%) i zadaje','piercing-arrow':'wypuszcza Przeszywającą Strzałę i zadaje','abyss-echo':'wywołuje Echo Zagłady i zadaje'};
       message=`${battle[hit.actor].name} ${verbs[hit.ability]||'zadaje'} ${hit.damage} obrażeń${hit.ability==='poison'?' od trucizny':''}.`;
       if(hit.poisonTick)message=`${hit.poisonTick.label}: ${battle[hit.poisonTick.target].name} otrzymuje ${hit.poisonTick.damage} obrażeń. `+message;
       if(hit.poisonApplied)message+=` ${hit.poisonApplied.label}: ${hit.poisonApplied.damage} obrażeń przez ${hit.poisonApplied.turns} tury celu.`;
@@ -305,7 +309,7 @@
         renderFighter(dialog.querySelector('[data-fighter="enemy"]'),enemy);
         dialog.querySelector('.combat-round').textContent='Przygotowanie do walki';
         const rewardText=enemy?.reward?`Nagroda za zwycięstwo: ${enemy.reward.gold} złota · ${enemy.reward.xp} EXP`:'Nagroda za zwycięstwo: 10–30 złota · 33–55 EXP';
-        dialog.querySelector('.combat-status').textContent=enemy?rewardText+(hero.classId==='mage'?' · Kula ognia: 10 many za uderzenie. Bez many: atak różdżką.':''):eligible(hero)?'Brak dostępnych przeciwników.':'Brak potworów dostępnych na Twoim poziomie.';
+        dialog.querySelector('.combat-status').textContent=enemy?rewardText+(hero.classId==='mage'?(isNecromancer(hero)?' · Mroczny pocisk: +10% obrażeń, 10 many. Bez many: atak różdżką.':' · Kula ognia: 10 many za uderzenie. Bez many: atak różdżką.') :''):eligible(hero)?'Brak dostępnych przeciwników.':'Brak potworów dostępnych na Twoim poziomie.';
         action.textContent=enemy?'Rozpocznij walkę · 5 energii':'Walka niedostępna';action.disabled=!enemy||busy;action.dataset.action='start';
       }
     }
@@ -344,5 +348,5 @@
     dispose.open=preview;
     return dispose;
   }
-  window.BrandCombat={FIREBALL,manaInfo,profile,opponents,availableOpponents,drawLocation,createBattle,advance,play,mount,prepare,start,tick,skip,finish};
+  window.BrandCombat={FIREBALL,isNecromancer,manaInfo,profile,opponents,availableOpponents,drawLocation,createBattle,advance,play,mount,prepare,start,tick,skip,finish};
 })();

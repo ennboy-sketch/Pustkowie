@@ -781,3 +781,8 @@ Ilustracja nauczycielki `elf-profession-teacher.jpg` jest niezmienioną kopią p
 ## Profesje Wojownika i Wojowniczki
 
 Od poziomu 10 u Paladyna Gabriela można wybrać Palladyna (`warrior-profession-1`) lub Rycerza (`warrior-profession-2`). Palladyn może zakładać przedmioty oznaczone `holy: true`; konkretne Święte przedmioty dodamy później. Rycerz odnawia pełne 100 energii co 6 godzin, również po nieobecności. Pozostałe klasy i profesje zachowują 12 godzin. Zmiana profesji zachowuje początek bieżącego cyklu, a po przejściu na inną profesję święte przedmioty nie są aktywnie noszone. Trzecia profesja Wojownika i wszystkie nieustalone profesje pozostałych klas są nadal zablokowane.
+
+
+## Profesje Maga i Magini
+
+Od poziomu 10 u Lilith można wybrać Nekromantę (`mage-profession-1`) lub Alchemika (`mage-profession-2`). Nekromanta zastępuje Kulę ognia Mrocznym pociskiem: 10 many, magiczne obrażenia z dodatkową premią 10% (zaokrąglenie w dół) przed redukcją pancerza. Cechy nie zmieniają się, bez many pozostaje atak różdżką. Nowe walki zapisują efekt w migawce; rozpoczęte wcześniej pozostają bez zmian. Nekromanta ignoruje oczekiwanie w lochach, także po porażce. Kolejność bossów, pojedyncze zwycięstwa i nagrody nie zmieniają się. Rzeczywisty termin 3 godzin nadal zapisuje się po walce i obowiązuje po zmianie profesji. Alchemik jest dostępny do wyboru; tworzenie mikstur i zbieranie ziół dodamy później. Trzecia profesja Maga pozostaje zablokowana.
