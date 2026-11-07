@@ -73,8 +73,8 @@
       const wallet=`<div class="market-wallet"><span>Złoto: <strong>${gold}</strong></span><span>Ekwipunek: ${window.HeroSheet.bagItems(hero).length} / 25</span></div><nav class="market-modes" aria-label="Handel"><button type="button" data-market-mode="buy" aria-pressed="${mode==='buy'}">Kupno</button><button type="button" data-market-mode="sell" aria-pressed="${mode==='sell'}">Sprzedaż · 60%</button></nav>`;
       if(mode==='sell'){
         content.innerHTML=wallet+'<p class="market-help">Gringo płaci 60% wartości, zaokrąglone w dół. Sprzedajesz przedmioty z plecaka — założone trzeba najpierw zdjąć.</p><div class="market-stock market-sale-stock"></div>';
-        const list=content.querySelector('.market-sale-stock'),items=window.HeroSheet.bagItems(hero);
-        if(!items.length){const empty=document.createElement('p');empty.className='market-empty';empty.textContent='Plecak jest pusty. Nie masz przedmiotów do sprzedaży.';list.append(empty);}
+        const list=content.querySelector('.market-sale-stock'),items=window.HeroSheet.bagItems(hero).filter(item=>sellPrice(item)!==null);
+        if(!items.length){const empty=document.createElement('p');empty.className='market-empty';empty.textContent='Nie masz przedmiotów, które Gringo może kupić.';list.append(empty);}
         for(const item of items){
           const article=document.createElement('article');article.className='market-product';
           article.innerHTML=window.HeroSheet.art(window.HeroSheet.SLOTS.findIndex(([s])=>s===item.slot),item,hero)+'<div><h3></h3><small></small><small class="sale-value"></small><strong></strong></div><button type="button" data-sell-market></button>';
