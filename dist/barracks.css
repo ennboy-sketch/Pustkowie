@@ -4,4 +4,4 @@
 
 .barracks-armory{left:14%;top:65%}.barracks-commander{left:86%;top:65%}.barracks-detail-dialog.shows-professions{width:680px}.barracks-detail-dialog .barracks-banner h3{font-size:20px}.barracks-detail-dialog [data-barracks-part=professions]{width:100%;margin-top:8px}
 
-.barracks-roland{left:50%;top:88%;min-height:48px;min-width:112px;max-width:none;box-sizing:border-box}.roland-service{padding:16px;border:1px solid #a88d50;background:#0b1912;margin:16px 0}.roland-service h3{font:600 20px Cinzel,Georgia,serif;color:#ead09b;margin:0 0 12px}.barracks-detail-dialog .roland-service p:last-child{margin-bottom:0}.roland-access-note{padding:14px;border:1px solid #8b7141;background:#201c12}
+.barracks-roland,.barracks-melody{left:50%;top:88%;min-height:48px;min-width:112px;max-width:none;box-sizing:border-box}.roland-service{padding:16px;border:1px solid #a88d50;background:#0b1912;margin:16px 0}.roland-service h3{font:600 20px Cinzel,Georgia,serif;color:#ead09b;margin:0 0 12px}.barracks-detail-dialog .roland-service p:last-child{margin-bottom:0}.roland-access-note{padding:14px;border:1px solid #8b7141;background:#201c12}
