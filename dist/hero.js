@@ -57,6 +57,7 @@
     const items=hero.lootInventory??['weapon','armor'].map((slot,i)=>({id:`starter-${slot}`,slot,name:STARTERS[hero.classId][i]}));
     const stack=MATERIALS.flatMap(([key,id,name])=>{const quantity=hero[key]??0;if(!Number.isSafeInteger(quantity)||quantity<0)throw new Error('Nieprawidłowy zapis materiałów.');return quantity>0?[{id,kind:key==='magicDust'?'magic-dust':'craft-material',slot:'material',materialKey:key,name,quantity}]:[];});
     return [...stack,...items.filter(item=>!MATERIALS.some(([,id])=>id===item.id)&&!(item.kind==='power-potion'&&Number.isSafeInteger(item.powerExpiresAt)&&item.powerExpiresAt<=Date.now()))].map(item=>{
+      const crafted=window.GearCatalog?.productFor(item);if(crafted?.craftOnly&&item.name!==crafted.name)return {...item,name:crafted.name};
       if(item.id==='starter-weapon'&&item.slot==='weapon'&&item.name===LEGACY_WEAPONS[hero.classId])return {...item,name:STARTERS[hero.classId][0]};
       if(item.id==='starter-armor'&&item.slot==='armor'&&[LEGACY_ARMOR[hero.classId],STARTERS[hero.classId][1]].includes(item.name))return {...item,name:STARTERS[hero.classId][1],armorType:bodyTypeFor(hero.classId)};
       return item;
