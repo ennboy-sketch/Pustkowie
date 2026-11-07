@@ -577,7 +577,7 @@ Stół alchemiczki wymienia dokładnie 25 pyłu na 1 odłamek, jedną wymianę n
 
 ## Nauczyciele profesji według klasy
 
-Wojownik i Krasnolud szkolą się u Paladyna Gabriela w koszarach, Mag u Alchemiczki w Wieży Zielonego Płomienia. Obie rozmowy mają przycisk „Porozmawiaj o profesjach”. Niewłaściwy nauczyciel wskazuje właściwą postać, bez dostępu do formularza szkolenia. Elf otrzymuje informację, że jego nowy nauczyciel pojawi się później. Wymagany poziom 10 zostaje zachowany. Nazwy i umiejętności trzech profesji każdej klasy nadal są do ustalenia; robocze profesje pozostają zablokowane. Obsługa formularza ponownie odczytuje zapis i sprawdza klasę, nauczyciela oraz poziom. Nie zmieniono istniejących profesji w zapisie ani walut.
+Wojownik i Krasnolud szkolą się u Paladyna Gabriela w koszarach, Mag u Alchemiczki w Wieży Zielonego Płomienia. Obie rozmowy mają przycisk „Porozmawiaj o profesjach”. Niewłaściwy nauczyciel wskazuje właściwą postać, bez dostępu do formularza szkolenia. Elf szkoli się u nauczycielki w Komnacie Leśnej Przysięgi w głównym zamku. Wymagany poziom 10 zostaje zachowany. Nazwy i umiejętności trzech profesji każdej klasy nadal są do ustalenia; robocze profesje pozostają zablokowane. Obsługa formularza ponownie odczytuje zapis i sprawdza klasę, nauczyciela oraz poziom. Nie zmieniono istniejących profesji w zapisie ani walut.
 
 
 ## Siedem nagród Koła Losu
@@ -773,4 +773,6 @@ Eldor od poziomu 10 będzie osadą elfów przeznaczoną do misji i wypraw. Ubocz
 
 ## Profesje Elfów w głównym zamku
 
-Lewe boczne drzwi w przedsionku Zamku Czarnej Stali otwierają Komnatę Leśnej Przysięgi z panelem profesji klasy Elf. Szkolenie wymaga poziomu 10; trzy istniejące profesje pozostają wyłączone jako „Do ustalenia” do czasu ustalenia nazw i umiejętności. Postacie nauczycieli dodamy później. Inne klasy otrzymują informację o własnym nauczycielu. Eldor zachowuje próg 10 i jest lokacją misjową, bez szkolenia profesji. Pozostałe drzwi i władczyni nie zmieniają się.
+Lewe boczne drzwi w przedsionku Zamku Czarnej Stali otwierają Komnatę Leśnej Przysięgi z panelem profesji klasy Elf. Szkolenie wymaga poziomu 10; trzy istniejące profesje pozostają wyłączone jako „Do ustalenia” do czasu ustalenia nazw i umiejętności. W komnacie znajduje się nauczycielka profesji Elfa z przesłanej ilustracji. Inne klasy otrzymują informację o własnym nauczycielu. Eldor zachowuje próg 10 i jest lokacją misjową, bez szkolenia profesji. Pozostałe drzwi i władczyni nie zmieniają się.
+
+Ilustracja nauczycielki `elf-profession-teacher.jpg` jest niezmienioną kopią przesłanego zdjęcia: zachowuje pełny kadr, szczegóły postaci i oryginalną rozdzielczość 960 × 1280. Panel wyświetla ją obok profesji na komputerze, a nad nimi na telefonie, bez przycinania sylwetki. Wymóg poziomu 10 i blokady nieustalonych profesji pozostają zachowane.
