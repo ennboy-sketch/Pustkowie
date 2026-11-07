@@ -768,12 +768,12 @@ Znaczniki i okna kierunków używają osobnych ikon WebP 384 × 384 px z przezro
 
 ## Poziomy dostępu do kierunków Polany
 
-Eldor od poziomu 10 będzie osadą elfów przeznaczoną do misji i wypraw. Ubocze od poziomu 30 będzie karczmą „Pod złotym Kucem” z nowymi postaciami i misjami. Lodowe Wzgórza od poziomu 75 będą siedzibą zamku krasnoludów. Nazwy i umiejętności profesji, nauczyciele, zadania i wnętrza pozostają do stworzenia. Znaczniki pokazują wymagany poziom; zamknięte kierunki mają przygaszone ikony. Kliknięcie ponownie odczytuje aktualny zapis postaci: poniżej progu pokazuje blokadę, od progu opis przygotowywanej lokacji. Dostęp do Eldoru nie jest ograniczony klasą, szkolenie Elfów znajduje się w głównym zamku.
+Eldor od poziomu 50 będzie osadą elfów przeznaczoną do misji i wypraw. Ubocze od poziomu 30 będzie karczmą „Pod złotym Kucem” z nowymi postaciami i misjami. Lodowe Wzgórza od poziomu 75 będą siedzibą zamku krasnoludów. Nazwy i umiejętności profesji, nauczyciele, zadania i wnętrza pozostają do stworzenia. Znaczniki pokazują wyłącznie nazwy lokacji; wymagany poziom jest widoczny po kliknięciu. Zamknięte kierunki mają przygaszone ikony. Kliknięcie ponownie odczytuje aktualny zapis postaci: poniżej progu pokazuje blokadę, od progu opis przygotowywanej lokacji. Dostęp do Eldoru nie jest ograniczony klasą, szkolenie Elfów znajduje się w głównym zamku.
 
 
 ## Profesje Elfów w głównym zamku
 
-Lewe boczne drzwi w przedsionku Zamku Czarnej Stali otwierają Komnatę Leśnej Przysięgi z panelem profesji klasy Elf. Szkolenie wymaga poziomu 10; dwie istniejące profesje pozostają wyłączone jako „Do ustalenia” do czasu ustalenia nazw i umiejętności. W komnacie stoi Lyrien, nauczycielka profesji Elfa, odtworzona na podstawie przesłanej ilustracji. Inne klasy otrzymują informację o własnym nauczycielu. Eldor zachowuje próg 10 i jest lokacją misjową, bez szkolenia profesji. Pozostałe drzwi i władczyni nie zmieniają się.
+Lewe boczne drzwi w przedsionku Zamku Czarnej Stali otwierają Komnatę Leśnej Przysięgi z panelem profesji klasy Elf. Szkolenie wymaga poziomu 10; dwie istniejące profesje pozostają wyłączone jako „Do ustalenia” do czasu ustalenia nazw i umiejętności. W komnacie stoi Lyrien, nauczycielka profesji Elfa, odtworzona na podstawie przesłanej ilustracji. Inne klasy otrzymują informację o własnym nauczycielu. Eldor ma próg 50 i jest lokacją misjową, bez szkolenia profesji. Pozostałe drzwi i władczyni nie zmieniają się.
 
 Ilustracja nauczycielki `elf-profession-teacher.jpg` jest niezmienioną kopią przesłanego zdjęcia: zachowuje pełny kadr, szczegóły postaci i oryginalną rozdzielczość 960 × 1280. Oryginalna ilustracja pozostaje zachowana jako wzorzec wyglądu Lyrien; obecny widok używa panoramy komnaty. Wymóg poziomu 10 i blokady nieustalonych profesji pozostają zachowane.
 

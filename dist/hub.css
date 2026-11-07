@@ -13,4 +13,4 @@ body.playing{background:#080e0c}body.playing:before{opacity:.3}body.playing .gam
 
 .glade-path .pin-medallion{width:64px;height:64px;border:0;border-radius:50%;background:transparent;box-shadow:none}.glade-path .pin-medallion:after{display:none}.glade-path-art{display:block;width:64px;height:64px;object-fit:contain;pointer-events:none;-webkit-user-drag:none}.glade-location-art{display:block;width:128px;height:128px;object-fit:contain;margin:auto}
 
-.glade-level{position:absolute;top:100%;left:50%;transform:translateX(-50%);margin-top:3px;padding:3px 6px;border-radius:2px;background:#0d1a12ed;color:#d6c28f;font-size:10px;line-height:1.2;white-space:nowrap}.glade-path.is-locked .glade-path-art{filter:grayscale(.7) brightness(.6)}
+.glade-path.is-locked .glade-path-art{filter:grayscale(.7) brightness(.6)}
