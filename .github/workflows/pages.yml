@@ -4,11 +4,6 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
-    inputs:
-      stale_deployment:
-        description: 'Optional stuck Pages deployment ID to cancel before publishing'
-        required: false
-        default: ''
 
 permissions:
   contents: read
@@ -28,6 +23,7 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/configure-pages@v5
       - name: Check game logic
         run: node --test tests/*.test.cjs
       - name: Prepare the public site
@@ -40,37 +36,6 @@ jobs:
       - uses: actions/upload-pages-artifact@v3
         with:
           path: _site
-      - name: Recover Pages and enable workflow publishing
-        uses: actions/github-script@v7
-        env:
-          STALE_DEPLOYMENT: ${{ inputs.stale_deployment }}
-        with:
-          script: |
-            const repo = context.repo;
-            // One-time recovery of the deployment that blocked subsequent updates.
-            const deployment = process.env.STALE_DEPLOYMENT || 'c683438ed7bcd36c15573cf58941ffede8f149cb';
-            try {
-              await github.request('POST /repos/{owner}/{repo}/pages/deployments/{pages_deployment_id}/cancel', {
-                ...repo, pages_deployment_id: deployment
-              });
-              core.info(`Requested cancellation of stale Pages deployment ${deployment}.`);
-              for (let attempt = 0; attempt < 12; attempt++) {
-                const {data} = await github.request('GET /repos/{owner}/{repo}/pages/deployments/{pages_deployment_id}', {
-                  ...repo, pages_deployment_id: deployment
-                });
-                core.info(`Previous deployment: ${data.status}`);
-                if (/cancel|fail|error|lost|succeed/.test(data.status)) break;
-                await new Promise(resolve => setTimeout(resolve, 5000));
-              }
-            } catch (error) {
-              if (![404, 409].includes(error.status)) throw error;
-              core.info(`Previous deployment needs no cancellation (${error.status}).`);
-            }
-            const {data: pages} = await github.request('GET /repos/{owner}/{repo}/pages', repo);
-            if (pages.build_type !== 'workflow') {
-              await github.request('PUT /repos/{owner}/{repo}/pages', {...repo, build_type: 'workflow'});
-              core.info('Pages now publishes through this workflow.');
-            }
       - name: Publish the game
         id: deployment
         uses: actions/deploy-pages@v4
