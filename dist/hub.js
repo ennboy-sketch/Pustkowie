@@ -27,7 +27,7 @@
   const HERO_KEY = 'pustkowie.hero.v2';
   const FORGE_LEVEL = 30;
   const DUNGEON_LEVEL = 10;
-  // Nazwy i umiejętności trzech osobnych profesji każdej klasy ustalimy później.
+  // Zachowujemy stałe identyfikatory profesji; nieustalone ścieżki pozostają zablokowane.
   const PROFESSIONS = Object.fromEntries(
     Object.entries({warrior:'arena',mage:'alchemy',elf:'guild',dwarf:'forge'}).map(([classId,symbol]) => [
       classId, [1,2,3].map(slot => ({
@@ -39,6 +39,8 @@
       }))
     ])
   );
+  PROFESSIONS.warrior[0]={id:'warrior-profession-1',name:'Palladyn',role:'Święty wojownik walczący wręcz. Może zakładać Święty ekwipunek.',icon:'barracks',pending:false};
+  PROFESSIONS.warrior[1]={id:'warrior-profession-2',name:'Rycerz',role:'Wojownik walczący wręcz i obrońca. Pełne odnowienie 100 energii co 6 godzin.',icon:'arena',pending:false};
   let hero = null;
   const level = () => window.Progression.level(hero);
   const profession = () => (PROFESSIONS[hero?.classId] || []).find(p=>!p.pending && p.id === hero.profession);
@@ -114,7 +116,7 @@
     return `<div class="barracks-banner">${icon(trainer==='alchemist'?'alchemy':trainer==='elven'?'guild':'barracks')}<div><h3>Wybierz swoją profesję</h3><p>${unlocked ? 'Poziom wymagany do wyboru został osiągnięty.' : 'Wybór odblokuje się na 10. poziomie.'}</p></div></div>
       <div class="profession-unlock"><div><span>${unlocked ? 'Wymagany poziom osiągnięty' : 'Wymagany poziom 10'}</span><b>Twój poziom: ${level()}</b></div><progress max="10" value="${Math.min(level(),10)}" aria-label="Postęp do odblokowania profesji"></progress></div>
       ${current ? `<p class="current-profession">Obecna profesja: <strong>${current.name}</strong></p>` : ''}
-      <form id="profession-form" data-profession-trainer="${trainer}"><fieldset ${canChoose ? '' : 'disabled'}><legend class="sr-only">Profesje dla twojej klasy</legend><div class="profession-grid">${PROFESSIONS[hero.classId].map(p=>`<label class="profession-card"><input type="radio" name="profession" value="${p.id}" ${current?.id===p.id ? 'checked' : ''} ${p.pending ? 'disabled' : ''} required><span class="profession-symbol">${icon(p.icon)}</span><strong>${p.name}</strong><span class="profession-role">${p.role}</span><span class="profession-state">${p.pending ? 'Do ustalenia' : unlocked ? 'Dostępna' : 'Od poziomu 10'}</span></label>`).join('')}</div><button type="submit" class="primary profession-submit">${unlocked ? canChoose ? current ? 'Zmień profesję' : 'Wybierz profesję' : 'Profesje w przygotowaniu' : 'Odblokowanie na poziomie 10'}</button></fieldset><p id="profession-status" role="status" aria-live="polite"></p></form><p class="panel-note">${trainer==='alchemist'?'Nauczyciel: Alchemiczka.':trainer==='elven'?'Miejsce szkolenia: Komnata Leśnej Przysięgi w Zamku Czarnej Stali. Nauczycielka profesji Elfa czeka w tej komnacie.':'Nauczyciel: Paladyn Gabriel.'} Szkolenie od poziomu 10. Nazwy i umiejętności profesji ustalimy później.</p>`;
+      <form id="profession-form" data-profession-trainer="${trainer}"><fieldset ${canChoose ? '' : 'disabled'}><legend class="sr-only">Profesje dla twojej klasy</legend><div class="profession-grid">${PROFESSIONS[hero.classId].map(p=>`<label class="profession-card"><input type="radio" name="profession" value="${p.id}" ${current?.id===p.id ? 'checked' : ''} ${p.pending ? 'disabled' : ''} required><span class="profession-symbol">${icon(p.icon)}</span><strong>${p.name}</strong><span class="profession-role">${p.role}</span><span class="profession-state">${p.pending ? 'Do ustalenia' : unlocked ? 'Dostępna' : 'Od poziomu 10'}</span></label>`).join('')}</div><button type="submit" class="primary profession-submit">${unlocked ? canChoose ? current ? 'Zmień profesję' : 'Wybierz profesję' : 'Profesje w przygotowaniu' : 'Odblokowanie na poziomie 10'}</button></fieldset><p id="profession-status" role="status" aria-live="polite"></p></form><p class="panel-note">${trainer==='alchemist'?'Nauczyciel: Alchemiczka.':trainer==='elven'?'Miejsce szkolenia: Komnata Leśnej Przysięgi w Zamku Czarnej Stali. Nauczycielka profesji Elfa czeka w tej komnacie.':'Nauczyciel: Paladyn Gabriel.'} Szkolenie od poziomu 10. ${hero.classId==='warrior'?'Palladyn i Rycerz są dostępni. Trzecia profesja pozostaje do ustalenia.':'Nazwy i umiejętności profesji ustalimy później.'}</p>`;
   }
   const labels = ['Siła','Zręczność','Inteligencja','Wytrzymałość'];
   function toggleMenu(open) {
@@ -237,7 +239,7 @@
     if (PROFESSIONS[hero.classId].every(p=>p.pending)) { status.textContent = 'Profesje tej klasy są jeszcze do ustalenia.'; return; }
     const chosen = new FormData(e.target).get('profession');
     if (!PROFESSIONS[hero.classId].some(p=>!p.pending && p.id===chosen)) { status.textContent = 'Wybierz jedną z dostępnych profesji.'; return; }
-    const updated = {...hero, level:level(), profession:chosen};
+    const updated = window.EnergyCycle.apply({...hero, level:level(), profession:chosen});
     try {
       const stored = localStorage.getItem(HERO_KEY);
       if (stored) {

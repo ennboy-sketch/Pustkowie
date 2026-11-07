@@ -39,10 +39,10 @@
   }
   const PRODUCTS=Object.freeze(products),BY_ID=new Map(PRODUCTS.map(p=>[p.id,p]));
   function productFor(item){const p=BY_ID.get(item?.marketProduct??item?.id);return p&&p.slot===item.slot?p:null;}
-  function reason(hero,item){if(item?.kind==='minotaur-axe')return window.Progression.level(hero)<20?'Wymagany poziom 20.':'';const p=productFor(item);if(!p)return item?.marketProduct?.startsWith('gringo-')?'Nieprawidłowy przedmiot.':'';return !p.classes.includes(hero.classId)?'Przedmiot dla innej klasy.':window.Progression.level(hero)<p.requiredLevel?`Wymagany poziom ${p.requiredLevel}.`:'';}
+  function reason(hero,item){if(item?.holy===true&&(hero.classId!=='warrior'||hero.profession!=='warrior-profession-1'||window.Progression.level(hero)<10))return 'Święty ekwipunek wymaga profesji Palladyn i poziomu 10.';if(item?.kind==='minotaur-axe')return window.Progression.level(hero)<20?'Wymagany poziom 20.':'';const p=productFor(item);if(!p)return item?.marketProduct?.startsWith('gringo-')?'Nieprawidłowy przedmiot.':'';return !p.classes.includes(hero.classId)?'Przedmiot dla innej klasy.':window.Progression.level(hero)<p.requiredLevel?`Wymagany poziom ${p.requiredLevel}.`:'';}
   function forClass(classId){return PRODUCTS.filter(p=>p.classes.includes(classId)).sort((a,b)=>a.requiredLevel-b.requiredLevel||SLOTS.indexOf(a.slot)-SLOTS.indexOf(b.slot));}
   function iconClass(item){const p=productFor(item);return p?`gear-art catalog-art catalog-${p.iconClass}-${p.iconRow}-${p.iconCol}`:null;}
   function icon(item){const cls=iconClass(item);return cls?`<span class="${cls}" aria-hidden="true"></span>`:'';}
-  function details(item){const p=productFor(item);return p?`Poziom ${p.requiredLevel} · ${p.classes.map(c=>CLASS_LABELS[c]).join(' / ')}`:'';}
+  function details(item){const p=productFor(item);const holy=item?.holy===true?'Święty ekwipunek · Tylko Palladyn · Od poziomu 10':'';return p?holy+(holy?' · ':'')+`Poziom ${p.requiredLevel} · ${p.classes.map(c=>CLASS_LABELS[c]).join(' / ')}`:holy;}
   window.GearCatalog={LEVELS,PRODUCTS,get:id=>BY_ID.get(id),productFor,reason,forClass,iconClass,icon,details};
 })();

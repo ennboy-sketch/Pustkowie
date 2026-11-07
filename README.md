@@ -577,7 +577,7 @@ Stół alchemiczki wymienia dokładnie 25 pyłu na 1 odłamek, jedną wymianę n
 
 ## Nauczyciele profesji według klasy
 
-Wojownik i Krasnolud szkolą się u Paladyna Gabriela w koszarach, Mag u Alchemiczki w Wieży Zielonego Płomienia. Obie rozmowy mają przycisk „Porozmawiaj o profesjach”. Niewłaściwy nauczyciel wskazuje właściwą postać, bez dostępu do formularza szkolenia. Elf szkoli się u nauczycielki w Komnacie Leśnej Przysięgi w głównym zamku. Wymagany poziom 10 zostaje zachowany. Nazwy i umiejętności trzech profesji każdej klasy nadal są do ustalenia; robocze profesje pozostają zablokowane. Obsługa formularza ponownie odczytuje zapis i sprawdza klasę, nauczyciela oraz poziom. Nie zmieniono istniejących profesji w zapisie ani walut.
+Wojownik i Krasnolud szkolą się u Paladyna Gabriela w koszarach, Mag u Alchemiczki w Wieży Zielonego Płomienia. Obie rozmowy mają przycisk „Porozmawiaj o profesjach”. Niewłaściwy nauczyciel wskazuje właściwą postać, bez dostępu do formularza szkolenia. Elf szkoli się u nauczycielki w Komnacie Leśnej Przysięgi w głównym zamku. Wymagany poziom 10 zostaje zachowany. Wojownik i Wojowniczka mogą od poziomu 10 wybrać Palladyna lub Rycerza. Pozostałe nieustalone profesje pozostają zablokowane. Obsługa formularza ponownie odczytuje zapis i sprawdza klasę, nauczyciela oraz poziom. Nie zmieniono istniejących profesji w zapisie ani walut.
 
 
 ## Siedem nagród Koła Losu
@@ -776,3 +776,8 @@ Eldor od poziomu 10 będzie osadą elfów przeznaczoną do misji i wypraw. Ubocz
 Lewe boczne drzwi w przedsionku Zamku Czarnej Stali otwierają Komnatę Leśnej Przysięgi z panelem profesji klasy Elf. Szkolenie wymaga poziomu 10; trzy istniejące profesje pozostają wyłączone jako „Do ustalenia” do czasu ustalenia nazw i umiejętności. W komnacie znajduje się nauczycielka profesji Elfa z przesłanej ilustracji. Inne klasy otrzymują informację o własnym nauczycielu. Eldor zachowuje próg 10 i jest lokacją misjową, bez szkolenia profesji. Pozostałe drzwi i władczyni nie zmieniają się.
 
 Ilustracja nauczycielki `elf-profession-teacher.jpg` jest niezmienioną kopią przesłanego zdjęcia: zachowuje pełny kadr, szczegóły postaci i oryginalną rozdzielczość 960 × 1280. Panel wyświetla ją obok profesji na komputerze, a nad nimi na telefonie, bez przycinania sylwetki. Wymóg poziomu 10 i blokady nieustalonych profesji pozostają zachowane.
+
+
+## Profesje Wojownika i Wojowniczki
+
+Od poziomu 10 u Paladyna Gabriela można wybrać Palladyna (`warrior-profession-1`) lub Rycerza (`warrior-profession-2`). Palladyn może zakładać przedmioty oznaczone `holy: true`; konkretne Święte przedmioty dodamy później. Rycerz odnawia pełne 100 energii co 6 godzin, również po nieobecności. Pozostałe klasy i profesje zachowują 12 godzin. Zmiana profesji zachowuje początek bieżącego cyklu, a po przejściu na inną profesję święte przedmioty nie są aktywnie noszone. Trzecia profesja Wojownika i wszystkie nieustalone profesje pozostałych klas są nadal zablokowane.
