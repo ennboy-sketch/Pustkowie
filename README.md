@@ -577,7 +577,7 @@ Stół alchemiczki wymienia dokładnie 25 pyłu na 1 odłamek, jedną wymianę n
 
 ## Nauczyciele profesji według klasy
 
-Wojownik i Krasnolud szkolą się u Paladyna Gabriela w koszarach, Mag u Alchemiczki w Wieży Zielonego Płomienia. Obie rozmowy mają przycisk „Porozmawiaj o profesjach”. Niewłaściwy nauczyciel wskazuje właściwą postać, bez dostępu do formularza szkolenia. Elf szkoli się u nauczycielki w Komnacie Leśnej Przysięgi w głównym zamku. Wymagany poziom 10 zostaje zachowany. Wojownik i Wojowniczka mogą od poziomu 10 wybrać Palladyna lub Rycerza. Pozostałe nieustalone profesje pozostają zablokowane. Obsługa formularza ponownie odczytuje zapis i sprawdza klasę, nauczyciela oraz poziom. Nie zmieniono istniejących profesji w zapisie ani walut.
+Wojownik i Krasnolud szkolą się u Paladyna Gabriela w koszarach, Mag u Alchemiczki w Wieży Zielonego Płomienia. Obie rozmowy mają przycisk „Porozmawiaj o profesjach”. Niewłaściwy nauczyciel wskazuje właściwą postać, bez dostępu do formularza szkolenia. Elf szkoli się u Lyrien w Komnacie Leśnej Przysięgi w głównym zamku. Wymagany poziom 10 zostaje zachowany. Wojownik i Wojowniczka mogą od poziomu 10 wybrać Palladyna lub Rycerza. Pozostałe nieustalone profesje pozostają zablokowane. Obsługa formularza ponownie odczytuje zapis i sprawdza klasę, nauczyciela oraz poziom. Nie zmieniono istniejących profesji w zapisie ani walut.
 
 
 ## Siedem nagród Koła Losu
@@ -773,9 +773,9 @@ Eldor od poziomu 10 będzie osadą elfów przeznaczoną do misji i wypraw. Ubocz
 
 ## Profesje Elfów w głównym zamku
 
-Lewe boczne drzwi w przedsionku Zamku Czarnej Stali otwierają Komnatę Leśnej Przysięgi z panelem profesji klasy Elf. Szkolenie wymaga poziomu 10; trzy istniejące profesje pozostają wyłączone jako „Do ustalenia” do czasu ustalenia nazw i umiejętności. W komnacie znajduje się nauczycielka profesji Elfa z przesłanej ilustracji. Inne klasy otrzymują informację o własnym nauczycielu. Eldor zachowuje próg 10 i jest lokacją misjową, bez szkolenia profesji. Pozostałe drzwi i władczyni nie zmieniają się.
+Lewe boczne drzwi w przedsionku Zamku Czarnej Stali otwierają Komnatę Leśnej Przysięgi z panelem profesji klasy Elf. Szkolenie wymaga poziomu 10; trzy istniejące profesje pozostają wyłączone jako „Do ustalenia” do czasu ustalenia nazw i umiejętności. W komnacie stoi Lyrien, nauczycielka profesji Elfa, odtworzona na podstawie przesłanej ilustracji. Inne klasy otrzymują informację o własnym nauczycielu. Eldor zachowuje próg 10 i jest lokacją misjową, bez szkolenia profesji. Pozostałe drzwi i władczyni nie zmieniają się.
 
-Ilustracja nauczycielki `elf-profession-teacher.jpg` jest niezmienioną kopią przesłanego zdjęcia: zachowuje pełny kadr, szczegóły postaci i oryginalną rozdzielczość 960 × 1280. Panel wyświetla ją obok profesji na komputerze, a nad nimi na telefonie, bez przycinania sylwetki. Wymóg poziomu 10 i blokady nieustalonych profesji pozostają zachowane.
+Ilustracja nauczycielki `elf-profession-teacher.jpg` jest niezmienioną kopią przesłanego zdjęcia: zachowuje pełny kadr, szczegóły postaci i oryginalną rozdzielczość 960 × 1280. Oryginalna ilustracja pozostaje zachowana jako wzorzec wyglądu Lyrien; obecny widok używa panoramy komnaty. Wymóg poziomu 10 i blokady nieustalonych profesji pozostają zachowane.
 
 
 ## Profesje Wojownika i Wojowniczki
@@ -786,3 +786,8 @@ Od poziomu 10 u Paladyna Gabriela można wybrać Palladyna (`warrior-profession-
 ## Profesje Maga i Magini
 
 Od poziomu 10 u Lilith można wybrać Nekromantę (`mage-profession-1`) lub Alchemika (`mage-profession-2`). Nekromanta zastępuje Kulę ognia Mrocznym pociskiem: 10 many, magiczne obrażenia z dodatkową premią 10% (zaokrąglenie w dół) przed redukcją pancerza. Cechy nie zmieniają się, bez many pozostaje atak różdżką. Nowe walki zapisują efekt w migawce; rozpoczęte wcześniej pozostają bez zmian. Nekromanta ignoruje oczekiwanie w lochach, także po porażce. Kolejność bossów, pojedyncze zwycięstwa i nagrody nie zmieniają się. Rzeczywisty termin 3 godzin nadal zapisuje się po walce i obowiązuje po zmianie profesji. Alchemik jest dostępny do wyboru; tworzenie mikstur i zbieranie ziół dodamy później. Trzecia profesja Maga pozostaje zablokowana.
+
+
+## Panoramiczna Komnata Leśnej Przysięgi
+
+Lewe drzwi zamku otwierają pełny widok pomieszczenia `lyrien-chamber.webp`: kamienne sklepienia, pochodnie, zielone chorągwie, wyposażenie treningowe i Lyrien stojąca swobodnie w komnacie. Podpis „Lyrien” otwiera rozmowę i istniejący panel profesji Elfa; blokada poziomu 10 i nieustalonych profesji pozostają zachowane. Pokój korzysta ze wspólnego `SceneZoom.mount`: przeciąganie myszą i palcem, bezwładność, kółko, gest szczypania i klawiatura. Zamknięcie rozmowy pozostawia widok pokoju; powrót do przedsionka resetuje przybliżenie. Zmiana pomieszczenia odtwarza obsługę gestów; zamknięcie zamku usuwa ją wraz z obserwatorem rozmiaru. Testy: `node tests/lyrien-panorama.browser.cjs http://127.0.0.1:8020/` i `node tests/elf-school.browser.cjs http://127.0.0.1:8020/`.
