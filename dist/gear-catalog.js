@@ -37,12 +37,17 @@
     if(slot==='shield'){stats[primary[classId]]=support;stats[3]=[3,7,12][row];}
     products.push(Object.freeze({id:`gringo-${shared?'heavy':classId}-${LEVELS[row]}-${slot}`,name:NAMES[classId][row][col],slot,requiredLevel:LEVELS[row],classes:Object.freeze(shared?['warrior','dwarf']:[classId]),price:prices[row][col],stats:Object.freeze(stats),iconClass:classId,iconRow:row,iconCol:col,...(slot==='armor'?{armorType:shared?'heavy':classId==='mage'?'cloak':'light'}:{})}));
   }
-  const PRODUCTS=Object.freeze(products),BY_ID=new Map(PRODUCTS.map(p=>[p.id,p]));
+  const craftedNames={warrior:'Miecz Strażnika Przysięgi',mage:'Różdżka Tajemnej Przysięgi',elf:'Łuk Srebrnej Przysięgi',dwarf:'Topór Runicznego Bastionu'};
+  const CRAFTED_WEAPONS=Object.freeze(Object.keys(NAMES).map(classId=>{
+    const base=products.find(p=>p.id===`gringo-${classId}-25-weapon`),stats=[0,0,0,20];stats[primary[classId]]=20;
+    return Object.freeze({...base,id:`forge-${classId}-35-weapon`,name:craftedNames[classId],requiredLevel:35,craftOnly:true,stats:Object.freeze(stats)});
+  }));
+  const PRODUCTS=Object.freeze(products),BY_ID=new Map([...PRODUCTS,...CRAFTED_WEAPONS].map(p=>[p.id,p]));
   function productFor(item){const p=BY_ID.get(item?.marketProduct??item?.id);return p&&p.slot===item.slot?p:null;}
   function reason(hero,item){if(item?.holy===true&&(hero.classId!=='warrior'||hero.profession!=='warrior-profession-1'||window.Progression.level(hero)<10))return 'Święty ekwipunek wymaga profesji Palladyn i poziomu 10.';if(item?.kind==='minotaur-axe')return window.Progression.level(hero)<20?'Wymagany poziom 20.':'';const p=productFor(item);if(!p)return item?.marketProduct?.startsWith('gringo-')?'Nieprawidłowy przedmiot.':'';return !p.classes.includes(hero.classId)?'Przedmiot dla innej klasy.':window.Progression.level(hero)<p.requiredLevel?`Wymagany poziom ${p.requiredLevel}.`:'';}
   function forClass(classId){return PRODUCTS.filter(p=>p.classes.includes(classId)).sort((a,b)=>a.requiredLevel-b.requiredLevel||SLOTS.indexOf(a.slot)-SLOTS.indexOf(b.slot));}
   function iconClass(item){const p=productFor(item);return p?`gear-art catalog-art catalog-${p.iconClass}-${p.iconRow}-${p.iconCol}`:null;}
   function icon(item){const cls=iconClass(item);return cls?`<span class="${cls}" aria-hidden="true"></span>`:'';}
   function details(item){const p=productFor(item);const holy=item?.holy===true?'Święty ekwipunek · Tylko Palladyn · Od poziomu 10':'';return p?holy+(holy?' · ':'')+`Poziom ${p.requiredLevel} · ${p.classes.map(c=>CLASS_LABELS[c]).join(' / ')}`:holy;}
-  window.GearCatalog={LEVELS,PRODUCTS,get:id=>BY_ID.get(id),productFor,reason,forClass,iconClass,icon,details};
+  window.GearCatalog={LEVELS,PRODUCTS,CRAFTED_WEAPONS,get:id=>BY_ID.get(id),productFor,reason,forClass,iconClass,icon,details};
 })();

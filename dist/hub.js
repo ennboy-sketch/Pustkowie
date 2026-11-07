@@ -210,7 +210,7 @@
     if (id === 'dungeon' && !dungeonLocked) stopDungeons=window.DungeonsPanel.mount($('#place-content'),{read:readCurrentHero,update:updateCurrentHero,onTitle:title=>{$('#place-title').textContent=title;}});
     if (id === 'wheel') window.FateWheel.mount($('#place-content'),{read:readCurrentHero,update:updateCurrentHero});
     if (id === 'alchemy') window.AlchemistPanel.mount($('#place-content'),{read:readCurrentHero,update:updateCurrentHero,professionMarkup:()=>barracksPanel('alchemist')});
-    if (id === 'forge' && !forgeLocked) window.ForgePanel.mount($('#place-content'));
+    if (id === 'forge' && !forgeLocked) window.ForgePanel.mount($('#place-content'),{read:readCurrentHero,update:updateCurrentHero});
     if (id === 'market') window.MarketPanel.mount($('#place-content'),{read:readCurrentHero,update:updateCurrentHero});
     if (id === 'barracks') window.BarracksPanel.mount($('#place-content'),{professionMarkup:()=>barracksPanel('gabriel')});
     if(id==='tavern'){

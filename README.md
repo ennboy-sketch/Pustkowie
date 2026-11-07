@@ -338,7 +338,7 @@ Widok przesuwa się swobodnie palcem, gładzikiem lub myszą, bez widocznych pas
 
 Kuźnia na mapie i w menu zamku otwiera panoramiczną pracownię `forge-workshop.webp`. Gorim Sadza jest potężnym, szerokim w barach człowiekiem z młotem, stojącym przy kowadle na tle rozpalonego pieca hutniczego. Otoczenie uzupełniają narzędzia, sztaby metalu i stojaki z uzbrojeniem. Widok przesuwa się palcem i myszą, z zachowaniem proporcji obrazu i początkowym kadrem na kowala.
 
-Jedyną interaktywną postacią i znacznikiem w pracowni jest Gorim Sadza. Kliknięcie otwiera rozmowę i informację o przyszłym wytwarzaniu rzadkiego ekwipunku. Kowadło, piec i pozostałe wyposażenie są częścią ilustracji. Nie dodano receptur, cen, kosztów ani możliwości wytwarzania przedmiotów. Oglądanie kuźni i rozmowa nie zmieniają zapisu postaci.
+Jedyną interaktywną postacią i znacznikiem w pracowni jest Gorim Sadza. Kliknięcie otwiera rozmowę oraz recepturę broni na poziom 35. Kowadło, piec i pozostałe wyposażenie są częścią ilustracji. Oglądanie kuźni i rozmowa nie zmieniają zapisu postaci; dopiero zatwierdzenie wytwarzania zużywa składniki i dodaje broń.
 
 
 ## Przybliżanie lokacji
@@ -791,3 +791,8 @@ Od poziomu 10 u Lilith można wybrać Nekromantę (`mage-profession-1`) lub Alch
 ## Panoramiczna Komnata Leśnej Przysięgi
 
 Lewe drzwi zamku otwierają pełny widok pomieszczenia `lyrien-chamber.webp`: kamienne sklepienia, pochodnie, zielone chorągwie, wyposażenie treningowe i Lyrien stojąca swobodnie w komnacie. Podpis „Lyrien” otwiera rozmowę i istniejący panel profesji Elfa; blokada poziomu 10 i nieustalonych profesji pozostają zachowane. Pokój korzysta ze wspólnego `SceneZoom.mount`: przeciąganie myszą i palcem, bezwładność, kółko, gest szczypania i klawiatura. Zamknięcie rozmowy pozostawia widok pokoju. Wyjście z komnaty odbywa się przez X w prawym górnym rogu, jak w koszarach. Dolny przycisk powrotu jest widoczny tylko w sali tronowej. Na niskich ekranach początkowe przesunięcie pokazuje cały przycisk Lyrien z zapasem miejsca. Zmiana pomieszczenia odtwarza obsługę gestów; zamknięcie zamku usuwa ją wraz z obserwatorem rozmiaru. Testy: `node tests/lyrien-panorama.browser.cjs http://127.0.0.1:8020/` i `node tests/elf-school.browser.cjs http://127.0.0.1:8020/`.
+
+
+## Przekuwanie broni na poziom 35
+
+Gorim Sadza w kuźni wytwarza broń na poziom 35 z 10 Rzadkich Materiałów, 10 Kawałków klejnotu i jednej zdjętej z postaci broni na poziom 25 dla tej samej klasy. Wytwarzanie wymaga poziomu 35 i nie pobiera złota. Wojownik otrzymuje Miecz Strażnika Przysięgi (+20 Siła, +20 Wytrzymałość), Krasnolud Topór Runicznego Bastionu (+20 Siła, +20 Wytrzymałość), Mag Różdżkę Tajemnej Przysięgi (+20 Inteligencja, +20 Wytrzymałość), Elf Łuk Srebrnej Przysięgi (+20 Zręczność, +20 Wytrzymałość). Premie działają po założeniu. Broń trafia do plecaka, a wybrany składnik i materiały są usuwane w tej samej operacji zapisu. Wytwarzanie może zastąpić składnik także w pełnym plecaku. Błąd zapisu nie zużywa składników. Nowy oręż jest dostępny wyłącznie przez wytwarzanie, bez dodawania go do oferty Gringa. Wykorzystuje ikony odpowiednich broni klasowych z najwyższego istniejącego poziomu atlasu. Model: `weapon-crafting.js`; testy `node --test tests/*.test.cjs` i `node tests/weapon-crafting.browser.cjs http://127.0.0.1:8020/`.

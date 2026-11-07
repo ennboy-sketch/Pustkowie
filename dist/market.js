@@ -22,7 +22,7 @@
     return out;
   }
   function purchase(hero,id){
-    const p=window.GearCatalog.get(id);if(!p)throw new Error('Nieznany przedmiot.');
+    const p=window.GearCatalog.get(id);if(!p||p.craftOnly)throw new Error('Nieznany przedmiot.');
     const blocked=window.GearCatalog.reason(hero,p);if(blocked)throw new Error(blocked);
     if(!window.HeroSheet.canEquip(hero,p))throw new Error('Ten przedmiot nie jest przeznaczony dla Twojej klasy.');
     if(window.HeroSheet.bagItems(hero).length>=25)throw new Error('Ekwipunek pełny. Zwolnij miejsce przed zakupem.');
