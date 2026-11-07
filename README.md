@@ -780,7 +780,7 @@ Ilustracja nauczycielki `elf-profession-teacher.jpg` jest niezmienioną kopią p
 
 ## Profesje Wojownika i Wojowniczki
 
-Od poziomu 10 u Paladyna Gabriela można wybrać Palladyna (`warrior-profession-1`) lub Rycerza (`warrior-profession-2`). Palladyn może zakładać przedmioty oznaczone `holy: true`; konkretne Święte przedmioty dodamy później. Rycerz odnawia pełne 100 energii co 6 godzin, również po nieobecności. Pozostałe klasy i profesje zachowują 12 godzin. Zmiana profesji zachowuje początek bieżącego cyklu, a po przejściu na inną profesję święte przedmioty nie są aktywnie noszone. Każda klasa ma tylko dwie profesje. Nieustalone profesje pozostałych klas są nadal zablokowane.
+Od poziomu 10 u Paladyna Gabriela można wybrać Palladyna (`warrior-profession-1`) lub Rycerza (`warrior-profession-2`). Palladyn może zakładać przedmioty oznaczone `holy: true`; konkretne Święte przedmioty dodamy później. Rycerz odnawia pełne 100 energii co 6 godzin, również po nieobecności. Pozostałe klasy i profesje zachowują 12 godzin. Wybrana profesja jest stała. Pierwszy wybór Rycerza zachowuje początek bieżącego cyklu energii. Każda klasa ma tylko dwie profesje. Nieustalone profesje pozostałych klas są nadal zablokowane.
 
 
 ## Profesje Maga i Magini
@@ -796,3 +796,8 @@ Lewe drzwi zamku otwierają pełny widok pomieszczenia `lyrien-chamber.webp`: ka
 ## Przekuwanie broni na poziom 35
 
 Gorim Sadza w kuźni wytwarza broń na poziom 35 z 10 Rzadkich Materiałów, 10 Kawałków klejnotu i jednej zdjętej z postaci broni na poziom 25 dla tej samej klasy. Wytwarzanie wymaga poziomu 35 oraz dodatkowej opłaty 5000 złota i 5 odłamków. Wojownik otrzymuje Ostrze Szmaragdowego Zmierzchu (+20 Siła, +20 Wytrzymałość), Krasnolud Topór Serca Głębin (+20 Siła, +20 Wytrzymałość), Mag Różdżkę Astralnego Splotu (+20 Inteligencja, +20 Wytrzymałość), Elf Łuk Ametystowego Szeptu (+20 Zręczność, +20 Wytrzymałość). Premie działają po założeniu. Broń trafia do plecaka, a wybrany składnik i materiały są usuwane w tej samej operacji zapisu. Wytwarzanie może zastąpić składnik także w pełnym plecaku. Błąd zapisu nie zużywa składników. Nowy oręż jest dostępny wyłącznie przez wytwarzanie, bez dodawania go do oferty Gringa. Cztery unikalne ikony z atlasu `forged-weapons-35.webp` przedstawiają metal z zielonymi żyłami Rzadkiego Materiału, złotymi akcentami oraz fioletowo-błękitnymi kryształami Kawałka klejnotu. Nowa nazwa i grafika obejmują także wcześniej wykute egzemplarze; poziom i statystyki pozostają takie same. Opłata, materiały i broń są zużywane atomowo. Model: `weapon-crafting.js`; testy `node --test tests/*.test.cjs` i `node tests/weapon-crafting.browser.cjs http://127.0.0.1:8020/`.
+
+
+## Nieodwracalny wybór profesji
+
+Każda postać może wybrać profesję tylko raz. Zasada obejmuje wcześniejsze zapisy oraz wszystkie klasy i płcie. Przed zatwierdzeniem panel wyraźnie informuje o nieodwracalności. Po zapisaniu pola i przycisk wyboru są zablokowane, a profesja pozostaje widoczna. Obsługa formularza ponownie odczytuje zapis pod wspólną blokadą Web Locks, odrzuca drugi wybór i sprawdza zapis tuż przed nadpisaniem. Błąd zapisu nie zatwierdza profesji i pozwala spróbować ponownie.

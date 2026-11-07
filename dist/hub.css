@@ -14,3 +14,5 @@ body.playing{background:#080e0c}body.playing:before{opacity:.3}body.playing .gam
 .glade-path .pin-medallion{width:64px;height:64px;border:0;border-radius:50%;background:transparent;box-shadow:none}.glade-path .pin-medallion:after{display:none}.glade-path-art{display:block;width:64px;height:64px;object-fit:contain;pointer-events:none;-webkit-user-drag:none}.glade-location-art{display:block;width:128px;height:128px;object-fit:contain;margin:auto}
 
 .glade-path.is-locked .glade-path-art{filter:grayscale(.7) brightness(.6)}
+
+.profession-permanent-note{padding:12px 14px;border:1px solid #b29a5c;background:#30271588;color:#f2d798;font-size:12px;line-height:1.7}
