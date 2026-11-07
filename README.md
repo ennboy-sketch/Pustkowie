@@ -28,7 +28,7 @@ Utworzona lub zapisana postać otwiera bezpośrednio Zamek Czarnej Stali. Autors
 
 ## Koszary i profesje
 
-Koszary Żelaznej Przysięgi znajdują się przy placu treningowym (znacznik na mapie i menu ŚWIAT). Każda klasa (wojownik, mag, elf, krasnolud) ma trzy osobne miejsca na profesje, łącznie 12. Nazwy i umiejętności ustalimy później. Robocze etykiety to Profesja 1, Profesja 2 i Profesja 3; identyfikatory są osobne dla każdej klasy.
+Koszary Żelaznej Przysięgi znajdują się przy placu treningowym (znacznik na mapie i menu ŚWIAT). Każda klasa (wojownik, mag, elf, krasnolud) ma dwa osobne miejsca na profesje, łącznie 8. Nazwy i umiejętności ustalimy później. Robocze etykiety to Profesja 1 i Profesja 2; identyfikatory są osobne dla każdej klasy.
 
 Wymagany poziom to 10. Dopóki profesje mają pending: true, wybór jest niedostępny również po osiągnięciu tego poziomu. Blokada działa w interfejsie i obsłudze formularza. Poprzednie robocze nazwy zostały usunięte; istniejące zapisy postaci nie są nadpisywane podczas wczytywania. Wybrana docelowo profesja będzie zapisywana w istniejącym zapisie v2. Stare zapisy bez pola level mają poziom 1. System zdobywania poziomów i umiejętności pozostaje w przygotowaniu.
 
@@ -773,19 +773,19 @@ Eldor od poziomu 10 będzie osadą elfów przeznaczoną do misji i wypraw. Ubocz
 
 ## Profesje Elfów w głównym zamku
 
-Lewe boczne drzwi w przedsionku Zamku Czarnej Stali otwierają Komnatę Leśnej Przysięgi z panelem profesji klasy Elf. Szkolenie wymaga poziomu 10; trzy istniejące profesje pozostają wyłączone jako „Do ustalenia” do czasu ustalenia nazw i umiejętności. W komnacie stoi Lyrien, nauczycielka profesji Elfa, odtworzona na podstawie przesłanej ilustracji. Inne klasy otrzymują informację o własnym nauczycielu. Eldor zachowuje próg 10 i jest lokacją misjową, bez szkolenia profesji. Pozostałe drzwi i władczyni nie zmieniają się.
+Lewe boczne drzwi w przedsionku Zamku Czarnej Stali otwierają Komnatę Leśnej Przysięgi z panelem profesji klasy Elf. Szkolenie wymaga poziomu 10; dwie istniejące profesje pozostają wyłączone jako „Do ustalenia” do czasu ustalenia nazw i umiejętności. W komnacie stoi Lyrien, nauczycielka profesji Elfa, odtworzona na podstawie przesłanej ilustracji. Inne klasy otrzymują informację o własnym nauczycielu. Eldor zachowuje próg 10 i jest lokacją misjową, bez szkolenia profesji. Pozostałe drzwi i władczyni nie zmieniają się.
 
 Ilustracja nauczycielki `elf-profession-teacher.jpg` jest niezmienioną kopią przesłanego zdjęcia: zachowuje pełny kadr, szczegóły postaci i oryginalną rozdzielczość 960 × 1280. Oryginalna ilustracja pozostaje zachowana jako wzorzec wyglądu Lyrien; obecny widok używa panoramy komnaty. Wymóg poziomu 10 i blokady nieustalonych profesji pozostają zachowane.
 
 
 ## Profesje Wojownika i Wojowniczki
 
-Od poziomu 10 u Paladyna Gabriela można wybrać Palladyna (`warrior-profession-1`) lub Rycerza (`warrior-profession-2`). Palladyn może zakładać przedmioty oznaczone `holy: true`; konkretne Święte przedmioty dodamy później. Rycerz odnawia pełne 100 energii co 6 godzin, również po nieobecności. Pozostałe klasy i profesje zachowują 12 godzin. Zmiana profesji zachowuje początek bieżącego cyklu, a po przejściu na inną profesję święte przedmioty nie są aktywnie noszone. Trzecia profesja Wojownika i wszystkie nieustalone profesje pozostałych klas są nadal zablokowane.
+Od poziomu 10 u Paladyna Gabriela można wybrać Palladyna (`warrior-profession-1`) lub Rycerza (`warrior-profession-2`). Palladyn może zakładać przedmioty oznaczone `holy: true`; konkretne Święte przedmioty dodamy później. Rycerz odnawia pełne 100 energii co 6 godzin, również po nieobecności. Pozostałe klasy i profesje zachowują 12 godzin. Zmiana profesji zachowuje początek bieżącego cyklu, a po przejściu na inną profesję święte przedmioty nie są aktywnie noszone. Każda klasa ma tylko dwie profesje. Nieustalone profesje pozostałych klas są nadal zablokowane.
 
 
 ## Profesje Maga i Magini
 
-Od poziomu 10 u Lilith można wybrać Nekromantę (`mage-profession-1`) lub Alchemika (`mage-profession-2`). Nekromanta zastępuje Kulę ognia Mrocznym pociskiem: 10 many, magiczne obrażenia z dodatkową premią 10% (zaokrąglenie w dół) przed redukcją pancerza. Cechy nie zmieniają się, bez many pozostaje atak różdżką. Nowe walki zapisują efekt w migawce; rozpoczęte wcześniej pozostają bez zmian. Nekromanta ignoruje oczekiwanie w lochach, także po porażce. Kolejność bossów, pojedyncze zwycięstwa i nagrody nie zmieniają się. Rzeczywisty termin 3 godzin nadal zapisuje się po walce i obowiązuje po zmianie profesji. Alchemik jest dostępny do wyboru; tworzenie mikstur i zbieranie ziół dodamy później. Trzecia profesja Maga pozostaje zablokowana.
+Od poziomu 10 u Lilith można wybrać Nekromantę (`mage-profession-1`) lub Alchemika (`mage-profession-2`). Nekromanta zastępuje Kulę ognia Mrocznym pociskiem: 10 many, magiczne obrażenia z dodatkową premią 10% (zaokrąglenie w dół) przed redukcją pancerza. Cechy nie zmieniają się, bez many pozostaje atak różdżką. Nowe walki zapisują efekt w migawce; rozpoczęte wcześniej pozostają bez zmian. Nekromanta ignoruje oczekiwanie w lochach, także po porażce. Kolejność bossów, pojedyncze zwycięstwa i nagrody nie zmieniają się. Rzeczywisty termin 3 godzin nadal zapisuje się po walce i obowiązuje po zmianie profesji. Alchemik jest dostępny do wyboru; tworzenie mikstur i zbieranie ziół dodamy później. Mag i Magini mają tylko te dwie profesje.
 
 
 ## Panoramiczna Komnata Leśnej Przysięgi
