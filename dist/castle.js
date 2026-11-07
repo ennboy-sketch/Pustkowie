@@ -16,13 +16,13 @@
       if(disposed||!view.clientWidth)return;
       const height=Math.max(600,view.clientHeight),ratio=art.naturalWidth&&art.naturalHeight?art.naturalWidth/art.naturalHeight:1.5;
       scene.style.height=`${height}px`;scene.style.width=`${Math.max(view.clientWidth,height*ratio)}px`;
-      if(!centered&&art.complete&&art.naturalWidth){view.scrollLeft=Math.max(0,(scene.clientWidth-view.clientWidth)/2);view.scrollTop=0;centered=true;}
+      if(!centered&&art.complete&&art.naturalWidth){view.scrollLeft=Math.max(0,(scene.clientWidth-view.clientWidth)/2);view.scrollTop=room==='school'?Math.max(0,mentor.offsetTop+mentor.offsetHeight/2+24-view.clientHeight):0;centered=true;}
     }
     function show(next){
       if(disposed)return;
       if(school.open)school.close();
       stopZoom();centered=false;room=next;panel.dataset.castleRoom=room;
-      door.hidden=room!=='entrance';schoolDoor.hidden=room!=='entrance';mentor.hidden=room!=='school';back.hidden=room==='entrance';
+      door.hidden=room!=='entrance';schoolDoor.hidden=room!=='entrance';mentor.hidden=room!=='school';back.hidden=room!=='throne';
       art.src=ROOMS[room].image;art.alt=ROOMS[room].alt;
       view.setAttribute('aria-label',`Przesuwany widok: ${ROOMS[room].title}`);
       onTitle(ROOMS[room].title);
