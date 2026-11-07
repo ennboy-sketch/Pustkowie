@@ -13,3 +13,5 @@
 .castle-throne-door:focus-visible{outline:2px solid #edcc8d;outline-offset:4px}
 .castle-return{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);z-index:2;white-space:nowrap;background:#122219ed!important;width:auto!important}
 @media(max-width:420px){.place-dialog:has(.castle-panel){max-width:calc(100% - 16px)}.place-dialog:has(.castle-panel)>h2{font-size:21px;margin:5px 15px 12px}.place-dialog:has(.castle-panel)>.place-top{padding:12px 15px 0}}
+
+.castle-school-door{left:8%;top:33%;width:17%;height:39%}.castle-school-dialog{width:680px;max-width:calc(100% - 24px);max-height:calc(100svh - 48px);overflow:auto;padding:24px;border:1px solid #a58b50;background:#122219;color:#e6d3a4;box-shadow:0 14px 60px #000b}.castle-school-dialog::backdrop{background:#030b09bb;backdrop-filter:blur(3px)}.castle-school-dialog h2{font:600 23px Cinzel,Georgia,serif;color:#e9cf98;border-bottom:1px solid #75663c;padding-bottom:14px;margin:0 0 15px}.castle-school-dialog>p{font-size:13px;line-height:1.7}.castle-school-dialog>[data-close-castle-school]{width:100%;margin-top:18px}

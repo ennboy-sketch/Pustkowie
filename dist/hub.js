@@ -19,7 +19,7 @@
     wheel:{name:'Koło Losu',title:'Koło Losu',category:'Fontanna Czarnej Stali',icon:'wheel',x:50,y:39},
     glade:{name:'Polana',title:'Polana',category:'Świat',icon:'map',x:65,y:94},
     'glade-path-1':{name:'Lodowe Wzgórza',art:'glade-ice-hills-icon.webp',requiredLevel:75,category:'Polana',icon:'map',text:'W Lodowych Wzgórzach wznosi się zamek krasnoludów. Lokację stworzymy w kolejnym etapie.',future:'Zamek krasnoludów'},
-    'glade-path-2':{name:'Eldor',art:'glade-eldor-icon.webp',requiredLevel:10,category:'Polana',icon:'map',text:'Ta ścieżka prowadzi do Eldoru, osady elfów. Elfy będą tu wybierać profesję u odpowiednich nauczycieli. Postacie nauczycieli i profesje dodamy później.',future:'Osada elfów · Nauczyciele profesji'},
+    'glade-path-2':{name:'Eldor',art:'glade-eldor-icon.webp',requiredLevel:10,category:'Polana',icon:'map',text:'Ta ścieżka prowadzi do Eldoru, osady elfów. Eldor będzie lokacją misjową z nowymi postaciami, zadaniami i wyprawami. Mieszkańców i misje dodamy później.',future:'Osada elfów · Misje i wyprawy'},
     'glade-path-3':{name:'Ubocze',art:'glade-ubocze-icon.webp',requiredLevel:30,category:'Polana',icon:'map',text:'Na Uboczu mieści się karczma „Pod złotym Kucem”. Spotkasz tu nowe postacie i otrzymasz nowe misje. Wnętrze, postacie i zadania dodamy później.',future:'Tawerna „Pod złotym Kucem”'},
     mount:{name:'Wierzchowiec',category:'Bohater',icon:'mount'},
     help:{name:'Pomoc',category:'Pustkowie',icon:'help'}
@@ -102,19 +102,19 @@
   document.addEventListener('visibilitychange',()=>{if(!document.hidden)void refreshEnergy();});
   window.addEventListener('focus',()=>void refreshEnergy());
   window.addEventListener('storage',e=>{if(e.key===HERO_KEY)void refreshEnergy();});
-  function professionTeacher(){return ['warrior','dwarf'].includes(hero.classId)?'gabriel':hero.classId==='mage'?'alchemist':null;}
+  function professionTeacher(){return ['warrior','dwarf'].includes(hero.classId)?'gabriel':hero.classId==='mage'?'alchemist':hero.classId==='elf'?'elven':null;}
   function barracksPanel(trainer='gabriel') {
     try{readCurrentHero();}catch{return '<p role="status">Nie można odczytać postaci. Odśwież grę.</p>';}
     const teacher=professionTeacher();
-    if(!teacher)return '<p class="place-text">Nauczyciele profesji Elfa pojawią się w Eldorze. Wejście do osady od poziomu 10.</p>';
-    if(teacher!==trainer)return `<p class="place-text">${teacher==='alchemist'?'Mag szkoli się w profesji u Alchemiczki w Wieży Zielonego Płomienia.':'Wojownik i Krasnolud szkolą się w profesji u Paladyna Gabriela w koszarach.'}</p>`;
+    if(!teacher)return '<p class="place-text">Nauczyciel profesji tej klasy nie jest jeszcze dostępny.</p>';
+    if(teacher!==trainer)return `<p class="place-text">${teacher==='alchemist'?'Mag szkoli się w profesji u Alchemiczki w Wieży Zielonego Płomienia.':teacher==='elven'?'Elf szkoli się w Komnacie Leśnej Przysięgi w głównym zamku. Wejdź do Zamku, a następnie przez lewe drzwi w przedsionku.':'Wojownik i Krasnolud szkolą się w profesji u Paladyna Gabriela w koszarach.'}</p>`;
     const unlocked = level() >= 10;
     const current = profession();
     const canChoose = unlocked && PROFESSIONS[hero.classId].some(p=>!p.pending);
-    return `<div class="barracks-banner">${icon(trainer==='alchemist'?'alchemy':'barracks')}<div><h3>Wybierz swoją profesję</h3><p>${unlocked ? 'Poziom wymagany do wyboru został osiągnięty.' : 'Wybór odblokuje się na 10. poziomie.'}</p></div></div>
+    return `<div class="barracks-banner">${icon(trainer==='alchemist'?'alchemy':trainer==='elven'?'guild':'barracks')}<div><h3>Wybierz swoją profesję</h3><p>${unlocked ? 'Poziom wymagany do wyboru został osiągnięty.' : 'Wybór odblokuje się na 10. poziomie.'}</p></div></div>
       <div class="profession-unlock"><div><span>${unlocked ? 'Wymagany poziom osiągnięty' : 'Wymagany poziom 10'}</span><b>Twój poziom: ${level()}</b></div><progress max="10" value="${Math.min(level(),10)}" aria-label="Postęp do odblokowania profesji"></progress></div>
       ${current ? `<p class="current-profession">Obecna profesja: <strong>${current.name}</strong></p>` : ''}
-      <form id="profession-form" data-profession-trainer="${trainer}"><fieldset ${canChoose ? '' : 'disabled'}><legend class="sr-only">Profesje dla twojej klasy</legend><div class="profession-grid">${PROFESSIONS[hero.classId].map(p=>`<label class="profession-card"><input type="radio" name="profession" value="${p.id}" ${current?.id===p.id ? 'checked' : ''} ${p.pending ? 'disabled' : ''} required><span class="profession-symbol">${icon(p.icon)}</span><strong>${p.name}</strong><span class="profession-role">${p.role}</span><span class="profession-state">${p.pending ? 'Do ustalenia' : unlocked ? 'Dostępna' : 'Od poziomu 10'}</span></label>`).join('')}</div><button type="submit" class="primary profession-submit">${unlocked ? canChoose ? current ? 'Zmień profesję' : 'Wybierz profesję' : 'Profesje w przygotowaniu' : 'Odblokowanie na poziomie 10'}</button></fieldset><p id="profession-status" role="status" aria-live="polite"></p></form><p class="panel-note">${trainer==='alchemist'?'Nauczyciel: Alchemiczka.':'Nauczyciel: Paladyn Gabriel.'} Szkolenie od poziomu 10. Nazwy i umiejętności profesji ustalimy później.</p>`;
+      <form id="profession-form" data-profession-trainer="${trainer}"><fieldset ${canChoose ? '' : 'disabled'}><legend class="sr-only">Profesje dla twojej klasy</legend><div class="profession-grid">${PROFESSIONS[hero.classId].map(p=>`<label class="profession-card"><input type="radio" name="profession" value="${p.id}" ${current?.id===p.id ? 'checked' : ''} ${p.pending ? 'disabled' : ''} required><span class="profession-symbol">${icon(p.icon)}</span><strong>${p.name}</strong><span class="profession-role">${p.role}</span><span class="profession-state">${p.pending ? 'Do ustalenia' : unlocked ? 'Dostępna' : 'Od poziomu 10'}</span></label>`).join('')}</div><button type="submit" class="primary profession-submit">${unlocked ? canChoose ? current ? 'Zmień profesję' : 'Wybierz profesję' : 'Profesje w przygotowaniu' : 'Odblokowanie na poziomie 10'}</button></fieldset><p id="profession-status" role="status" aria-live="polite"></p></form><p class="panel-note">${trainer==='alchemist'?'Nauczyciel: Alchemiczka.':trainer==='elven'?'Miejsce szkolenia: Komnata Leśnej Przysięgi w Zamku Czarnej Stali. Nauczycieli dodamy później.':'Nauczyciel: Paladyn Gabriel.'} Szkolenie od poziomu 10. Nazwy i umiejętności profesji ustalimy później.</p>`;
   }
   const labels = ['Siła','Zręczność','Inteligencja','Wytrzymałość'];
   function toggleMenu(open) {
@@ -200,7 +200,7 @@
       content = `<div class="place-emblem">${place.art?`<img class="glade-location-art" src="${place.art}" alt="" width="128" height="128">`:icon(place.icon)}</div><p class="place-text">${place.text}</p><div class="coming-soon"><span>${place.future}</span><span class="state-badge">W przygotowaniu</span></div>`;
     }
     $('#place-content').innerHTML = content;
-    if (id === 'guild') stopCastle=window.CastlePanel.mount($('#place-content'),{onTitle:title=>{$('#place-title').textContent=title;}});
+    if (id === 'guild') stopCastle=window.CastlePanel.mount($('#place-content'),{onTitle:title=>{$('#place-title').textContent=title;},professionMarkup:()=>barracksPanel('elven')});
     if (id === 'hero') stopHeroSheet=window.HeroSheet.mount($('.hero-sheet-root'),{read:readCurrentHero,update:updateCurrentHero});
     if (id === 'inventory') stopHeroSheet=window.HeroSheet.mountBag($('.backpack-root'),{read:readCurrentHero,update:updateCurrentHero});
     if (id === 'dungeon' && !dungeonLocked) stopDungeons=window.DungeonsPanel.mount($('#place-content'),{read:readCurrentHero,update:updateCurrentHero,onTitle:title=>{$('#place-title').textContent=title;}});
@@ -249,8 +249,8 @@
       localStorage.setItem(HERO_KEY,JSON.stringify(updated));
     } catch { status.textContent = 'Nie udało się zapisać profesji. Sprawdź ustawienia zapisu w przeglądarce.'; return; }
     hero = updated; updateProfile();
-    const teacher=professionTeacher();openPlace(teacher==='alchemist'?'alchemy':'barracks');
-    if(teacher==='alchemist')window.AlchemistPanel.openProfessions();else window.BarracksPanel.openProfessions();
+    const teacher=professionTeacher();openPlace(teacher==='alchemist'?'alchemy':teacher==='elven'?'guild':'barracks');
+    if(teacher==='alchemist')window.AlchemistPanel.openProfessions();else if(teacher==='elven')window.CastlePanel.openSchool();else window.BarracksPanel.openProfessions();
     $('#profession-status').textContent = `Wybrano profesję: ${profession().name}.`;
   });
   $('#place-dialog').addEventListener('close', () => {stopHeroSheet();stopActiveScout();stopDungeons();stopCastle();window.FateWheel.cancel();window.TavernPanel.cancel();window.AlchemistPanel.cancel();window.ForgePanel.cancel();window.BarracksPanel.cancel();window.MarketPanel.cancel();});
