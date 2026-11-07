@@ -352,7 +352,7 @@ Podczas zwiadu i walki przycisk lupy otwiera osobny pełnoekranowy podgląd loka
 
 Koszary Żelaznej Przysięgi otwierają panoramiczny plac treningowy (`barracks-training.webp`). Paladyn Gabriel jest człowiekiem w lśniącej srebrnej zbroi ze złotymi detalami, bez hełmu. Otaczają go manekiny, stojaki z bronią, tarcze i sztandary. Plac obsługuje przesuwanie i wspólne przybliżanie 100–300%.
 
-Kliknięcie Gabriela otwiera powitanie i panel profesji Wojownika oraz Krasnoluda; pozostałe klasy otrzymują wskazówkę o swoim nauczycielu; zachowane są jego wymagania poziomu 10 i blokada profesji czekających na ustalenie. Drzwi do zbrojowni oraz gabinetu dowódcy paladynów mają osobne znaczniki i informują o zamkniętym wejściu. Nie dodano jeszcze postaci dowódcy, wnętrz ani mechaniki treningu. Oglądanie placu i rozmowy nie pobierają zasobów i nie zmieniają zapisu postaci.
+Kliknięcie Gabriela otwiera powitanie i panel profesji Wojownika oraz Krasnoluda; pozostałe klasy otrzymują wskazówkę o swoim nauczycielu; zachowane są jego wymagania poziomu 10 i blokada profesji czekających na ustalenie. Drzwi do zbrojowni otwierają panoramiczną salę z Rolandem. Gabinet dowódcy paladynów pozostaje zamknięty; postać dowódcy i jego wnętrze dodamy później. Oglądanie placu i rozmowy nie pobierają zasobów i nie zmieniają zapisu postaci.
 
 
 ## Gringo i Czarny Targ
@@ -801,3 +801,10 @@ Gorim Sadza w kuźni wytwarza broń na poziom 35 z 10 Rzadkich Materiałów, 10 
 ## Nieodwracalny wybór profesji
 
 Każda postać może wybrać profesję tylko raz. Zasada obejmuje wcześniejsze zapisy oraz wszystkie klasy i płcie. Przed zatwierdzeniem panel wyraźnie informuje o nieodwracalności. Po zapisaniu pola i przycisk wyboru są zablokowane, a profesja pozostaje widoczna. Obsługa formularza ponownie odczytuje zapis pod wspólną blokadą Web Locks, odrzuca drugi wybór i sprawdza zapis tuż przed nadpisaniem. Błąd zapisu nie zatwierdza profesji i pozwala spróbować ponownie.
+
+
+## Zbrojownia i Roland
+
+W Koszarach drzwi „Zbrojownia” otwierają nową panoramiczną kamienną salę `armory-roland.webp` ze stojakami na broń, świętymi pancerzami Palladynów i ciężkim uzbrojeniem Rycerzy. Roland stoi pośrodku jako zbrojmistrz; podpis z jego imieniem otwiera rozmowę. Pokój używa wspólnego przesuwania, bezwładności i przybliżania `SceneZoom`, jak karczma; na krótkich ekranach początkowy kadr zapewnia widoczny i klikalny podpis. Wyjście przez górny X, ponowne wejście do Koszar przywraca plac treningowy z Gabrielem.
+
+Panel ekwipunku Rolanda jest udostępniany wyłącznie Wojownikowi/Wojowniczce od poziomu 10 z zapisaną profesją Palladyn lub Rycerz. Pozostałe klasy i postacie bez profesji mogą obejrzeć salę, ale otrzymują komunikat o ograniczeniu. Dostęp jest sprawdzany z aktualnego zapisu podczas rozmowy oraz po zdarzeniu storage/focus. Konkretne przedmioty, statystyki, ceny i sposób ich zdobywania ustalimy później; nie są przyznawane żadne przedmioty ani pobierane waluty. Testy: `node --test tests/*.test.cjs`, `node tests/armory-roland.browser.cjs http://127.0.0.1:8020/`.

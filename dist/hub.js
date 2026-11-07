@@ -213,7 +213,7 @@
     if (id === 'alchemy') window.AlchemistPanel.mount($('#place-content'),{read:readCurrentHero,update:updateCurrentHero,professionMarkup:()=>barracksPanel('alchemist')});
     if (id === 'forge' && !forgeLocked) window.ForgePanel.mount($('#place-content'),{read:readCurrentHero,update:updateCurrentHero});
     if (id === 'market') window.MarketPanel.mount($('#place-content'),{read:readCurrentHero,update:updateCurrentHero});
-    if (id === 'barracks') window.BarracksPanel.mount($('#place-content'),{professionMarkup:()=>barracksPanel('gabriel')});
+    if (id === 'barracks') window.BarracksPanel.mount($('#place-content'),{read:readCurrentHero,onTitle:title=>{$('#place-title').textContent=title;},professionMarkup:()=>barracksPanel('gabriel')});
     if(id==='tavern'){
       if(scouting){
         const scene=window.BrandMissions.SCENES[hero.activeMission.sceneId];
