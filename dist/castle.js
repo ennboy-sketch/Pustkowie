@@ -48,5 +48,5 @@
     const observer=new ResizeObserver(fit);observer.observe(view);fit();
     return ()=>{disposed=true;openSchool=()=>{};if(school.open)school.close();observer.disconnect();stopZoom();art.removeEventListener('load',fit);panel.removeEventListener('click',click);};
   }
-  window.CastlePanel={markup,mount,openSchool:()=>openSchool()};
+  window.CastlePanel={openRoom:id=>{if(id==='school')document.querySelector('[data-castle-school]')?.click();else if(id==='throne')document.querySelector('[data-castle-throne]')?.click();},markup,mount,openSchool:()=>openSchool()};
 })();

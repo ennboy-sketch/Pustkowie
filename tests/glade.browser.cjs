@@ -1,7 +1,7 @@
 const {chromium}=require('playwright'),assert=require('node:assert/strict');
 (async()=>{const browser=await chromium.launch({executablePath:'/usr/bin/chromium',headless:true,args:['--no-sandbox','--disable-dev-shm-usage']});try{for(const width of [1280,390]){
  const p=await browser.newPage({viewport:{width,height:900}}),errors=[];p.on('pageerror',e=>errors.push(e.message));await p.route('https://fonts.googleapis.com/**',r=>r.abort());await p.goto(process.argv[2]||'http://127.0.0.1:8020/',{waitUntil:'load'});
- await p.evaluate(()=>localStorage.setItem('pustkowie.hero.v2',JSON.stringify({version:2,name:'Test',classId:'warrior',gender:'female',level:5,xp:0,gold:100,energy:100})));await p.reload({waitUntil:'load'});
+ await p.evaluate(()=>localStorage.setItem('pustkowie.hero.v2',JSON.stringify({version:2,name:'Test',classId:'warrior',gender:'female',level:5,xp:0,gold:100,energy:100})));await p.reload({waitUntil:'load'});await require("./profile-fixture.cjs")(p);
  const entry=p.locator('#map-pins [data-place="glade"]');assert.equal(await entry.innerText(),'Polana');
  const coords=await entry.evaluate(e=>({x:parseFloat(e.style.getPropertyValue('--x')),y:parseFloat(e.style.getPropertyValue('--y'))}));assert.ok(coords.y>76&&coords.x>48);
  await entry.scrollIntoViewIfNeeded();await entry.click();await p.waitForFunction(()=>document.querySelector('#town-map').classList.contains('is-glade'));

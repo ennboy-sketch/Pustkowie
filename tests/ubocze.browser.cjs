@@ -8,7 +8,7 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
       await p.route('https://fonts.googleapis.com/**',r=>r.abort());
       await p.goto(process.argv[2]||'http://127.0.0.1:8020/',{waitUntil:'load'});
       await p.evaluate(()=>localStorage.setItem('pustkowie.hero.v2',JSON.stringify({version:2,name:'Test',classId:'warrior',gender:'female',level:30,xp:0,gold:100,shards:2,energy:80})));
-      await p.reload({waitUntil:'load'});
+      await p.reload({waitUntil:'load'});await require("./profile-fixture.cjs")(p);
       const view=p.locator('.world-viewport');
       await p.locator('#map-pins [data-place=glade]').scrollIntoViewIfNeeded();
       const castlePosition=await view.evaluate(e=>({left:e.scrollLeft,top:e.scrollTop}));

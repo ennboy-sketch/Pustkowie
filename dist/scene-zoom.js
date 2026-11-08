@@ -119,6 +119,7 @@
         zoom(e.key==='0'?1:base+(e.key==='-'?-.25:.25));
       }
     }
+    function restore(e){const p=e.detail;if(!p)return;zoom(p.scale,{x:view.clientWidth/2,y:view.clientHeight/2},{x:scene.clientWidth*p.x,y:scene.clientHeight*p.y});flush();}
     function suspend(){
       haltInertia();flush();
       const ids=[...pointers.keys()];pointers.clear();pan=null;pinch=null;
@@ -126,7 +127,7 @@
       view.classList.remove('is-dragging');
     }
     const dialog=view.closest('dialog');
-    view.addEventListener('wheel',wheel,{passive:false});
+    view.addEventListener('scene-restore',restore);view.addEventListener('wheel',wheel,{passive:false});
     view.addEventListener('pointerdown',down);view.addEventListener('pointermove',move,{passive:false});
     view.addEventListener('pointerup',end);view.addEventListener('pointercancel',end);view.addEventListener('lostpointercapture',end);view.addEventListener('pointerleave',leave);
     view.addEventListener('click',click,true);view.addEventListener('keydown',key);
@@ -137,7 +138,7 @@
       if(mapObserver){mapObserver.disconnect();scene.style.width=previousWidth;scene.style.height=previousHeight;}
       scene.style.zoom=previousZoom;view.style.touchAction=previousTouch;view.classList.remove('scene-zoom-viewport');
       if(previousTab===null)view.removeAttribute('tabindex');delete view.dataset.zoomScale;
-      view.removeEventListener('wheel',wheel);
+      view.removeEventListener('scene-restore',restore);view.removeEventListener('wheel',wheel);
       view.removeEventListener('pointerdown',down);view.removeEventListener('pointermove',move);view.removeEventListener('pointerup',end);view.removeEventListener('pointercancel',end);view.removeEventListener('lostpointercapture',end);view.removeEventListener('pointerleave',leave);
       view.removeEventListener('click',click,true);view.removeEventListener('keydown',key);
       document.removeEventListener('pointerdown',haltInertia,true);document.removeEventListener('visibilitychange',suspend);window.removeEventListener('blur',suspend);dialog?.removeEventListener('close',suspend);
@@ -173,5 +174,5 @@
     }
   }
   let scheduled=false;const observer=new MutationObserver(()=>{if(!scheduled){scheduled=true;requestAnimationFrame(()=>{scheduled=false;scan();});}});observer.observe(document.body,{childList:true,subtree:true});scan();
-  window.SceneZoom={mount,reset(view){controllers.get(view)?.();controllers.delete(view);scan();}};
+  window.SceneZoom={mount,restore(view,state){if(view&&state)view.dispatchEvent(new CustomEvent('scene-restore',{detail:state}));},reset(view){controllers.get(view)?.();controllers.delete(view);scan();}};
 })();

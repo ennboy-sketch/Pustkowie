@@ -64,5 +64,5 @@
     panel.addEventListener('click',click);fit();
     stop=()=>{disposed=true;showProfessions=()=>{};window.removeEventListener('storage',refreshAccess);window.removeEventListener('focus',refreshAccess);observer.disconnect();art.removeEventListener('load',fit);panel.removeEventListener('click',click);if(dialog.open)dialog.close();};
   }
-  window.BarracksPanel={markup,mount,cancel,armoryProfession,openProfessions:()=>showProfessions()};
+  window.BarracksPanel={markup,mount,cancel,armoryProfession,openProfessions:()=>showProfessions(),openRoom:id=>{const button=document.querySelector(`.barracks-panorama [data-barracks-part=${id}]`);if(button&&!button.hidden)button.click();}};
 })();

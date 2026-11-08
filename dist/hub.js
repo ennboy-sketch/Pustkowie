@@ -78,7 +78,7 @@
     }
   }
   function readSavedHero() {
-    const saved=JSON.parse(localStorage.getItem(HERO_KEY));
+    const saved=window.LocalProfiles.read();
     if(!saved || saved.version!==2 || saved.name!==hero.name || saved.classId!==hero.classId || saved.gender!==hero.gender)throw new Error('Zapis postaci zmienił się. Odśwież grę.');
     return saved;
   }
@@ -87,7 +87,7 @@
   }
   function updateCurrentHero(change) {
     const updated=window.HeroSheet.activatePotion(change(readCurrentHero()));
-    localStorage.setItem(HERO_KEY,JSON.stringify(updated));
+    window.LocalProfiles.write(updated);
     hero=updated;updateProfile();return updated;
   }
   let energySyncBusy=false;
@@ -97,7 +97,7 @@
     try {
       const sync=()=>{
         const saved=readSavedHero(),updated=window.HeroSheet.activatePotion(window.EnergyCycle.apply(saved));
-        if(updated!==saved)localStorage.setItem(HERO_KEY,JSON.stringify(updated));
+        if(updated!==saved)window.LocalProfiles.write(updated);
         hero=updated;updateProfile();
         if(updated.lootInventory!==saved.lootInventory)window.dispatchEvent(new Event('pustkowie-equipment-updated'));
       };
@@ -133,13 +133,13 @@
   let stopHeroSheet=()=>{};
   let stopDungeons=()=>{};
   let stopCastle=()=>{};
-  let worldLocation='map';
+  let worldLocation='map',openPlaceId=null;
   const worldPositions=new Map();
   function showWorld(id){
     const view=$('.world-viewport'),map=$('#town-map'),glade=id==='glade',ubocze=id==='ubocze';
     const scale=Number(view.dataset.zoomScale)||1;
     worldPositions.set(worldLocation,{x:(view.scrollLeft+view.clientWidth/2)/(map.clientWidth*scale),y:(view.scrollTop+view.clientHeight/2)/(map.clientHeight*scale)});
-    worldLocation=id;map.classList.toggle('is-glade',glade);map.classList.toggle('is-ubocze',ubocze);
+    worldLocation=id;openPlaceId=null;map.classList.toggle('is-glade',glade);map.classList.toggle('is-ubocze',ubocze);
     const name=ubocze?'Ubocze':glade?'Polana':'Zamek Czarnej Stali';
     $('#settlement-title').textContent=name;
     $('.world-kicker').textContent=ubocze?'PRZY LEŚNYM TRAKCIE':glade?'ZA MURAMI ZAMKU':'OSTATNIE SCHRONIENIE';
@@ -219,6 +219,7 @@
     } else {
       content = `<div class="place-emblem">${place.art?`<img class="glade-location-art" src="${place.art}" alt="" width="128" height="128">`:icon(place.icon)}</div><p class="place-text">${place.text}</p><div class="coming-soon"><span>${place.future}</span><span class="state-badge">W przygotowaniu</span></div>`;
     }
+    openPlaceId=id;
     $('#place-content').innerHTML = content;
     if (id === 'guild') stopCastle=window.CastlePanel.mount($('#place-content'),{onTitle:title=>{$('#place-title').textContent=title;},professionMarkup:()=>barracksPanel('elven')});
     if (id === 'hero') stopHeroSheet=window.HeroSheet.mount($('.hero-sheet-root'),{read:readCurrentHero,update:updateCurrentHero});
@@ -265,7 +266,7 @@
         const previous=readSavedHero();
         if(typeof previous.profession==='string'&&previous.profession.length>0){message='Profesja została już wybrana na stałe. Nie można jej zmienić.';return;}
         if(window.Progression.level(previous)!==level()){message='Zapis zmienił się w innej karcie. Otwórz panel ponownie.';return;}
-        localStorage.setItem(HERO_KEY,JSON.stringify(updated));
+        window.LocalProfiles.write(updated);
       }catch{message='Nie udało się zapisać profesji. Spróbuj ponownie.';return;}
       hero=updated;updateProfile();saved=true;
     };
@@ -280,13 +281,14 @@
     }catch{const status=$('#profession-status');if(status)status.textContent='Nie udało się zapisać profesji. Spróbuj ponownie.';}
     finally{professionBusy=false;}
   });
-  $('#place-dialog').addEventListener('close', () => {stopHeroSheet();stopActiveScout();stopDungeons();stopCastle();window.FateWheel.cancel();window.TavernPanel.cancel();window.AlchemistPanel.cancel();window.ForgePanel.cancel();window.BarracksPanel.cancel();window.MarketPanel.cancel();});
+  $('#place-dialog').addEventListener('close', () => {if(!$('#place-dialog').open)openPlaceId=null;stopHeroSheet();stopActiveScout();stopDungeons();stopCastle();window.FateWheel.cancel();window.TavernPanel.cancel();window.AlchemistPanel.cancel();window.ForgePanel.cancel();window.BarracksPanel.cancel();window.MarketPanel.cancel();});
   $('#close-place').addEventListener('click',()=>$('#place-dialog').close());
   $('#place-dialog').addEventListener('click',e=>{if(e.target===$('#place-dialog')){const r=e.target.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)e.target.close();}});
   $('#menu-toggle').addEventListener('click',()=>toggleMenu(!$('#sidebar').classList.contains('is-open')));
   $('#close-menu').addEventListener('click',()=>toggleMenu(false));
   $('#sidebar-scrim').addEventListener('click',()=>toggleMenu(false));
   document.addEventListener('keydown',e=>{if(e.key==='Escape')toggleMenu(false);});
+  window.HubNavigation={open:openPlace,world:()=>worldLocation,place:()=>openPlaceId};
   window.mountHub = data => {
     hero = window.EnergyCycle.apply(data);
     updateProfile();

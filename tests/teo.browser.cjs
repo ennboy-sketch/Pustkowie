@@ -3,7 +3,7 @@ const{chromium}=require('playwright'),assert=require('node:assert/strict');
  for(const state of['none','accepted','two-wins','ready','completed']){
   const unlocked=['ready','completed'].includes(state);
   await page.evaluate(state=>{const hero={version:2,name:'Test',classId:'warrior',gender:'female',level:5,xp:0,gold:100,energy:100};if(state!=='none')hero.taurielQuest={status:state==='two-wins'||state==='accepted'?'active':state,defeated:TaurielQuest.BANDITS.slice(0,state==='accepted'?0:state==='two-wins'?2:3).map(x=>x.id),acceptedAt:Date.now()};localStorage.setItem('pustkowie.hero.v2',JSON.stringify(hero));},state);
-  await page.reload({waitUntil:'load'});if(width===390)await page.locator('#menu-toggle').click();await page.locator('#hub-navigation [data-place="tavern"]').click();
+  await page.reload({waitUntil:'load'});await require("./profile-fixture.cjs")(page);if(width===390)await page.locator('#menu-toggle').click();await page.locator('#hub-navigation [data-place="tavern"]').click();
   assert.equal(await page.locator('[data-npc="teo"]').isVisible(),unlocked);assert.equal(await page.locator('[data-npc="tauriel"]').isVisible(),!unlocked);
   if(unlocked){
    await page.locator('[data-npc="teo"]').scrollIntoViewIfNeeded();await page.locator('[data-npc="teo"]').click();assert.equal(await page.locator('#tavern-speaker').innerText(),'Myśliwy Teo');assert.equal(await page.locator('.teo-service').isVisible(),true);assert.match(await page.locator('.teo-service').innerText(),/100 złota za sztukę/);

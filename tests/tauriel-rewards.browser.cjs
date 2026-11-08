@@ -9,7 +9,7 @@ const url=process.argv[2]||'http://127.0.0.1:8000/';
     await page.route('https://fonts.googleapis.com/**',r=>r.abort());
     await page.goto(url,{waitUntil:'load'});
     await page.evaluate(()=>localStorage.setItem('pustkowie.hero.v2',JSON.stringify({version:2,name:'Import',classId:'warrior',gender:'female',level:5,statAllocations:{endurance:17},gold:25,xp:0,energy:100,nextEnergyResetAt:Date.now()+86400000})));
-    await page.reload({waitUntil:'load'});
+    await page.reload({waitUntil:'load'});await require("./profile-fixture.cjs")(page);
     if(width===390)await page.locator('#menu-toggle').click();
     await page.locator('#hub-navigation [data-place="tavern"]').click();
     await page.locator('[data-npc="tauriel"]').click();
