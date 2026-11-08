@@ -21,6 +21,8 @@
     'glade-path-1':{name:'Lodowe Wzgórza',art:'glade-ice-hills-icon.webp',requiredLevel:75,category:'Polana',icon:'map',text:'W Lodowych Wzgórzach wznosi się zamek krasnoludów. Lokację stworzymy w kolejnym etapie.',future:'Zamek krasnoludów'},
     'glade-path-2':{name:'Eldor',art:'glade-eldor-icon.webp',requiredLevel:50,category:'Polana',icon:'map',text:'Ta ścieżka prowadzi do Eldoru, osady elfów. Eldor będzie lokacją misjową z nowymi postaciami, zadaniami i wyprawami. Mieszkańców i misje dodamy później.',future:'Osada elfów · Misje i wyprawy'},
     'glade-path-3':{name:'Ubocze',art:'glade-ubocze-icon.webp',requiredLevel:30,category:'Polana',icon:'map',text:'Na Uboczu mieści się karczma „Pod złotym Kucem”. Spotkasz tu nowe postacie i otrzymasz nowe misje. Wnętrze, postacie i zadania dodamy później.',future:'Tawerna „Pod złotym Kucem”'},
+    'ubocze-tavern':{name:'Pod Złotym Kucem',title:'Karczma „Pod Złotym Kucem”',requiredLevel:30,category:'Ubocze',icon:'tavern',art:'glade-ubocze-icon.webp',text:'W oknach przydrożnej karczmy płonie ciepłe światło. Wnętrze, nowych mieszkańców i ich zlecenia dodamy w kolejnym etapie.',future:'Nowe postacie i misje'},
+    'ubocze-path':{name:'Ścieżka',requiredLevel:30,category:'Ubocze',icon:'map',text:'Za mostkiem ścieżka znika pomiędzy drzewami. Jej dalszy kierunek odkryjemy później.',future:'Dalsza droga'},
     mount:{name:'Wierzchowiec',category:'Bohater',icon:'mount'},
     help:{name:'Pomoc',category:'Pustkowie',icon:'help'}
   };
@@ -131,19 +133,31 @@
   let stopHeroSheet=()=>{};
   let stopDungeons=()=>{};
   let stopCastle=()=>{};
-  let worldLocation='map',townPosition=null;
+  let worldLocation='map';
+  const worldPositions=new Map();
   function showWorld(id){
-    const view=$('.world-viewport'),map=$('#town-map'),glade=id==='glade';
-    if(glade&&worldLocation==='map')townPosition={left:view.scrollLeft,top:view.scrollTop};
-    worldLocation=id;map.classList.toggle('is-glade',glade);
-    $('#settlement-title').textContent=glade?'Polana':'Zamek Czarnej Stali';
-    $('.world-kicker').textContent=glade?'ZA MURAMI ZAMKU':'OSTATNIE SCHRONIENIE';
-    $('.world-bottom>span').innerHTML=glade?'<i></i> Na leśnej polanie':'<i></i> W bezpiecznym zamku';
-    $('.map-caption').innerHTML=`<span>✦</span> ${glade?'Polana':'Zamek Czarnej Stali'} <small>Poziom ${level()}</small>`;
-    view.setAttribute('aria-label',glade?'Polana z trzema ścieżkami — przeciągnij, aby przesunąć widok':'Mapa zamku — przeciągnij, aby przesunąć widok');
-    $('#map-pins').innerHTML=glade?[[1,16,36],[2,51.3,16],[3,78,35]].map(([n,x,y])=>`<button type="button" class="map-pin glade-path ${level()<places['glade-path-'+n].requiredLevel?'is-locked':''}" aria-label="${places['glade-path-'+n].name}" data-place="glade-path-${n}" style="--x:${x}%;--y:${y}%"><span class="pin-medallion"><img class="glade-path-art" src="${places['glade-path-'+n].art}" alt="" width="64" height="64" draggable="false"></span><span class="pin-label">${places['glade-path-'+n].name}</span></button>`).join('')+'<button type="button" class="map-pin glade-return" data-place="map" style="--x:50%;--y:86%"><span class="pin-medallion">'+icon('castle')+'</span><span class="pin-label">Powrót do zamku</span></button>':townPins();
+    const view=$('.world-viewport'),map=$('#town-map'),glade=id==='glade',ubocze=id==='ubocze';
+    const scale=Number(view.dataset.zoomScale)||1;
+    worldPositions.set(worldLocation,{x:(view.scrollLeft+view.clientWidth/2)/(map.clientWidth*scale),y:(view.scrollTop+view.clientHeight/2)/(map.clientHeight*scale)});
+    worldLocation=id;map.classList.toggle('is-glade',glade);map.classList.toggle('is-ubocze',ubocze);
+    const name=ubocze?'Ubocze':glade?'Polana':'Zamek Czarnej Stali';
+    $('#settlement-title').textContent=name;
+    $('.world-kicker').textContent=ubocze?'PRZY LEŚNYM TRAKCIE':glade?'ZA MURAMI ZAMKU':'OSTATNIE SCHRONIENIE';
+    $('.world-bottom>span').innerHTML='<i></i> '+(ubocze?'Na Uboczu':glade?'Na leśnej polanie':'W bezpiecznym zamku');
+    $('.map-caption').innerHTML=`<span>✦</span> ${name} <small>Poziom ${level()}</small>`;
+    view.setAttribute('aria-label',`${name} — przeciągnij, aby przesunąć widok`);
+    if(ubocze){
+      $('#map-pins').innerHTML='<button type="button" class="map-pin ubocze-tavern" data-place="ubocze-tavern" style="--x:37%;--y:63%"><span class="pin-medallion"><img class="glade-path-art" src="glade-ubocze-icon.webp" alt="" width="64" height="64" draggable="false"></span><span class="pin-label">Pod Złotym Kucem</span></button><button type="button" class="map-pin ubocze-path" data-place="ubocze-path" style="--x:81%;--y:46%"><span class="pin-medallion"><img class="glade-path-art" src="ubocze-path-icon.webp" alt="" width="64" height="64" draggable="false"></span><span class="pin-label">Ścieżka</span></button><button type="button" class="map-pin ubocze-return" data-place="glade" style="--x:50%;--y:86%"><span class="pin-medallion">'+icon('map')+'</span><span class="pin-label">Powrót na polanę</span></button>';
+    }else{
+      $('#map-pins').innerHTML=glade?[[1,16,36],[2,51.3,16],[3,78,35]].map(([n,x,y])=>`<button type="button" class="map-pin glade-path ${level()<places['glade-path-'+n].requiredLevel?'is-locked':''}" aria-label="${places['glade-path-'+n].name}" data-place="glade-path-${n}" style="--x:${x}%;--y:${y}%"><span class="pin-medallion"><img class="glade-path-art" src="${places['glade-path-'+n].art}" alt="" width="64" height="64" draggable="false"></span><span class="pin-label">${places['glade-path-'+n].name}</span></button>`).join('')+'<button type="button" class="map-pin glade-return" data-place="map" style="--x:50%;--y:86%"><span class="pin-medallion">'+icon('castle')+'</span><span class="pin-label">Powrót do zamku</span></button>':townPins();
+    }
     window.SceneZoom?.reset(view);
-    requestAnimationFrame(()=>{view.scrollLeft=glade?Math.max(0,(view.scrollWidth-view.clientWidth)/2):townPosition?.left??Math.max(0,(view.scrollWidth-view.clientWidth)/2);view.scrollTop=glade?Math.max(0,(view.scrollHeight-view.clientHeight)/2):townPosition?.top??0;});
+    requestAnimationFrame(()=>{
+      if(worldLocation!==id)return;
+      const position=worldPositions.get(id)||{x:ubocze ? .37 : .5,y:.5};
+      view.scrollLeft=Math.max(0,map.clientWidth*position.x-view.clientWidth/2);
+      view.scrollTop=Math.max(0,map.clientHeight*position.y-view.clientHeight/2);
+    });
     $('#place-dialog').close();$('#settlement-title').focus({preventScroll:true});
   }
   function openPlace(id) {
@@ -164,6 +178,7 @@
     toggleMenu(false);
     document.querySelectorAll('.nav-tile').forEach(el => el.setAttribute('aria-current',el.dataset.place === id ? 'page' : 'false'));
     if (id === 'map'||id==='glade') {showWorld(id);return;}
+    if(id==='glade-path-3'&&level()>=places[id].requiredLevel){showWorld('ubocze');return;}
     const place = places[id];
     $('#place-title').textContent = place.title || place.name;
     $('#place-category').textContent = place.category;
@@ -172,7 +187,7 @@
     let content;
     if (place.requiredLevel) {
       const locked=level()<place.requiredLevel;
-      content=`<div class="place-emblem"><img class="glade-location-art" src="${place.art}" alt="" width="128" height="128"></div><p class="place-text" role="status">${locked?'Wejście jest zablokowane.':place.text}</p><p class="panel-note">Twój poziom: ${level()} · Wymagany poziom: ${place.requiredLevel}</p><div class="coming-soon"><span>${place.future}</span><span class="state-badge">${locked?'Od poziomu '+place.requiredLevel:'W przygotowaniu'}</span></div>`;
+      content=`<div class="place-emblem">${place.art?`<img class="glade-location-art" src="${place.art}" alt="" width="128" height="128">`:icon(place.icon)}</div><p class="place-text" role="status">${locked?'Wejście jest zablokowane.':place.text}</p><p class="panel-note">Twój poziom: ${level()} · Wymagany poziom: ${place.requiredLevel}</p><div class="coming-soon"><span>${place.future}</span><span class="state-badge">${locked?'Od poziomu '+place.requiredLevel:'W przygotowaniu'}</span></div>`;
     } else if (id === 'hero') {
       content = '<div class="hero-sheet-root"></div>';
     } else if (id === 'tavern') {
