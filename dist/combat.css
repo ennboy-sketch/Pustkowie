@@ -57,3 +57,4 @@ dialog.combat-dialog{position:fixed;inset:0;margin:0;padding:0;border:0;border-r
 .combat-portrait .combat-figure.monster-level-16{--monster-art:url('monsters-level-16.webp');--monster-grid:300% 200%}.combat-portrait .combat-figure.monster-level-21{--monster-art:url('monsters-level-21.webp');--monster-grid:300% 200%}.combat-portrait .combat-figure.monster-level-26{--monster-art:url('monsters-level-26.webp');--monster-grid:300% 200%}
 
 .combat-fighter.casting-dark-missile .combat-portrait{box-shadow:inset 0 0 45px #481475bd,0 0 20px #a563d680}.combat-fighter.casting-dark-missile .combat-figure{filter:drop-shadow(0 0 14px #a968e5)}
+.combat-portrait .combat-figure.monster-training{--monster-art:url('training-dummy.svg');--monster-grid:100% 100%}

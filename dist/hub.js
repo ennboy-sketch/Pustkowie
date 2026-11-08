@@ -168,6 +168,7 @@
     }
     const forgeLocked=id==='forge'&&level()<FORGE_LEVEL;
     const dungeonLocked=id==='dungeon'&&level()<DUNGEON_LEVEL;
+    const dungeonTrainingLocked=id==='dungeon'&&!window.GabrielTraining.unlocked(hero)&&hero.activeCombat?.source!=='graveyard';
     if(['tavern','hero','inventory','market'].includes(id)){try{readCurrentHero();}catch{}}
     stopActiveScout();stopHeroSheet();stopDungeons();stopCastle();
     window.FateWheel.cancel();
@@ -194,6 +195,8 @@
       content = scouting?'<div class="scout-active-view" aria-label="Aktywny zwiad"></div>':window.TavernPanel.markup();
     } else if (id === 'alchemy') {
       content = window.AlchemistPanel.markup();
+    } else if (dungeonTrainingLocked) {
+      content='<p class="place-text">Aby wejść do lochów, ukończ misje treningowe u Gabriela: pokonaj 3 manekiny, odzyskaj od goblinów skradzioną broń, tarczę i hełm, a następnie oddaj uzbrojenie. Wymagany jest również poziom 10.</p><button type="button" class="primary" id="go-gabriel">Idź do Gabriela</button>';
     } else if (dungeonLocked) {
       content = `<div class="place-emblem">${icon('dungeon')}</div><p class="place-text" role="status">Wejście do Lochów jest dostępne od ${DUNGEON_LEVEL}. poziomu postaci.</p><p class="panel-note">Twój poziom: ${level()} · Wymagany poziom: ${DUNGEON_LEVEL}</p>`;
     } else if (id === 'dungeon') {
@@ -224,12 +227,12 @@
     if (id === 'guild') stopCastle=window.CastlePanel.mount($('#place-content'),{onTitle:title=>{$('#place-title').textContent=title;},professionMarkup:()=>barracksPanel('elven')});
     if (id === 'hero') stopHeroSheet=window.HeroSheet.mount($('.hero-sheet-root'),{read:readCurrentHero,update:updateCurrentHero});
     if (id === 'inventory') stopHeroSheet=window.HeroSheet.mountBag($('.backpack-root'),{read:readCurrentHero,update:updateCurrentHero});
-    if (id === 'dungeon' && !dungeonLocked) stopDungeons=window.DungeonsPanel.mount($('#place-content'),{read:readCurrentHero,update:updateCurrentHero,onTitle:title=>{$('#place-title').textContent=title;}});
+    if (id === 'dungeon' && !dungeonLocked && !dungeonTrainingLocked) stopDungeons=window.DungeonsPanel.mount($('#place-content'),{read:readCurrentHero,update:updateCurrentHero,onTitle:title=>{$('#place-title').textContent=title;}});
     if (id === 'wheel') window.FateWheel.mount($('#place-content'),{read:readCurrentHero,update:updateCurrentHero});
     if (id === 'alchemy') window.AlchemistPanel.mount($('#place-content'),{read:readCurrentHero,update:updateCurrentHero,professionMarkup:()=>barracksPanel('alchemist')});
     if (id === 'forge' && !forgeLocked) window.ForgePanel.mount($('#place-content'),{read:readCurrentHero,update:updateCurrentHero});
     if (id === 'market') window.MarketPanel.mount($('#place-content'),{read:readCurrentHero,update:updateCurrentHero});
-    if (id === 'barracks') window.BarracksPanel.mount($('#place-content'),{read:readCurrentHero,onTitle:title=>{$('#place-title').textContent=title;},professionMarkup:()=>barracksPanel('gabriel')});
+    if (id === 'barracks') window.BarracksPanel.mount($('#place-content'),{read:readCurrentHero,update:updateCurrentHero,onTitle:title=>{$('#place-title').textContent=title;},professionMarkup:()=>barracksPanel('gabriel')});
     if(id==='tavern'){
       if(scouting){
         const scene=window.BrandMissions.SCENES[hero.activeMission.sceneId];
@@ -282,6 +285,7 @@
     finally{professionBusy=false;}
   });
   $('#place-dialog').addEventListener('close', () => {if(!$('#place-dialog').open)openPlaceId=null;stopHeroSheet();stopActiveScout();stopDungeons();stopCastle();window.FateWheel.cancel();window.TavernPanel.cancel();window.AlchemistPanel.cancel();window.ForgePanel.cancel();window.BarracksPanel.cancel();window.MarketPanel.cancel();});
+  $('#place-content').addEventListener('click',e=>{if(e.target.closest('#go-gabriel')){openPlace('barracks');window.BarracksPanel.openTraining();}});
   $('#close-place').addEventListener('click',()=>$('#place-dialog').close());
   $('#place-dialog').addEventListener('click',e=>{if(e.target===$('#place-dialog')){const r=e.target.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)e.target.close();}});
   $('#menu-toggle').addEventListener('click',()=>toggleMenu(!$('#sidebar').classList.contains('is-open')));

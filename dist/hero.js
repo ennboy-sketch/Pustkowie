@@ -19,7 +19,7 @@
   }
   function canEquip(hero,item){if(item?.kind==='minotaur-axe'&&window.Progression.level(hero)<20)return false;if(!item||item.slot==='material'||window.GearCatalog.reason(hero,item))return false;return item.slot!=='armor'||!!BODY_TYPES[armorType(item)]?.classes.includes(hero.classId);}
   function slotLabel(slot,hero){return slot==='armor'?BODY_TYPES[bodyTypeFor(hero.classId)].label:SLOTS.find(([id])=>id===slot)?.[1]||'';}
-  function itemSlotLabel(item){if(item?.slot==='material')return 'Materiał';return item?.slot==='armor'?BODY_TYPES[armorType(item)]?.label||'Ochrona ciała':SLOTS.find(([id])=>id===item?.slot)?.[1]||'';}
+  function itemSlotLabel(item){if(item?.kind==='gabriel-armament')return 'Przedmiot misyjny';if(item?.slot==='material')return 'Materiał';return item?.slot==='armor'?BODY_TYPES[armorType(item)]?.label||'Ochrona ciała':SLOTS.find(([id])=>id===item?.slot)?.[1]||'';}
   function manaCapacity(classId,intelligence){return classId==='mage'?Math.max(0,intelligence)*10:0;}
   function random(max){const a=new Uint32Array(1),limit=4294967296-4294967296%max;do{crypto.getRandomValues(a);}while(a[0]>=limit);return a[0]%max;}
   function allocations(hero){
@@ -105,7 +105,7 @@
     }
     return null;
   }
-  function iconClass(item,hero){if(item?.slot==='material')return 'gear-art material-'+item.materialKey;if(item?.kind==='minotaur-axe')return 'gear-art minotaur-axe-art';if(item?.kind==='power-potion')return 'gear-art power-potion-art';return window.GearCatalog.iconClass(item)||starterIconClass(item,hero)||(item?.id==='tauriel-emerald-necklace'?'gear-art tauriel-necklace':`gear-art gear-${SLOTS.findIndex(([id])=>id===item?.slot)}`);}
+  function iconClass(item,hero){if(item?.kind==='gabriel-armament')return 'gear-art gear-'+({weapon:4,shield:3,helmet:0}[item.questPiece]);if(item?.slot==='material')return 'gear-art material-'+item.materialKey;if(item?.kind==='minotaur-axe')return 'gear-art minotaur-axe-art';if(item?.kind==='power-potion')return 'gear-art power-potion-art';return window.GearCatalog.iconClass(item)||starterIconClass(item,hero)||(item?.id==='tauriel-emerald-necklace'?'gear-art tauriel-necklace':`gear-art gear-${SLOTS.findIndex(([id])=>id===item?.slot)}`);}
   function art(i,item,hero){
     if(item)return `<span class="${iconClass(item,hero)}" aria-hidden="true"></span>`;
     return i===7?'<span class="special-slot-mark" aria-hidden="true"></span>':`<span class="gear-art gear-${i}" aria-hidden="true"></span>`;
@@ -131,7 +131,8 @@
         grid.append(button);
       }
       const item=items.find(i=>i.id===selected);
-      if(item?.slot==='material'){detail.innerHTML=`<strong>${item.name} ×${item.quantity}</strong><small>${item.materialKey==='spellScrolls'?`Wymiana u Lilith: 10 zwojów za ${window.FateWheel?.scrollXp(hero)??1000} EXP.`:MATERIALS.find(([key])=>key===item.materialKey)?.[4]||'Materiał'}</small>`;}
+      if(item?.kind==='gabriel-armament'){detail.innerHTML='<strong></strong><small>Odzyskane uzbrojenie. Oddaj je Gabrielowi w koszarach, aby ukończyć szkolenie do lochów.</small>';detail.querySelector('strong').textContent=item.name;}
+      else if(item?.slot==='material'){detail.innerHTML=`<strong>${item.name} ×${item.quantity}</strong><small>${item.materialKey==='spellScrolls'?`Wymiana u Lilith: 10 zwojów za ${window.FateWheel?.scrollXp(hero)??1000} EXP.`:MATERIALS.find(([key])=>key===item.materialKey)?.[4]||'Materiał'}</small>`;}
       else if(item){detail.innerHTML='<strong></strong><small></small><button type="button" class="secondary" data-bag-equip>Załóż przedmiot</button>';detail.querySelector('strong').textContent=item.name;detail.querySelector('small').textContent=(itemSlotLabel(item))+itemDetails(item);detail.querySelector('button').disabled=busy||!canEquip(hero,item);if(!canEquip(hero,item))detail.querySelector('button').textContent=window.GearCatalog.reason(hero,item)||'Niedostępne dla tej klasy';}
       else{selected=null;detail.innerHTML='<p>Wybierz przedmiot, aby go obejrzeć lub założyć.</p>';}
     }

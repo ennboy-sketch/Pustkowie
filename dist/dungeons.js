@@ -18,6 +18,7 @@
     const combat=window.BrandCombat.mount(panel.querySelector('.dungeon-combat'),{...state,onQuestResolved:next=>{render(next);showResult(next.lastGraveyard);}});
     function render(hero){
       const level=window.Progression.level(hero);
+      if(!window.GabrielTraining.unlocked(hero)&&hero.activeCombat?.source!=='graveyard'){view.innerHTML='<p class="dungeons-intro">Najpierw ukończ misje treningowe u Gabriela w koszarach.</p>';return;}
       if(selected&&level<selected.requiredLevel)selected=null;
       state.onTitle?.(selected?.name||'Lochy');
       message.textContent='';
@@ -36,7 +37,7 @@
     }
     function refreshCooldown(){
       if(disposed)return;
-      try{const h=state.read(),clock=window.Graveyard.cooldown(h),n=window.Graveyard.count(h);for(const container of [panel,result])container.querySelectorAll('[data-dungeon-cooldown]').forEach(el=>el.textContent=clock.remaining?'Kolejna walka w lochach za '+clock.text:'Walka w lochach dostępna.');view.querySelectorAll('[data-grave-boss]').forEach(button=>button.disabled=busy||Number(button.dataset.graveBoss)!==n||!!h.activeCombat||!!h.activeMission||clock.remaining>0);}
+      try{const h=state.read(),clock=window.Graveyard.cooldown(h),n=window.Graveyard.count(h);for(const container of [panel,result])container.querySelectorAll('[data-dungeon-cooldown]').forEach(el=>el.textContent=clock.remaining?'Kolejna walka w lochach za '+clock.text:'Walka w lochach dostępna.');view.querySelectorAll('[data-grave-boss]').forEach(button=>button.disabled=busy||!window.GabrielTraining.unlocked(h)||Number(button.dataset.graveBoss)!==n||!!h.activeCombat||!!h.activeMission||clock.remaining>0);}
       catch{view.querySelectorAll('[data-grave-boss]').forEach(button=>button.disabled=true);}
     }
     const cooldownTimer=setInterval(refreshCooldown,1000);
@@ -51,6 +52,7 @@
       if(back){const id=selected?.id;selected=null;render(hero);view.querySelector(`[data-dungeon="${id}"]`)?.focus();return;}
       const location=LOCATIONS.find(location=>location.id===button.dataset.dungeon);if(!location)return;
       if(window.Progression.level(hero)<location.requiredLevel){selected=null;render(hero);message.textContent=`${location.name}: wymagany poziom postaci ${location.requiredLevel}.`;return;}
+      if(!window.GabrielTraining.unlocked(hero)){message.textContent='Najpierw ukończ misje treningowe u Gabriela.';return;}
       selected=location;render(hero);view.querySelector('h3').focus();
     }
     function storage(event){if(event.key==='pustkowie.hero.v2'||event.key===null)refresh();}
