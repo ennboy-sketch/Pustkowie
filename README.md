@@ -830,3 +830,16 @@ Każdy profil, także dotychczasowy, musi ukończyć „Próbę Żelaznej Przysi
 Każdy element uzbrojenia to osobny przedmiot misyjny w plecaku. Nie można go założyć ani sprzedać u Gringa lub Teo. Przed rozpoczęciem walki z goblinem wymagane jest wolne miejsce; brak miejsca przy rozliczaniu zwycięstwa nie zużywa postępu. Oddanie kompletu usuwa tylko trzy odzyskane przedmioty i zapisuje ukończenie w `gabrielQuest`. Porażki można powtarzać, wznowienie i przewijanie walk korzystają z normalnego silnika, a zapisany identyfikator walki i kolejny etap chronią przed dwukrotnym zaliczeniem. Postęp należy do profilu i jest zawarty w jego eksporcie. Import sprawdza spójność etapów.
 
 Blokada obowiązuje w widoku lochów oraz w modelu rozpoczynania walk, również dla Nekromanty. Bossowie, ich kolejność, nagrody, progi poziomów i odnowienie po walce pozostają zachowane. Rozpoczętą wcześniej walkę z bossem można dokończyć; kolejna próba wymaga szkolenia. Przy zablokowanych lochach przycisk „Idź do Gabriela” otwiera jego zadania. Model: `gabriel-training.js`; testy `node --test tests/gabriel-training.test.cjs` i `node tests/gabriel-training.browser.cjs` przy lokalnej grze na porcie 8020.
+
+## Melody, Topór Minotaura i zestawy Rolanda
+
+Drzwi do zbrojowni w Koszarach są zamknięte do oddania Topora Minotaura Melody. Warunki przekazania: ukończone wszystkie pięć walk Cmentarzyska, profesja Palladyn lub Rycerz i dokładnie jeden oryginalny topór w plecaku. Założoną broń trzeba najpierw zdjąć. Przekazanie nie jest dostępne podczas aktywnej walki lub misji. Zabiera tylko topór i zapisuje dostęp w `melodyArmory`; postęp bossów, nagrody, odnowienia i pozostałe przedmioty pozostają zachowane. Pozostałe klasy/profesje zachowują ograniczenie zbrojowni i nie mogą oddać topora bez prawa do zestawu.
+
+U Rolanda można odebrać raz na profil osiem przedmiotów od poziomu 20: broń, hełm, zbroję, buty, tarczę, naszyjnik, kolczyki i przedmiot specjalny. Palladyn otrzymuje „Świętą Przysięgę”, Rycerz „Bastion Czarnej Stali”. Komplet trafia do plecaka i nie zastępuje automatycznie obecnego wyposażenia. Potrzeba ośmiu wolnych miejsc; przy braku miejsca pozwolenie i nagroda czekają. Premie działają po założeniu. Każdy przedmiot ma kanoniczne ograniczenie do swojej profesji, a wszystkie części Palladyna są Świętym ekwipunkiem. Przedmiot specjalny zestawu jest trwałym elementem wyposażenia; nie jest miksturą.
+
+| Zestaw | Siła łącznie | Zręczność łącznie | Wytrzymałość łącznie |
+| --- | ---: | ---: | ---: |
+| Święta Przysięga (Palladyn) | 31 | 7 | 50 |
+| Bastion Czarnej Stali (Rycerz) | 24 | 6 | 61 |
+
+Zestawy są w osobnym katalogu `GearCatalog.ARMORY_SETS`, poza ofertą sklepu i wytwarzania. Bezpośredni zakup za pomocą modelu sklepu jest blokowany. Odbiór pozostaje jednorazowy również po sprzedaży części. Wręczenie topora i odbiór zestawu zapisują się pod wspólną blokadą Web Locks; błąd zapisu niczego nie zużywa. Eksport/import profilu przenosi pozwolenie i stan odbioru. Testy: `node --test tests/armory-rewards.test.cjs` i `node tests/armory-roland.browser.cjs` (lokalna gra na porcie 8020).
