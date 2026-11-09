@@ -86,20 +86,23 @@
     const enemy=sceneId&&Object.hasOwn(ROSTERS,sceneId)?availableOpponents(hero,sceneId).find(m=>m.id===hero.combatOffer.enemyId):null;
     if(!enemy)throw new Error('Brak przydzielonego przeciwnika.');
     if(hero.energy<cost)throw new Error(`Potrzebujesz ${cost} energii.`);
-    const player=profile(hero),power=Math.max(...player.stats)+player.level*2+(player.damageBonus||0);
-    player.attack=[Math.max(1,power-3),power+3];
+    const player=profile(hero);
     return {...hero,energy:hero.energy-cost,brandOffers:null,activeCombat:{cost,difficulty:options.difficulty||null,id:crypto.randomUUID(),sceneId,battle:createBattle(player,enemy,'hero'),loot:null,reward:enemy.reward?{...enemy.reward}:{gold:random(10,30),xp:random(33,55)},nextHitAt:now+1100}};
+  }
+  function rollAttack(actor){
+    const fallback=actor.classId==='mage'&&Array.isArray(actor.meleeAttack)&&!actor.attackElement&&manaInfo(actor).current<FIREBALL.manaCost;
+    return random(...(fallback?actor.meleeAttack:actor.attack));
   }
   function tick(hero,now=Date.now()){
     const fight=hero.activeCombat;
     if(!fight||fight.battle.winner||now<fight.nextHitAt)return hero;
-    return {...hero,activeCombat:{...fight,battle:advance(fight.battle,actor=>random(...actor.attack)),nextHitAt:now+1100}};
+    return {...hero,activeCombat:{...fight,battle:advance(fight.battle,rollAttack),nextHitAt:now+1100}};
   }
   function skip(hero,id){
     const fight=hero.activeCombat;
     if(!fight||fight.id!==id)throw new Error('Walka została już rozliczona lub zmieniła się.');
     let battle=fight.battle;
-    while(!battle.winner)battle=advance(battle,actor=>random(...actor.attack));
+    while(!battle.winner)battle=advance(battle,rollAttack);
     return finish({...hero,activeCombat:{...fight,battle}},id);
   }
   function trackFinishedBattle(result,fight){
@@ -127,7 +130,20 @@
     if(!base)throw new Error('Nieznana klasa postaci.');
     const added=window.HeroSheet.bonuses(hero),stats=base.map((n,i)=>n+added[i]);
     const bonuses=window.FateWheel?.bonuses(hero)||{damage:0,armor:0};
-    return {necromancer:isNecromancer(hero),damageBonus:bonuses.damage,armor:bonuses.armor,name:hero.name,level:window.Progression.level(hero),maxHp:50+stats[3]*10+window.HeroSheet.hpBonus(hero),maxMana:window.HeroSheet.manaCapacity(hero.classId,stats[2]),stats:[...stats],classId:hero.classId,gender:hero.gender};
+    const level=window.Progression.level(hero);
+    // +1 base damage per main attribute point: melee = strength,
+    // ranged = agility, magic = intelligence.
+    const mainIndex=hero.classId==='elf'?1:hero.classId==='mage'?2:0;
+    const attackRange=index=>{
+      const power=level*2+stats[index]+(bonuses.damage||0);
+      return [Math.max(1,power-3),power+3];
+    };
+    return {necromancer:isNecromancer(hero),damageBonus:bonuses.damage,armor:bonuses.armor,name:hero.name,level,
+      maxHp:50+stats[3]*10+window.HeroSheet.hpBonus(hero),
+      maxMana:window.HeroSheet.manaCapacity(hero.classId,stats[2]),
+      stats:[...stats],classId:hero.classId,gender:hero.gender,
+      attack:attackRange(mainIndex),
+      ...(hero.classId==='mage'?{meleeAttack:attackRange(0)}:{})};
   }
   function drawLocation(hero){
     const ids=Object.keys(ROSTERS).filter(id=>hero?availableOpponents(hero,id).length:ROSTERS[id].length),value=new Uint32Array(1),limit=4294967296-(4294967296%ids.length);

@@ -20,8 +20,7 @@
     if(window.Progression.level(hero)<5||quest(hero)?.status!=='active')throw new Error('Najpierw przyjmij misję u Tauriel od poziomu 5.');
     if(hero.activeMission||hero.activeCombat)throw new Error('Najpierw zakończ obecną misję.');
     if(index!==count(hero)||!BANDITS[index])throw new Error('Etap misji zmienił się. Otwórz panel ponownie.');
-    const player=window.BrandCombat.profile(hero),power=Math.max(...player.stats)+player.level*2+(player.damageBonus||0);
-    player.attack=[Math.max(1,power-3),power+3];
+    const player=window.BrandCombat.profile(hero);
     return {...hero,activeCombat:{id:crypto.randomUUID(),source:'tauriel',questIndex:index,cost:0,sceneId:'tavern-upstairs',battle:window.BrandCombat.createBattle(player,BANDITS[index],'hero'),reward:{...BANDITS[index].reward},loot:null,nextHitAt:Date.now()+1100}};
   }
   function resolve(hero,id){

@@ -174,7 +174,10 @@
       mana.hidden=hero.classId!=='mage';
       if(!mana.hidden){const resource=window.BrandCombat.manaInfo(hero.activeCombat?.battle?.hero||profile);mana.querySelector('span').textContent=`Mana: ${resource.current} / ${resource.max}`;mana.querySelector('progress').max=resource.max||1;mana.querySelector('progress').value=resource.current;}
       const spell=root.querySelector('.hero-starting-spell');spell.hidden=hero.classId!=='mage';spell.textContent=spell.hidden?'':'Zaklęcie startowe: Kula ognia · 10 many za uderzenie. Po wyczerpaniu many: atak różdżką.';
-      root.querySelector('[data-attribute="intelligence"] small').textContent=hero.classId==='mage'?'+10 many za punkt':'';
+      root.querySelector('[data-attribute="strength"] small').textContent=hero.classId==='mage'?'+1 obrażeń różdżką bez many':'+1 obrażeń w walce wręcz';
+      root.querySelector('[data-attribute="agility"] small').textContent='+1 obrażeń dystansowych (Elf)';
+      root.querySelector('[data-attribute="intelligence"] small').textContent='+1 obrażeń magicznych i +10 many (Mag)';
+      root.querySelector('[data-attribute="endurance"] small').textContent='+10 HP za punkt';
       root.querySelector('.hero-points').textContent=`Punkty do rozdania: ${available(hero)}`;
       STATS.forEach(([id],i)=>{const row=root.querySelector(`[data-attribute="${id}"]`);row.querySelector('strong').textContent=i<4?profile.stats[i]:luck(hero);row.querySelector('button').disabled=busy||available(hero)<1;if(id==='luck')row.querySelector('small').textContent=`${chance(hero)}% szansy na przedmiot`;});
       for(const [slot,label] of SLOTS){const button=root.querySelector(`[data-gear-slot="${slot}"]`),item=inventory(hero).find(i=>i.id===equipment(hero)[slot]);button.querySelector('span:not(.gear-art):not(.special-slot-mark)').textContent=slotLabel(slot,hero);button.classList.toggle('is-equipped',!!item);button.querySelector('small').textContent=item?'Założono':'Puste';button.setAttribute('aria-label',`${slotLabel(slot,hero)}: ${item?.name||'Puste'}`);button.title=(item?.name||slotLabel(slot,hero))+itemDetails(item);const icon=button.querySelector('.gear-art,.special-slot-mark');if(icon)icon.outerHTML=art(SLOTS.findIndex(([id])=>id===slot),item,hero);}
