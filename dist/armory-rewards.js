@@ -18,10 +18,10 @@
   if(!unlocked(h))throw Error('Najpierw oddaj Topór Minotaura dowódczyni Melody.');
   if(progress(h).claimed)throw Error('Zestaw od Rolanda został już odebrany.');
   if(h.activeCombat||h.activeMission)throw Error('Najpierw zakończ obecną walkę lub misję.');
-  const set=profession(h),items=window.HeroSheet.inventory(h);
-  if(window.HeroSheet.bagItems(h).length+set.items.length>25)throw Error(`Zwolnij ${set.items.length} miejsc w plecaku na pełny zestaw od Rolanda.`);
-  if(set.items.some(p=>items.some(i=>i.marketProduct===p.id||i.id===p.id)))throw Error('Przedmioty z tego zestawu są już w Twoim zapisie.');
-  const reward=set.items.map(p=>({id:p.id,marketProduct:p.id,name:p.name,slot:p.slot,requiredLevel:p.requiredLevel,...(p.armorType?{armorType:p.armorType}:{}),...(p.holy?{holy:true}:{})}));
+  const set=profession(h),items=window.HeroSheet.inventory(h),rewardItems=set.items.filter(item=>item.slot!=='weapon');
+  if(window.HeroSheet.bagItems(h).length+rewardItems.length>25)throw Error(`Zwolnij ${rewardItems.length} miejsc w plecaku na wyposażenie od Rolanda bez miecza.`);
+  if(rewardItems.some(p=>items.some(i=>i.marketProduct===p.id||i.id===p.id)))throw Error('Przedmioty z tego zestawu są już w Twoim zapisie.');
+  const reward=rewardItems.map(p=>({id:p.id,marketProduct:p.id,name:p.name,slot:p.slot,requiredLevel:p.requiredLevel,...(p.armorType?{armorType:p.armorType}:{}),...(p.holy?{holy:true}:{})}));
   return {...h,lootInventory:[...items,...reward],melodyArmory:{...progress(h),claimed:true}};
  }
  window.ArmoryRewards={profession,progress,unlocked,handoverReason,handover,claim};
