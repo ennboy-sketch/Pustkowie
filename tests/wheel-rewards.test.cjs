@@ -32,7 +32,7 @@ test('wheel upgrades five rewards exactly at level 10 and retains costs and inve
  const r=run();for(const level of [9,10,11,119])for(const currency of ['gold','shards']){
   const base={...hero(),level},high=level>=10;
   for(const [id,key,amount] of [['energy','energy',high?40:25],['xp','xp',high?10000:250],['scroll','spellScrolls',high?3:1],['gem','gemFragments',high?3:1],['rare','rareMaterial',high?3:1]]){
-   const h=win(r,base,id,currency);assert.equal(h[key],(base[key]||0)+amount);assert.equal(h.gold,base.gold-(currency==='gold'?100:0));assert.equal(h.shards,base.shards-(currency==='shards'?1:0));
+   const h=win(r,base,id,currency);assert.equal(h[key],(base[key]||0)+amount);assert.equal(h.gold,base.gold-(currency==='gold'?(level>=30?500:100):0));assert.equal(h.shards,base.shards-(currency==='shards'?(level>=30?5:1):0));
    assert.ok(h.lastWheel.name.endsWith(String(amount)));assert.ok(r.FateWheel.markup(base).includes(h.lastWheel.name));
    if(['scroll','gem','rare'].includes(id))assert.equal(r.HeroSheet.bagItems(h).filter(i=>i.slot==='material').length,1);
   }
@@ -58,3 +58,4 @@ test('expired potions disappear from equipped slot and bag, preserving unused po
  assert.equal(done.equipment.special,null);assert.equal(done.equipment.weapon,'saved-weapon');assert.equal(done.lootInventory.length,25);assert.ok(done.lootInventory.some(i=>i.id==='unused'));assert.equal(unused.powerExpiresAt,undefined);assert.equal(r.HeroSheet.activatePotion(done,now+1),done);assert.equal(h.lootInventory.length,26);
  const bag={...hero(),lootInventory:[p,unused]};const cleaned=r.HeroSheet.activatePotion(bag,now);assert.equal(cleaned.equipment,undefined);assert.equal(cleaned.lootInventory.length,1);
 });
+test('Wheel costs change exactly at level 30 for both currencies, never charge unaffordable spins and use the pre-reward level',()=>{const r=run();for(const level of [1,10,29,30,31,75])for(const currency of ['gold','shards']){const h={...hero(),level},cost=currency==='gold'?(level>=30?500:100):(level>=30?5:1);const n=win(r,h,'energy',currency);assert.equal(n[currency],h[currency]-cost);const poor={...h,[currency]:cost-1},before=JSON.stringify(poor);assert.throws(()=>win(r,poor,'energy',currency));assert.equal(JSON.stringify(poor),before);const exact=win(r,{...h,[currency]:cost},'energy',currency);assert.equal(exact[currency],0);}const h={...hero(),level:29,xp:r.Progression.info({...hero(),level:29}).required-1};const next=win(r,h,'xp','gold');assert.ok(r.Progression.level(next)>=30);assert.equal(next.gold,h.gold-100);assert.equal(r.FateWheel.costsFor(next).gold,500);});
