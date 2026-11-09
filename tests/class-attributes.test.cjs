@@ -11,7 +11,7 @@ test('Main attributes grant exactly +1 damage per point for warrior, dwarf, elf 
  const r=runtime();
  for(const [classId,key] of [['warrior','strength'],['dwarf','strength'],['elf','agility'],['mage','intelligence']]){
   const h=hero(classId),before=r.BrandCombat.profile(h),after=r.BrandCombat.profile({...h,statAllocations:{[key]:1}});
-  assert.deepEqual(plain(after.attack),before.attack.map(n=>n+1),classId);
+  assert.deepEqual(plain(after.attack),plain(before.attack.map(n=>n+1)),classId);
   const wrong=key==='strength'?'agility':'strength';
   assert.deepEqual(plain(r.BrandCombat.profile({...h,statAllocations:{[wrong]:1}}).attack),plain(before.attack),classId);
  }
@@ -26,7 +26,7 @@ test('Endurance grants +10 HP in every class; intelligence grants +10 mana and +
  }
  const h=hero('mage'),base=r.BrandCombat.profile(h),buffed=r.BrandCombat.profile({...h,statAllocations:{intelligence:1}});
  assert.equal(buffed.maxMana-base.maxMana,10);
- assert.deepEqual(plain(buffed.attack),base.attack.map(n=>n+1));
+ assert.deepEqual(plain(buffed.attack),plain(base.attack.map(n=>n+1)));
 });
 test('Mage with insufficient mana uses the strength-based wand attack; with mana uses intelligence-based spells',()=>{
  const r=runtime(),c=r.BrandCombat;
@@ -44,7 +44,7 @@ test('Mage with insufficient mana uses the strength-based wand attack; with mana
  assert.equal(cast.lastHit.damage,80);
  assert.equal(cast.hero.mana,battle.hero.mana-10);
  const boosted=c.profile({...h,statAllocations:{strength:1}});
- assert.deepEqual(plain(boosted.meleeAttack),p.meleeAttack.map(n=>n+1));
+ assert.deepEqual(plain(boosted.meleeAttack),plain(p.meleeAttack.map(n=>n+1)));
  assert.deepEqual(plain(boosted.attack),plain(p.attack));
 });
 test('All four encounter sources use the same primary-attribute attack ranges',()=>{
