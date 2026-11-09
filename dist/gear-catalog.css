@@ -70,4 +70,21 @@
 .gear-art.adept-body-2{background-position:66.666667% 100%}
 
 .gear-art.crafted-weapon-art{background-image:url('forged-weapons-35.webp');background-size:200% 200%;background-repeat:no-repeat;background-color:transparent}.gear-art.crafted-warrior{background-position:0% 0%}.gear-art.crafted-mage{background-position:100% 0%}.gear-art.crafted-elf{background-position:0% 100%}.gear-art.crafted-dwarf{background-position:100% 100%}
-.gear-art.armory-paladin{box-shadow:inset 0 0 0 1px #c7a753,0 0 5px #d3b86444}.gear-art.armory-knight{box-shadow:inset 0 0 0 1px #8d9b9b,0 0 5px #aac3c233}
+/* One atlas: two rows per profession, four icons per row. */
+.gear-art.armory-set-art{background-image:url('armory-sets-35.webp');background-size:400% 400%;background-repeat:no-repeat;background-color:#08130d}
+.gear-art.armory-set-art.armory-paladin.armory-slot-0{background-position:0.000000% 0.000000%}
+.gear-art.armory-set-art.armory-paladin.armory-slot-1{background-position:33.333333% 0.000000%}
+.gear-art.armory-set-art.armory-paladin.armory-slot-2{background-position:66.666667% 0.000000%}
+.gear-art.armory-set-art.armory-paladin.armory-slot-3{background-position:100.000000% 0.000000%}
+.gear-art.armory-set-art.armory-paladin.armory-slot-4{background-position:0.000000% 33.333333%}
+.gear-art.armory-set-art.armory-paladin.armory-slot-5{background-position:33.333333% 33.333333%}
+.gear-art.armory-set-art.armory-paladin.armory-slot-6{background-position:66.666667% 33.333333%}
+.gear-art.armory-set-art.armory-paladin.armory-slot-7{background-position:100.000000% 33.333333%}
+.gear-art.armory-set-art.armory-knight.armory-slot-0{background-position:0.000000% 66.666667%}
+.gear-art.armory-set-art.armory-knight.armory-slot-1{background-position:33.333333% 66.666667%}
+.gear-art.armory-set-art.armory-knight.armory-slot-2{background-position:66.666667% 66.666667%}
+.gear-art.armory-set-art.armory-knight.armory-slot-3{background-position:100.000000% 66.666667%}
+.gear-art.armory-set-art.armory-knight.armory-slot-4{background-position:0.000000% 100.000000%}
+.gear-art.armory-set-art.armory-knight.armory-slot-5{background-position:33.333333% 100.000000%}
+.gear-art.armory-set-art.armory-knight.armory-slot-6{background-position:66.666667% 100.000000%}
+.gear-art.armory-set-art.armory-knight.armory-slot-7{background-position:100.000000% 100.000000%}
