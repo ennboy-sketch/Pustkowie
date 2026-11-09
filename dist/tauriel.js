@@ -36,7 +36,7 @@
     if(quest(hero)?.status!=='ready'||!canEnter(hero))throw new Error('Najpierw pokonaj wszystkich trzech rozbójników.');
     if(window.HeroSheet.bagItems(hero).length>=25)throw new Error('Ekwipunek jest pełny. Zwolnij miejsce — Tauriel zachowa Twój naszyjnik.');
     const inventory=window.HeroSheet.inventory(hero);
-    return {...hero,lootInventory:inventory.some(i=>i.id===NECKLACE.id)?inventory:[...inventory,{...NECKLACE}],taurielQuest:{...quest(hero),status:'completed',claimedAt:Date.now()}};
+    const completed={...hero,lootInventory:inventory.some(i=>i.id===NECKLACE.id)?inventory:[...inventory,{...NECKLACE}],taurielQuest:{...quest(hero),status:'completed',claimedAt:Date.now()}};return window.PlayerStats?.recordMission(completed,'tavern-upstairs')??completed;
   }
   function mount(root,state){
     root.innerHTML='<div class="tauriel-quest-body"></div><p class="tauriel-message" role="status" aria-live="polite"></p><div class="tauriel-combat" hidden></div>';

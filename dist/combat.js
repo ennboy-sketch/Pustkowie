@@ -102,17 +102,25 @@
     while(!battle.winner)battle=advance(battle,actor=>random(...actor.attack));
     return finish({...hero,activeCombat:{...fight,battle}},id);
   }
+  function trackFinishedBattle(result,fight){
+    let next=window.PlayerStats?.recordBattle(result,fight)??result;
+    if(fight.battle.winner==='hero'&&fight.source==='graveyard'&&next.graveyardDefeated?.length===window.Graveyard.BOSSES.length)
+      next=window.PlayerStats?.recordMission(next,'graveyard')??next;
+    if(fight.battle.winner==='hero'&&!fight.source)
+      next=window.PlayerStats?.recordMission(next,fight.sceneId)??next;
+    return next;
+  }
   function finish(hero,id){
     const fight=hero.activeCombat;
     if(!fight||fight.id!==id||!fight.battle.winner)throw new Error('Walka trwa lub została już rozliczona.');
-    if(fight.source==='graveyard')return window.Graveyard.resolve(hero,id);
-    if(fight.source==='gabriel')return window.GabrielTraining.resolve(hero,id);
-    if(fight.source==='tauriel')return window.TaurielQuest.resolve(hero,id);
+    if(fight.source==='graveyard')return trackFinishedBattle(window.Graveyard.resolve(hero,id),fight);
+    if(fight.source==='gabriel')return trackFinishedBattle(window.GabrielTraining.resolve(hero,id),fight);
+    if(fight.source==='tauriel')return trackFinishedBattle(window.TaurielQuest.resolve(hero,id),fight);
     const won=fight.battle.winner==='hero',reward=won?fight.reward:{gold:0,xp:0};
     const next=window.Progression.award(hero,reward.xp),gold=(hero.gold??25)+reward.gold;
     if(!Number.isSafeInteger(gold))throw new Error('Nieprawidłowa ilość złota.');
     // Brand grants only gold and EXP, including fights saved with pending loot.
-    return {...next,gold,activeCombat:null,combatOffer:null,lastCombat:{id,sceneId:fight.sceneId,enemyId:fight.battle.enemy.id,won,reward,loot:null,levelsGained:next.level-window.Progression.level(hero)}};
+    return trackFinishedBattle({...next,gold,activeCombat:null,combatOffer:null,lastCombat:{id,sceneId:fight.sceneId,enemyId:fight.battle.enemy.id,won,reward,loot:null,levelsGained:next.level-window.Progression.level(hero)}},fight);
   }
   function profile(hero){
     const base=BASE_STATS[hero.classId];
