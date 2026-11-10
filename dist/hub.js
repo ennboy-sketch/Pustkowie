@@ -21,7 +21,7 @@
     'glade-path-1':{name:'Lodowe Wzgórza',art:'glade-ice-hills-icon.webp',requiredLevel:75,category:'Polana',icon:'map',text:'W Lodowych Wzgórzach wznosi się zamek krasnoludów. Lokację stworzymy w kolejnym etapie.',future:'Zamek krasnoludów'},
     'glade-path-2':{name:'Eldor',art:'glade-eldor-icon.webp',requiredLevel:50,category:'Polana',icon:'map',text:'Ta ścieżka prowadzi do Eldoru, osady elfów. Eldor będzie lokacją misjową z nowymi postaciami, zadaniami i wyprawami. Mieszkańców i misje dodamy później.',future:'Osada elfów · Misje i wyprawy'},
     'glade-path-3':{name:'Ubocze',art:'glade-ubocze-icon.webp',requiredLevel:30,category:'Polana',icon:'map',text:'Na Uboczu mieści się karczma „Pod złotym Kucem”. Spotkasz tu nowe postacie i otrzymasz nowe misje. Wnętrze, postacie i zadania dodamy później.',future:'Tawerna „Pod złotym Kucem”'},
-    'ubocze-tavern':{name:'Pod Złotym Kucem',title:'Karczma „Pod Złotym Kucem”',requiredLevel:30,category:'Ubocze',icon:'tavern',art:'glade-ubocze-icon.webp',text:'W oknach przydrożnej karczmy płonie ciepłe światło. Wnętrze, nowych mieszkańców i ich zlecenia dodamy w kolejnym etapie.',future:'Nowe postacie i misje'},
+    'ubocze-tavern':{name:'Pod Złotym Kucem',title:'Karczma „Pod Złotym Kucem”',requiredLevel:30,category:'Ubocze',icon:'tavern',art:'glade-ubocze-icon.webp',text:'Przydrożna karczma z ciepłym piecem kaflowym i drewnianą salą.',future:'Nowe postacie i misje'},
     'ubocze-path':{name:'Ścieżka',requiredLevel:30,category:'Ubocze',icon:'map',text:'Za mostkiem zaczyna się droga do krainy zła. Nazwę krainy i dalszą część wyprawy ustalimy później.',future:'Droga do krainy zła'},
     mount:{name:'Wierzchowiec',category:'Bohater',icon:'mount'},
     help:{name:'Pomoc',category:'Pustkowie',icon:'help'}
@@ -133,6 +133,7 @@
   let stopHeroSheet=()=>{};
   let stopDungeons=()=>{};
   let stopCastle=()=>{};
+  let stopGoldenPony=()=>{};
   let worldLocation='map',openPlaceId=null;
   const worldPositions=new Map();
   function showWorld(id){
@@ -170,7 +171,7 @@
     const dungeonLocked=id==='dungeon'&&level()<DUNGEON_LEVEL;
     const dungeonTrainingLocked=id==='dungeon'&&!window.GabrielTraining.unlocked(hero)&&hero.activeCombat?.source!=='graveyard';
     if(['tavern','hero','inventory','market'].includes(id)){try{readCurrentHero();}catch{}}
-    stopActiveScout();stopHeroSheet();stopDungeons();stopCastle();
+    stopActiveScout();stopHeroSheet();stopDungeons();stopCastle();stopGoldenPony();
     window.FateWheel.cancel();
     window.TavernPanel.cancel();
     window.AlchemistPanel.cancel();
@@ -186,7 +187,9 @@
     let scouting=false;
     if(id==='tavern'){try{scouting=!!window.BrandMissions.status(hero).mission;}catch{}}
     let content;
-    if (place.requiredLevel) {
+    if(id==='ubocze-tavern'&&level()>=place.requiredLevel){
+      content=window.GoldenPony.markup();
+    } else if (place.requiredLevel) {
       const locked=level()<place.requiredLevel;
       content=`<div class="place-emblem">${place.art?`<img class="glade-location-art" src="${place.art}" alt="" width="128" height="128">`:icon(place.icon)}</div><p class="place-text" role="status">${locked?'Wejście jest zablokowane.':place.text}</p><p class="panel-note">Twój poziom: ${level()} · Wymagany poziom: ${place.requiredLevel}</p><div class="coming-soon"><span>${place.future}</span><span class="state-badge">${locked?'Od poziomu '+place.requiredLevel:'W przygotowaniu'}</span></div>`;
     } else if (id === 'hero') {
@@ -224,6 +227,7 @@
     }
     openPlaceId=id;
     $('#place-content').innerHTML = content;
+    if(id==='ubocze-tavern'&&level()>=place.requiredLevel)stopGoldenPony=window.GoldenPony.mount($('#place-content'));
     if (id === 'guild') stopCastle=window.CastlePanel.mount($('#place-content'),{onTitle:title=>{$('#place-title').textContent=title;},professionMarkup:()=>barracksPanel('elven')});
     if (id === 'hero') stopHeroSheet=window.HeroSheet.mount($('.hero-sheet-root'),{read:readCurrentHero,update:updateCurrentHero});
     if (id === 'inventory') stopHeroSheet=window.HeroSheet.mountBag($('.backpack-root'),{read:readCurrentHero,update:updateCurrentHero});
@@ -284,7 +288,7 @@
     }catch{const status=$('#profession-status');if(status)status.textContent='Nie udało się zapisać profesji. Spróbuj ponownie.';}
     finally{professionBusy=false;}
   });
-  $('#place-dialog').addEventListener('close', () => {if(!$('#place-dialog').open)openPlaceId=null;stopHeroSheet();stopActiveScout();stopDungeons();stopCastle();window.FateWheel.cancel();window.TavernPanel.cancel();window.AlchemistPanel.cancel();window.ForgePanel.cancel();window.BarracksPanel.cancel();window.MarketPanel.cancel();});
+  $('#place-dialog').addEventListener('close', () => {if(!$('#place-dialog').open)openPlaceId=null;stopHeroSheet();stopActiveScout();stopDungeons();stopCastle();stopGoldenPony();window.FateWheel.cancel();window.TavernPanel.cancel();window.AlchemistPanel.cancel();window.ForgePanel.cancel();window.BarracksPanel.cancel();window.MarketPanel.cancel();});
   $('#place-content').addEventListener('click',e=>{if(e.target.closest('#go-gabriel')){openPlace('barracks');window.BarracksPanel.openTraining();}});
   $('#close-place').addEventListener('click',()=>$('#place-dialog').close());
   $('#place-dialog').addEventListener('click',e=>{if(e.target===$('#place-dialog')){const r=e.target.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)e.target.close();}});

@@ -1,6 +1,6 @@
 'use strict';
 (() => {
-  const SELECTOR='.castle-viewport,.barracks-viewport,.tavern-viewport,.alchemist-viewport,.forge-viewport,.market-viewport,.upstairs-viewport';
+  const SELECTOR='.castle-viewport,.barracks-viewport,.golden-pony-viewport,.tavern-viewport,.alchemist-viewport,.forge-viewport,.market-viewport,.upstairs-viewport';
   let restoring=false,timer=0;
   function position(view){
     if(!view?.clientWidth||!view.firstElementChild?.clientWidth)return null;

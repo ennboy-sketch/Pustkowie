@@ -851,3 +851,9 @@ Miecze nie są już przyznawane ani pokazywane w ofercie Rolanda. Katalog zachow
 ## Koszt koła od poziomu 30
 
 Poziomy 1–29: jeden obrót kosztuje 100 złota albo 1 odłamek. Od poziomu 30: 500 złota albo 5 odłamków. `FateWheel.costsFor` określa cenę zarówno dla przycisków, jak i pobierania opłaty; próg jest sprawdzany z aktualnego zapisu pod blokadą zapisu. Liczy się poziom sprzed przyznania nagrody: obrót powodujący awans z 29 na 30 nadal kosztuje starą cenę. Zmienia się cena następnego obrotu. Nagrody pozostają zachowane. Testy: `node --test tests/wheel-rewards.test.cjs` i `node tests/wheel-cost.browser.cjs`.
+
+## Wnętrze karczmy Pod Złotym Kucem
+
+Drzwi na mapie Ubocza od poziomu 30 otwierają osobny panoramiczny widok `golden-pony-interior.webp`: przydrożną drewnianą salę z jasnym tynkiem, zakrzywionym barem, zielonym piecem kaflowym, okrągłymi stołami i wnękami przy leśnych oknach. Pomieszczenie jest puste; postacie, rozmowy i usługi będą dodane później. Karczma zamkowa i jej mechaniki pozostają osobnym miejscem.
+
+Widok wykorzystuje wspólny `SceneZoom`: przesuwanie myszą i dotykiem, bezwładność, kółko, gest szczypania i klawisze przybliżania. Wyjście przez X w prawym górnym rogu wraca na mapę Ubocza. Profil zapisuje miejsce, przesunięcie i przybliżenie, a następnie odtwarza je po wyborze postaci. Zamknięcie lub zmiana miejsca zatrzymuje obserwator rozmiaru i obsługę ładowania grafiki. Moduł `golden-pony.js` nie zmienia postępu ani zasobów postaci. Test: `node tests/golden-pony.browser.cjs`, dodatkowo `node tests/ubocze.browser.cjs` z grą na porcie 8020.

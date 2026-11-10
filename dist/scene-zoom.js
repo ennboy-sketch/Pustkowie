@@ -157,7 +157,7 @@
   const controllers=new Map();
   function scan(){
     for(const [el,stop] of controllers)if(!el.isConnected){stop();controllers.delete(el);}
-    for(const selector of ['.world-viewport','.tavern-viewport','.alchemist-viewport','.forge-viewport','.market-viewport','.barracks-viewport','.upstairs-viewport']){
+    for(const selector of ['.world-viewport','.golden-pony-viewport','.tavern-viewport','.alchemist-viewport','.forge-viewport','.market-viewport','.barracks-viewport','.upstairs-viewport']){
       for(const view of document.querySelectorAll(selector))if(!controllers.has(view)){const scene=view.firstElementChild;if(scene)controllers.set(view,mount(view,scene));}
     }
     for(const scene of document.querySelectorAll('.upstairs-room-art'))if(!controllers.has(scene)){
