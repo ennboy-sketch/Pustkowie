@@ -149,7 +149,7 @@
     $('.map-caption').innerHTML=`<span>✦</span> ${name} <small>Poziom ${level()}</small>`;
     view.setAttribute('aria-label',`${name} — przeciągnij, aby przesunąć widok`);
     if(hell){
-      $('#map-pins').innerHTML='<button type="button" class="map-pin hell-mercenary-camp" data-place="hell-mercenary-camp" aria-label="Obóz najemników — wejdź" style="--x:48%;--y:53%"><img class="mercenary-camp-art" src="mercenary-camp.webp" alt="" width="1254" height="1254" draggable="false"><span class="pin-label">Obóz najemników</span></button><button type="button" class="map-pin hell-return" data-place="glade-path-3" style="--x:50%;--y:86%"><span class="pin-medallion">'+icon('map')+'</span><span class="pin-label">Powrót na Ubocze</span></button>';
+      $('#map-pins').innerHTML='<button type="button" class="map-pin hell-mercenary-camp" data-place="hell-mercenary-camp" aria-label="Obóz najemników — wejdź" style="--x:42%;--y:54.5%"><span class="pin-label">Obóz najemników</span></button><button type="button" class="map-pin hell-return" data-place="glade-path-3" style="--x:50%;--y:86%"><span class="pin-medallion">'+icon('map')+'</span><span class="pin-label">Powrót na Ubocze</span></button>';
     }else if(ubocze){
       $('#map-pins').innerHTML='<button type="button" class="map-pin ubocze-tavern" data-place="ubocze-tavern" style="--x:37.5%;--y:51%"><span class="pin-medallion"><img class="glade-path-art" src="glade-ubocze-icon.webp" alt="" width="64" height="64" draggable="false"></span><span class="pin-label">Pod Złotym Kucem</span></button><button type="button" class="map-pin ubocze-path" aria-label="Wrota Piekieł" data-place="ubocze-path" style="--x:81%;--y:46%"><span class="pin-medallion"><img class="glade-path-art" src="hell-gates-icon.webp" alt="" width="64" height="64" draggable="false"></span><span class="pin-label">Wrota Piekieł</span></button><button type="button" class="map-pin ubocze-return" data-place="glade" style="--x:50%;--y:86%"><span class="pin-medallion">'+icon('map')+'</span><span class="pin-label">Powrót na polanę</span></button>';
     }else{
@@ -158,7 +158,7 @@
     window.SceneZoom?.reset(view);
     requestAnimationFrame(()=>{
       if(worldLocation!==id)return;
-      const position=worldPositions.get(id)||{x:hell ? .60 : ubocze ? .37 : .5,y:.5};
+      const position=worldPositions.get(id)||{x:hell ? .55 : ubocze ? .37 : .5,y:.5};
       view.scrollLeft=Math.max(0,map.clientWidth*position.x-view.clientWidth/2);
       view.scrollTop=Math.max(0,map.clientHeight*position.y-view.clientHeight/2);
     });
