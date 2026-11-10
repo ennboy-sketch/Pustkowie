@@ -48,7 +48,7 @@
     return create(hero,location);
   }
   function cleanView(v){
-    if(!v||!['map','glade','ubocze'].includes(v.world))return null;
+    if(!v||!['map','glade','ubocze','hell-gates'].includes(v.world))return null;
     const position=p=>p&&['x','y','scale'].every(k=>typeof p[k]==='number'&&Number.isFinite(p[k]))?{x:Math.max(0,Math.min(1,p.x)),y:Math.max(0,Math.min(1,p.y)),scale:Math.max(1,Math.min(3,p.scale))}:null;
     return {world:v.world,worldView:position(v.worldView),place:typeof v.place==='string'&&/^[a-z0-9-]{1,40}$/.test(v.place)?v.place:null,room:['entrance','throne','school','training','armory','commander'].includes(v.room)?v.room:null,placeView:position(v.placeView)};
   }

@@ -18,3 +18,5 @@ body.playing{background:#080e0c}body.playing:before{opacity:.3}body.playing .gam
 .profession-permanent-note{padding:12px 14px;border:1px solid #b29a5c;background:#30271588;color:#f2d798;font-size:12px;line-height:1.7}
 
 .town-map.is-ubocze{background-image:url('ubocze.webp');background-color:#1b281c}.ubocze-tavern .pin-medallion,.ubocze-path .pin-medallion{width:64px;height:64px;border:0;background:transparent;box-shadow:none}.ubocze-tavern .pin-medallion:after,.ubocze-path .pin-medallion:after{display:none}.ubocze-return .pin-medallion{background:#1c3523 url('glade.webp') center/cover no-repeat}.ubocze-return .rpg-icon{visibility:hidden}
+
+.town-map.is-hell-gates{background-image:url('hell-gates-map.webp');background-color:#23110d}.hell-return .pin-medallion{background:#1c3523 url('ubocze.webp') 37% 40%/cover no-repeat}.hell-return .rpg-icon{visibility:hidden}

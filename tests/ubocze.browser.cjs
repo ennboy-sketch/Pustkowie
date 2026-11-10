@@ -55,8 +55,9 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
       }
       assert.equal(await p.locator('#place-dialog').isVisible(),false,'Dragging must not open a destination');
       await p.locator('[data-place=ubocze-path]').click();
-      assert.equal(await p.locator('#place-title').innerText(),'Wrota Piekieł');
-      await p.locator('#close-place').click();
+      assert.equal(await p.locator('#settlement-title').innerText(),'Wrota Piekieł');
+      assert.equal(await p.locator('#place-dialog').isVisible(),false);
+      await p.locator('.hell-return').click();
       await p.locator('.ubocze-return').click();
       await p.waitForFunction(()=>document.querySelector('#town-map').classList.contains('is-glade'));
       const returned=await view.evaluate(e=>({left:e.scrollLeft,top:e.scrollTop}));

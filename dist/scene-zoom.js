@@ -9,7 +9,7 @@
     if(view.matches('.world-viewport')){
       const fit=()=>{
         if(!view.clientWidth)return;
-        if(scene.matches('.is-glade,.is-ubocze')){const height=Math.max(630,view.clientHeight);scene.style.width=`${Math.max(view.clientWidth,height*1.5)}px`;scene.style.height=`${height}px`;return;}
+        if(scene.matches('.is-glade,.is-ubocze,.is-hell-gates')){const height=Math.max(630,view.clientHeight);scene.style.width=`${Math.max(view.clientWidth,height*1.5)}px`;scene.style.height=`${height}px`;return;}
         const mobile=matchMedia('(max-width:700px)').matches;
         scene.style.width=`${mobile?900:view.clientWidth}px`;
         scene.style.height=`${mobile?Math.max(630,view.clientHeight):view.clientHeight}px`;

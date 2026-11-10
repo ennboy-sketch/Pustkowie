@@ -20,9 +20,10 @@
     const saved=window.LocalProfiles.cleanView(window.LocalProfiles.view());if(!saved){schedule();return;}
     restoring=true;
     try{
-      const h=window.LocalProfiles.read(),world=saved.world==='ubocze'&&window.Progression.level(h)<30?'glade':saved.world;
-      if(world==='glade'||world==='ubocze')window.HubNavigation.open('glade');
-      if(world==='ubocze')window.HubNavigation.open('glade-path-3');
+      const h=window.LocalProfiles.read(),world=['ubocze','hell-gates'].includes(saved.world)&&window.Progression.level(h)<30?'glade':saved.world;
+      if(['glade','ubocze','hell-gates'].includes(world))window.HubNavigation.open('glade');
+      if(world==='ubocze'||world==='hell-gates')window.HubNavigation.open('glade-path-3');
+      if(world==='hell-gates')window.HubNavigation.open('ubocze-path');
       await frame();await frame();
       window.SceneZoom.restore(document.querySelector('.world-viewport'),saved.worldView);
       if(saved.place){
