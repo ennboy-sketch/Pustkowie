@@ -22,8 +22,8 @@
     'glade-path-2':{name:'Eldor',art:'glade-eldor-icon.webp',requiredLevel:50,category:'Polana',icon:'map',text:'Ta ścieżka prowadzi do Eldoru, osady elfów. Eldor będzie lokacją misjową z nowymi postaciami, zadaniami i wyprawami. Mieszkańców i misje dodamy później.',future:'Osada elfów · Misje i wyprawy'},
     'glade-path-3':{name:'Ubocze',art:'glade-ubocze-icon.webp',requiredLevel:30,category:'Polana',icon:'map',text:'Na Uboczu mieści się karczma „Pod złotym Kucem”. Spotkasz tu nowe postacie i otrzymasz nowe misje. Wnętrze, postacie i zadania dodamy później.',future:'Tawerna „Pod złotym Kucem”'},
     'ubocze-tavern':{name:'Pod Złotym Kucem',title:'Karczma „Pod Złotym Kucem”',requiredLevel:30,category:'Ubocze',icon:'tavern',art:'glade-ubocze-icon.webp',text:'Przydrożna karczma z ciepłym piecem kaflowym i drewnianą salą.',future:'Nowe postacie i misje'},
-    'ubocze-path':{name:'Wrota Piekieł',art:'hell-gates-icon.webp',requiredLevel:30,category:'Ubocze',icon:'map',text:'Za mostkiem ścieżka prowadzi do ognistej krainy Wrót Piekieł. W oddali wznosi się zamek zła.',future:'Wrota Piekieł · Kraina zła'},
-    'hell-mercenary-camp':{name:'Obóz najemników',requiredLevel:30,category:'Wrota Piekieł',icon:'barracks',art:'mercenary-camp.webp'},
+    'ubocze-path':{name:'Wrota Piekieł',art:'hell-gates-icon.webp',requiredLevel:110,category:'Ubocze',icon:'map',text:'Za mostkiem ścieżka prowadzi do ognistej krainy Wrót Piekieł. W oddali wznosi się zamek zła.',future:'Wrota Piekieł · Kraina zła'},
+    'hell-mercenary-camp':{name:'Obóz najemników',requiredLevel:110,category:'Wrota Piekieł',icon:'barracks',art:'mercenary-camp.webp'},
     mount:{name:'Wierzchowiec',category:'Bohater',icon:'mount'},
     help:{name:'Pomoc',category:'Pustkowie',icon:'help'}
   };

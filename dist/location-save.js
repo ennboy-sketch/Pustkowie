@@ -20,13 +20,14 @@
     const saved=window.LocalProfiles.cleanView(window.LocalProfiles.view());if(!saved){schedule();return;}
     restoring=true;
     try{
-      const h=window.LocalProfiles.read(),world=['ubocze','hell-gates'].includes(saved.world)&&window.Progression.level(h)<30?'glade':saved.world;
+      const currentLevel=window.Progression.level(window.LocalProfiles.read());
+      const world=saved.world==='hell-gates'&&currentLevel<110?(currentLevel>=30?'ubocze':'glade'):saved.world==='ubocze'&&currentLevel<30?'glade':saved.world;
       if(['glade','ubocze','hell-gates'].includes(world))window.HubNavigation.open('glade');
       if(world==='ubocze'||world==='hell-gates')window.HubNavigation.open('glade-path-3');
       if(world==='hell-gates')window.HubNavigation.open('ubocze-path');
       await frame();await frame();
-      window.SceneZoom.restore(document.querySelector('.world-viewport'),saved.worldView);
-      if(saved.place){
+      if(world===saved.world)window.SceneZoom.restore(document.querySelector('.world-viewport'),saved.worldView);
+      if(saved.place&&world===saved.world){
         window.HubNavigation.open(saved.place);
         if(saved.place==='barracks'&&['armory','commander'].includes(saved.room))window.BarracksPanel.openRoom(saved.room);
         if(saved.place==='guild'&&['throne','school'].includes(saved.room))window.CastlePanel.openRoom(saved.room);
