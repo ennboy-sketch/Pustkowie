@@ -23,6 +23,7 @@
     'glade-path-3':{name:'Ubocze',art:'glade-ubocze-icon.webp',requiredLevel:30,category:'Polana',icon:'map',text:'Na Uboczu mieści się karczma „Pod złotym Kucem”. Spotkasz tu nowe postacie i otrzymasz nowe misje. Wnętrze, postacie i zadania dodamy później.',future:'Tawerna „Pod złotym Kucem”'},
     'ubocze-tavern':{name:'Pod Złotym Kucem',title:'Karczma „Pod Złotym Kucem”',requiredLevel:30,category:'Ubocze',icon:'tavern',art:'glade-ubocze-icon.webp',text:'Przydrożna karczma z ciepłym piecem kaflowym i drewnianą salą.',future:'Nowe postacie i misje'},
     'ubocze-path':{name:'Wrota Piekieł',art:'hell-gates-icon.webp',requiredLevel:30,category:'Ubocze',icon:'map',text:'Za mostkiem ścieżka prowadzi do ognistej krainy Wrót Piekieł. W oddali wznosi się zamek zła.',future:'Wrota Piekieł · Kraina zła'},
+    'hell-mercenary-camp':{name:'Obóz najemników',requiredLevel:30,category:'Wrota Piekieł',icon:'barracks',art:'mercenary-camp.webp'},
     mount:{name:'Wierzchowiec',category:'Bohater',icon:'mount'},
     help:{name:'Pomoc',category:'Pustkowie',icon:'help'}
   };
@@ -148,7 +149,7 @@
     $('.map-caption').innerHTML=`<span>✦</span> ${name} <small>Poziom ${level()}</small>`;
     view.setAttribute('aria-label',`${name} — przeciągnij, aby przesunąć widok`);
     if(hell){
-      $('#map-pins').innerHTML='<button type="button" class="map-pin hell-return" data-place="glade-path-3" style="--x:50%;--y:86%"><span class="pin-medallion">'+icon('map')+'</span><span class="pin-label">Powrót na Ubocze</span></button>';
+      $('#map-pins').innerHTML='<button type="button" class="map-pin hell-mercenary-camp" data-place="hell-mercenary-camp" aria-label="Obóz najemników — wejdź" style="--x:48%;--y:53%"><img class="mercenary-camp-art" src="mercenary-camp.webp" alt="" width="1254" height="1254" draggable="false"><span class="pin-label">Obóz najemników</span></button><button type="button" class="map-pin hell-return" data-place="glade-path-3" style="--x:50%;--y:86%"><span class="pin-medallion">'+icon('map')+'</span><span class="pin-label">Powrót na Ubocze</span></button>';
     }else if(ubocze){
       $('#map-pins').innerHTML='<button type="button" class="map-pin ubocze-tavern" data-place="ubocze-tavern" style="--x:37.5%;--y:51%"><span class="pin-medallion"><img class="glade-path-art" src="glade-ubocze-icon.webp" alt="" width="64" height="64" draggable="false"></span><span class="pin-label">Pod Złotym Kucem</span></button><button type="button" class="map-pin ubocze-path" aria-label="Wrota Piekieł" data-place="ubocze-path" style="--x:81%;--y:46%"><span class="pin-medallion"><img class="glade-path-art" src="hell-gates-icon.webp" alt="" width="64" height="64" draggable="false"></span><span class="pin-label">Wrota Piekieł</span></button><button type="button" class="map-pin ubocze-return" data-place="glade" style="--x:50%;--y:86%"><span class="pin-medallion">'+icon('map')+'</span><span class="pin-label">Powrót na polanę</span></button>';
     }else{
@@ -192,6 +193,8 @@
     let content;
     if(id==='ubocze-tavern'&&level()>=place.requiredLevel){
       content=window.GoldenPony.markup();
+    } else if(id==='hell-mercenary-camp'&&level()>=place.requiredLevel){
+      content='<section class="mercenary-camp-panel" aria-label="Obóz najemników"><img src="mercenary-camp.webp" alt="Mały obóz z trzema ciemnymi namiotami, drewnianą palisadą i ogniskiem na wulkanicznej ziemi." width="1254" height="1254" draggable="false"><p class="place-text">Przy kamiennym trakcie najemnicy rozbili niewielki obóz. Pomiędzy namiotami płonie ognisko, a drewniana palisada osłania zapasy przed pustkowiem.</p><p class="panel-note">Postacie i misje dodamy później.</p></section>';
     } else if (place.requiredLevel) {
       const locked=level()<place.requiredLevel;
       content=`<div class="place-emblem">${place.art?`<img class="glade-location-art" src="${place.art}" alt="" width="128" height="128">`:icon(place.icon)}</div><p class="place-text" role="status">${locked?'Wejście jest zablokowane.':place.text}</p><p class="panel-note">Twój poziom: ${level()} · Wymagany poziom: ${place.requiredLevel}</p><div class="coming-soon"><span>${place.future}</span><span class="state-badge">${locked?'Od poziomu '+place.requiredLevel:'W przygotowaniu'}</span></div>`;
