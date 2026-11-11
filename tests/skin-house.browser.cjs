@@ -16,7 +16,7 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
   await pin.click();await p.locator('.skin-house-art').evaluate(i=>i.decode());
   assert.equal(await p.locator('#place-title').innerText(),'Dom Tysiąca Twarzy');
   const view=p.locator('.skin-house-viewport');await p.waitForFunction(()=>document.querySelector('.skin-house-viewport').dataset.zoomScale==='1');
-  const merchant=p.getByRole('button',{name:'Porozmawiaj ze sprzedawczynią skórek',exact:true});
+  const merchant=p.getByRole('button',{name:'Porozmawiaj z Vesperą, Mistrzynią Przemian',exact:true});
   const visible=await merchant.evaluate(e=>{const r=e.getBoundingClientRect(),v=e.closest('.skin-house-viewport').getBoundingClientRect();return r.width>=44&&r.height>=44&&r.left>=v.left&&r.right<=v.right&&r.bottom<=v.bottom;});
   assert.equal(visible,true,'Merchant must be visible and clickable immediately');
   await p.screenshot({path:`/tmp/skin-house-room-${width}-${height}.png`});

@@ -4,15 +4,15 @@
     return `<section class="skin-house-panel" aria-label="Dom Tysiąca Twarzy">
       <div class="skin-house-viewport" tabindex="0" role="region" aria-label="Przesuwany widok Domu Tysiąca Twarzy" aria-describedby="skin-house-hint">
         <div class="skin-house-panorama">
-          <img class="skin-house-art" src="skin-house-interior.webp" alt="Przytulna kamienno-drewniana pracownia: fioletowowłosa sprzedawczyni z ametystowym naszyjnikiem, skórzanymi bransoletami i wysokimi butami siedzi w fotelu przy kominku. Po lewej wiszą ozdobne maski i płaszcze, po prawej stoją lustro, szafa i bele tkanin." draggable="false">
+          <img class="skin-house-art" src="skin-house-interior.webp" alt="Przytulna kamienno-drewniana pracownia: fioletowowłosa Vespera z ametystowym naszyjnikiem, skórzanymi bransoletami i wysokimi butami siedzi w fotelu przy kominku. Po lewej wiszą ozdobne maski i płaszcze, po prawej stoją lustro, szafa i bele tkanin." draggable="false">
           <div class="skin-house-vignette" aria-hidden="true"></div>
-          <button type="button" class="skin-house-merchant" data-skin-house-merchant aria-label="Porozmawiaj ze sprzedawczynią skórek"><span>Sprzedawczyni</span><small>Porozmawiaj</small></button>
+          <button type="button" class="skin-house-merchant" data-skin-house-merchant aria-label="Porozmawiaj z Vesperą, Mistrzynią Przemian"><span>Vespera</span><small>Mistrzyni Przemian</small></button>
         </div>
       </div>
-      <p id="skin-house-hint" class="sr-only">Przesuwaj widok myszą lub palcem. Przybliżaj kółkiem, dwoma palcami lub klawiszami plus i minus. Kliknij sprzedawczynię, aby porozmawiać. Wyjście znajduje się pod X w prawym górnym rogu.</p>
+      <p id="skin-house-hint" class="sr-only">Przesuwaj widok myszą lub palcem. Przybliżaj kółkiem, dwoma palcami lub klawiszami plus i minus. Kliknij Vesperę, aby porozmawiać. Wyjście znajduje się pod X w prawym górnym rogu.</p>
       <dialog class="skin-house-dialog" aria-labelledby="skin-house-merchant-title">
-        <h3 id="skin-house-merchant-title" tabindex="-1">Sprzedawczyni skórek</h3>
-        <p>Witaj w Domu Tysiąca Twarzy. Tutaj znajdziesz wygląd, który opowie Twoją historię.</p>
+        <h3 id="skin-house-merchant-title" tabindex="-1">Vespera — Mistrzyni Przemian</h3>
+        <p>Witaj w Domu Tysiąca Twarzy. Jestem Vespera. Tutaj znajdziesz wygląd, który opowie Twoją historię.</p>
         <p class="skin-house-coming">Wkrótce pojawią się tu skórki postaci za odłamki.</p>
         <button type="button" class="secondary" data-close-skin-house-merchant>Wróć do pracowni</button>
       </dialog>
