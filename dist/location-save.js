@@ -30,7 +30,7 @@
       if(saved.place&&world===saved.world){
         window.HubNavigation.open(saved.place);
         if(saved.place==='barracks'&&['armory','commander'].includes(saved.room))window.BarracksPanel.openRoom(saved.room);
-        if(saved.place==='guild'&&['throne','school'].includes(saved.room))window.CastlePanel.openRoom(saved.room);
+        if(saved.place==='guild'&&['throne','school','archive'].includes(saved.room))window.CastlePanel.openRoom(saved.room);
         if(saved.place==='skin-house'&&saved.room==='bedroom')window.SkinHouse.openRoom('bedroom',{focus:false});
         await Promise.allSettled([...document.querySelectorAll('#place-content img')].map(i=>i.decode()));
         await frame();await frame();

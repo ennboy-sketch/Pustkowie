@@ -93,6 +93,7 @@
       panel.querySelectorAll('[data-bedroom-only]').forEach(button=>{button.hidden=!bedroom;});
       panel.querySelector('[data-open-hero-skins]').hidden=bedroom;
       state.onTitle?.(bedroom?'Sypialnia Vespery':'Dom Tysiąca Twarzy');
+      state.onRoom?.(room);
       window.SceneZoom?.reset(view);showScene(wardrobe().current(state.read()));
       if(cameras.has(room))requestAnimationFrame(()=>{if(!disposed&&panel.dataset.skinHouseRoom===next)window.SceneZoom?.restore(view,cameras.get(next));});
       if(focus)view.focus({preventScroll:true});

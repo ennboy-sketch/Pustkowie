@@ -95,6 +95,18 @@
     window.LocalProfiles.write(updated);
     hero=updated;updateProfile();return updated;
   }
+  function markCampaignVisit(place){
+    const change=()=>{const h=readCurrentHero();if(window.OathCampaign.visit(h,place)!==h)updateCurrentHero(latest=>window.OathCampaign.visit(latest,place));};
+    Promise.resolve(navigator.locks?navigator.locks.request('pustkowie-hero-v2',change):change()).catch(()=>{$('#status').textContent='Nie udało się zapisać wizyty do kampanii. Spróbuj wejść ponownie.';});
+  }
+  function travelCampaign(place){
+    if(place==='archive'||place==='throne'){openPlace('guild');window.CastlePanel.openRoom(place);}
+    else if(place==='training'){openPlace('barracks');window.BarracksPanel.openTraining();}
+    else if(place==='vespera-bedroom'){openPlace('skin-house');window.SkinHouse.openRoom('bedroom');}
+    else if(['ubocze','eldor','ice-hills','hell-gates'].includes(place)){
+      openPlace('glade');openPlace(place==='eldor'?'glade-path-2':place==='ice-hills'?'glade-path-1':'glade-path-3');if(place==='hell-gates'&&level()>=30)openPlace('ubocze-path');
+    }else if(['tavern','dungeon'].includes(place))openPlace(place);
+  }
   let energySyncBusy=false;
   async function refreshEnergy() {
     if(energySyncBusy||!hero||!document.body.classList.contains('playing')||document.hidden)return;
@@ -140,6 +152,7 @@
   let stopCastle=()=>{};
   let stopGoldenPony=()=>{};
   let stopSkinHouse=()=>{};
+  let stopCampaign=()=>{};
   let worldLocation='map',openPlaceId=null;
   const worldPositions=new Map();
   function showWorld(id){
@@ -168,6 +181,7 @@
       view.scrollTop=Math.max(0,map.clientHeight*position.y-view.clientHeight/2);
     });
     $('#place-dialog').close();$('#settlement-title').focus({preventScroll:true});
+    if(id==='ubocze'||id==='hell-gates')markCampaignVisit(id);
   }
   function openPlace(id) {
     if (!places[id] || !hero) return;
@@ -178,8 +192,8 @@
     const forgeLocked=id==='forge'&&level()<FORGE_LEVEL;
     const dungeonLocked=id==='dungeon'&&level()<DUNGEON_LEVEL;
     const dungeonTrainingLocked=id==='dungeon'&&!window.GabrielTraining.unlocked(hero)&&hero.activeCombat?.source!=='graveyard';
-    if(['tavern','hero','inventory','market','skin-house'].includes(id)){try{readCurrentHero();}catch{}}
-    stopActiveScout();stopHeroSheet();stopDungeons();stopCastle();stopGoldenPony();stopSkinHouse();
+    if(['tavern','hero','inventory','market','skin-house','journal','guild'].includes(id)){try{readCurrentHero();}catch{}}
+    stopActiveScout();stopHeroSheet();stopDungeons();stopCastle();stopGoldenPony();stopSkinHouse();stopCampaign();
     window.FateWheel.cancel();
     window.TavernPanel.cancel();
     window.AlchemistPanel.cancel();
@@ -205,6 +219,10 @@
     } else if (place.requiredLevel) {
       const locked=level()<place.requiredLevel;
       content=`<div class="place-emblem">${place.art?`<img class="glade-location-art" src="${place.art}" alt="" width="128" height="128">`:icon(place.icon)}</div><p class="place-text" role="status">${locked?'Wejście jest zablokowane.':place.text}</p><p class="panel-note">Twój poziom: ${level()} · Wymagany poziom: ${place.requiredLevel}</p><div class="coming-soon"><span>${place.future}</span><span class="state-badge">${locked?'Od poziomu '+place.requiredLevel:'W przygotowaniu'}</span></div>`;
+      if(!locked&&['glade-path-1','glade-path-2'].includes(id)){
+        const chapter=id==='glade-path-1'?'ice-seal':'eldor-seal';
+        content=`<div class="place-emblem"><img class="glade-location-art" src="${place.art}" alt="" width="128" height="128"></div><h3 class="place-text">${window.OathCampaign.get(chapter).title}</h3><p class="place-text">Ślad odwróconych pieczęci prowadzi do tej krainy. Dalszy rozdział kampanii czeka w dzienniku po ukończeniu poprzedniego etapu.</p><p class="panel-note">Twój poziom: ${level()} · Wymagany poziom: ${place.requiredLevel}</p><button type="button" class="primary campaign-chapter-link" data-open-campaign="${chapter}">Otwórz rozdział w dzienniku</button>`;
+      }
     } else if (id === 'hero') {
       content = '<div class="hero-sheet-root"></div>';
     } else if (id === 'tavern') {
@@ -232,7 +250,7 @@
     } else if (id === 'inventory') {
       content = '<div class="backpack-root"></div>';
     } else if (id === 'journal') {
-      content = `<div class="journal-entry">${icon('journal')}<div><h3>Przybycie do zamku</h3><p>Twoja postać dotarła do Zamku Czarnej Stali.</p><span class="state-badge">Zapisane</span></div></div>`;
+      content = window.CampaignPanel.markup();
     } else if (id === 'help') {
       content = '<p class="place-text">Wybierz miejsce na mapie lub w bocznym menu. Kliknij portret, aby zobaczyć statystyki bohatera.</p><p class="panel-note">Postać zapisuje się w tej przeglądarce. Wyprawy, handel i walka pojawią się w kolejnych etapach.</p>';
     } else {
@@ -240,9 +258,12 @@
     }
     openPlaceId=id;
     $('#place-content').innerHTML = content;
-    if(id==='skin-house')stopSkinHouse=window.SkinHouse.mount($('#place-content'),{read:readCurrentHero,update:updateCurrentHero,onTitle:title=>{$('#place-title').textContent=title;}});
+    if(id==='skin-house')stopSkinHouse=window.SkinHouse.mount($('#place-content'),{read:readCurrentHero,update:updateCurrentHero,onTitle:title=>{$('#place-title').textContent=title;},onRoom:room=>{if(room==='bedroom')markCampaignVisit('vespera-bedroom');}});
+    if(id==='journal')stopCampaign=window.CampaignPanel.mount($('#place-content'),{read:readCurrentHero,update:updateCurrentHero,navigate:travelCampaign});
+    if(level()>=place.requiredLevel&&id==='glade-path-1')markCampaignVisit('ice-hills');
+    if(level()>=place.requiredLevel&&id==='glade-path-2')markCampaignVisit('eldor');
     if(id==='ubocze-tavern'&&level()>=place.requiredLevel)stopGoldenPony=window.GoldenPony.mount($('#place-content'));
-    if (id === 'guild') stopCastle=window.CastlePanel.mount($('#place-content'),{onTitle:title=>{$('#place-title').textContent=title;},professionMarkup:()=>barracksPanel('elven')});
+    if (id === 'guild') stopCastle=window.CastlePanel.mount($('#place-content'),{read:readCurrentHero,update:updateCurrentHero,onTitle:title=>{$('#place-title').textContent=title;},professionMarkup:()=>barracksPanel('elven')});
     if (id === 'hero') stopHeroSheet=window.HeroSheet.mount($('.hero-sheet-root'),{read:readCurrentHero,update:updateCurrentHero});
     if (id === 'inventory') stopHeroSheet=window.HeroSheet.mountBag($('.backpack-root'),{read:readCurrentHero,update:updateCurrentHero});
     if (id === 'dungeon' && !dungeonLocked && !dungeonTrainingLocked) stopDungeons=window.DungeonsPanel.mount($('#place-content'),{read:readCurrentHero,update:updateCurrentHero,onTitle:title=>{$('#place-title').textContent=title;}});
@@ -302,8 +323,8 @@
     }catch{const status=$('#profession-status');if(status)status.textContent='Nie udało się zapisać profesji. Spróbuj ponownie.';}
     finally{professionBusy=false;}
   });
-  $('#place-dialog').addEventListener('close', () => {if(!$('#place-dialog').open)openPlaceId=null;stopHeroSheet();stopActiveScout();stopDungeons();stopCastle();stopGoldenPony();stopSkinHouse();window.FateWheel.cancel();window.TavernPanel.cancel();window.AlchemistPanel.cancel();window.ForgePanel.cancel();window.BarracksPanel.cancel();window.MarketPanel.cancel();});
-  $('#place-content').addEventListener('click',e=>{if(e.target.closest('#go-gabriel')){openPlace('barracks');window.BarracksPanel.openTraining();}});
+  $('#place-dialog').addEventListener('close', () => {if(!$('#place-dialog').open)openPlaceId=null;stopHeroSheet();stopActiveScout();stopDungeons();stopCastle();stopGoldenPony();stopSkinHouse();stopCampaign();window.FateWheel.cancel();window.TavernPanel.cancel();window.AlchemistPanel.cancel();window.ForgePanel.cancel();window.BarracksPanel.cancel();window.MarketPanel.cancel();});
+  $('#place-content').addEventListener('click',e=>{const story=e.target.closest('[data-open-campaign]');if(story){const id=story.dataset.openCampaign;openPlace('journal');if(id)window.CampaignPanel.select(id);return;}if(e.target.closest('#go-gabriel')){openPlace('barracks');window.BarracksPanel.openTraining();}});
   $('#close-place').addEventListener('click',()=>$('#place-dialog').close());
   $('#place-dialog').addEventListener('click',e=>{if(e.target===$('#place-dialog')){const r=e.target.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)e.target.close();}});
   $('#menu-toggle').addEventListener('click',()=>toggleMenu(!$('#sidebar').classList.contains('is-open')));
