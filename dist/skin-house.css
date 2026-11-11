@@ -3,8 +3,17 @@
 .place-dialog:has(.skin-house-panel)>.place-top{padding:15px 20px 0;flex-shrink:0}
 .place-dialog:has(.skin-house-panel)>h2{margin:6px 20px 15px;padding-bottom:13px;font-size:27px;flex-shrink:0}
 .place-dialog:has(.skin-house-panel)>#place-content{flex:1;min-height:0;overflow:hidden}
-.skin-house-panel{height:100%;background:#19151f}
-.skin-house-viewport{width:100%;height:100%;overflow:auto;overscroll-behavior:contain;touch-action:pan-x pan-y;cursor:grab;scrollbar-width:none;border-top:1px solid #a38950}
+.skin-house-panel{height:100%;background:#19151f;display:flex;flex-direction:column;position:relative}
+.skin-house-panel [hidden]{display:none!important}
+.skin-house-room-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-shrink:0;padding:12px 20px;background:linear-gradient(100deg,#302037,#19121f);border-top:1px solid #795e43}
+.skin-house-room-bar small{display:block;font-size:8px;letter-spacing:1.5px;color:#af927a;margin-bottom:5px}
+.skin-house-room-bar strong{display:block;font:600 16px 'Cinzel',Georgia,serif;color:#e6c98d}
+.skin-house-room-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.skin-house-room-actions button{min-height:44px;padding:9px 12px;border:1px solid #a08655;border-radius:4px;background:#211828;color:#e4c78d;font-size:12px;cursor:pointer}
+.skin-house-room-actions button:hover,.skin-house-room-actions button:focus-visible{background:#46304c;border-color:#ebce8d}
+.skin-house-room-message{position:absolute;bottom:10px;left:12px;right:12px;margin:0;pointer-events:none;padding:8px 12px;background:#180f23ed;border:1px solid #8f734d;color:#e8cfa4;font-size:11px;z-index:2}
+.skin-house-room-message:empty{display:none}
+.skin-house-viewport{width:100%;height:100%;flex:1;min-height:0;overflow:auto;overscroll-behavior:contain;touch-action:pan-x pan-y;cursor:grab;scrollbar-width:none;border-top:1px solid #a38950}
 .skin-house-viewport::-webkit-scrollbar{display:none}
 .skin-house-viewport.is-dragging,.skin-house-viewport.is-dragging *{cursor:grabbing;user-select:none}
 .skin-house-panorama{position:relative;isolation:isolate}
@@ -24,6 +33,15 @@
 @media(max-width:480px){.place-dialog[open]:has(.skin-house-panel){height:calc(100svh - 16px);max-height:calc(100svh - 16px);max-width:calc(100% - 16px)}.place-dialog:has(.skin-house-panel)>.place-top{padding:12px 15px 0}.place-dialog:has(.skin-house-panel)>h2{font-size:20px;margin:5px 15px 12px}.skin-house-merchant>span{font-size:15px}}
 .skin-house-art-frame{position:absolute;inset:0;overflow:hidden;pointer-events:none}
 .skin-house-art{max-width:none;transform-origin:0 0;pointer-events:none}
+.skin-house-art-frame.shows-standing{background:radial-gradient(ellipse at center,#58314b,#211422 60%,#130f19)}
+.skin-house-bedroom-figure{position:absolute;left:53%;top:7%;height:80%;aspect-ratio:3/4;padding:6px;background:#170f20;border:2px solid #a48750;box-shadow:0 12px 36px #0009,inset 0 0 0 1px #e6c583;border-radius:4px;overflow:hidden}
+.skin-house-bedroom-figure>.vespera-portrait{height:100%;width:100%;aspect-ratio:auto;border-radius:inherit}
+.skin-house-panel[data-skin-house-room=bedroom] .skin-house-merchant{left:68.4%;top:92%;width:19%}
+.skin-house-door,.skin-house-bedroom-wardrobe{position:absolute;left:88%;top:61%;transform:translate(-50%,-50%);min-width:145px;min-height:64px;padding:9px 12px;border:1px solid #b4965f;border-radius:4px;background:#211525ed;color:#f2d8a5;box-shadow:0 3px 12px #0008;cursor:pointer}
+.skin-house-door span,.skin-house-bedroom-wardrobe span{display:block;font:600 14px 'Cinzel',Georgia,serif}
+.skin-house-door small,.skin-house-bedroom-wardrobe small{display:block;font-size:10px;color:#d0baa5;margin-top:6px}
+.skin-house-door:hover,.skin-house-bedroom-wardrobe:hover,.skin-house-door:focus-visible,.skin-house-bedroom-wardrobe:focus-visible{background:#3b2543ee;border-color:#ebce8d}
+.skin-house-bedroom-wardrobe{left:90%;top:76%}
 .skin-house-dialog.shows-outfits{width:840px;max-height:calc(100svh - 32px);overflow:auto;overscroll-behavior:contain}
 .skin-house-dialog .vespera-wardrobe[hidden],.skin-house-dialog .skin-house-intro[hidden]{display:none}
 .vespera-wallet{display:flex;align-items:center;gap:6px;margin:0;padding:10px 14px;border:1px solid #77603e;background:#15111c}
@@ -36,6 +54,8 @@
 .vespera-preview small{font-size:11px;color:#bfae9a;line-height:1.6;display:block}
 .vespera-portrait{display:block;position:relative;isolation:isolate;overflow:hidden;width:100%;aspect-ratio:3/4;background:#17111b}
 .vespera-portrait img{position:absolute;width:calc(var(--cols)*300%);height:calc(var(--rows)*112.5%);max-width:none;left:calc(-100% - var(--col)*300%);top:calc(-5% - var(--row)*112.5%);object-fit:fill;pointer-events:none;user-select:none;-webkit-user-drag:none}
+.vespera-portrait.is-standing img{width:100%;height:100%;left:0;top:0;object-fit:contain}
+.vespera-outfit-heading{font:600 15px 'Cinzel',Georgia,serif;color:#e4c78d;margin:16px 0 12px}
 .vespera-wardrobe fieldset{border:0;padding:0;margin:0;min-width:0}
 .vespera-wardrobe legend{font:600 16px 'Cinzel',Georgia,serif;color:#e4c78d;margin-bottom:12px}
 .vespera-outfit-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
@@ -52,3 +72,4 @@
 .vespera-message{font-size:12px!important;margin:9px 0 0;line-height:1.6!important;color:#dcc799}
 .vespera-message:empty{display:none}
 @media(max-width:480px){.skin-house-dialog.shows-outfits{padding:18px;max-height:calc(100svh - 20px)}.vespera-preview{padding:10px;gap:12px;align-items:flex-start}.vespera-preview>.vespera-portrait{width:120px;max-width:42%}.vespera-preview h4{font-size:16px}.vespera-preview p{font-size:11px;line-height:1.6}.vespera-preview small{font-size:10px}.vespera-outfit-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.vespera-outfit-card strong{font-size:11px}.vespera-checkout{bottom:-18px}}
+@media(max-width:600px){.skin-house-room-bar{padding:10px 12px;align-items:flex-start;flex-direction:column;gap:9px}.skin-house-room-bar strong{font-size:15px}.skin-house-room-actions{justify-content:flex-start;width:100%}.skin-house-room-actions button{font-size:11px;flex:1}.skin-house-room-message{font-size:10px;bottom:6px;left:6px;right:6px}}

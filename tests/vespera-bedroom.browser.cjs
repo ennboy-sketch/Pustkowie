@@ -1,0 +1,62 @@
+const {chromium}=require('playwright'),assert=require('node:assert/strict'),fs=require('node:fs');
+(async()=>{
+ const browser=await chromium.launch({executablePath:'/usr/bin/chromium',headless:true,args:['--no-sandbox','--disable-dev-shm-usage']});
+ fs.mkdirSync('outputs',{recursive:true});
+ try{for(const [width,height] of [[1280,900],[390,844],[360,640]]){
+  const context=await browser.newContext({viewport:{width,height}}),p=await context.newPage(),errors=[];
+  p.on('pageerror',e=>errors.push(e.message));await p.route('https://fonts.googleapis.com/**',r=>r.abort());
+  await p.goto('http://127.0.0.1:8020/');
+  await p.evaluate(()=>localStorage.setItem('pustkowie.hero.v2',JSON.stringify({version:2,name:'Test',classId:'warrior',gender:'female',level:1,xp:0,gold:200,shards:40,energy:80})));
+  await p.reload({waitUntil:'load'});await require('./profile-fixture.cjs')(p);
+  const value=()=>p.evaluate(()=>({shards:LocalProfiles.read().shards,id:VesperaOutfits.current(LocalProfiles.read()).id}));
+  const travel=async room=>{await p.locator(`.skin-house-room-bar [data-go-skin-house-room="${room}"]`).click();await p.waitForFunction(room=>document.querySelector('.skin-house-panel').dataset.skinHouseRoom===room,room);await p.locator('.skin-house-art').evaluate(i=>i.decode());};
+  const open=()=>p.locator('.skin-house-room-bar [data-open-vespera-outfits]').click();
+  await p.evaluate(()=>HubNavigation.open('skin-house'));await p.locator('.skin-house-art').evaluate(i=>i.decode());
+  assert.equal(await p.locator('.skin-house-panel').getAttribute('data-skin-house-room'),'workshop');
+  assert.equal(await p.locator('.skin-house-door').isVisible(),true);
+  await travel('bedroom');assert.equal(await p.locator('#place-title').innerText(),'Sypialnia Vespery');
+  assert.match(await p.locator('.skin-house-art').getAttribute('src'),/vespera-bedroom/);
+  await open();assert.equal(await p.locator('.vespera-outfit-card').count(),18);
+  const standing=await p.evaluate(()=>VesperaOutfits.CATALOG.filter(o=>o.pose==='standing').map(o=>o.id));assert.equal(standing.length,5);
+  for(const id of standing){
+   await p.locator(`[name=vespera-outfit][value="${id}"]`).check();
+   const image=await p.locator('.vespera-preview img').evaluate(async i=>{await i.decode();const s=getComputedStyle(i);return{width:i.naturalWidth,height:i.naturalHeight,fit:s.objectFit,left:s.left,top:s.top};});
+   assert.equal(image.width,id==='standing-lace'?853:960);assert.equal(image.height,1280);assert.equal(image.fit,'contain');assert.equal(image.left,'0px');assert.equal(image.top,'0px');
+   assert.deepEqual(await value(),{shards:40,id:'default'});
+  }
+  await p.keyboard.press('Escape');assert.deepEqual(await value(),{shards:40,id:'default'});
+  await open();await p.locator(`[name=vespera-outfit][value="${standing[0]}"]`).check();
+  await p.evaluate(()=>{const b=document.querySelector('[data-confirm-vespera-outfit]');b.click();b.click();});
+  await p.waitForFunction(()=>LocalProfiles.read().vesperaOutfit==='standing-amethyst');assert.deepEqual(await value(),{shards:35,id:standing[0]});
+  await p.keyboard.press('Escape');await p.locator('.skin-house-bedroom-figure img').evaluate(i=>i.decode());
+  assert.equal(await p.locator('.skin-house-bedroom-figure img').evaluate(i=>getComputedStyle(i).objectFit),'contain');
+  await p.screenshot({path:`outputs/vespera-bedroom-${width}.png`});
+  await travel('workshop');assert.equal(await p.locator('#place-title').innerText(),'Dom Tysiąca Twarzy');
+  assert.equal(await p.locator('.skin-house-art').evaluate(i=>getComputedStyle(i).objectFit),'contain');
+  assert.match(await p.locator('.skin-house-art').getAttribute('src'),/vespera-standing-amethyst/);
+  assert.doesNotMatch(await p.locator('.skin-house-art').getAttribute('alt'),/siedzi/);
+  const bounds=await p.locator('.skin-house-art').boundingBox(),viewport=await p.locator('.skin-house-viewport').boundingBox(),label=await p.locator('.skin-house-merchant').boundingBox();
+  assert.ok(bounds.x>=viewport.x-1&&bounds.x+bounds.width<=viewport.x+viewport.width+1,'Full standing photo fits horizontally');
+  assert.ok(bounds.y>=viewport.y-1&&bounds.y+bounds.height<=viewport.y+viewport.height+1,'Full standing photo fits vertically');
+  assert.ok(label.y>=bounds.y+bounds.height,'Merchant label does not cover the original photo');
+  await p.screenshot({path:`outputs/vespera-standing-${width}.png`});
+  await travel('bedroom');await open();await p.locator('[name=vespera-outfit][value="standing-ranger"]').check();
+  await p.screenshot({path:`outputs/vespera-wardrobe-${width}.png`});
+  await p.keyboard.press('Escape');
+  const view=p.locator('.skin-house-viewport');await view.focus();await p.keyboard.press('+');
+  await p.waitForFunction(()=>Number(document.querySelector('.skin-house-viewport').dataset.zoomScale)>1);
+  const saved=await p.evaluate(()=>{GameLocation.flush();return LocalProfiles.view();});assert.equal(saved.room,'bedroom');
+  await p.reload({waitUntil:'load'});assert.match(await p.locator('.profile-card').innerText(),/Sypialnia Vespery/);
+  await Promise.all([p.waitForNavigation({waitUntil:'load'}),p.locator('[data-play-profile=legacy]').click()]);
+  await p.waitForFunction(()=>document.querySelector('.skin-house-panel')?.dataset.skinHouseRoom==='bedroom');
+  await p.locator('.skin-house-art').evaluate(i=>i.decode());
+  assert.deepEqual(await value(),{shards:35,id:standing[0]});
+  await p.waitForFunction(scale=>Math.abs(Number(document.querySelector('.skin-house-viewport').dataset.zoomScale)-scale)<.01,saved.placeView.scale);
+  await travel('workshop');await p.locator('[data-open-hero-skins]').click();
+  assert.equal(await p.locator('.hero-skin-dialog').isVisible(),true);await p.keyboard.press('Escape');
+  await p.locator('#close-place').click();assert.equal(await p.locator('#place-dialog').isVisible(),false);
+  const hero=await p.evaluate(()=>LocalProfiles.read());assert.equal(hero.gold,200);assert.equal(hero.energy,80);assert.equal(hero.heroSkin,undefined);
+  assert.deepEqual(errors,[]);console.log(`PASS ${width}x${height}: bedroom, five original photos, free previews, exact charge, standing workshop, saved room/zoom and hero shop`);
+  await context.close();
+ }}finally{await browser.close();}
+})().catch(e=>{console.error(e);process.exit(1)});

@@ -6,3 +6,11 @@ test('Profiles with identical names stay isolated, preserving timers, rewards an
 test('Failed metadata or hero writes cannot lose existing profiles or mutate current resources',()=>{const {p,data,fail}=setup(),a=p.create(hero);p.activate(a);const before=JSON.stringify([...data]);fail('pustkowie.profiles.v1');assert.throws(()=>p.create({...hero,name:'Druga'}),/Quota/);assert.equal(JSON.stringify([...data]),before);fail('pustkowie.hero.v2.'+a);assert.throws(()=>p.write({...hero,gold:0}),/Quota/);assert.equal(p.read().gold,73);});
 test('Malformed and hostile imports do not create or overwrite any profile',()=>{const {p,data}=setup();p.create(hero);const before=JSON.stringify([...data]);for(const text of ['{',JSON.stringify({...hero,gold:-1}),JSON.stringify({...hero,classId:'unknown'}),JSON.stringify({...hero,name:'<img onerror=x>'}),JSON.stringify({format:'pustkowie-profile',version:2,hero}),JSON.stringify({...hero,extra:JSON.parse('{"__proto__":{"x":1}}')})])assert.throws(()=>p.importText(text));assert.equal(JSON.stringify([...data]),before);});
 test('Broken profile index is never silently replaced',()=>{const {p,data}=setup();data.set('pustkowie.profiles.v1','broken');assert.throws(()=>p.create(hero));assert.equal(data.get('pustkowie.profiles.v1'),'broken');});
+test('Vespera bedroom and outfit survive profile export/import without changing resources',()=>{
+ const {p}=setup(),a=p.create({...hero,shards:15,vesperaOutfit:'standing-ranger'});p.activate(a);
+ p.saveView({world:'map',place:'skin-house',room:'bedroom',placeView:{x:.67,y:.55,scale:1.5}});
+ const imported=p.importText(p.exportText(a));p.activate(imported);
+ assert.equal(p.view().room,'bedroom');assert.equal(p.view().place,'skin-house');assert.equal(p.view().placeView.scale,1.5);
+ assert.equal(p.read().vesperaOutfit,'standing-ranger');assert.equal(p.read().shards,15);assert.equal(p.read().gold,hero.gold);
+ assert.equal(p.cleanView({world:'map',place:'skin-house',room:'unknown'}).room,null);
+});

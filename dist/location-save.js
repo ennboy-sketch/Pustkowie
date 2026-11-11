@@ -11,7 +11,7 @@
     if(restoring||!document.body.classList.contains('playing')||!window.LocalProfiles?.active())return;
     const dialog=document.querySelector('#place-dialog'),root=document.querySelector('#place-content');
     const place=dialog.open?window.HubNavigation.place():null;
-    try{window.LocalProfiles.saveView({world:window.HubNavigation.world(),worldView:position(document.querySelector('.world-viewport')),place,room:place==='barracks'?root.querySelector('.barracks-panel')?.dataset.barracksRoom||'training':place==='guild'?root.querySelector('.castle-panel')?.dataset.castleRoom||'entrance':null,placeView:place?position(root.querySelector(SELECTOR)):null});}
+    try{window.LocalProfiles.saveView({world:window.HubNavigation.world(),worldView:position(document.querySelector('.world-viewport')),place,room:place==='barracks'?root.querySelector('.barracks-panel')?.dataset.barracksRoom||'training':place==='guild'?root.querySelector('.castle-panel')?.dataset.castleRoom||'entrance':place==='skin-house'?root.querySelector('.skin-house-panel')?.dataset.skinHouseRoom||'workshop':null,placeView:place?position(root.querySelector(SELECTOR)):null});}
     catch{document.querySelector('#status').textContent='Nie udało się zapisać ostatniego miejsca. Sprawdź miejsce na zapis w przeglądarce.';}
   }
   function schedule(){clearTimeout(timer);timer=setTimeout(capture,400);}
@@ -31,6 +31,7 @@
         window.HubNavigation.open(saved.place);
         if(saved.place==='barracks'&&['armory','commander'].includes(saved.room))window.BarracksPanel.openRoom(saved.room);
         if(saved.place==='guild'&&['throne','school'].includes(saved.room))window.CastlePanel.openRoom(saved.room);
+        if(saved.place==='skin-house'&&saved.room==='bedroom')window.SkinHouse.openRoom('bedroom',{focus:false});
         await Promise.allSettled([...document.querySelectorAll('#place-content img')].map(i=>i.decode()));
         await frame();await frame();
         window.SceneZoom.restore(document.querySelector('#place-content '+SELECTOR.split(',').join(',#place-content ')),saved.placeView);
@@ -40,7 +41,7 @@
   }
   document.addEventListener('scroll',schedule,{capture:true,passive:true});
   document.addEventListener('click',schedule);
-  new MutationObserver(records=>{if(records.some(r=>r.type==='attributes'||r.target.closest?.('#place-content,#map-pins')))schedule();}).observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['open','data-barracks-room','data-castle-room','data-zoom-scale']});
+  new MutationObserver(records=>{if(records.some(r=>r.type==='attributes'||r.target.closest?.('#place-content,#map-pins')))schedule();}).observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['open','data-barracks-room','data-castle-room','data-skin-house-room','data-zoom-scale']});
   window.addEventListener('pagehide',capture);
   document.addEventListener('visibilitychange',()=>{if(document.hidden)capture();});
   window.GameLocation={restore,flush(){clearTimeout(timer);capture();}};

@@ -7,9 +7,9 @@ function runtime(){
  return {r,data,fail:()=>{fail=true;}};
 }
 const hero=()=>({version:2,name:'Test',classId:'elf',gender:'female',level:20,xp:123,gold:400,shards:100,energy:65.5,profession:'elf-profession-1',equipment:{weapon:'sword'},lootInventory:[{id:'sword',slot:'weapon',name:'Broń'}]});
-test('All twelve new costumes and original have valid unique assets and charge exactly five per actual change',()=>{
+test('All seventeen costumes and original have valid unique assets and charge exactly five per actual change',()=>{
  const {r}=runtime(),v=r.VesperaOutfits;let h=hero();const original=h;
- assert.equal(v.CATALOG.length,13);assert.equal(new Set(v.CATALOG.map(o=>o.id)).size,13);
+ assert.equal(v.CATALOG.length,18);assert.equal(new Set(v.CATALOG.map(o=>o.id)).size,18);
  for(const outfit of v.CATALOG){
   assert.ok(fs.existsSync('dist/'+outfit.image));assert.ok(outfit.col>=0&&outfit.col<outfit.columns);assert.ok(outfit.row>=0&&outfit.row<outfit.rows);
   const previous=v.current(h).id,before=h.shards;h=v.change(h,outfit.id,previous);
@@ -19,6 +19,18 @@ test('All twelve new costumes and original have valid unique assets and charge e
  }
  assert.equal(original.shards,100);assert.equal(original.vesperaOutfit,undefined);
  const back=v.change(h,'default');assert.equal(back.shards,h.shards-5);assert.equal(v.current(back).id,'default');
+});
+test('Standing outfits preserve all five uploaded JPEG files byte for byte',()=>{
+ const {r}=runtime(),standing=r.VesperaOutfits.CATALOG.filter(o=>o.pose==='standing');
+ const hashes=[
+  'cb2d16df372d6b61e642f57a0f7a010ead57be5e17f1b4e3773aa55d5c09bf9a',
+  '5ab6db792c5a84ae74c46099203e5cb54c81bf2140f7e61672bab586f3712f2f',
+  'd687c66bc9806d97fb4ed763c8ef5df1af5d23abc9134a06701831774b88e782',
+  '99e13259fd3dfcf4435abad8c6199e8b219b9eb27464ca416ba46fd5fd407671',
+  'b2eac66a11121a2fff0e0c30b0e02f2567195a8b16ad9e7f0a374f30d0dc4607'
+ ];
+ assert.equal(standing.length,5);
+ standing.forEach((outfit,i)=>{assert.equal(crypto.createHash('sha256').update(fs.readFileSync('dist/'+outfit.image)).digest('hex'),hashes[i]);});
 });
 test('Insufficient funds, invalid outfits, stale confirmation and corrupt balances cannot change the hero',()=>{
  const {r}=runtime(),v=r.VesperaOutfits,h=hero(),before=JSON.stringify(h);

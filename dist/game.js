@@ -68,7 +68,7 @@ function renderProfiles(){
       const figure=document.createElement('span');figure.className=`character ${hero.gender} ${hero.classId}${window.HeroSkins?.classSuffix(hero)||''}`;portrait.append(figure);
       const info=document.createElement('div'),name=document.createElement('h2'),description=document.createElement('p'),where=document.createElement('small');
       name.textContent=hero.name;description.textContent=`${hero.gender==='female'?CLASSES[hero.classId].female:CLASSES[hero.classId].name} · Poziom ${window.Progression.level(hero)}`;
-      const roomName=location?.place==='skin-house'?'Dom Tysiąca Twarzy':location?.place==='barracks'?{commander:'Komnata Melody',armory:'Zbrojownia Rolanda'}[location.room]:location?.place==='guild'?{throne:'Sala tronowa',school:'Komnata Leśnej Przysięgi'}[location.room]:null;
+      const roomName=location?.place==='skin-house'?(location.room==='bedroom'?'Sypialnia Vespery':'Dom Tysiąca Twarzy'):location?.place==='barracks'?{commander:'Komnata Melody',armory:'Zbrojownia Rolanda'}[location.room]:location?.place==='guild'?{throne:'Sala tronowa',school:'Komnata Leśnej Przysięgi'}[location.room]:null;
       where.textContent='Ostatnie miejsce: '+(roomName||{map:'Zamek Czarnej Stali',glade:'Polana',ubocze:'Ubocze','hell-gates':'Wrota Piekieł'}[location?.world]||'Zamek Czarnej Stali');
       info.append(name,description,where);
       const buttons=document.createElement('div');buttons.className='profile-buttons';
