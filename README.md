@@ -920,3 +920,9 @@ Prawe boczne drzwi zamku prowadzą do Archiwum Pieczęci z nową ilustracją `se
 Stare zapisy nie wymagają zerowania ani osobnej konwersji. Ukończone zadania Tauriel, szkolenie Gabriela oraz bossowie zapisani w `graveyardDefeated` zaliczają cele kampanii bez powtarzania walk i odbierania dawnych przedmiotów po raz drugi. Nowe pole `campaign` powstaje dopiero po przyjęciu zadania. Przyjęcie, dowody, zwycięstwa, wizyty i nagrody zapisują się w aktywnym profilu, także przez eksport/import. Nagrodę kampanii odbiera się jeden raz po wykonaniu wszystkich celów. Nowe walki nie pobierają energii ani nie resetują odnowienia lochów.
 
 Weryfikacja: `node --test tests/*.test.cjs`; przy stronie na porcie 8020 — `node tests/campaign.browser.cjs`, `node tests/castle.browser.cjs`, `node tests/lyrien-visibility.browser.cjs`, `node tests/profiles.browser.cjs` i `node tests/vespera-bedroom.browser.cjs`. Testy obejmują pełną kampanię na komputerze i telefonie, istniejące osiągnięcia, dokładne jednorazowe nagrody, decyzje, zapisy komnat, błędy pamięci przeglądarki, dwie równoczesne karty oraz regresje zamku, profesji, profili i garderoby Vespery.
+
+## Przygotowany bestiariusz 31–50
+
+20 nowych potworów (po jednym na poziom) i 5 terenów pogranicza Wrót Piekieł: Popielny Bór, Martwe Rozlewiska, Kopalnie Czarnego Żaru, Ruiny Spalonej Przysięgi i Przedpola Piekielnych Wrót. Każdy ma ilustrację, statystyki, zdolności, opis i tytuł przyszłego zlecenia. EXP to 18% progu awansu na równym poziomie, z limitem według słabszej strony; złoto 300–795. Szczegóły i pełna tabela: [docs/FRONTIER-BESTIARY.md](docs/FRONTIER-BESTIARY.md).
+
+Katalog pozostaje przygotowany, bez włączenia do misji karczmy lub Branda. Osobny, tylko do odczytu [podgląd bestiariusza](https://ennboy-sketch.github.io/Pustkowie/dist/bestiary-31-50.html) pozwala obejrzeć grafiki i zmienić poziom podglądu nagród. Nie ładuje zapisu bohatera. Główna gra i wymóg 110 poziomu dla Wrót Piekieł pozostają bez zmian.

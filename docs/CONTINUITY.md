@@ -47,3 +47,7 @@ Testy logiki: `node --test tests/*.test.cjs`.
 Testy przeglądarkowe przy stronie lokalnej na porcie 8020: `node tests/campaign.browser.cjs`, `node tests/castle.browser.cjs`, `node tests/lyrien-visibility.browser.cjs`, `node tests/profiles.browser.cjs`, `node tests/vespera-bedroom.browser.cjs`.
 
 Publikacja zachowuje GitHub Pages. Zapis nowej wersji na `main` uruchamia istniejący proces publikacji; przed ukończeniem zadania należy sprawdzić wdrożenie i pliki pod publicznym adresem. Nie tworzyć zastępczej witryny w innej usłudze.
+
+## Przygotowane potwory 31–50 — jeszcze bez misji
+
+Zgodnie z poleceniem użytkownika katalog FrontierBestiary pozostaje poza aktywnymi pulami karczmy i Branda. Zawiera 20 przeciwników i 5 nowych terenów; pełna tabela, wzór nagród i uwagi do przyszłej integracji: [FRONTIER-BESTIARY.md](FRONTIER-BESTIARY.md). Oddzielny podgląd: dist/bestiary-31-50.html. Nie włączać zleceń ani nowych terenów na mapie bez dalszego polecenia.
