@@ -867,3 +867,13 @@ Znacznik „Wrota Piekieł” na Uboczu od poziomu 110 przenosi na pełną mapę
 ### Obóz najemników we Wrotach Piekieł
 
 Przy trakcie na mapie Wrót Piekieł znajduje się niewielki klikalny obóz (`hell-mercenary-camp`). Trzy niewielkie namioty, palisada i ognisko są namalowane bezpośrednio w tle `hell-gates-camp-map.webp`, z perspektywą, kolorem i cieniami dopasowanymi do skalnej równiny. Przezroczysty obszar kliknięcia leży nad obozem, a podpis poniżej; oba przesuwają się i powiększają razem z mapą. Grafika `mercenary-camp.webp` pozostaje ilustracją w oknie obozu. Kliknięcie otwiera okno „Obóz najemników”, zamykane standardowym X, bez zużywania zasobów. Postacie, handel i misje pozostają do dodania. Obóz wymaga tego samego 110. poziomu co wejście do krainy; profil zapamiętuje otwarte okno i po powrocie odtwarza je nad mapą Wrót Piekieł. Test `node tests/hell-gates.browser.cjs` sprawdza wejście, powrót, wznowienie w obozie oraz przesuwanie i przybliżanie mapy na komputerze i telefonie.
+
+### Profesje Elfów u Lyrien
+
+Od 10. poziomu Elf i Elfka wybierają w Komnacie Leśnej Przysięgi jedną z dwóch stałych profesji: **Zwiadowca** (`elf-profession-1`) lub **Leśna Straż** (`elf-profession-2`). Dotychczasowe identyfikatory zachowują zgodność ze starymi zapisami; profesji nie można zmienić.
+
+Zwiadowca płaci dokładnie 50% bazowej energii za walki i zwiady Branda: 3 → 1,5 oraz 5 → 2,5. Koszt obliczany jest przy rozpoczęciu, pokazywany w ofertach i zapisany z aktywnością, bez ponownego pobierania po odświeżeniu. Energia obsługuje połówki także w regeneracji, piwie, nagrodach koła oraz eksporcie/importcie profilu. Bezpłatne przejścia map, lochy i szkolenie pozostają bez kosztu; nie przyspieszamy zegara odnowienia ani czasu zwiadu. Pozostałe klasy i profesje płacą dotychczasowe koszty.
+
+Zwiadowca może nadal używać łuków, a u Gringa otrzymuje dostęp do krótkich sztyletów w istniejących przedziałach sklepu 5/15/25. Wymagają profesji Zwiadowca i co najmniej poziomu 10 (wyższe wersje: 15/25); koszt i premia zręczności odpowiadają łukowi tego samego przedziału. Mają własną ikonę `scout-dagger.webp`, zajmują zwykły slot broni i po założeniu działają także w walce oraz jej komunikatach. Leśna Straż i inne klasy nie mogą ich kupować ani zakładać.
+
+Leśna Straż ma opis przyszłego dostępu do specjalnego ekwipunku za misje w Eldorze oraz Specjalnych Najemników Elfickich. Ekwipunek, misje i możliwość dołączenia do oddziału pozostają do zaprojektowania później. Testy: `node --test tests/elf-professions.test.cjs` i `node tests/elf-professions.browser.cjs` z lokalną stroną na porcie 8020.

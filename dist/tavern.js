@@ -92,7 +92,7 @@
       const countdown=[Math.floor(seconds/3600),Math.floor(seconds/60)%60,seconds%60].map(n=>String(n).padStart(2,'0')).join(':');
       if(!beerPanel.querySelector('[data-buy-beer]'))beerPanel.innerHTML=`<div class="beer-heading"><span class="rpg-icon icon-tavern" aria-hidden="true"></span><div><h3>Piwo Tobiasza</h3><p>+20 energii · 25 złota</p></div></div><div class="beer-numbers"><span>Złoto <b class="beer-gold"></b></span><span>Energia <b class="beer-energy"></b></span><span>Pozostało piw <b class="beer-left"></b></span></div><p class="beer-limit">Maksymalnie 3 piwa w ciągu ostatnich 8 godzin.<span class="beer-reset"><br>Następne zużycie odnowi się za <span class="beer-timer"></span>.</span></p><button type="button" class="primary" data-buy-beer></button><p class="beer-gain"></p><p class="beer-message" role="status" aria-live="polite"></p>`;
       beerPanel.querySelector('.beer-gold').textContent=s.gold;
-      beerPanel.querySelector('.beer-energy').textContent=`${s.energy} / 100`;
+      beerPanel.querySelector('.beer-energy').textContent=`${window.EnergyCycle.format(s.energy)} / 100`;
       beerPanel.querySelector('.beer-left').textContent=`${s.remaining} / 3`;
       beerPanel.querySelector('.beer-reset').hidden=!s.nextAt;
       beerPanel.querySelector('.beer-timer').textContent=countdown;

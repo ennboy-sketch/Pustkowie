@@ -44,13 +44,14 @@
     return {mission,minutes:duration,energy:window.EnergyCycle.info(hero,now).energy,level:heroLevel(hero),remaining:mission?Math.max(0,mission.endsAt-now):0,ready:!!mission&&now>=mission.endsAt};
   }
   function start(hero,now=Date.now(),draw=drawScene,roll=rollReward,options={}) {
-    const cost=options.cost??COST;if(![3,5].includes(cost))throw new Error('Nieprawidłowy koszt misji.');
+    const baseCost=options.cost??COST;if(![3,5].includes(baseCost))throw new Error('Nieprawidłowy koszt misji.');
     hero=window.EnergyCycle.apply(hero,now);
+    const cost=window.EnergyCycle.cost(hero,baseCost);
     if(hero.activeCombat)throw new Error('Najpierw zakończ walkę z potworem.');
     if(active(hero))throw new Error('Najpierw zakończ obecny zwiad.');
     const level=heroLevel(hero),duration=durationFor(level);
     if(!duration)throw new Error('Zwiad powyżej poziomu 35 ustalimy później.');
-    if(hero.energy<cost)throw new Error(`Potrzebujesz ${cost} punktów energii.`);
+    if(hero.energy<cost)throw new Error(`Potrzebujesz ${window.EnergyCycle.format(cost)} punktów energii.`);
     const sceneId=draw();if(!Object.hasOwn(SCENES,sceneId))throw new Error('Nieznane miejsce zwiadu.');
     const durationMs=duration*60000*(hero.warPony?.9:1);
     const reward=roll(duration);if(!validReward(reward,duration,level))throw new Error('Nieprawidłowa nagroda zwiadu.');
@@ -84,7 +85,7 @@
       if(disposed)return;
       container.classList.toggle('scout-has-error',actionError);
       try {
-        const hero=state.read(),s=status(hero),button=$('[data-scout-action]');
+        const hero=state.read(),s=status(hero),cost=window.EnergyCycle.cost(hero,COST),costLabel=window.EnergyCycle.format(cost),button=$('[data-scout-action]');
         if(container.classList.contains('scout-active-view')&&!s.mission){if(!leaving){leaving=true;queueMicrotask(()=>{if(!disposed)state.onFinished?.();});}return;}
         container.classList.toggle('scout-ready',s.ready);
         const location=s.mission?.sceneId,scene=location?SCENES[location]:null;
@@ -94,7 +95,8 @@
         $('.scout-narrative').textContent=scene?scene.description:s.mission?'Trwa wcześniej rozpoczęty zwiad. Zgłoś powrót po upływie czasu.':'Dowódca Brand wyznaczy jedno z trzech miejsc: Mroczny Las, Starą Kopalnię lub Podziemia Miasta.';
         $('.scout-offers').hidden=!!s.mission;
         $('.scout-duration').textContent=s.mission?`Czas przyjętego zwiadu: ${s.mission.durationMs/60000} min`:s.minutes?`Twój poziom: ${s.level} · Czas: ${s.minutes*(hero.warPony?.9:1)} min`:`Twój poziom: ${s.level} · Czas powyżej 35. poziomu do ustalenia`;
-        $('.scout-cost').textContent=`${s.mission?'Koszt został pobrany przy rozpoczęciu':'Koszt: 5 energii'} · Energia: ${s.energy} / 100`;
+        $('.mission-note').textContent=`Nagroda EXP i złota zależy od czasu zwiadu. Rozpoczęcie kosztuje ${costLabel} energii. Nagrodę otrzymasz po zgłoszeniu powrotu.`;
+        $('.scout-cost').textContent=`${s.mission?'Koszt został pobrany przy rozpoczęciu':`Koszt: ${costLabel} energii`} · Energia: ${window.EnergyCycle.format(s.energy)} / 100`;
         const range=s.mission?ranges(savedDuration(s.mission),s.mission.rewardVersion??0):REWARDS[s.minutes];
         const chance=s.mission?(s.mission.reward?.shards!==undefined&&s.mission.levelAtStart>=8?s.mission.shardChance??3:0):shardChance(s.level);
         $('.scout-reward-preview').textContent=range?`Nagroda: ${range.xp[0]===range.xp[1]?range.xp[0]:range.xp.join('–')} EXP · ${range.gold[0]===range.gold[1]?range.gold[0]:range.gold.join('–')} złota${chance?` · ${chance}% szansy na 1 odłamek`:''}`:'';
@@ -103,8 +105,8 @@
         button.dataset.missionAction=s.mission?'finish':'start';
         button.dataset.missionStartedAt=s.mission?String(s.mission.startedAt):'';
         button.dataset.missionEndsAt=s.mission?String(s.mission.endsAt):'';
-        button.disabled=busy||(!s.mission&&(!s.minutes||s.energy<COST))||(!!s.mission&&!s.ready);
-        button.textContent=busy?'Zapisywanie…':s.ready?'Zgłoś powrót':s.mission?'Zwiad w toku':!s.minutes?'Czas zwiadu do ustalenia':s.energy<COST?'Brak energii · potrzeba 5':'Rozpocznij zwiad · 5 energii';
+        button.disabled=busy||(!s.mission&&(!s.minutes||s.energy<cost))||(!!s.mission&&!s.ready);
+        button.textContent=busy?'Zapisywanie…':s.ready?'Zgłoś powrót':s.mission?'Zwiad w toku':!s.minutes?'Czas zwiadu do ustalenia':s.energy<cost?`Brak energii · potrzeba ${costLabel}`:`Rozpocznij zwiad · ${costLabel} energii`;
         $('.mission-message').textContent=message||(s.ready?'Wróć do Branda i zgłoś zakończenie zwiadu.':'');
         $('.scout-history').hidden=!hero.lastScout||!!s.mission;
         if(hero.lastScout)$('.scout-history').textContent=`Ostatni zwiad: ${SCENES[hero.lastScout.sceneId]?.name||'Zwiad'} — zakończony.${hero.lastScout.reward?` +${hero.lastScout.reward.xp} EXP i ${hero.lastScout.reward.gold} złota${hero.lastScout.reward.shards?' · +1 odłamek':''}.`:''}`;

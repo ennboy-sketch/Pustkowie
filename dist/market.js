@@ -88,7 +88,7 @@
         return;
       }
       if(selectedTier===null)selectedTier=[...window.GearCatalog.LEVELS].reverse().find(n=>n<=window.Progression.level(hero))||5;
-      const stock=window.GearCatalog.forClass(hero.classId).filter(p=>p.requiredLevel===selectedTier);
+      const stock=window.GearCatalog.forClass(hero.classId).filter(p=>p.requiredLevel===selectedTier&&(!p.profession||p.profession===hero.profession));
       content.innerHTML=wallet+`<p class="market-help">Uzbrojenie Zamku Czarnej Stali dla Twojej klasy. Premie działają po założeniu. Zakupy trafiają do ekwipunku.</p><nav class="market-tiers" aria-label="Poziom uzbrojenia">${window.GearCatalog.LEVELS.map(n=>`<button type="button" data-market-tier="${n}" aria-pressed="${n===selectedTier}">Poziom ${n}</button>`).join('')}</nav>${full?'<p class="market-full">Ekwipunek pełny — zakupy zablokowane.</p>':''}<div class="market-stock">${stock.map(p=>{const reason=window.GearCatalog.reason(hero,p),blocked=busy||full||!!reason||gold<p.price;return `<article class="market-product ${reason?'is-level-locked':''}">${window.GearCatalog.icon(p)}<div><h3>${p.name}</h3><small>${window.HeroSheet.itemSlotLabel(p)} · ${window.GearCatalog.details(p)}</small><small>${describeItem({marketProduct:p.id,slot:p.slot})}</small><strong>${p.price} złota</strong></div><button type="button" data-buy-market="${p.id}" aria-label="Kup: ${p.name}, ${p.price} złota" ${blocked?'disabled':''}>${busy?'Zapisywanie…':full?'Brak miejsca':reason?`Wymagany poziom ${p.requiredLevel}`:gold<p.price?'Brak złota':'Kup'}</button></article>`;}).join('')}</div>`;
     }
     function show(part){

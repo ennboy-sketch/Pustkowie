@@ -78,14 +78,15 @@
     return {...hero,combatOffer:{sceneId,enemyId:pool[random(0,pool.length-1)].id}};
   }
   function start(hero,now=Date.now(),options={}){
-    const cost=options.cost??5;if(![3,5].includes(cost))throw new Error('Nieprawidłowy koszt misji.');
+    const baseCost=options.cost??5;if(![3,5].includes(baseCost))throw new Error('Nieprawidłowy koszt misji.');
     hero=window.EnergyCycle.apply(hero,now);
+    const cost=window.EnergyCycle.cost(hero,baseCost);
     if(hero.activeMission||hero.activeCombat)throw new Error('Najpierw zakończ obecną misję.');
     if(!eligible(hero))throw new Error('Brak potworów dostępnych na Twoim poziomie.');
     const sceneId=hero.combatOffer?.sceneId;
     const enemy=sceneId&&Object.hasOwn(ROSTERS,sceneId)?availableOpponents(hero,sceneId).find(m=>m.id===hero.combatOffer.enemyId):null;
     if(!enemy)throw new Error('Brak przydzielonego przeciwnika.');
-    if(hero.energy<cost)throw new Error(`Potrzebujesz ${cost} energii.`);
+    if(hero.energy<cost)throw new Error(`Potrzebujesz ${window.EnergyCycle.format(cost)} energii.`);
     const player=profile(hero);
     return {...hero,energy:hero.energy-cost,brandOffers:null,activeCombat:{cost,difficulty:options.difficulty||null,id:crypto.randomUUID(),sceneId,battle:createBattle(player,enemy,'hero'),loot:null,reward:enemy.reward?{...enemy.reward}:{gold:random(10,30),xp:random(33,55)},nextHitAt:now+1100}};
   }
@@ -129,6 +130,8 @@
     const base=BASE_STATS[hero.classId];
     if(!base)throw new Error('Nieznana klasa postaci.');
     const added=window.HeroSheet.bonuses(hero),stats=base.map((n,i)=>n+added[i]);
+    const weaponId=window.HeroSheet.equipment?.(hero)?.weapon,weapon=window.HeroSheet.inventory?.(hero)?.find(i=>i.id===weaponId&&i.slot==='weapon');
+    const weaponType=hero.classId==='elf'?(window.GearCatalog?.productFor(weapon)?.weaponType==='dagger'?'dagger':'bow'):null;
     const bonuses=window.FateWheel?.bonuses(hero)||{damage:0,armor:0};
     const level=window.Progression.level(hero);
     // +1 base damage per main attribute point: melee = strength,
@@ -138,7 +141,7 @@
       const power=level*2+stats[index]+(bonuses.damage||0);
       return [Math.max(1,power-3),power+3];
     };
-    return {necromancer:isNecromancer(hero),damageBonus:bonuses.damage,armor:bonuses.armor,name:hero.name,level,
+    return {weaponType,necromancer:isNecromancer(hero),damageBonus:bonuses.damage,armor:bonuses.armor,name:hero.name,level,
       maxHp:50+stats[3]*10+window.HeroSheet.hpBonus(hero),
       maxMana:window.HeroSheet.manaCapacity(hero.classId,stats[2]),
       stats:[...stats],classId:hero.classId,gender:hero.gender,
@@ -226,7 +229,7 @@
     const hp=Math.max(0,current[target].hp-totalDamage);
     const poisonApplied=triggered&&special.type==='dot'&&hp>0?{damage:special.damage,turns:special.turns,label:special.label}:null;
     const defender={...current[target],hp,poisonEffect:hp===0?null:poisonApplied||current[target].poisonEffect||null};
-    const ability=triggered?special.ability:darkMissile?'dark-missile':fireball?'fireball':element==='magic'?'magic-missile':element==='water'?'water':mage?'wand':poison?'poison':piercing?'piercing':'attack';
+    const ability=triggered?special.ability:darkMissile?'dark-missile':fireball?'fireball':element==='magic'?'magic-missile':element==='water'?'water':mage?'wand':poison?'poison':piercing?'piercing':['bow','dagger'].includes(current[actor].weaponType)?current[actor].weaponType:'attack';
     return {...current,[actor]:attacker,[target]:defender,next:target,hits:battle.hits+1,winner:hp===0?actor:null,lastHit:{actor,target,damage:totalDamage,magicWave,ability,absorbed,ignoredArmor,element,weaknessBonus,magicBonus,professionBonus,resisted,resistanceIgnored,powerBonus,rageBonus,ragePercent:rage,poisonTick,poisonApplied,manaCost:fireball?FIREBALL.manaCost:0}};
   }
   function fighterMarkup(side){return `<article class="combat-fighter" data-fighter="${side}"><div class="combat-portrait"><div class="combat-figure"></div><span class="combat-empty-icon rpg-icon icon-arena" aria-hidden="true"></span><span class="combat-damage" aria-hidden="true"></span><div class="combat-identity"><h3></h3><span class="combat-level"></span></div></div><div class="combat-health"><progress max="1" value="0" aria-label="Punkty życia"></progress><strong></strong></div><div class="combat-mana" hidden><progress max="1" value="0" aria-label="Punkty many"></progress><strong></strong></div><dl class="combat-stats">${LABELS.map(label=>`<div><dt>${label}</dt><dd>—</dd></div>`).join('')}</dl><p class="combat-traits" hidden></p><p class="combat-effects" hidden role="status"></p></article>`;}
@@ -275,7 +278,7 @@
     let message='Przeciwnicy stają naprzeciw siebie.';
     if(hit?.ability==='poison-tick')message=`${hit.poisonName}: ${battle[hit.target].name} otrzymuje ${hit.damage} obrażeń.`;
     else if(hit){
-      const verbs={'dark-missile':'rzuca Mroczny pocisk (−10 many, +10% obrażeń) i zadaje','magic-missile':'rzuca magiczny pocisk i zadaje',fireball:'rzuca Kulę ognia (−10 many) i zadaje',water:'atakuje magią wody i zadaje',wand:'atakuje różdżką i zadaje',poison:'uderza zatrutym żądłem i zadaje',piercing:'wyprowadza potężny cios kilofem i zadaje','venom-bite':'wykonuje jadowite ukąszenie i zadaje',spores:'wypuszcza trujące zarodniki i zadaje','chain-slam':'wykonuje potężne uderzenie łańcuchami (150%) i zadaje','thorn-grab':'wykonuje Ciernisty Chwyt (+10) i zadaje','cursed-charge':'wykonuje szarżę (150%) i zadaje','piercing-arrow':'wypuszcza Przeszywającą Strzałę i zadaje','abyss-echo':'wywołuje Echo Zagłady i zadaje'};
+      const verbs={bow:'strzela z łuku i zadaje',dagger:'atakuje krótkim sztyletem i zadaje','dark-missile':'rzuca Mroczny pocisk (−10 many, +10% obrażeń) i zadaje','magic-missile':'rzuca magiczny pocisk i zadaje',fireball:'rzuca Kulę ognia (−10 many) i zadaje',water:'atakuje magią wody i zadaje',wand:'atakuje różdżką i zadaje',poison:'uderza zatrutym żądłem i zadaje',piercing:'wyprowadza potężny cios kilofem i zadaje','venom-bite':'wykonuje jadowite ukąszenie i zadaje',spores:'wypuszcza trujące zarodniki i zadaje','chain-slam':'wykonuje potężne uderzenie łańcuchami (150%) i zadaje','thorn-grab':'wykonuje Ciernisty Chwyt (+10) i zadaje','cursed-charge':'wykonuje szarżę (150%) i zadaje','piercing-arrow':'wypuszcza Przeszywającą Strzałę i zadaje','abyss-echo':'wywołuje Echo Zagłady i zadaje'};
       message=`${battle[hit.actor].name} ${verbs[hit.ability]||'zadaje'} ${hit.damage} obrażeń${hit.ability==='poison'?' od trucizny':''}.`;
       if(hit.poisonTick)message=`${hit.poisonTick.label}: ${battle[hit.poisonTick.target].name} otrzymuje ${hit.poisonTick.damage} obrażeń. `+message;
       if(hit.poisonApplied)message+=` ${hit.poisonApplied.label}: ${hit.poisonApplied.damage} obrażeń przez ${hit.poisonApplied.turns} tury celu.`;
@@ -320,7 +323,7 @@
       const fight=hero.activeCombat,offer=hero.combatOffer;
       dialog.querySelector('.combat-top>div>span').textContent=fight?.source==='gabriel'?'Gabriel · Próba Żelaznej Przysięgi':fight?.source==='graveyard'?'Cmentarzysko · Bossowie':fight?.source==='tauriel'?'Tauriel · Przepędź nieproszonych gości':'Dowódca Brand · Walka z potworami';
       dialog.querySelector('[data-close-combat]').setAttribute('aria-label',fight?.source==='gabriel'?'Wróć do Gabriela':fight?.source==='graveyard'?'Wróć do Cmentarzyska':fight?.source==='tauriel'?'Wróć do Tauriel':'Wróć do Branda');
-      dialog.querySelector('.combat-bottom>small').textContent=fight?.source==='gabriel'?'Szkolenie Gabriela · Bez kosztu energii':fight?.source==='graveyard'?'Cmentarzysko · Bez kosztu energii':fight?.source==='tauriel'?'Misja Tauriel · Bez kosztu energii':fight?`Koszt misji: ${fight.cost??5} energii · Opłacono przy rozpoczęciu`:'Wybierz zlecenie u Branda.';
+      dialog.querySelector('.combat-bottom>small').textContent=fight?.source==='gabriel'?'Szkolenie Gabriela · Bez kosztu energii':fight?.source==='graveyard'?'Cmentarzysko · Bez kosztu energii':fight?.source==='tauriel'?'Misja Tauriel · Bez kosztu energii':fight?`Koszt misji: ${window.EnergyCycle.format(fight.cost??5)} energii · Opłacono przy rozpoczęciu`:'Wybierz zlecenie u Branda.';
       const sceneId=fight?.sceneId||offer?.sceneId||'forest',scene=fight?.source==='gabriel'&&fight.stage==='dummies'?{image:'barracks-training.webp',short:'Plac treningowy Gabriela'}:fight?.source==='graveyard'?{image:'scout-forest.webp',short:'Cmentarzysko'}:fight?.source==='tauriel'?{image:'tavern-upstairs.webp',short:'Górne piętro · Barykada'}:window.BrandMissions.SCENES[sceneId];
       dialog.querySelector('.combat-stage').style.setProperty('--combat-art',`url("${scene.image}")`);
       dialog.querySelector('#combat-location').textContent=scene.short;

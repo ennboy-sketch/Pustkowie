@@ -34,7 +34,7 @@
       if(v&&typeof v==='object')for(const [k,x] of Object.entries(v)){if(['__proto__','constructor','prototype'].includes(k))throw Error('Nieprawidłowe pole w zapisie.');walk(x,depth+1);}
     }
     walk(hero);
-    for(const k of ['level','xp','gold','shards','energy','magicDust','rareMaterial','gemFragments','spellScrolls','deadBones','blackSteel'])if(hero[k]!==undefined&&(!Number.isSafeInteger(hero[k])||hero[k]<(k==='level'?1:0)))throw Error('Nieprawidłowe zasoby lub poziom postaci.');
+    for(const k of ['level','xp','gold','shards','energy','magicDust','rareMaterial','gemFragments','spellScrolls','deadBones','blackSteel'])if(hero[k]!==undefined&&(!(k==='energy'?typeof hero[k]==='number'&&Number.isSafeInteger(hero[k]*2):Number.isSafeInteger(hero[k]))||hero[k]<(k==='level'?1:0)))throw Error('Nieprawidłowe zasoby lub poziom postaci.');
     // Reuse the actual game validators when loaded by the browser.
     window.HeroSheet?.inventory(hero);window.HeroSheet?.bonuses(hero);window.BeerService?.status(hero);window.GabrielTraining?.quest(hero);window.ArmoryRewards?.progress(hero);
     return hero;
