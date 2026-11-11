@@ -1,0 +1,24 @@
+.place-dialog:has(.skin-house-panel){width:1200px;padding:0;background:#19151f}
+.place-dialog[open]:has(.skin-house-panel){display:flex;flex-direction:column;height:calc(100svh - 32px);max-height:calc(100svh - 32px);overflow:hidden}
+.place-dialog:has(.skin-house-panel)>.place-top{padding:15px 20px 0;flex-shrink:0}
+.place-dialog:has(.skin-house-panel)>h2{margin:6px 20px 15px;padding-bottom:13px;font-size:27px;flex-shrink:0}
+.place-dialog:has(.skin-house-panel)>#place-content{flex:1;min-height:0;overflow:hidden}
+.skin-house-panel{height:100%;background:#19151f}
+.skin-house-viewport{width:100%;height:100%;overflow:auto;overscroll-behavior:contain;touch-action:pan-x pan-y;cursor:grab;scrollbar-width:none;border-top:1px solid #a38950}
+.skin-house-viewport::-webkit-scrollbar{display:none}
+.skin-house-viewport.is-dragging,.skin-house-viewport.is-dragging *{cursor:grabbing;user-select:none}
+.skin-house-panorama{position:relative;isolation:isolate}
+.skin-house-art{display:block;width:100%;height:100%;object-fit:contain;user-select:none;-webkit-user-drag:none}
+.skin-house-vignette{position:absolute;inset:0;pointer-events:none;box-shadow:inset 0 0 35px #110a2055}
+.skin-house-merchant{position:absolute;left:50%;top:75%;transform:translate(-50%,-50%);width:16%;min-width:125px;height:13%;min-height:64px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;background:transparent;border:0;color:#f2d8a5;padding:0;cursor:pointer}
+.skin-house-merchant>span{display:block;width:170px;max-width:100%;box-sizing:border-box;padding:7px 13px 4px;background:#211525ed;border:1px solid #b4965f;border-bottom:0;border-radius:4px 4px 0 0;font:600 16px 'Cinzel',Georgia,serif;box-shadow:0 3px 12px #0008}
+.skin-house-merchant>small{display:block;padding:0 13px 6px;background:#211525ed;border:1px solid #b4965f;border-top:0;border-radius:0 0 4px 4px;width:170px;max-width:100%;box-sizing:border-box;font-size:10px;letter-spacing:.5px;color:#d0baa5}
+.skin-house-merchant:hover>span,.skin-house-merchant:hover>small,.skin-house-merchant:focus-visible>span,.skin-house-merchant:focus-visible>small{background:#3b2543ee;border-color:#ebce8d}
+.skin-house-merchant:focus-visible{outline:2px solid #f4d792;outline-offset:4px;border-radius:6px}
+.skin-house-dialog{width:440px;max-width:calc(100% - 24px);padding:24px;border:1px solid #b4965f;border-radius:5px;background:linear-gradient(135deg,#302037,#131d18);color:#e8d8b4;box-shadow:0 15px 70px #000b}
+.skin-house-dialog::backdrop{background:#060509b3}
+.skin-house-dialog h3{margin:0 0 18px;font:600 23px 'Cinzel',Georgia,serif;color:#e6c98d}
+.skin-house-dialog p{font-size:14px;line-height:1.8}
+.skin-house-coming{padding:12px 14px;border:1px solid #796641;background:#100d1588;color:#cfba95}
+.skin-house-dialog button{width:100%;min-width:0;margin-top:12px}
+@media(max-width:480px){.place-dialog[open]:has(.skin-house-panel){height:calc(100svh - 16px);max-height:calc(100svh - 16px);max-width:calc(100% - 16px)}.place-dialog:has(.skin-house-panel)>.place-top{padding:12px 15px 0}.place-dialog:has(.skin-house-panel)>h2{font-size:20px;margin:5px 15px 12px}.skin-house-merchant>span{font-size:15px}}

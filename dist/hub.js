@@ -15,6 +15,7 @@
     forge:{name:'Kuźnia',title:'Kuźnia Czarnego Żaru',category:'Handel',icon:'forge',x:47,y:22,text:'Ostatni kowal zamku wciąż podtrzymuje ogień.',future:'Broń i pancerze'},
     alchemy:{name:'Alchemiczka',title:'Wieża Zielonego Płomienia',category:'Handel',icon:'alchemy',x:87,y:64,text:'Za zielonymi szybami coś nigdy nie zasypia.',future:'Mikstury'},
     market:{name:'Czarny Targ',title:'Czarny Targ',category:'Handel',icon:'market',x:48,y:76,text:'Każda rzecz ma tu cenę. Każda moneta swoją historię.',future:'Kupno i sprzedaż'},
+    'skin-house':{name:'Dom Tysiąca Twarzy',title:'Dom Tysiąca Twarzy',category:'Pracownia wyglądu',icon:'market',x:64,y:81},
     guild:{name:'Zamek',title:'Komnaty z Czarnej Stali',category:'Świat',icon:'castle',x:77,y:12},
     wheel:{name:'Koło Losu',title:'Koło Losu',category:'Fontanna Czarnej Stali',icon:'wheel',x:50,y:39},
     glade:{name:'Polana',title:'Polana',category:'Świat',icon:'map',x:65,y:94},
@@ -137,6 +138,7 @@
   let stopDungeons=()=>{};
   let stopCastle=()=>{};
   let stopGoldenPony=()=>{};
+  let stopSkinHouse=()=>{};
   let worldLocation='map',openPlaceId=null;
   const worldPositions=new Map();
   function showWorld(id){
@@ -176,7 +178,7 @@
     const dungeonLocked=id==='dungeon'&&level()<DUNGEON_LEVEL;
     const dungeonTrainingLocked=id==='dungeon'&&!window.GabrielTraining.unlocked(hero)&&hero.activeCombat?.source!=='graveyard';
     if(['tavern','hero','inventory','market'].includes(id)){try{readCurrentHero();}catch{}}
-    stopActiveScout();stopHeroSheet();stopDungeons();stopCastle();stopGoldenPony();
+    stopActiveScout();stopHeroSheet();stopDungeons();stopCastle();stopGoldenPony();stopSkinHouse();
     window.FateWheel.cancel();
     window.TavernPanel.cancel();
     window.AlchemistPanel.cancel();
@@ -193,7 +195,9 @@
     let scouting=false;
     if(id==='tavern'){try{scouting=!!window.BrandMissions.status(hero).mission;}catch{}}
     let content;
-    if(id==='ubocze-tavern'&&level()>=place.requiredLevel){
+    if(id==='skin-house'){
+      content=window.SkinHouse.markup();
+    } else if(id==='ubocze-tavern'&&level()>=place.requiredLevel){
       content=window.GoldenPony.markup();
     } else if(id==='hell-mercenary-camp'&&level()>=place.requiredLevel){
       content='<section class="mercenary-camp-panel" aria-label="Obóz najemników"><img src="mercenary-camp.webp" alt="Mały obóz z trzema ciemnymi namiotami, drewnianą palisadą i ogniskiem na wulkanicznej ziemi." width="1254" height="1254" draggable="false"><p class="place-text">Przy kamiennym trakcie najemnicy rozbili niewielki obóz. Pomiędzy namiotami płonie ognisko, a drewniana palisada osłania zapasy przed pustkowiem.</p><p class="panel-note">Postacie i misje dodamy później.</p></section>';
@@ -235,6 +239,7 @@
     }
     openPlaceId=id;
     $('#place-content').innerHTML = content;
+    if(id==='skin-house')stopSkinHouse=window.SkinHouse.mount($('#place-content'));
     if(id==='ubocze-tavern'&&level()>=place.requiredLevel)stopGoldenPony=window.GoldenPony.mount($('#place-content'));
     if (id === 'guild') stopCastle=window.CastlePanel.mount($('#place-content'),{onTitle:title=>{$('#place-title').textContent=title;},professionMarkup:()=>barracksPanel('elven')});
     if (id === 'hero') stopHeroSheet=window.HeroSheet.mount($('.hero-sheet-root'),{read:readCurrentHero,update:updateCurrentHero});
@@ -257,7 +262,7 @@
   }
   $('#hub-navigation').innerHTML = [
     ['ŚWIAT',['map','glade','tavern','barracks','arena','dungeon']],
-    ['HANDEL',['forge','alchemy','market']],
+    ['HANDEL',['forge','alchemy','market','skin-house']],
     ['BOHATER',['hero','inventory','journal','guild','mount']]
   ].map(([name,ids])=>`<div class="nav-group"><h2>${name}</h2><div class="nav-grid">${ids.map(id=>`<button type="button" class="nav-tile" data-place="${id}" aria-current="${id==='map'?'page':'false'}" title="${places[id].name}">${icon(places[id].icon)}<span>${places[id].name}</span></button>`).join('')}</div></div>`).join('');
   function townPins(){return Object.entries(places).filter(([,p])=>p.x).map(([id,p])=>`<button type="button" class="map-pin pin-${id}" data-place="${id}" style="--x:${p.x}%;--y:${p.y}%" aria-label="${p.name}"><span class="pin-medallion">${icon(p.icon)}</span><span class="pin-label">${p.name}</span></button>`).join('');}
@@ -296,7 +301,7 @@
     }catch{const status=$('#profession-status');if(status)status.textContent='Nie udało się zapisać profesji. Spróbuj ponownie.';}
     finally{professionBusy=false;}
   });
-  $('#place-dialog').addEventListener('close', () => {if(!$('#place-dialog').open)openPlaceId=null;stopHeroSheet();stopActiveScout();stopDungeons();stopCastle();stopGoldenPony();window.FateWheel.cancel();window.TavernPanel.cancel();window.AlchemistPanel.cancel();window.ForgePanel.cancel();window.BarracksPanel.cancel();window.MarketPanel.cancel();});
+  $('#place-dialog').addEventListener('close', () => {if(!$('#place-dialog').open)openPlaceId=null;stopHeroSheet();stopActiveScout();stopDungeons();stopCastle();stopGoldenPony();stopSkinHouse();window.FateWheel.cancel();window.TavernPanel.cancel();window.AlchemistPanel.cancel();window.ForgePanel.cancel();window.BarracksPanel.cancel();window.MarketPanel.cancel();});
   $('#place-content').addEventListener('click',e=>{if(e.target.closest('#go-gabriel')){openPlace('barracks');window.BarracksPanel.openTraining();}});
   $('#close-place').addEventListener('click',()=>$('#place-dialog').close());
   $('#place-dialog').addEventListener('click',e=>{if(e.target===$('#place-dialog')){const r=e.target.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)e.target.close();}});
