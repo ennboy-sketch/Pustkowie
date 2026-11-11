@@ -926,3 +926,13 @@ Weryfikacja: `node --test tests/*.test.cjs`; przy stronie na porcie 8020 — `no
 20 nowych potworów (po jednym na poziom) i 5 terenów pogranicza Wrót Piekieł: Popielny Bór, Martwe Rozlewiska, Kopalnie Czarnego Żaru, Ruiny Spalonej Przysięgi i Przedpola Piekielnych Wrót. Każdy ma ilustrację, statystyki, zdolności, opis i tytuł przyszłego zlecenia. EXP to 18% progu awansu na równym poziomie, z limitem według słabszej strony; złoto 300–795. Szczegóły i pełna tabela: [docs/FRONTIER-BESTIARY.md](docs/FRONTIER-BESTIARY.md).
 
 Katalog pozostaje przygotowany, bez włączenia do misji karczmy lub Branda. Osobny, tylko do odczytu [podgląd bestiariusza](https://ennboy-sketch.github.io/Pustkowie/dist/bestiary-31-50.html) pozwala obejrzeć grafiki i zmienić poziom podglądu nagród. Nie ładuje zapisu bohatera. Główna gra i wymóg 110 poziomu dla Wrót Piekieł pozostają bez zmian.
+
+## Trzech najemników Pod Złotym Kucem
+
+Karczma na Uboczu (od poziomu 30) ma własną ilustrację `golden-pony-mercenaries.webp`: Roderik Żelazny Kruk siedzi przy stole obok pieca, Mira Szary Szlak stoi przy oknach, a Durgan Krzemień opiera się o bar. Stół i krzesło z przodu po prawej pozostają puste dla czwartej osoby. Oryginalna pusta sala `golden-pony-interior.webp` pozostaje w repozytorium jako kopia źródłowa.
+
+`GoldenPony.PEOPLE` zawiera trzy stałe ID: `roderik`, `mira`, `durgan`, ich role, rozmowy i współrzędne w panoramie. Każda postać ma znacznik w sali, skrót nad widokiem i portret w osobnym oknie rozmowy. Dwa tematy na osobę dotyczą ich fachu oraz wieści z Popielnego Boru, Martwych Rozlewisk i Kopalni Czarnego Żaru. Rozmowy nie zapisują zmian bohatera, nie pobierają zasobów i nie uruchamiają misji. Przy czwartej pozycji jest wyłącznie nieinteraktywna notatka „Wolne miejsce” (`data-pony-reserved-seat="fourth"`), bez postaci ani pustego przycisku.
+
+Nie zmienia to karczmy zamkowej, usług Tobiasza, Branda, Tauriel i Teo ani przygotowanych, nadal nieaktywnych misji potworów 31–50. Zachowano wspólne przesuwanie, zoom, zapis kadru, wznowienie profilu i próg dostępu 30. Nowe okno rozmowy usuwa się przy opuszczeniu sali.
+
+Testy: `node tests/golden-pony-mercenaries.browser.cjs`, `node tests/golden-pony.browser.cjs`, `node tests/teo.browser.cjs` przy lokalnej grze na porcie 8020 oraz `node --test tests/*.test.cjs`.

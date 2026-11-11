@@ -51,3 +51,7 @@ Publikacja zachowuje GitHub Pages. Zapis nowej wersji na `main` uruchamia istnie
 ## Przygotowane potwory 31–50 — jeszcze bez misji
 
 Zgodnie z poleceniem użytkownika katalog FrontierBestiary pozostaje poza aktywnymi pulami karczmy i Branda. Zawiera 20 przeciwników i 5 nowych terenów; pełna tabela, wzór nagród i uwagi do przyszłej integracji: [FRONTIER-BESTIARY.md](FRONTIER-BESTIARY.md). Oddzielny podgląd: dist/bestiary-31-50.html. Nie włączać zleceń ani nowych terenów na mapie bez dalszego polecenia.
+
+## Najemnicy w karczmie na Uboczu
+
+„Pod Złotym Kucem” ma trzech nowych mieszkańców: Roderika Żelaznego Kruka (tarczownik przy piecu), Mirę Szary Szlak (tropicielka przy oknach) i Durgana Krzemienia (krasnolud przy barze). `GoldenPony.PEOPLE` przechowuje ich rozmowy i stałe ID. Przednie prawe krzesło pozostaje wolne dla czwartej osoby: nie zapełniać go bez kolejnego polecenia. Nowa panorama to `golden-pony-mercenaries.webp`; oryginał pustej sali zachowano. Najemnicy mają na razie rozmowy, bez misji i nagród; bestiariusz 31–50 nadal nie trafia do ofert.
