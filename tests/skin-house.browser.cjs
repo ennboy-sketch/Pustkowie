@@ -23,7 +23,7 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
   if(width<700)await merchant.tap();else await merchant.click();
   await p.locator('.skin-house-dialog').waitFor({state:'visible'});
   assert.match(await p.locator('.skin-house-coming').innerText(),/skórki postaci za odłamki/);
-  assert.equal(await p.locator('.skin-house-dialog button').count(),1);
+  assert.equal(await p.locator('.skin-house-dialog button').count(),2);
   await p.locator('[data-close-skin-house-merchant]').click();
   const box=await view.boundingBox(),before=await view.evaluate(v=>v.scrollLeft);
   if(width<700){

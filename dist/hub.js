@@ -177,7 +177,7 @@
     const forgeLocked=id==='forge'&&level()<FORGE_LEVEL;
     const dungeonLocked=id==='dungeon'&&level()<DUNGEON_LEVEL;
     const dungeonTrainingLocked=id==='dungeon'&&!window.GabrielTraining.unlocked(hero)&&hero.activeCombat?.source!=='graveyard';
-    if(['tavern','hero','inventory','market'].includes(id)){try{readCurrentHero();}catch{}}
+    if(['tavern','hero','inventory','market','skin-house'].includes(id)){try{readCurrentHero();}catch{}}
     stopActiveScout();stopHeroSheet();stopDungeons();stopCastle();stopGoldenPony();stopSkinHouse();
     window.FateWheel.cancel();
     window.TavernPanel.cancel();
@@ -196,7 +196,7 @@
     if(id==='tavern'){try{scouting=!!window.BrandMissions.status(hero).mission;}catch{}}
     let content;
     if(id==='skin-house'){
-      content=window.SkinHouse.markup();
+      content=window.SkinHouse.markup(hero);
     } else if(id==='ubocze-tavern'&&level()>=place.requiredLevel){
       content=window.GoldenPony.markup();
     } else if(id==='hell-mercenary-camp'&&level()>=place.requiredLevel){
@@ -239,7 +239,7 @@
     }
     openPlaceId=id;
     $('#place-content').innerHTML = content;
-    if(id==='skin-house')stopSkinHouse=window.SkinHouse.mount($('#place-content'));
+    if(id==='skin-house')stopSkinHouse=window.SkinHouse.mount($('#place-content'),{read:readCurrentHero,update:updateCurrentHero});
     if(id==='ubocze-tavern'&&level()>=place.requiredLevel)stopGoldenPony=window.GoldenPony.mount($('#place-content'));
     if (id === 'guild') stopCastle=window.CastlePanel.mount($('#place-content'),{onTitle:title=>{$('#place-title').textContent=title;},professionMarkup:()=>barracksPanel('elven')});
     if (id === 'hero') stopHeroSheet=window.HeroSheet.mount($('.hero-sheet-root'),{read:readCurrentHero,update:updateCurrentHero});

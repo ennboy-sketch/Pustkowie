@@ -22,3 +22,33 @@
 .skin-house-coming{padding:12px 14px;border:1px solid #796641;background:#100d1588;color:#cfba95}
 .skin-house-dialog button{width:100%;min-width:0;margin-top:12px}
 @media(max-width:480px){.place-dialog[open]:has(.skin-house-panel){height:calc(100svh - 16px);max-height:calc(100svh - 16px);max-width:calc(100% - 16px)}.place-dialog:has(.skin-house-panel)>.place-top{padding:12px 15px 0}.place-dialog:has(.skin-house-panel)>h2{font-size:20px;margin:5px 15px 12px}.skin-house-merchant>span{font-size:15px}}
+.skin-house-art-frame{position:absolute;inset:0;overflow:hidden;pointer-events:none}
+.skin-house-art{max-width:none;transform-origin:0 0;pointer-events:none}
+.skin-house-dialog.shows-outfits{width:840px;max-height:calc(100svh - 32px);overflow:auto;overscroll-behavior:contain}
+.skin-house-dialog .vespera-wardrobe[hidden],.skin-house-dialog .skin-house-intro[hidden]{display:none}
+.vespera-wallet{display:flex;align-items:center;gap:6px;margin:0;padding:10px 14px;border:1px solid #77603e;background:#15111c}
+.vespera-wallet strong{color:#d6abf7}
+.vespera-rule{color:#c9bba2;font-size:12px!important}
+.vespera-preview{display:flex;gap:20px;align-items:center;padding:16px;margin-bottom:22px;background:#110e1688;border:1px solid #766044}
+.vespera-preview>.vespera-portrait{width:220px;max-width:45%;flex-shrink:0}
+.vespera-preview h4{font:600 21px 'Cinzel',Georgia,serif;color:#e6c98d;margin:0 0 10px}
+.vespera-preview p{font-size:13px}
+.vespera-preview small{font-size:11px;color:#bfae9a;line-height:1.6;display:block}
+.vespera-portrait{display:block;position:relative;isolation:isolate;overflow:hidden;width:100%;aspect-ratio:3/4;background:#17111b}
+.vespera-portrait img{position:absolute;width:calc(var(--cols)*300%);height:calc(var(--rows)*112.5%);max-width:none;left:calc(-100% - var(--col)*300%);top:calc(-5% - var(--row)*112.5%);object-fit:fill;pointer-events:none;user-select:none;-webkit-user-drag:none}
+.vespera-wardrobe fieldset{border:0;padding:0;margin:0;min-width:0}
+.vespera-wardrobe legend{font:600 16px 'Cinzel',Georgia,serif;color:#e4c78d;margin-bottom:12px}
+.vespera-outfit-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.vespera-outfit-card{position:relative;display:flex;flex-direction:column;min-width:0;padding:7px;margin:0;border:1px solid #766044;background:#1c1522;cursor:pointer;color:#e1c99a}
+.vespera-outfit-card>input{position:absolute;right:12px;top:12px;z-index:1;width:18px;height:18px;margin:0;padding:0;accent-color:#c3a06b}
+.vespera-outfit-card:has(input:checked){border-color:#e4c381;box-shadow:0 0 0 1px #e4c381,inset 0 0 20px #b0805422}
+.vespera-outfit-card:has(input:focus-visible){outline:2px solid #f4d792;outline-offset:3px}
+.vespera-outfit-card strong{display:block;font:600 13px 'Cinzel',Georgia,serif;line-height:1.5;margin:9px 3px 6px;overflow-wrap:anywhere}
+.vespera-outfit-card small{display:block;font-size:10px;line-height:1.5;color:#baa787;margin:auto 3px 3px}
+.vespera-outfit-grid:has(input:disabled){opacity:.7}
+.vespera-checkout{position:sticky;bottom:-24px;margin:18px -1px 0;padding:14px;border:1px solid #a08655;background:#1c1525fa;z-index:2;box-shadow:0 -5px 20px #0007}
+.vespera-checkout>strong{font-size:13px;color:#e6c98d;display:block}
+.vespera-checkout .primary{white-space:normal;font-size:13px;padding:12px;min-width:0;margin-top:10px}
+.vespera-message{font-size:12px!important;margin:9px 0 0;line-height:1.6!important;color:#dcc799}
+.vespera-message:empty{display:none}
+@media(max-width:480px){.skin-house-dialog.shows-outfits{padding:18px;max-height:calc(100svh - 20px)}.vespera-preview{padding:10px;gap:12px;align-items:flex-start}.vespera-preview>.vespera-portrait{width:120px;max-width:42%}.vespera-preview h4{font-size:16px}.vespera-preview p{font-size:11px;line-height:1.6}.vespera-preview small{font-size:10px}.vespera-outfit-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.vespera-outfit-card strong{font-size:11px}.vespera-checkout{bottom:-18px}}
