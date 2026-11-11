@@ -10,22 +10,25 @@
         <div class="skin-house-panorama">
           <div class="skin-house-art-frame"><img class="skin-house-art" src="${outfit.image}" style="${artStyle(outfit)}" data-vespera-outfit="${outfit.id}" alt="Vespera w stroju: ${outfit.name}. Fioletowowłosa Mistrzyni Przemian siedzi w fotelu w pracowni z kominkiem, maskami, lustrem i tkaninami." draggable="false"></div>
           <div class="skin-house-vignette" aria-hidden="true"></div>
+          <button type="button" class="skin-house-stall" data-open-hero-skins aria-label="Kup stroje bohatera"><span>Stroje bohatera</span><small>Obejrzyj ofertę</small></button>
           <button type="button" class="skin-house-merchant" data-skin-house-merchant aria-label="Porozmawiaj z Vesperą, Mistrzynią Przemian"><span>Vespera</span><small>Mistrzyni Przemian</small></button>
         </div>
       </div>
-      <p id="skin-house-hint" class="sr-only">Przesuwaj widok myszą lub palcem. Przybliżaj kółkiem, dwoma palcami lub klawiszami plus i minus. Kliknij Vesperę, aby porozmawiać. Wyjście znajduje się pod X w prawym górnym rogu.</p>
+      <p id="skin-house-hint" class="sr-only">Przesuwaj widok myszą lub palcem. Przybliżaj kółkiem, dwoma palcami lub klawiszami plus i minus. Kliknij ekspozycję po lewej, aby kupić strój bohatera, lub Vesperę, aby porozmawiać. Wyjście znajduje się pod X w prawym górnym rogu.</p>
       <dialog class="skin-house-dialog" aria-labelledby="skin-house-merchant-title">
         <h3 id="skin-house-merchant-title" tabindex="-1">Vespera — Mistrzyni Przemian</h3>
         <div class="skin-house-intro"><p>Witaj w Domu Tysiąca Twarzy. Jestem Vespera. Tutaj znajdziesz wygląd, który opowie Twoją historię.</p>
-        <p class="skin-house-coming">Wkrótce pojawią się tu skórki postaci za odłamki.</p>
+        <p class="skin-house-coming">Przy ekspozycji po lewej kupisz skórki postaci za odłamki.</p>
         <button type="button" class="primary" data-open-vespera-outfits>Zmień strój Vespery · 5 odłamków</button></div>
         <div class="vespera-wardrobe" hidden></div>
         <button type="button" class="secondary" data-close-skin-house-merchant>Wróć do pracowni</button>
       </dialog>
+      <dialog class="hero-skin-dialog" aria-label="Stroje bohatera"></dialog>
     </section>`;
   }
   function mount(root,state){
     const panel=root.querySelector('.skin-house-panel'),view=panel.querySelector('.skin-house-viewport'),scene=view.firstElementChild,art=scene.querySelector('img'),dialog=panel.querySelector('.skin-house-dialog');
+    const heroShop=window.HeroSkins.mountShop(panel.querySelector('.hero-skin-dialog'),state);
     const gallery=panel.querySelector('.vespera-wardrobe'),intro=panel.querySelector('.skin-house-intro');
     let disposed=false,centered=false,busy=false,operation=0,selected=art.dataset.vesperaOutfit,expected=selected;
     const preloads=new Map(),sizes=new Map();
@@ -82,6 +85,7 @@
     function changeSelection(e){if(e.target.name!=='vespera-outfit'||busy)return;selected=e.target.value;renderWardrobe();}
     function click(e){
       if(disposed)return;
+      if(e.target.closest('[data-open-hero-skins]')){if(dialog.open)dialog.close();heroShop.open();return;}
       if(e.target.closest('[data-close-skin-house-merchant]')){dialog.close();return;}
       if(e.target.closest('[data-open-vespera-outfits]')){openWardrobe();return;}
       if(e.target.closest('[data-confirm-vespera-outfit]')){void confirm();return;}
@@ -100,7 +104,7 @@
     dialog.addEventListener('close',closed);
     art.addEventListener('load',fit);panel.addEventListener('click',click);panel.addEventListener('change',changeSelection);window.addEventListener('storage',storage);
     const observer=new ResizeObserver(fit);observer.observe(view);fit();
-    return ()=>{disposed=true;observer.disconnect();art.removeEventListener('load',fit);panel.removeEventListener('click',click);panel.removeEventListener('change',changeSelection);window.removeEventListener('storage',storage);dialog.removeEventListener('close',closed);if(dialog.open)dialog.close();};
+    return ()=>{disposed=true;heroShop.stop();observer.disconnect();art.removeEventListener('load',fit);panel.removeEventListener('click',click);panel.removeEventListener('change',changeSelection);window.removeEventListener('storage',storage);dialog.removeEventListener('close',closed);if(dialog.open)dialog.close();};
   }
   window.SkinHouse={markup,mount};
 })();

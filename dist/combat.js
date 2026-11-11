@@ -141,7 +141,7 @@
       const power=level*2+stats[index]+(bonuses.damage||0);
       return [Math.max(1,power-3),power+3];
     };
-    return {weaponType,necromancer:isNecromancer(hero),damageBonus:bonuses.damage,armor:bonuses.armor,name:hero.name,level,
+    return {appearanceSkin:window.HeroSkins?.current(hero)?.id||null,weaponType,necromancer:isNecromancer(hero),damageBonus:bonuses.damage,armor:bonuses.armor,name:hero.name,level,
       maxHp:50+stats[3]*10+window.HeroSheet.hpBonus(hero),
       maxMana:window.HeroSheet.manaCapacity(hero.classId,stats[2]),
       stats:[...stats],classId:hero.classId,gender:hero.gender,
@@ -240,7 +240,7 @@
     figure.className='combat-figure';
     figure.style.cssText='';
     if(Number.isInteger(fighter?.tile)){figure.classList.add('monster-avatar');if(fighter.atlas==='abyss-bellringer')figure.classList.add('monster-abyss-bellringer');if(fighter.atlas==='bloodthirsty-flower')figure.classList.add('monster-bloodthirsty-flower');if(fighter.atlas==='cursed-stag')figure.classList.add('monster-cursed-stag');if(fighter.atlas==='ancient-forest-spirit')figure.classList.add('monster-ancient-forest-spirit');if(fighter.atlas==='birch-werewolf')figure.classList.add('monster-birch-werewolf');if(fighter.atlas==='wraith-archer')figure.classList.add('monster-wraith-archer');if(fighter.atlas==='centipede')figure.classList.add('monster-centipede');if(fighter.atlas==='chain-troll')figure.classList.add('monster-chain-troll');if(fighter.atlas==='spore-crawler')figure.classList.add('monster-spore-crawler');if(fighter.atlas==='magma-golem')figure.classList.add('monster-magma-golem');if(fighter.atlas==='undead-miner')figure.classList.add('monster-undead-miner');if(fighter.atlas==='scorpion')figure.classList.add('monster-scorpion');if(fighter.atlas==='aelira')figure.classList.add('monster-aelira');if(fighter.atlas==='devourer')figure.classList.add('monster-devourer');if(fighter.atlas==='spectral-knight')figure.classList.add('monster-spectral-knight');if(fighter.atlas==='demoness')figure.classList.add('monster-demoness');if(fighter.atlas==='whisperer')figure.classList.add('monster-whisperer');if(fighter.atlas==='mine')figure.classList.add('monster-mine');if(fighter.atlas==='undercity')figure.classList.add('monster-undercity');if(/^level-(16|21|26)$/.test(fighter.atlas))figure.classList.add('monster-'+fighter.atlas);if(fighter.atlas==='training')figure.classList.add('monster-training');if(fighter.atlas==='graveyard')figure.classList.add('monster-graveyard');if(fighter.atlas==='tauriel')figure.classList.add('monster-tauriel');figure.style.setProperty('--monster-position',(fighter.atlas==='graveyard'||/^level-(16|21|26)$/.test(fighter.atlas))?`${fighter.tile%3*50}% ${Math.floor(fighter.tile/3)*100}%`:fighter.atlas==='tauriel'?`${fighter.tile*50}% 0%`:`${fighter.tile%2*100}% ${Math.floor(fighter.tile/2)*100}%`);}
-    if(fighter&&Object.hasOwn(BASE_STATS,fighter.classId)&&['male','female'].includes(fighter.gender))figure.className+=` character ${fighter.gender} ${fighter.classId}`;
+    if(fighter&&Object.hasOwn(BASE_STATS,fighter.classId)&&['male','female'].includes(fighter.gender))figure.className+=` character ${fighter.gender} ${fighter.classId}${window.HeroSkins?.battleSuffix(fighter)||''}`;
     root.classList.toggle('combat-empty',!fighter);
     const hp=fighter?(fighter.hp??fighter.maxHp):0,bar=root.querySelector('progress');
     bar.max=fighter?.maxHp||1;bar.value=hp;bar.setAttribute('aria-label',fighter?`Życie: ${fighter.name}`:'Życie przeciwnika — brak danych');

@@ -72,6 +72,7 @@
     $('.avatar .level').textContent = level();
     $('.profile-text small').textContent = `Poziom ${level()}`;
     $('.map-caption small').textContent = `Poziom ${level()}`;
+    $('#avatar-art').classList.toggle('hero-skin',!!window.HeroSkins?.current(hero));
     $('#hero-profession').textContent = profession()?.name || '';
     $('#hero-profession').hidden = !profession();
     for(const [id,requiredLevel] of [['forge',FORGE_LEVEL],['dungeon',DUNGEON_LEVEL]]){
@@ -314,7 +315,7 @@
     hero = window.EnergyCycle.apply(data);
     updateProfile();
     void refreshEnergy();
-    $('#avatar-art').className = `character ${data.gender} ${data.classId}`;
+    $('#avatar-art').className = `character ${data.gender} ${data.classId}${window.HeroSkins?.classSuffix(data)||''}`;
     toggleMenu(false);
     requestAnimationFrame(() => { const view = $('.world-viewport'); view.scrollLeft = Math.max(0,(view.scrollWidth-view.clientWidth)/2); });
     document.querySelectorAll('.nav-tile').forEach(el=>el.setAttribute('aria-current',el.dataset.place==='map'?'page':'false'));

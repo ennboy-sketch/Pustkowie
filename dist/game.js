@@ -65,7 +65,7 @@ function renderProfiles(){
       if(profile.error){card.textContent='Nie można odczytać jednego z profili. Zachowano jego zapis.';list.append(card);continue;}
       const {hero,id,location}=profile;
       const portrait=document.createElement('div');portrait.className='profile-portrait';portrait.setAttribute('aria-hidden','true');
-      const figure=document.createElement('span');figure.className=`character ${hero.gender} ${hero.classId}`;portrait.append(figure);
+      const figure=document.createElement('span');figure.className=`character ${hero.gender} ${hero.classId}${window.HeroSkins?.classSuffix(hero)||''}`;portrait.append(figure);
       const info=document.createElement('div'),name=document.createElement('h2'),description=document.createElement('p'),where=document.createElement('small');
       name.textContent=hero.name;description.textContent=`${hero.gender==='female'?CLASSES[hero.classId].female:CLASSES[hero.classId].name} · Poziom ${window.Progression.level(hero)}`;
       const roomName=location?.place==='skin-house'?'Dom Tysiąca Twarzy':location?.place==='barracks'?{commander:'Komnata Melody',armory:'Zbrojownia Rolanda'}[location.room]:location?.place==='guild'?{throne:'Sala tronowa',school:'Komnata Leśnej Przysięgi'}[location.room]:null;

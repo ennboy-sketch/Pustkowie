@@ -167,7 +167,7 @@
       if(disposed)return;
       const hero=state.read(),profile=window.BrandCombat.profile(hero),xp=window.Progression.info(hero);
       root.querySelector('.hero-player-stats').innerHTML=window.PlayerStats?.markup(hero)??'';
-      const portrait=root.querySelector('.hero-portrait');portrait.querySelector('.character').className=`character ${hero.gender} ${hero.classId}`;portrait.querySelector('h3').textContent=hero.name;portrait.querySelector('.hero-identity>span').textContent=`Poziom ${xp.level}`;
+      const portrait=root.querySelector('.hero-portrait');portrait.querySelector('.character').className=`character ${hero.gender} ${hero.classId}${window.HeroSkins?.classSuffix(hero)||''}`;portrait.querySelector('h3').textContent=hero.name;portrait.querySelector('.hero-identity>span').textContent=`Poziom ${xp.level}`;
       root.querySelector('.hero-xp>span').textContent=`Poziom ${xp.level}`;root.querySelector('.hero-xp progress').value=xp.percent;root.querySelector('.hero-xp>small').textContent=xp.label;
       const health=root.querySelector('.hero-health'),mana=root.querySelector('.hero-mana');
       health.querySelector('span').textContent=`Życie: ${profile.maxHp} / ${profile.maxHp}`;health.querySelector('progress').max=profile.maxHp;health.querySelector('progress').value=profile.maxHp;
