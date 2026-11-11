@@ -26,23 +26,29 @@
     ['standing-crimson','Karmazynowy Dwór','Bordowo-fioletowa suknia z odkrytymi ramionami, złote zdobienia gorsetu, drapowane tkaniny i sznurowane botki.','vespera-standing-crimson.jpg'],
     ['standing-enchantress','Ametystowa Czarodziejka','Czarny gorset ze złotym ornamentem, zwiewne fioletowe rękawy, ozdobny pas z łańcuszkami i wysokie haftowane buty.','vespera-standing-enchantress.jpg'],
     ['standing-ranger','Łuczniczka Leśnego Szlaku','Skórzany gorset, pasy i sakiewki, fioletowa szarfa ze złotym haftem, łuk, kołczan i wysokie sznurowane buty.','vespera-standing-ranger.jpg'],
-    ['standing-lace','Ametystowa Koronka','Fioletowo-złoty strój z koronką, sznurowany czarny gorset, ametystowa biżuteria, ozdobne karwasze i delikatne łańcuszki.','vespera-standing-lace.jpg']
+    ['standing-lace','Ametystowa Koronka','Długa fioletowa suknia z koronkowymi rękawami, złotymi haftami, ametystowym naszyjnikiem i ozdobnym pasem z łańcuszkami.','vespera-standing-lace.jpg']
   ];
   const CATALOG=Object.freeze([
     Object.freeze({id:'default',name:'Strój Mistrzyni Przemian',description:'Oryginalny fioletowy strój Vespery.',image:'skin-house-interior.webp',columns:1,rows:1,col:0,row:0}),
     ...groups.flatMap(([group,entries])=>entries.map(([id,name,description],index)=>Object.freeze({id,name,description,image:`vespera-outfits-${group}.webp`,columns:2,rows:2,col:index%2,row:Math.floor(index/2)}))),
-    ...standing.map(([id,name,description,image])=>Object.freeze({id,name,description,image,pose:'standing',columns:1,rows:1,col:0,row:0}))
+    ...standing.map(([id,name,description,image])=>Object.freeze({id,name,description,image,sprite:image.replace('.jpg','-character.webp'),pose:'standing',columns:1,rows:1,col:0,row:0}))
   ]);
   const get=id=>CATALOG.find(outfit=>outfit.id===id);
-  const current=hero=>get(hero?.vesperaOutfit)||CATALOG[0];
+  const forRoom=room=>{if(!['workshop','bedroom'].includes(room))throw Error('Nieznany pokój Vespery.');return CATALOG.filter(outfit=>(outfit.pose==='standing')===(room==='bedroom'));};
+  function current(hero,room='workshop'){
+    const choices=forRoom(room);
+    if(room==='workshop')return choices.find(outfit=>outfit.id===hero?.vesperaOutfit)||CATALOG[0];
+    return choices.find(outfit=>outfit.id===hero?.vesperaStandingOutfit)||choices.find(outfit=>outfit.id===hero?.vesperaOutfit)||get('standing-ranger');
+  }
   function balance(hero){const n=hero.shards??0;if(!Number.isSafeInteger(n)||n<0)throw Error('Nieprawidłowy zapis odłamków.');return n;}
-  function change(hero,id,expected=current(hero).id){
-    const outfit=get(id);if(!outfit)throw Error('Nieznany strój Vespery.');
-    const previous=current(hero).id;
-    if(previous!==expected)throw Error('Strój Vespery zmienił się w innej karcie. Wybierz strój ponownie.');
+  function change(hero,id,expected,room='workshop'){
+    const outfit=forRoom(room).find(outfit=>outfit.id===id);if(!outfit)throw Error('Ten strój nie należy do garderoby w tym pokoju.');
+    const previous=current(hero,room).id;
+    if(expected!==undefined&&previous!==expected)throw Error('Strój Vespery zmienił się w innej karcie. Wybierz strój ponownie.');
     if(previous===id)return hero;
     const shards=balance(hero);if(shards<COST)throw Error('Potrzebujesz 5 odłamków.');
-    return {...hero,shards:shards-COST,vesperaOutfit:id};
+    return {...hero,shards:shards-COST,vesperaOutfit:room==='workshop'?id:current(hero,'workshop').id,vesperaStandingOutfit:room==='bedroom'?id:current(hero,'bedroom').id};
   }
-  window.VesperaOutfits={CATALOG,COST,get,current,balance,change};
+  function validate(hero){if(hero.vesperaStandingOutfit!==undefined&&!forRoom('bedroom').some(outfit=>outfit.id===hero.vesperaStandingOutfit))throw Error('Nieprawidłowy zapis stojącego stroju Vespery.');}
+  window.VesperaOutfits={CATALOG,COST,get,forRoom,current,balance,change,validate};
 })();

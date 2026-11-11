@@ -323,7 +323,7 @@
     }catch{const status=$('#profession-status');if(status)status.textContent='Nie udało się zapisać profesji. Spróbuj ponownie.';}
     finally{professionBusy=false;}
   });
-  $('#place-dialog').addEventListener('close', () => {if(!$('#place-dialog').open)openPlaceId=null;stopHeroSheet();stopActiveScout();stopDungeons();stopCastle();stopGoldenPony();stopSkinHouse();stopCampaign();window.FateWheel.cancel();window.TavernPanel.cancel();window.AlchemistPanel.cancel();window.ForgePanel.cancel();window.BarracksPanel.cancel();window.MarketPanel.cancel();});
+  $('#place-dialog').addEventListener('close', () => {if($('#place-dialog').open)return;openPlaceId=null;stopHeroSheet();stopActiveScout();stopDungeons();stopCastle();stopGoldenPony();stopSkinHouse();stopCampaign();window.FateWheel.cancel();window.TavernPanel.cancel();window.AlchemistPanel.cancel();window.ForgePanel.cancel();window.BarracksPanel.cancel();window.MarketPanel.cancel();});
   $('#place-content').addEventListener('click',e=>{const story=e.target.closest('[data-open-campaign]');if(story){const id=story.dataset.openCampaign;openPlace('journal');if(id)window.CampaignPanel.select(id);return;}if(e.target.closest('#go-gabriel')){openPlace('barracks');window.BarracksPanel.openTraining();}});
   $('#close-place').addEventListener('click',()=>$('#place-dialog').close());
   $('#place-dialog').addEventListener('click',e=>{if(e.target===$('#place-dialog')){const r=e.target.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)e.target.close();}});

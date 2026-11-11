@@ -9,7 +9,7 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
   const value=()=>p.evaluate(()=>({shards:LocalProfiles.read().shards,id:VesperaOutfits.current(LocalProfiles.read()).id}));
   async function open(page=p){await page.evaluate(()=>HubNavigation.open('skin-house'));await page.locator('.skin-house-art').evaluate(i=>i.decode());await page.locator('[data-skin-house-merchant]').click();await page.locator('.skin-house-dialog [data-open-vespera-outfits]').click();await page.locator('.vespera-wardrobe').waitFor({state:'visible'});}
   async function choose(id,page=p){await page.locator(`[name=vespera-outfit][value="${id}"]`).check();}
-  await open();assert.equal(await p.locator('.vespera-outfit-card').count(),18);
+  await open();assert.equal(await p.locator('.vespera-outfit-card').count(),13);
   await choose('commander');assert.deepEqual(await value(),{shards:20,id:'default'});
   await p.evaluate(()=>{window.saveItem=Storage.prototype.setItem;Storage.prototype.setItem=function(key,v){if(key==='pustkowie.hero.v2')throw new DOMException('test','QuotaExceededError');return window.saveItem.call(this,key,v);};});
   await p.locator('[data-confirm-vespera-outfit]').click();await p.waitForFunction(()=>document.querySelector('.vespera-message').textContent.includes('Nie udało'));
@@ -50,6 +50,6 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
   await p.evaluate(()=>document.querySelector('[data-confirm-vespera-outfit]').dispatchEvent(new MouseEvent('click',{bubbles:true})));await p.waitForFunction(()=>document.querySelector('.vespera-message').textContent.includes('Potrzebujesz 5'));assert.deepEqual(await value(),{shards:0,id:'priestess'});
   await Promise.all([p.waitForNavigation({waitUntil:'load'}),p.evaluate(()=>{const id=LocalProfiles.create({version:2,name:'Druga',classId:'mage',gender:'male',level:1,xp:0,gold:25,energy:100,shards:20});LocalProfiles.enter(id);})]);await p.locator('#ready').waitFor({state:'visible'});await p.evaluate(()=>GameLocation.ready);await open();assert.deepEqual(await value(),{shards:20,id:'default'});
   const previous=await p.evaluate(()=>JSON.parse(localStorage.getItem('pustkowie.hero.v2')));assert.equal(previous.vesperaOutfit,'priestess');assert.equal(previous.shards,0);assert.equal(previous.gold,200);assert.equal(previous.energy,80);assert.equal(previous.classId,'warrior');assert.equal(previous.gender,'female');assert.equal(previous.skin,undefined);
-  assert.deepEqual(errors,[]);console.log(`PASS ${width}px: 18 previews, exact charge, no double charge, cancellation, failed save/image, reload, competing tabs and profile isolation`);await context.close();
+  assert.deepEqual(errors,[]);console.log(`PASS ${width}px: 13 seated previews, exact charge, no double charge, cancellation, failed save/image, reload, competing tabs and profile isolation`);await context.close();
  }}finally{await browser.close();}
 })().catch(e=>{console.error(e);process.exit(1)});

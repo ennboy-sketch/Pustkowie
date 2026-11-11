@@ -5,6 +5,10 @@ Gra: https://ennboy-sketch.github.io/Pustkowie/dist/.
 
 Repozytorium zawiera kompletną statyczną grę w `dist/`. Wersja `db55730` dodała sklep ze strojami bohatera, a `fd66f7b` dodała sypialnię Vespery oraz pięć jej strojów z oryginalnych zdjęć. Kampania została przygotowana na bazie `fd66f7b`; przy kontynuacji należy pobrać aktualne `main`, ponieważ zawiera również późniejsze wdrożenia.
 
+## Wygląd Vespery w dwóch pomieszczeniach
+
+Pracownia pokazuje wyłącznie siedzącą Vesperę i 13 strojów zapisanych jako `vesperaOutfit`. Sypialnia pokazuje wyłącznie stojącą Vesperę i 5 osobnych strojów zapisanych jako `vesperaStandingOutfit`. Domyślny wariant sypialni to Łuczniczka Leśnego Szlaku z referencyjnego zdjęcia. Sylwetki WebP z kanałem alfa są wkomponowane w pokój bez prostokątnej ramki. Nie przywracać wcześniejszego wspólnego wyboru stroju dla obu miejsc. Starszy stojący wariant zapisany w `vesperaOutfit` odczytuje się jako wybór sypialni bez dodatkowej opłaty.
+
 ## Kampania „Pęknięta Przysięga”
 
 Dziesięć misji głównych, w kolejności:

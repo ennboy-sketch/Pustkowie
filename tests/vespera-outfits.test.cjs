@@ -11,10 +11,11 @@ test('All seventeen costumes and original have valid unique assets and charge ex
  const {r}=runtime(),v=r.VesperaOutfits;let h=hero();const original=h;
  assert.equal(v.CATALOG.length,18);assert.equal(new Set(v.CATALOG.map(o=>o.id)).size,18);
  for(const outfit of v.CATALOG){
-  assert.ok(fs.existsSync('dist/'+outfit.image));assert.ok(outfit.col>=0&&outfit.col<outfit.columns);assert.ok(outfit.row>=0&&outfit.row<outfit.rows);
-  const previous=v.current(h).id,before=h.shards;h=v.change(h,outfit.id,previous);
-  assert.equal(h.shards,before-(previous===outfit.id?0:5));assert.equal(v.current(h).id,outfit.id);
-  assert.equal(v.change(h,outfit.id),h);assert.equal(h.gold,original.gold);assert.equal(h.energy,original.energy);assert.equal(h.xp,original.xp);
+  const room=outfit.pose==='standing'?'bedroom':'workshop',other=room==='bedroom'?'workshop':'bedroom',otherBefore=v.current(h,other).id;
+  assert.ok(fs.existsSync('dist/'+outfit.image));if(outfit.sprite)assert.ok(fs.existsSync('dist/'+outfit.sprite));assert.ok(outfit.col>=0&&outfit.col<outfit.columns);assert.ok(outfit.row>=0&&outfit.row<outfit.rows);
+  const previous=v.current(h,room).id,before=h.shards;h=v.change(h,outfit.id,previous,room);
+  assert.equal(h.shards,before-(previous===outfit.id?0:5));assert.equal(v.current(h,room).id,outfit.id);assert.equal(v.current(h,other).id,otherBefore);
+  assert.equal(v.change(h,outfit.id,undefined,room),h);assert.equal(h.gold,original.gold);assert.equal(h.energy,original.energy);assert.equal(h.xp,original.xp);
   assert.equal(h.lootInventory,original.lootInventory);assert.equal(h.equipment,original.equipment);assert.equal(h.classId,original.classId);assert.equal(h.gender,original.gender);
  }
  assert.equal(original.shards,100);assert.equal(original.vesperaOutfit,undefined);
@@ -47,4 +48,28 @@ test('Profiles preserve independent Vespera looks through export/import; a faile
  p.activate(b);assert.equal(v.current(p.read()).id,'default');assert.equal(p.read().shards,100);
  p.activate(a);const before=JSON.stringify([...data]);fail();assert.throws(()=>p.write(v.change(p.read(),'huntress')),/Quota/);
  assert.equal(JSON.stringify([...data]),before);assert.equal(v.current(p.read()).id,'queen');assert.equal(p.read().shards,95);
+});
+test('Workshop and bedroom accept only their own poses and retain independent paid looks',()=>{
+ const {r}=runtime(),v=r.VesperaOutfits;let h=hero();
+ assert.equal(v.forRoom('workshop').length,13);assert.equal(v.forRoom('bedroom').length,5);
+ assert.equal(v.current(h,'workshop').id,'default');assert.equal(v.current(h,'bedroom').id,'standing-ranger');
+ assert.throws(()=>v.change(h,'standing-amethyst',undefined,'workshop'));
+ assert.throws(()=>v.change(h,'queen',undefined,'bedroom'));
+ assert.throws(()=>v.forRoom('other'));
+ h=v.change(h,'queen','default','workshop');h=v.change(h,'standing-amethyst','standing-ranger','bedroom');
+ assert.equal(h.shards,90);assert.equal(h.vesperaOutfit,'queen');assert.equal(h.vesperaStandingOutfit,'standing-amethyst');
+ h=v.change(h,'standing-crimson','standing-amethyst','bedroom');
+ assert.equal(v.current(h,'workshop').id,'queen');assert.equal(v.current(h,'bedroom').id,'standing-crimson');
+ assert.throws(()=>v.change(h,'standing-enchantress','standing-amethyst','bedroom'),/innej karcie/);
+ assert.equal(h.shards,85);
+});
+test('Legacy standing selections migrate without a charge or a standing image in the workshop',()=>{
+ const {r}=runtime(),v=r.VesperaOutfits,old={...hero(),vesperaOutfit:'standing-crimson'},before=JSON.stringify(old);
+ assert.equal(v.current(old,'workshop').id,'default');assert.equal(v.current(old,'bedroom').id,'standing-crimson');
+ assert.equal(JSON.stringify(old),before);
+ const seated=v.change(old,'queen','default','workshop');
+ assert.equal(seated.vesperaOutfit,'queen');assert.equal(seated.vesperaStandingOutfit,'standing-crimson');assert.equal(seated.shards,95);
+ const p=r.LocalProfiles,id=p.create(seated);p.activate(id);const copy=p.importText(p.exportText(id));p.activate(copy);
+ assert.equal(v.current(p.read(),'workshop').id,'queen');assert.equal(v.current(p.read(),'bedroom').id,'standing-crimson');
+ assert.throws(()=>p.importText(JSON.stringify({...hero(),vesperaStandingOutfit:'queen'})),/stojącego/);
 });

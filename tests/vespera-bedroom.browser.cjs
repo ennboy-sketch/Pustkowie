@@ -1,62 +1,42 @@
 const {chromium}=require('playwright'),assert=require('node:assert/strict'),fs=require('node:fs');
 (async()=>{
- const browser=await chromium.launch({executablePath:'/usr/bin/chromium',headless:true,args:['--no-sandbox','--disable-dev-shm-usage']});
- fs.mkdirSync('outputs',{recursive:true});
- try{for(const [width,height] of [[1280,900],[390,844],[360,640]]){
-  const context=await browser.newContext({viewport:{width,height}}),p=await context.newPage(),errors=[];
-  p.on('pageerror',e=>errors.push(e.message));await p.route('https://fonts.googleapis.com/**',r=>r.abort());
-  await p.goto('http://127.0.0.1:8020/');
-  await p.evaluate(()=>localStorage.setItem('pustkowie.hero.v2',JSON.stringify({version:2,name:'Test',classId:'warrior',gender:'female',level:1,xp:0,gold:200,shards:40,energy:80})));
-  await p.reload({waitUntil:'load'});await require('./profile-fixture.cjs')(p);
-  const value=()=>p.evaluate(()=>({shards:LocalProfiles.read().shards,id:VesperaOutfits.current(LocalProfiles.read()).id}));
-  const travel=async room=>{await p.locator(`.skin-house-room-bar [data-go-skin-house-room="${room}"]`).click();await p.waitForFunction(room=>document.querySelector('.skin-house-panel').dataset.skinHouseRoom===room,room);await p.locator('.skin-house-art').evaluate(i=>i.decode());};
-  const open=()=>p.locator('.skin-house-room-bar [data-open-vespera-outfits]').click();
-  await p.evaluate(()=>HubNavigation.open('skin-house'));await p.locator('.skin-house-art').evaluate(i=>i.decode());
-  assert.equal(await p.locator('.skin-house-panel').getAttribute('data-skin-house-room'),'workshop');
-  assert.equal(await p.locator('.skin-house-door').isVisible(),true);
-  await travel('bedroom');assert.equal(await p.locator('#place-title').innerText(),'Sypialnia Vespery');
-  assert.match(await p.locator('.skin-house-art').getAttribute('src'),/vespera-bedroom/);
-  await open();assert.equal(await p.locator('.vespera-outfit-card').count(),18);
-  const standing=await p.evaluate(()=>VesperaOutfits.CATALOG.filter(o=>o.pose==='standing').map(o=>o.id));assert.equal(standing.length,5);
-  for(const id of standing){
-   await p.locator(`[name=vespera-outfit][value="${id}"]`).check();
-   const image=await p.locator('.vespera-preview img').evaluate(async i=>{await i.decode();const s=getComputedStyle(i);return{width:i.naturalWidth,height:i.naturalHeight,fit:s.objectFit,left:s.left,top:s.top};});
-   assert.equal(image.width,id==='standing-lace'?853:960);assert.equal(image.height,1280);assert.equal(image.fit,'contain');assert.equal(image.left,'0px');assert.equal(image.top,'0px');
-   assert.deepEqual(await value(),{shards:40,id:'default'});
+ const browser=await chromium.launch({executablePath:'/usr/bin/chromium',headless:true,args:['--no-sandbox','--disable-dev-shm-usage']});fs.mkdirSync('outputs',{recursive:true});
+ async function seed(p,extra={}){await p.route('https://fonts.googleapis.com/**',r=>r.abort());await p.goto('http://127.0.0.1:8020/');await p.evaluate(extra=>localStorage.setItem('pustkowie.hero.v2',JSON.stringify({version:2,name:'Test',classId:'warrior',gender:'female',level:20,xp:0,gold:200,shards:50,energy:80,...extra})),extra);await p.reload({waitUntil:'load'});await require('./profile-fixture.cjs')(p);await p.evaluate(()=>HubNavigation.open('skin-house'));await p.locator('.skin-house-art').evaluate(i=>i.decode());}
+ async function travel(p,room){await p.bringToFront();await p.locator(`.skin-house-room-actions [data-go-skin-house-room="${room}"]`).click();await p.waitForFunction(room=>document.querySelector('.skin-house-panel').dataset.skinHouseRoom===room,room,{polling:50});await p.locator('.skin-house-art').evaluate(i=>i.decode());if(room==='bedroom')await p.locator('.skin-house-standing-character').evaluate(i=>i.decode());}
+ const open=p=>p.locator('.skin-house-room-actions [data-open-vespera-outfits]').click();
+ const values=p=>p.evaluate(()=>{const h=LocalProfiles.read();return{shards:h.shards,seated:VesperaOutfits.current(h,'workshop').id,standing:VesperaOutfits.current(h,'bedroom').id};});
+ async function choose(p,id){await p.locator(`[name=vespera-outfit][value="${id}"]`).check();}
+ async function confirm(p,id,room){await p.locator('[data-confirm-vespera-outfit]').click();await p.waitForFunction(({id,room})=>VesperaOutfits.current(LocalProfiles.read(),room).id===id,{id,room});}
+ try{
+  for(const[width,height]of[[1280,900],[390,844],[360,640]]){
+   const context=await browser.newContext({viewport:{width,height}}),p=await context.newPage(),errors=[];p.on('pageerror',e=>errors.push(e.message));await seed(p,{vesperaOutfit:'queen'});
+   assert.equal(await p.locator('.skin-house-panel').getAttribute('data-vespera-pose'),'seated');assert.match(await p.locator('.skin-house-art').getAttribute('alt'),/siedzi/);assert.equal(await p.locator('.skin-house-standing-character').count(),0);
+   await open(p);assert.equal(await p.locator('.vespera-outfit-card').count(),13);assert.equal(await p.locator('[name=vespera-outfit][value^=standing-]').count(),0);
+   await choose(p,'sorceress');await confirm(p,'sorceress','workshop');await p.keyboard.press('Escape');
+   assert.deepEqual(await values(p),{shards:45,seated:'sorceress',standing:'standing-ranger'});
+   await travel(p,'bedroom');assert.equal(await p.locator('.skin-house-panel').getAttribute('data-vespera-pose'),'standing');assert.match(await p.locator('.skin-house-standing-character').getAttribute('src'),/standing-ranger-character/);
+   const frame=await p.locator('.skin-house-bedroom-figure').evaluate(e=>{const s=getComputedStyle(e);return{border:s.borderTopWidth,background:s.backgroundColor,shadow:s.boxShadow};});assert.equal(frame.border,'0px');assert.equal(frame.background,'rgba(0, 0, 0, 0)');assert.equal(frame.shadow,'none');
+   await p.screenshot({path:`outputs/vespera-integrated-${width}.png`});
+   const transparent=await p.locator('.skin-house-standing-character').evaluate(i=>{const c=document.createElement('canvas');c.width=i.naturalWidth;c.height=i.naturalHeight;const x=c.getContext('2d');x.drawImage(i,0,0);return[x.getImageData(0,0,1,1).data[3],x.getImageData(c.width-1,0,1,1).data[3]];});assert.deepEqual(transparent,[0,0]);
+   await open(p);assert.equal(await p.locator('.vespera-outfit-card').count(),5);assert.equal(await p.locator('[name=vespera-outfit][value=queen]').count(),0);
+   const ids=await p.evaluate(()=>VesperaOutfits.forRoom('bedroom').map(o=>o.id));
+   for(const id of ids){await choose(p,id);await p.locator('.vespera-preview img').evaluate(i=>i.decode());assert.deepEqual(await values(p),{shards:45,seated:'sorceress',standing:'standing-ranger'});}
+   await p.keyboard.press('Escape');await open(p);await choose(p,'standing-amethyst');
+   await p.evaluate(()=>{const b=document.querySelector('[data-confirm-vespera-outfit]');b.click();b.click();});await p.waitForFunction(()=>LocalProfiles.read().vesperaStandingOutfit==='standing-amethyst');assert.deepEqual(await values(p),{shards:40,seated:'sorceress',standing:'standing-amethyst'});
+   await p.keyboard.press('Escape');await p.locator('.skin-house-standing-character').evaluate(i=>i.decode());await p.screenshot({path:`outputs/vespera-integrated-dress-${width}.png`});
+   await travel(p,'workshop');assert.match(await p.locator('.skin-house-art').getAttribute('src'),/vespera-outfits-a/);assert.equal(await p.locator('.skin-house-standing-character').count(),0);assert.equal(await p.locator('.skin-house-art').getAttribute('data-vespera-outfit'),'sorceress');
+   await open(p);assert.equal(await p.locator('[name=vespera-outfit][value^=standing-]').count(),0);await p.keyboard.press('Escape');
+   await travel(p,'bedroom');const view=p.locator('.skin-house-viewport');await view.focus();await p.keyboard.press('+');await p.waitForFunction(()=>Number(document.querySelector('.skin-house-viewport').dataset.zoomScale)>1);
+   const saved=await p.evaluate(()=>{GameLocation.flush();return LocalProfiles.view();});await p.reload({waitUntil:'load'});await Promise.all([p.waitForNavigation({waitUntil:'load'}),p.locator('[data-play-profile=legacy]').click()]);await p.waitForFunction(()=>document.querySelector('.skin-house-panel')?.dataset.skinHouseRoom==='bedroom');await p.locator('.skin-house-standing-character').evaluate(i=>i.decode());
+   assert.deepEqual(await values(p),{shards:40,seated:'sorceress',standing:'standing-amethyst'});await p.waitForFunction(scale=>Math.abs(Number(document.querySelector('.skin-house-viewport').dataset.zoomScale)-scale)<.01,saved.placeView.scale);
+   await travel(p,'workshop');await p.locator('[data-open-hero-skins]').click();assert.equal(await p.locator('.hero-skin-dialog').isVisible(),true);await p.keyboard.press('Escape');
+   const h=await p.evaluate(()=>LocalProfiles.read());assert.equal(h.gold,200);assert.equal(h.energy,80);assert.equal(h.heroSkin,undefined);assert.deepEqual(errors,[]);console.log(`PASS ${width}x${height}: separate seated/standing wardrobes, transparent room character, exact charges, independent saved looks and hero shop`);await context.close();
   }
-  await p.keyboard.press('Escape');assert.deepEqual(await value(),{shards:40,id:'default'});
-  await open();await p.locator(`[name=vespera-outfit][value="${standing[0]}"]`).check();
-  await p.evaluate(()=>{const b=document.querySelector('[data-confirm-vespera-outfit]');b.click();b.click();});
-  await p.waitForFunction(()=>LocalProfiles.read().vesperaOutfit==='standing-amethyst');assert.deepEqual(await value(),{shards:35,id:standing[0]});
-  await p.keyboard.press('Escape');await p.locator('.skin-house-bedroom-figure img').evaluate(i=>i.decode());
-  assert.equal(await p.locator('.skin-house-bedroom-figure img').evaluate(i=>getComputedStyle(i).objectFit),'contain');
-  await p.screenshot({path:`outputs/vespera-bedroom-${width}.png`});
-  await travel('workshop');assert.equal(await p.locator('#place-title').innerText(),'Dom Tysiąca Twarzy');
-  assert.equal(await p.locator('.skin-house-art').evaluate(i=>getComputedStyle(i).objectFit),'contain');
-  assert.match(await p.locator('.skin-house-art').getAttribute('src'),/vespera-standing-amethyst/);
-  assert.doesNotMatch(await p.locator('.skin-house-art').getAttribute('alt'),/siedzi/);
-  const bounds=await p.locator('.skin-house-art').boundingBox(),viewport=await p.locator('.skin-house-viewport').boundingBox(),label=await p.locator('.skin-house-merchant').boundingBox();
-  assert.ok(bounds.x>=viewport.x-1&&bounds.x+bounds.width<=viewport.x+viewport.width+1,'Full standing photo fits horizontally');
-  assert.ok(bounds.y>=viewport.y-1&&bounds.y+bounds.height<=viewport.y+viewport.height+1,'Full standing photo fits vertically');
-  assert.ok(label.y>=bounds.y+bounds.height,'Merchant label does not cover the original photo');
-  await p.screenshot({path:`outputs/vespera-standing-${width}.png`});
-  await travel('bedroom');await open();await p.locator('[name=vespera-outfit][value="standing-ranger"]').check();
-  await p.screenshot({path:`outputs/vespera-wardrobe-${width}.png`});
-  await p.keyboard.press('Escape');
-  const view=p.locator('.skin-house-viewport');await view.focus();await p.keyboard.press('+');
-  await p.waitForFunction(()=>Number(document.querySelector('.skin-house-viewport').dataset.zoomScale)>1);
-  const saved=await p.evaluate(()=>{GameLocation.flush();return LocalProfiles.view();});assert.equal(saved.room,'bedroom');
-  await p.reload({waitUntil:'load'});assert.match(await p.locator('.profile-card').innerText(),/Sypialnia Vespery/);
-  await Promise.all([p.waitForNavigation({waitUntil:'load'}),p.locator('[data-play-profile=legacy]').click()]);
-  await p.waitForFunction(()=>document.querySelector('.skin-house-panel')?.dataset.skinHouseRoom==='bedroom');
-  await p.locator('.skin-house-art').evaluate(i=>i.decode());
-  assert.deepEqual(await value(),{shards:35,id:standing[0]});
-  await p.waitForFunction(scale=>Math.abs(Number(document.querySelector('.skin-house-viewport').dataset.zoomScale)-scale)<.01,saved.placeView.scale);
-  await travel('workshop');await p.locator('[data-open-hero-skins]').click();
-  assert.equal(await p.locator('.hero-skin-dialog').isVisible(),true);await p.keyboard.press('Escape');
-  await p.locator('#close-place').click();assert.equal(await p.locator('#place-dialog').isVisible(),false);
-  const hero=await p.evaluate(()=>LocalProfiles.read());assert.equal(hero.gold,200);assert.equal(hero.energy,80);assert.equal(hero.heroSkin,undefined);
-  assert.deepEqual(errors,[]);console.log(`PASS ${width}x${height}: bedroom, five original photos, free previews, exact charge, standing workshop, saved room/zoom and hero shop`);
-  await context.close();
- }}finally{await browser.close();}
+  const context=await browser.newContext(),p=await context.newPage();await seed(p,{vesperaOutfit:'standing-crimson',shards:20});assert.equal(await p.locator('.skin-house-art').getAttribute('data-vespera-outfit'),'default');await travel(p,'bedroom');assert.match(await p.locator('.skin-house-standing-character').getAttribute('src'),/standing-crimson-character/);assert.equal((await values(p)).shards,20);
+  await open(p);await choose(p,'standing-amethyst');await p.evaluate(()=>{window.saveItem=Storage.prototype.setItem;Storage.prototype.setItem=function(k,v){if(k==='pustkowie.hero.v2')throw new DOMException('test','QuotaExceededError');return window.saveItem.call(this,k,v);};});await p.locator('[data-confirm-vespera-outfit]').click();await p.waitForFunction(()=>document.querySelector('.vespera-message').textContent.includes('Nie udało'));assert.deepEqual(await values(p),{shards:20,seated:'default',standing:'standing-crimson'});await p.evaluate(()=>Storage.prototype.setItem=window.saveItem);await p.keyboard.press('Escape');await context.close();
+  const shared=await browser.newContext(),a=await shared.newPage();await seed(a,{shards:10});await open(a);await choose(a,'queen');
+  const b=await shared.newPage();await b.route('https://fonts.googleapis.com/**',r=>r.abort());await b.goto('http://127.0.0.1:8020/');await require('./profile-fixture.cjs')(b);await b.evaluate(()=>HubNavigation.open('skin-house'));await b.locator('.skin-house-art').evaluate(i=>i.decode());await travel(b,'bedroom');await open(b);await choose(b,'standing-amethyst');
+  await Promise.all([a.locator('[data-confirm-vespera-outfit]').click(),b.locator('[data-confirm-vespera-outfit]').click()]);await a.waitForFunction(()=>LocalProfiles.read().shards===0,null,{polling:50});assert.deepEqual(await values(a),{shards:0,seated:'queen',standing:'standing-amethyst'});await shared.close();
+  console.log('PASS legacy standing migration, failed storage and simultaneous changes in different rooms');
+ }finally{await browser.close();}
 })().catch(e=>{console.error(e);process.exit(1)});

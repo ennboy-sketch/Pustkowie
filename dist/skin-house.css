@@ -33,10 +33,10 @@
 @media(max-width:480px){.place-dialog[open]:has(.skin-house-panel){height:calc(100svh - 16px);max-height:calc(100svh - 16px);max-width:calc(100% - 16px)}.place-dialog:has(.skin-house-panel)>.place-top{padding:12px 15px 0}.place-dialog:has(.skin-house-panel)>h2{font-size:20px;margin:5px 15px 12px}.skin-house-merchant>span{font-size:15px}}
 .skin-house-art-frame{position:absolute;inset:0;overflow:hidden;pointer-events:none}
 .skin-house-art{max-width:none;transform-origin:0 0;pointer-events:none}
-.skin-house-art-frame.shows-standing{background:radial-gradient(ellipse at center,#58314b,#211422 60%,#130f19)}
-.skin-house-bedroom-figure{position:absolute;left:53%;top:7%;height:80%;aspect-ratio:3/4;padding:6px;background:#170f20;border:2px solid #a48750;box-shadow:0 12px 36px #0009,inset 0 0 0 1px #e6c583;border-radius:4px;overflow:hidden}
-.skin-house-bedroom-figure>.vespera-portrait{height:100%;width:100%;aspect-ratio:auto;border-radius:inherit}
-.skin-house-panel[data-skin-house-room=bedroom] .skin-house-merchant{left:68.4%;top:92%;width:19%}
+.skin-house-bedroom-figure{position:absolute;left:60%;bottom:12%;height:82%;transform:translateX(-50%);padding:0;background:none;border:0;box-shadow:none;pointer-events:none;isolation:isolate}
+.skin-house-bedroom-figure::before{content:'';position:absolute;left:50%;bottom:1%;width:36%;height:3%;transform:translateX(-50%);background:radial-gradient(ellipse,#170d1870,transparent 70%);filter:blur(4px);z-index:-1}
+.skin-house-standing-character{display:block;width:100%;height:100%;object-fit:contain;pointer-events:none;user-select:none;-webkit-user-drag:none;filter:drop-shadow(0 9px 7px #100a155c)}
+.skin-house-panel[data-skin-house-room=bedroom] .skin-house-merchant{left:60%;top:95%;width:19%}
 .skin-house-door,.skin-house-bedroom-wardrobe{position:absolute;left:88%;top:61%;transform:translate(-50%,-50%);min-width:145px;min-height:64px;padding:9px 12px;border:1px solid #b4965f;border-radius:4px;background:#211525ed;color:#f2d8a5;box-shadow:0 3px 12px #0008;cursor:pointer}
 .skin-house-door span,.skin-house-bedroom-wardrobe span{display:block;font:600 14px 'Cinzel',Georgia,serif}
 .skin-house-door small,.skin-house-bedroom-wardrobe small{display:block;font-size:10px;color:#d0baa5;margin-top:6px}
