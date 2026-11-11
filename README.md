@@ -936,3 +936,9 @@ Karczma na Uboczu (od poziomu 30) ma własną ilustrację `golden-pony-mercenari
 Nie zmienia to karczmy zamkowej, usług Tobiasza, Branda, Tauriel i Teo ani przygotowanych, nadal nieaktywnych misji potworów 31–50. Zachowano wspólne przesuwanie, zoom, zapis kadru, wznowienie profilu i próg dostępu 30. Nowe okno rozmowy usuwa się przy opuszczeniu sali.
 
 Testy: `node tests/golden-pony-mercenaries.browser.cjs`, `node tests/golden-pony.browser.cjs`, `node tests/teo.browser.cjs` przy lokalnej grze na porcie 8020 oraz `node --test tests/*.test.cjs`.
+
+### Zlecenia Roderika na Uboczu
+
+W rozmowie z Roderikiem wybierz „Zlecenia Roderika”. Trudniejsza walka kosztuje 15 energii i losuje jednego z 20 potworów poziomów 31–50 w zakresie ±3 poziomów postaci, na jednym z pięciu terenów pogranicza. Łatwiejszy zwiad czasowy za 10 energii jest zapowiedziany, ale pozostaje niedostępny do późniejszego dodania. Premia profesji zwiadowcy nadal zmniejsza koszty o połowę.
+
+Przyjęcie zapisuje koszt, nagrodę i walkę w profilu. Wznowienie nie pobiera ponownej opłaty. Zwycięstwo wypłaca zapisane złoto i EXP dokładnie raz; porażka nie przyznaje nagrody. Oferty i misje Branda pozostają niezależne. Testy: `node --test tests/*.test.cjs` i `node tests/roderik-missions.browser.cjs` przy lokalnej stronie na porcie 8020.

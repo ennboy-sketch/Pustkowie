@@ -46,12 +46,14 @@ Testy logiki: `node --test tests/*.test.cjs`.
 
 Testy przeglądarkowe przy stronie lokalnej na porcie 8020: `node tests/campaign.browser.cjs`, `node tests/castle.browser.cjs`, `node tests/lyrien-visibility.browser.cjs`, `node tests/profiles.browser.cjs`, `node tests/vespera-bedroom.browser.cjs`.
 
-Publikacja zachowuje GitHub Pages. Zapis nowej wersji na `main` uruchamia istniejący proces publikacji; przed ukończeniem zadania należy sprawdzić wdrożenie i pliki pod publicznym adresem. Nie tworzyć zastępczej witryny w innej usłudze.
+Publikacja zachowuje GitHub Pages. Jeśli automatyczne wdrożenie utknie, istniejący workflow można wywołać przez `gh workflow run pages.yml --repo ennboy-sketch/Pustkowie --ref main` bez pustych commitów. Zapis nowej wersji na `main` uruchamia istniejący proces publikacji; przed ukończeniem zadania należy sprawdzić wdrożenie i pliki pod publicznym adresem. Nie tworzyć zastępczej witryny w innej usłudze.
 
-## Przygotowane potwory 31–50 — jeszcze bez misji
+## Potwory 31–50 — zlecenia Roderika
 
-Zgodnie z poleceniem użytkownika katalog FrontierBestiary pozostaje poza aktywnymi pulami karczmy i Branda. Zawiera 20 przeciwników i 5 nowych terenów; pełna tabela, wzór nagród i uwagi do przyszłej integracji: [FRONTIER-BESTIARY.md](FRONTIER-BESTIARY.md). Oddzielny podgląd: dist/bestiary-31-50.html. Nie włączać zleceń ani nowych terenów na mapie bez dalszego polecenia.
+Na dalsze polecenie użytkownika katalog FrontierBestiary został podłączony do Roderika. Zawiera 20 przeciwników i 5 terenów; pełna tabela, wzór nagród i opis integracji: [FRONTIER-BESTIARY.md](FRONTIER-BESTIARY.md). Oddzielny podgląd: dist/bestiary-31-50.html. Potwory występują wyłącznie w zleceniach Roderika, poza pulami Branda. Nie dodano nowych wejść na mapie.
 
 ## Najemnicy w karczmie na Uboczu
 
-„Pod Złotym Kucem” ma trzech nowych mieszkańców: Roderika Żelaznego Kruka (tarczownik przy piecu), Mirę Szary Szlak (tropicielka przy oknach) i Durgana Krzemienia (krasnolud przy barze). `GoldenPony.PEOPLE` przechowuje ich rozmowy i stałe ID. Przednie prawe krzesło pozostaje wolne dla czwartej osoby: nie zapełniać go bez kolejnego polecenia. Nowa panorama to `golden-pony-mercenaries.webp`; oryginał pustej sali zachowano. Najemnicy mają na razie rozmowy, bez misji i nagród; bestiariusz 31–50 nadal nie trafia do ofert.
+„Pod Złotym Kucem” ma trzech nowych mieszkańców: Roderika Żelaznego Kruka (tarczownik przy piecu), Mirę Szary Szlak (tropicielka przy oknach) i Durgana Krzemienia (krasnolud przy barze). `GoldenPony.PEOPLE` przechowuje ich rozmowy i stałe ID. Przednie prawe krzesło pozostaje wolne dla czwartej osoby: nie zapełniać go bez kolejnego polecenia. Nowa panorama to `golden-pony-mercenaries.webp`; oryginał pustej sali zachowano. Mira i Durgan mają rozmowy. Roderik udostępnia przycisk „Zlecenia Roderika”: łatwiejszy zwiad czasowy za bazowo 10 energii pozostaje wyłączony do późniejszej realizacji, trudniejsza walka za bazowo 15 energii jest aktywna. Zachowano premię profesji zwiadowcy (połowa kosztu). Dobór przeciwników ±3 poziomy, wejście na Ubocze od poziomu 30. Zlecenie nie losuje się ponownie przy ponownym otwarciu, a następne powstaje po rozliczeniu walki.
+
+`roderik-missions.js` zawiera osobną logikę i panel. Pola `roderikOffer`, `activeCombat.source = roderik` i `lastRoderikCombat` przechodzą z całym profilem przez eksport/import. Koszt, konkretna nagroda, poziom gracza i `rewardVersion: 1` są zapisywane przy przyjęciu, a wynik i nagroda atomowo pod wspólną blokadą postaci. Porażka nie wypłaca nagród. Nie zmieniać ofert Branda. Testy: `node --test tests/*.test.cjs`, `node tests/roderik-missions.browser.cjs` (opcjonalnie `GAME_URL` dla opublikowanej wersji), dotychczasowe testy karczmy i Teo.

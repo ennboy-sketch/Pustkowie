@@ -4,7 +4,7 @@ const plain=value=>JSON.parse(JSON.stringify(value));
 function runtime(){const r=vm.createContext({crypto:webcrypto,localStorage:new Proxy({},{get(){throw Error('Prepared content must not read or write saves');}})});r.window=r;for(const name of ['progression','energy','gear-catalog','hero','combat','missions','choices','frontier-bestiary'])vm.runInContext(read(name),r);return r;}
 test('Exactly one prepared monster for each level 31–50, five complete locations and no ID collisions',()=>{
   const r=runtime(),b=r.FrontierBestiary,old=['forest','mine','undercity'].flatMap(id=>r.BrandCombat.opponents(id));
-  assert.equal(b.STATUS,'prepared');assert.equal(b.MISSION_POOL_ENABLED,false);assert.equal(b.MONSTERS.length,20);assert.equal(b.LOCATIONS.length,5);
+  assert.equal(b.STATUS,'available-at-roderik');assert.equal(b.MISSION_POOL_ENABLED,true);assert.equal(b.MONSTERS.length,20);assert.equal(b.LOCATIONS.length,5);
   assert.equal(new Set(old.concat(b.MONSTERS).map(e=>e.id)).size,old.length+20);
   assert.deepEqual(plain(b.MONSTERS.map(e=>e.level)),Array.from({length:20},(_,i)=>31+i));
   for(const place of b.LOCATIONS){const group=b.MONSTERS.filter(e=>e.sceneId===place.id);assert.equal(group.length,4);assert.equal(group[0].level,place.levels[0]);assert.equal(group[3].level,place.levels[1]);assert.ok(fs.existsSync('dist/'+place.image));}
@@ -26,10 +26,11 @@ test('Rewards follow real level thresholds, cap weaker targets and preserve exac
   }
   for(const level of [0,-1,31.5,'31',120,250,NaN])assert.throws(()=>b.rewardFor(b.atLevel(31).id,level));
 });
-test('Prepared content never enters existing Brand/tavern offers, scenes, runtime or saves',()=>{
+test('Frontier content stays outside Brand offers and scenes; the game loads its separate provider',()=>{
   const r=runtime(),b=r.FrontierBestiary,ids=new Set(b.MONSTERS.map(e=>e.id));
   for(let level=1;level<=60;level++)for(const scene of ['forest','mine','undercity'])for(const tier of [undefined,'easy','hard'])assert.ok(r.BrandCombat.availableOpponents({level},scene,tier).every(e=>!ids.has(e.id)));
-  const sources=['index.html','tavern.js','missions.js','choices.js','combat.js','hub.js'].map(n=>fs.readFileSync('dist/'+n,'utf8'));
+  assert.match(fs.readFileSync('dist/index.html','utf8'),/roderik-missions/);
+  const sources=['tavern.js','missions.js','choices.js','combat.js','hub.js'].map(n=>fs.readFileSync('dist/'+n,'utf8'));
   for(const source of sources)assert.ok(!/frontier-bestiary|FrontierBestiary/.test(source));
   for(const place of b.LOCATIONS)assert.throws(()=>r.BrandCombat.opponents(place.id));
 });

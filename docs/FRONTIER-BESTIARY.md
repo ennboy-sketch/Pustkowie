@@ -1,6 +1,6 @@
-# Pogranicze Wrót — przygotowane potwory 31–50
+# Pogranicze Wrót — potwory 31–50 u Roderika
 
-20 przeciwników, dokładnie jeden na poziom. Treść przygotowana do przyszłych zleceń karczmy. Nie rejestrować automatycznie w ofertach Branda, karczmie, zwiadach ani na mapie.
+20 przeciwników, dokładnie jeden na poziom. Aktywne zlecenia Roderika w karczmie Pod Złotym Kucem na Uboczu. Nie rejestrować w ofertach Branda, zwiadach ani jako wejścia na mapie.
 
 Podgląd: [bestiariusz](https://ennboy-sketch.github.io/Pustkowie/dist/bestiary-31-50.html). Podgląd nie korzysta z magazynu zapisów, nie rozpoczyna walk i nie wypłaca nagród.
 
@@ -14,11 +14,11 @@ Podgląd: [bestiariusz](https://ennboy-sketch.github.io/Pustkowie/dist/bestiary-
 
 ## Nagrody i trudność
 
-Próg to EXP wymagany do następnego poziomu, odczytany z Progression.required, nie suma doświadczenia od początku gry. Wzór: floor(min(próg poziomu gracza, próg poziomu potwora) × 18%). Na równym poziomie potrzeba sześciu zwycięstw od pustego paska EXP. Słabszy przeciwnik nie zwiększa swojej nagrody, gdy gracz awansuje. Silniejszy nie daje więcej niż 18% bieżącego progu gracza. Planowany dobór: ±3 poziomy, jak u Branda; aktualne pule pozostają nietknięte.
+Próg to EXP wymagany do następnego poziomu, odczytany z Progression.required, nie suma doświadczenia od początku gry. Wzór: floor(min(próg poziomu gracza, próg poziomu potwora) × 18%). Na równym poziomie potrzeba sześciu zwycięstw od pustego paska EXP. Słabszy przeciwnik nie zwiększa swojej nagrody, gdy gracz awansuje. Silniejszy nie daje więcej niż 18% bieżącego progu gracza. Dobór: ±3 poziomy, jak u Branda; jego pule pozostają nietknięte.
 
-Złoto jest stałe dla gatunku: 300 + 25 × (poziom − 31) + 5 × floor((poziom − 31) / 4). Bez dodatkowych przedmiotów i odłamków. Przy przyszłym przyjęciu misji trzeba zapisać konkretną nagrodę, poziom gracza i rewardVersion: 1, a przy odbiorze nie przeliczać ich ponownie. Porażka nie wypłaca nagrody. Przyłączenie misji, opłaty energii i zapis walk pozostają osobnym przyszłym zadaniem.
+Złoto jest stałe dla gatunku: 300 + 25 × (poziom − 31) + 5 × floor((poziom − 31) / 4). Bez dodatkowych przedmiotów i odłamków. Przy przyjęciu misji Roderika zapisuje się konkretną nagrodę, poziom gracza i rewardVersion: 1; przy odbiorze nie przelicza się ich ponownie. Porażka nie wypłaca nagrody. Walka kosztuje bazowo 15 energii (z premią profesji zwiadowcy: 7,5). Łatwiejszy zwiad za bazowo 10 energii pozostaje wyłączony do późniejszego dodania.
 
-HP rośnie od 960 do 2500 względem 900 HP Bazyliszka (30). Bazowy atak rośnie od 157–177 do 290–329. Zdolności korzystają wyłącznie z istniejących mechanik: mocniejszy cios, przebicie, jad, magiczna fala, pancerz, podatności i furia. To początkowy balans treści przed uruchomieniem; ostateczny poziom trudności wymaga sprawdzenia z docelowym wyposażeniem postaci przy podłączeniu zleceń.
+HP rośnie od 960 do 2500 względem 900 HP Bazyliszka (30). Bazowy atak rośnie od 157–177 do 290–329. Zdolności korzystają wyłącznie z istniejących mechanik: mocniejszy cios, przebicie, jad, magiczna fala, pancerz, podatności i furia. Zachowano przygotowane parametry potworów; trudniejsze zlecenia wymagają rozwiniętej i wyposażonej postaci.
 
 | Poz. | Potwór | Teren | HP | Atak | EXP na równym poziomie | Złoto | Próg awansu |
 | ---: | --- | --- | ---: | --- | ---: | ---: | ---: |
@@ -43,11 +43,11 @@ HP rośnie od 960 do 2500 względem 900 HP Bazyliszka (30). Bazowy atak rośnie 
 | 49 | Przywoływacz Popiołów | Przedpola Piekielnych Wrót | 2410 | 283–321 | 2570400 | 770 | 14280000 |
 | 50 | Strażnik Przedbramia | Przedpola Piekielnych Wrót | 2500 | 290–329 | 2761200 | 795 | 15340000 |
 
-## Integracja w przyszłości
+## Integracja z Roderikiem
 
-Plik dist/frontier-bestiary.js udostępnia FrontierBestiary: LOCATIONS, MONSTERS, get(id), atLevel(level), rewardFor(id, poziomGracza). STATUS = prepared i MISSION_POOL_ENABLED = false. Katalog jest głęboko zamrożony; funkcje nagród zwracają świeże obiekty. Nie ma funkcji zapisu ani odbioru nagród. index.html nie ładuje tego modułu.
+Plik dist/frontier-bestiary.js udostępnia FrontierBestiary: LOCATIONS, MONSTERS, get(id), atLevel(level), rewardFor(id, poziomGracza). STATUS = available-at-roderik i MISSION_POOL_ENABLED = true. Katalog jest głęboko zamrożony; funkcje nagród zwracają świeże obiekty. Nie ma funkcji zapisu ani odbioru nagród. index.html ładuje katalog i osobny moduł roderik-missions.js.
 
-Stałe ID potworów i terenów są niezależne od polskich nazw. MONSTERS mają format danych zgodny z BrandCombat.createBattle i BrandCombat.advance, lecz nie są zarejestrowane w jego aktywnych ROSTERS. Obecny renderer walki musi otrzymać obsługę nowych atlasów i terenów przed integracją. Nie wolno po prostu dopisać potworów do Branda.
+Stałe ID potworów i terenów są niezależne od polskich nazw. MONSTERS mają format danych zgodny z BrandCombat.createBattle i BrandCombat.advance, lecz nie są zarejestrowane w jego aktywnych ROSTERS. Renderer walki obsługuje nowe atlasy (w tym nierówne kadry ruin) i tereny. Nie wolno po prostu dopisać potworów do Branda.
 
 Grafiki: pięć atlasów frontier-monsters-*.webp z czterema przeciwnikami oraz frontier-locations.webp (3 kolumny, 2 wiersze: pięć terenów i widok pogranicza w szóstym polu). Portrety wybiera tile w kolejności wierszowej. W atlasie ruin wiersze mają różne wysokości; podane crop (znormalizowane x, y, width, height) ma pierwszeństwo przed siatką columns/rows. Oryginały PNG są lokalnie w generated_images; repozytorium zawiera komplet WebP.
 

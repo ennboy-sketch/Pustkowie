@@ -1,5 +1,5 @@
 'use strict';
-// Prepared content only. Deliberately not loaded by index.html or registered with Brand/the tavern.
+// Frontier contracts are offered by Roderik only; Brand keeps his original rosters.
 (() => {
   const XP_BASIS_POINTS=1800;
   function freeze(value){if(value&&typeof value==='object'){Object.values(value).forEach(freeze);Object.freeze(value);}return value;}
@@ -41,5 +41,5 @@
   }));
   function get(id){const monster=MONSTERS.find(enemy=>enemy.id===id);if(!monster)throw Error('Nieznany potwór pogranicza.');return monster;}
   function rewardFor(id,playerLevel=get(id).level){const enemy=get(id);return {gold:enemy.reward.gold,xp:Math.floor(Math.min(threshold(playerLevel),threshold(enemy.level))*XP_BASIS_POINTS/10000)};}
-  window.FrontierBestiary=freeze({VERSION:1,STATUS:'prepared',MISSION_POOL_ENABLED:false,XP_BASIS_POINTS,LOCATIONS,MONSTERS,get,rewardFor,atLevel:level=>MONSTERS.find(enemy=>enemy.level===level)??null});
+  window.FrontierBestiary=freeze({VERSION:1,STATUS:'available-at-roderik',MISSION_POOL_ENABLED:true,XP_BASIS_POINTS,LOCATIONS,MONSTERS,get,rewardFor,atLevel:level=>MONSTERS.find(enemy=>enemy.level===level)??null});
 })();

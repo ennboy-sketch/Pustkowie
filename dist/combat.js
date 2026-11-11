@@ -110,7 +110,7 @@
     let next=window.PlayerStats?.recordBattle(result,fight)??result;
     if(fight.battle.winner==='hero'&&fight.source==='graveyard'&&next.graveyardDefeated?.length===window.Graveyard.BOSSES.length)
       next=window.PlayerStats?.recordMission(next,'graveyard')??next;
-    if(fight.battle.winner==='hero'&&!fight.source)
+    if(fight.battle.winner==='hero'&&(!fight.source||fight.source==='roderik'))
       next=window.PlayerStats?.recordMission(next,fight.sceneId)??next;
     return next;
   }
@@ -121,6 +121,7 @@
     if(fight.source==='gabriel')return trackFinishedBattle(window.GabrielTraining.resolve(hero,id),fight);
     if(fight.source==='tauriel')return trackFinishedBattle(window.TaurielQuest.resolve(hero,id),fight);
     if(fight.source==='campaign')return trackFinishedBattle(window.OathCampaign.resolve(hero,id),fight);
+    if(fight.source==='roderik')return trackFinishedBattle(window.RoderikMissions.resolve(hero,id),fight);
     const won=fight.battle.winner==='hero',reward=won?fight.reward:{gold:0,xp:0};
     const next=window.Progression.award(hero,reward.xp),gold=(hero.gold??25)+reward.gold;
     if(!Number.isSafeInteger(gold))throw new Error('Nieprawidłowa ilość złota.');
@@ -241,6 +242,11 @@
     figure.className='combat-figure';
     figure.style.cssText='';
     if(Number.isInteger(fighter?.tile)){figure.classList.add('monster-avatar');if(fighter.atlas==='abyss-bellringer')figure.classList.add('monster-abyss-bellringer');if(fighter.atlas==='bloodthirsty-flower')figure.classList.add('monster-bloodthirsty-flower');if(fighter.atlas==='cursed-stag')figure.classList.add('monster-cursed-stag');if(fighter.atlas==='ancient-forest-spirit')figure.classList.add('monster-ancient-forest-spirit');if(fighter.atlas==='birch-werewolf')figure.classList.add('monster-birch-werewolf');if(fighter.atlas==='wraith-archer')figure.classList.add('monster-wraith-archer');if(fighter.atlas==='centipede')figure.classList.add('monster-centipede');if(fighter.atlas==='chain-troll')figure.classList.add('monster-chain-troll');if(fighter.atlas==='spore-crawler')figure.classList.add('monster-spore-crawler');if(fighter.atlas==='magma-golem')figure.classList.add('monster-magma-golem');if(fighter.atlas==='undead-miner')figure.classList.add('monster-undead-miner');if(fighter.atlas==='scorpion')figure.classList.add('monster-scorpion');if(fighter.atlas==='aelira')figure.classList.add('monster-aelira');if(fighter.atlas==='devourer')figure.classList.add('monster-devourer');if(fighter.atlas==='spectral-knight')figure.classList.add('monster-spectral-knight');if(fighter.atlas==='demoness')figure.classList.add('monster-demoness');if(fighter.atlas==='whisperer')figure.classList.add('monster-whisperer');if(fighter.atlas==='mine')figure.classList.add('monster-mine');if(fighter.atlas==='undercity')figure.classList.add('monster-undercity');if(/^level-(16|21|26)$/.test(fighter.atlas))figure.classList.add('monster-'+fighter.atlas);if(fighter.atlas==='training')figure.classList.add('monster-training');if(fighter.atlas==='graveyard')figure.classList.add('monster-graveyard');if(fighter.atlas==='tauriel')figure.classList.add('monster-tauriel');figure.style.setProperty('--monster-position',(fighter.atlas==='graveyard'||/^level-(16|21|26)$/.test(fighter.atlas))?`${fighter.tile%3*50}% ${Math.floor(fighter.tile/3)*100}%`:fighter.atlas==='tauriel'?`${fighter.tile*50}% 0%`:`${fighter.tile%2*100}% ${Math.floor(fighter.tile/2)*100}%`);}
+    if(fighter?.image?.startsWith('frontier-monsters-')){
+      const crop=fighter.crop||{x:fighter.tile%fighter.columns/fighter.columns,y:Math.floor(fighter.tile/fighter.columns)/fighter.rows,width:1/fighter.columns,height:1/fighter.rows};
+      figure.classList.add('frontier-avatar');figure.replaceChildren();
+      const art=document.createElement('img');art.src=fighter.image;art.alt='';art.style.cssText=`position:absolute;width:${100/crop.width}%;height:${100/crop.height}%;max-width:none;left:${-crop.x/crop.width*100}%;top:${-crop.y/crop.height*100}%`;figure.append(art);
+    }else figure.replaceChildren();
     if(fighter&&Object.hasOwn(BASE_STATS,fighter.classId)&&['male','female'].includes(fighter.gender))figure.className+=` character ${fighter.gender} ${fighter.classId}${window.HeroSkins?.battleSuffix(fighter)||''}`;
     if(fighter?.id==='oath-severin-oath')figure.classList.add('campaign-severin');
     root.classList.toggle('combat-empty',!fighter);
@@ -323,11 +329,14 @@
     const locked=fn=>navigator.locks?navigator.locks.request('pustkowie-hero-v2',fn):fn();
     function render(hero){
       const fight=hero.activeCombat,offer=hero.combatOffer;
-      dialog.querySelector('.combat-top>div>span').textContent=fight?.source==='campaign'?'Pęknięta Przysięga · Walka fabularna':fight?.source==='gabriel'?'Gabriel · Próba Żelaznej Przysięgi':fight?.source==='graveyard'?'Cmentarzysko · Bossowie':fight?.source==='tauriel'?'Tauriel · Przepędź nieproszonych gości':'Dowódca Brand · Walka z potworami';
-      dialog.querySelector('[data-close-combat]').setAttribute('aria-label',fight?.source==='campaign'?'Wróć do dziennika':fight?.source==='gabriel'?'Wróć do Gabriela':fight?.source==='graveyard'?'Wróć do Cmentarzyska':fight?.source==='tauriel'?'Wróć do Tauriel':'Wróć do Branda');
+      dialog.querySelector('.combat-top>div>span').textContent=fight?.source==='roderik'?'Roderik Żelazny Kruk · Walka z potworami':fight?.source==='campaign'?'Pęknięta Przysięga · Walka fabularna':fight?.source==='gabriel'?'Gabriel · Próba Żelaznej Przysięgi':fight?.source==='graveyard'?'Cmentarzysko · Bossowie':fight?.source==='tauriel'?'Tauriel · Przepędź nieproszonych gości':'Dowódca Brand · Walka z potworami';
+      dialog.querySelector('[data-close-combat]').setAttribute('aria-label',fight?.source==='roderik'?'Wróć do Roderika':fight?.source==='campaign'?'Wróć do dziennika':fight?.source==='gabriel'?'Wróć do Gabriela':fight?.source==='graveyard'?'Wróć do Cmentarzyska':fight?.source==='tauriel'?'Wróć do Tauriel':'Wróć do Branda');
       dialog.querySelector('.combat-bottom>small').textContent=fight?.source==='campaign'?'Walka fabularna · Bez kosztu energii · Nagrodę za zadanie odbierzesz w dzienniku':fight?.source==='gabriel'?'Szkolenie Gabriela · Bez kosztu energii':fight?.source==='graveyard'?'Cmentarzysko · Bez kosztu energii':fight?.source==='tauriel'?'Misja Tauriel · Bez kosztu energii':fight?`Koszt misji: ${window.EnergyCycle.format(fight.cost??5)} energii · Opłacono przy rozpoczęciu`:'Wybierz zlecenie u Branda.';
-      const sceneId=fight?.sceneId||offer?.sceneId||'forest',scene=fight?.source==='campaign'?window.OathCampaign.encounterScene(fight):fight?.source==='gabriel'&&fight.stage==='dummies'?{image:'barracks-training.webp',short:'Plac treningowy Gabriela'}:fight?.source==='graveyard'?{image:'scout-forest.webp',short:'Cmentarzysko'}:fight?.source==='tauriel'?{image:'tavern-upstairs.webp',short:'Górne piętro · Barykada'}:window.BrandMissions.SCENES[sceneId];
+      const sceneId=fight?.sceneId||offer?.sceneId||'forest',scene=fight?.source==='roderik'?window.RoderikMissions.scene(fight):fight?.source==='campaign'?window.OathCampaign.encounterScene(fight):fight?.source==='gabriel'&&fight.stage==='dummies'?{image:'barracks-training.webp',short:'Plac treningowy Gabriela'}:fight?.source==='graveyard'?{image:'scout-forest.webp',short:'Cmentarzysko'}:fight?.source==='tauriel'?{image:'tavern-upstairs.webp',short:'Górne piętro · Barykada'}:window.BrandMissions.SCENES[sceneId];
       dialog.querySelector('.combat-stage').style.setProperty('--combat-art',`url("${scene.image}")`);
+      const stage=dialog.querySelector('.combat-stage'),frontier=fight?.source==='roderik';
+      stage.style.backgroundSize=frontier?'auto, 300% 200%':'';
+      stage.style.backgroundPosition=frontier?`center, ${scene.tile%3*50}% ${Math.floor(scene.tile/3)*100}%`:'';
       dialog.querySelector('#combat-location').textContent=scene.short;
       if(fight){
         renderBattle(dialog,fight.battle);shownId=fight.id;
@@ -348,7 +357,7 @@
       try{
         const hero=await locked(()=>{
           const current=state.read();if(current.activeMission)throw new Error('Najpierw zakończ aktywny zwiad.');
-          const next=prepare(current);return next===current?current:state.update(latest=>prepare(latest));
+          const prepareFight=state.prepareCombat||prepare,next=prepareFight(current);return next===current?current:state.update(latest=>prepareFight(latest));
         });
         if(disposed)return;busy=false;render(hero);if(!dialog.open)dialog.showModal();
       }catch(error){if(!disposed)container.querySelector('.combat-entry-error').textContent=error.message;}
@@ -360,7 +369,7 @@
       catch(error){if(!disposed)dialog.querySelector('.combat-status').textContent='Nie udało się zapisać walki. Spróbuj ponownie.';}
     }
     async function act(){
-      if(busy)return;const intent=action.dataset.action,id=action.dataset.fightId,isQuest=['tauriel','graveyard','gabriel','campaign'].includes(state.read().activeCombat?.source);busy=true;action.disabled=true;
+      if(busy)return;const intent=action.dataset.action,id=action.dataset.fightId,isQuest=['tauriel','graveyard','gabriel','campaign','roderik'].includes(state.read().activeCombat?.source);busy=true;action.disabled=true;
       try{
         const next=await locked(()=>state.update(hero=>intent==='skip'?skip(hero,id):intent==='finish'?finish(hero,id):start(hero)));
         if(disposed)return;

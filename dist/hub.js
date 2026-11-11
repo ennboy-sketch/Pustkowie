@@ -262,7 +262,7 @@
     if(id==='journal')stopCampaign=window.CampaignPanel.mount($('#place-content'),{read:readCurrentHero,update:updateCurrentHero,navigate:travelCampaign});
     if(level()>=place.requiredLevel&&id==='glade-path-1')markCampaignVisit('ice-hills');
     if(level()>=place.requiredLevel&&id==='glade-path-2')markCampaignVisit('eldor');
-    if(id==='ubocze-tavern'&&level()>=place.requiredLevel)stopGoldenPony=window.GoldenPony.mount($('#place-content'));
+    if(id==='ubocze-tavern'&&level()>=place.requiredLevel)stopGoldenPony=window.GoldenPony.mount($('#place-content'),{read:readCurrentHero,update:updateCurrentHero});
     if (id === 'guild') stopCastle=window.CastlePanel.mount($('#place-content'),{read:readCurrentHero,update:updateCurrentHero,onTitle:title=>{$('#place-title').textContent=title;},professionMarkup:()=>barracksPanel('elven')});
     if (id === 'hero') stopHeroSheet=window.HeroSheet.mount($('.hero-sheet-root'),{read:readCurrentHero,update:updateCurrentHero});
     if (id === 'inventory') stopHeroSheet=window.HeroSheet.mountBag($('.backpack-root'),{read:readCurrentHero,update:updateCurrentHero});
