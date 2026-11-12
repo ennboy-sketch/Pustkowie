@@ -166,7 +166,7 @@
       const observer=new ResizeObserver(fit);observer.observe(view);fit();const stop=mount(view,scene);
       controllers.set(scene,()=>{stop();observer.disconnect();});
     }
-    for(const scene of document.querySelectorAll('.scout-active-view .scout-scene,.combat-stage'))if(!controllers.has(scene)){
+    for(const scene of document.querySelectorAll('.scout-active-view:not(.roderik-scout-screen) .scout-scene,.combat-stage'))if(!controllers.has(scene)){
       const button=document.createElement('button');button.className='scene-inspect-button';button.type='button';button.textContent='⌕';button.setAttribute('aria-label','Przybliż lokację');button.title='Przybliż lokację';scene.append(button);
       const previous=scene.style.position;if(getComputedStyle(scene).position==='static')scene.style.position='relative';let close=()=>{};
       function open(){const prop=scene.matches('.combat-stage')?'--combat-art':'--scout-art',source=getComputedStyle(scene).getPropertyValue(prop).trim().match(/^url\(["']?(.*?)["']?\)$/)?.[1];if(!source)return;close();close=inspector(source,scene.querySelector('#combat-location,.scout-heading h3')?.textContent||'Lokacja');}

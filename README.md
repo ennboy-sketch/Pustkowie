@@ -944,3 +944,5 @@ W rozmowie z Roderikiem wybierz „Zlecenia Roderika”. Trudniejsza walka koszt
 Przyjęcie zapisuje koszt, nagrodę i walkę w profilu. Wznowienie nie pobiera ponownej opłaty. Odbiór zwiadu oraz zwycięstwo wypłacają zapisane złoto i EXP dokładnie raz; porażka nie przyznaje nagrody. Oferty i misje Branda pozostają niezależne. Testy: `node --test tests/*.test.cjs` i `node tests/roderik-missions.browser.cjs` przy lokalnej stronie na porcie 8020.
 
 Powyżej poziomu 50 oba rodzaje zleceń pozostają dostępne w ostatnim przedziale zawartości. Panel Roderika używa ilustrowanych kart w stylu zleceń Branda, z podglądem nagrody, kosztu i czasu. `node tests/roderik-scout.browser.cjs` sprawdza progi poziomów, równoległość misji, nagrody, odliczanie, import/eksport i dwie karty.
+
+Zwiad Roderika otwiera teraz osobne okno na cały ekran, z ilustracją wybranej lokacji, opisem i paskiem czasu u dołu, takim jak u Branda. Po zamknięciu widoku wrócisz do niego przyciskiem „Wróć do zwiadu”. Po upływie czasu w tym oknie pojawia się przycisk zgłoszenia powrotu. Termin, koszty i nagrody trwającej misji zostają zachowane.

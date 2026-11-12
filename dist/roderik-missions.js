@@ -74,17 +74,32 @@
   function mount(root,state){
     root.innerHTML='<div class="roderik-mission-list brand-choice-list"></div><p class="roderik-message brand-choice-message" role="status" aria-live="polite"></p><div class="roderik-combat" hidden></div>';
     const list=root.querySelector('.roderik-mission-list'),message=root.querySelector('.roderik-message');
+    const scoutDialog=document.createElement('dialog');scoutDialog.className='roderik-scout-dialog';scoutDialog.setAttribute('aria-labelledby','roderik-scout-title');
+    scoutDialog.innerHTML='<section class="scout-active-view roderik-scout-screen"><div class="scout-scene"><div class="roderik-scout-landscape" role="img"></div><div class="scout-heading"><h3 id="roderik-scout-title"></h3></div><button type="button" data-close-roderik-scout aria-label="Wróć do zleceń Roderika">×</button><p class="mission-message" role="status" aria-live="polite"></p><p class="scout-narrative"></p><button type="button" class="primary roderik-scout-report" data-roderik-claim disabled hidden>Zgłoś powrót</button><div class="scout-progress"><div><strong class="scout-clock" data-roderik-clock role="timer" aria-label="Pozostały czas zwiadu Roderika"></strong></div><progress aria-label="Postęp zwiadu Roderika" max="1" value="0"></progress></div></div></section>';document.body.append(scoutDialog);
+    const scoutScreen=scoutDialog.querySelector('.roderik-scout-screen');let shownScoutId=null;
     let disposed=false,busy=false,renderKey='';
     const locked=fn=>navigator.locks?navigator.locks.request('pustkowie-hero-v2',fn):fn();
     const combat=window.BrandCombat.mount(root.querySelector('.roderik-combat'),{...state,prepareCombat:hero=>hero,onQuestResolved:hero=>{if(disposed)return;const last=hero.lastRoderikCombat;message.textContent=last.won?`Zwycięstwo! Nagroda: ${last.reward.gold} złota · ${last.reward.xp} EXP${last.levelsGained?` · Awans o ${last.levelsGained} poziom(y)`:''}.`:'Porażka. Nie otrzymujesz nagrody. Energia została zużyta przy rozpoczęciu.';void refresh();}});
     function clock(hero){
-      const scout=readScout(hero);if(!scout)return;
-      const timer=list.querySelector('[data-roderik-clock]'),progress=list.querySelector('progress'),button=list.querySelector('[data-roderik-claim]');if(!timer||!progress||!button)return;
+      const scout=readScout(hero),resume=list.querySelector('[data-roderik-open-scout]');
+      if(!scout){if(scoutDialog.open)scoutDialog.close();shownScoutId=null;return;}
       const remaining=Math.max(0,scout.endsAt-Date.now()),seconds=Math.ceil(remaining/1000);
-      timer.textContent=remaining?`${String(Math.floor(seconds/60)).padStart(2,'0')}:${String(seconds%60).padStart(2,'0')}`:'Zwiad zakończony';
-      progress.max=scout.durationMs;progress.value=Math.min(scout.durationMs,Math.max(0,Date.now()-scout.startedAt));
-      button.disabled=busy||remaining>0;button.textContent=remaining?'Zwiad w toku':'Zgłoś powrót i odbierz nagrodę';
+      if(resume){resume.disabled=busy;resume.textContent=remaining?'Wróć do zwiadu':'Zwiad zakończony · Zgłoś powrót';}
+      if(!scoutDialog.open)return;
+      if(scout.id!==shownScoutId){scoutDialog.close();shownScoutId=null;return;}
+      scoutDialog.querySelector('[data-roderik-clock]').textContent=remaining?`${String(Math.floor(seconds/60)).padStart(2,'0')}:${String(seconds%60).padStart(2,'0')}`:'Zwiad zakończony';
+      const progress=scoutDialog.querySelector('progress');progress.max=scout.durationMs;progress.value=Math.min(scout.durationMs,Math.max(0,Date.now()-scout.startedAt));
+      const button=scoutDialog.querySelector('[data-roderik-claim]');button.dataset.roderikClaim=scout.id;button.hidden=remaining>0;button.disabled=busy||remaining>0;scoutScreen.classList.toggle('scout-ready',remaining===0);
     }
+    function openScout(hero){
+      if(disposed)return;const scout=readScout(hero);if(!scout)return;
+      const place=scene(scout),landscape=scoutDialog.querySelector('.roderik-scout-landscape');
+      landscape.style.cssText=atlasStyle(place);landscape.setAttribute('aria-label',place.name);scoutDialog.dataset.sceneId=place.id;
+      scoutDialog.querySelector('h3').textContent=`Zwiad Roderika · ${place.name}`;scoutDialog.querySelector('.scout-narrative').textContent=place.description;
+      scoutDialog.querySelector('.mission-message').textContent='';scoutScreen.classList.remove('scout-has-error');shownScoutId=scout.id;
+      if(!scoutDialog.open)scoutDialog.showModal();clock(hero);scoutDialog.querySelector('[data-close-roderik-scout]').focus({preventScroll:true});
+    }
+    function reportError(text){message.textContent=text;if(scoutDialog.open){scoutDialog.querySelector('.mission-message').textContent=text;scoutScreen.classList.add('scout-has-error');}}
     function render(hero){
       if(disposed)return;
       const scout=readScout(hero),terms=scoutTerms(hero),scoutReward=scout?.reward||terms.reward,energy=window.EnergyCycle.info(hero).energy,cost=window.EnergyCycle.cost(hero,TIERS.hard.cost),easyCost=window.EnergyCycle.cost(hero,TIERS.easy.cost),unlocked=level(hero)>=MIN_LEVEL;
@@ -95,28 +110,30 @@
       const key=JSON.stringify([level(hero),energy,hero.roderikOffer?.id,hero.roderikScoutOffer?.id,scout?.id,hero.activeCombat?.id,busy]);
       if(key===renderKey){clock(hero);return;}renderKey=key;
       function card(kind,art,title,body,button){return `<article class="roderik-card brand-choice-card" data-choice-type="${kind}"><div class="choice-art"><span class="roderik-atlas" style="${atlasStyle(art)}" aria-hidden="true"></span><span class="rpg-icon icon-${kind==='scout'?'journal':'arena'}" aria-hidden="true"></span><span>${kind==='scout'?'Łatwiejsza misja':'Trudniejsza misja'}</span></div><div class="choice-body"><h4>${title}</h4>${body}${button}</div></article>`;}
-      const scoutBody=`<p class="choice-location">${scoutPlace.name}</p><p class="choice-kind">Zwiad czasowy · ${scout?scout.durationMs/60000:terms.durationMs/60000} min</p><p>Sprawdź dawny szlak i przynieś Roderikowi raport. W czasie zwiadu możesz podejmować walki i zadania poboczne.</p><p class="choice-location">Nagroda: ${scoutReward.gold} złota · ${scoutReward.xp} EXP</p>${scout?'<div class="roderik-scout-progress"><strong data-roderik-clock role="timer"></strong><progress aria-label="Postęp zwiadu Roderika" max="1" value="0"></progress></div>':''}`;
-      const scoutButton=scout?`<button type="button" class="primary" data-roderik-claim="${scout.id}" disabled>Zwiad w toku</button>`:`<button type="button" class="primary" data-roderik-scout="${hero.roderikScoutOffer?.id||''}" ${busy||!unlocked||energy<easyCost?'disabled':''}>${!unlocked?'Od 31. poziomu':`Podejmij misję · ${window.EnergyCycle.format(easyCost)} energii`}</button>`;
+      const scoutBody=`<p class="choice-location">${scoutPlace.name}</p><p class="choice-kind">Zwiad czasowy · ${scout?scout.durationMs/60000:terms.durationMs/60000} min</p><p>Sprawdź dawny szlak i przynieś Roderikowi raport. W czasie zwiadu możesz podejmować walki i zadania poboczne.</p><p class="choice-location">Nagroda: ${scoutReward.gold} złota · ${scoutReward.xp} EXP</p>${scout?'<p>Zwiad jest w toku. Otwórz widok lokacji, aby sprawdzić czas i zgłosić powrót.</p>':''}`;
+      const scoutButton=scout?`<button type="button" class="primary" data-roderik-open-scout>Wróć do zwiadu</button>`:`<button type="button" class="primary" data-roderik-scout="${hero.roderikScoutOffer?.id||''}" ${busy||!unlocked||energy<easyCost?'disabled':''}>${!unlocked?'Od 31. poziomu':`Podejmij misję · ${window.EnergyCycle.format(easyCost)} energii`}</button>`;
       const combatBody=`<p class="choice-location">${place.name}</p><p class="choice-kind">Walka${enemy?` · ${enemy.name} · Poziom ${enemy.level}`:' z potworem'}</p><p>${enemy?enemy.description:'Dwa rodzaje zleceń są dostępne od 31. poziomu.'}</p>${enemy?`<p class="choice-location">Nagroda za zwycięstwo: ${reward.gold} złota · ${reward.xp} EXP</p>`:''}${blocked&&!active?'<p>Najpierw zakończ obecną walkę. Zwiady i zadania poboczne nie blokują tego zlecenia.</p>':''}`;
       const combatButton=active?'<button type="button" class="primary" data-roderik-resume>Wróć do walki · Bez kolejnej opłaty</button>':`<button type="button" class="primary" data-roderik-start="${hero.roderikOffer?.id||''}" ${busy||!unlocked||blocked||!enemy||energy<cost?'disabled':''}>${!unlocked?'Od 31. poziomu':`Podejmij misję · ${window.EnergyCycle.format(cost)} energii`}</button>`;
       list.innerHTML=`<p class="brand-matchmaking-note">${unlocked?`Zlecenia od 31. poziomu · Energia: ${window.EnergyCycle.format(energy)} / 100<br>${level(hero)>50?'Najsilniejsze potwory pogranicza: poziomy 47–50.':`Potwory: poziomy ${Math.max(31,level(hero)-3)}–${Math.min(50,level(hero)+3)}.`}`:'Oba zlecenia odblokujesz na 31. poziomie postaci.'}</p>`+card('scout',scoutPlace,'Szlak wędrowca',scoutBody,scoutButton)+card('combat',place,enemy?.contractTitle||'Próba śmiałka',combatBody,combatButton);clock(hero);
     }
-    async function refresh(){if(disposed||busy)return;try{const hero=await locked(()=>{if(disposed)return null;const h=state.read(),next=prepare(h);return next===h?h:state.update(current=>prepare(current));});if(hero)render(hero);}catch(error){if(!disposed)message.textContent=error.message||'Nie udało się odczytać zleceń.';}}
+    async function refresh(){if(disposed||busy)return;try{const hero=await locked(()=>{if(disposed)return null;const h=state.read(),next=prepare(h);return next===h?h:state.update(current=>prepare(current));});if(hero)render(hero);}catch(error){if(!disposed)reportError(error.message||'Nie udało się odczytać zleceń.');}}
     async function click(event){
       if(disposed||busy)return;
+      if(event.target.closest('[data-close-roderik-scout]')){scoutDialog.close();return;}
+      if(event.target.closest('[data-roderik-open-scout]')){openScout(state.read());return;}
       if(event.target.closest('[data-roderik-resume]')){await combat.open();return;}
       const button=event.target.closest('[data-roderik-start],[data-roderik-scout],[data-roderik-claim]');if(!button)return;
       const kind=button.hasAttribute('data-roderik-start')?'combat':button.hasAttribute('data-roderik-scout')?'scout':'claim',id=button.dataset.roderikStart||button.dataset.roderikScout||button.dataset.roderikClaim;
-      busy=true;button.disabled=true;message.textContent='';
+      busy=true;button.disabled=true;message.textContent='';scoutScreen.classList.remove('scout-has-error');scoutDialog.querySelector('.mission-message').textContent='';
       try{
         const next=await locked(()=>{if(disposed)return null;return state.update(hero=>kind==='combat'?start(hero,id):kind==='scout'?startScout(hero,id):finishScout(hero,id));});
-        if(!disposed&&next){render(next);if(kind==='combat')await combat.open();else message.textContent=kind==='scout'?'Zwiad rozpoczęty. Możesz walczyć i wykonywać zadania poboczne.':`Powrót ze zwiadu! Nagroda: ${next.lastRoderikScout.reward.gold} złota · ${next.lastRoderikScout.reward.xp} EXP.`;}
-      }catch(error){if(!disposed)message.textContent=['QuotaExceededError','SecurityError'].includes(error.name)?'Nie udało się zapisać misji. Energia nie została pobrana.':error.message;}
+        if(!disposed&&next){render(next);if(kind==='combat')await combat.open();else if(kind==='scout'){message.textContent='Zwiad rozpoczęty. Możesz walczyć i wykonywać zadania poboczne.';openScout(next);}else{if(scoutDialog.open)scoutDialog.close();message.textContent=`Powrót ze zwiadu! Nagroda: ${next.lastRoderikScout.reward.gold} złota · ${next.lastRoderikScout.reward.xp} EXP.`;}}
+      }catch(error){if(!disposed)reportError(['QuotaExceededError','SecurityError'].includes(error.name)?kind==='claim'?'Nie udało się zapisać powrotu. Nagroda nie została odebrana.':'Nie udało się zapisać misji. Energia nie została pobrana.':error.message);}
       finally{busy=false;renderKey='';if(!disposed)await refresh();}
     }
     function storage(event){if(event.key==='pustkowie.hero.v2'||event.key===null)void refresh();}
-    root.addEventListener('click',click);window.addEventListener('storage',storage);const timer=setInterval(refresh,1000);void refresh();
-    return()=>{disposed=true;clearInterval(timer);combat();root.removeEventListener('click',click);window.removeEventListener('storage',storage);};
+    root.addEventListener('click',click);scoutDialog.addEventListener('click',click);window.addEventListener('storage',storage);const timer=setInterval(refresh,1000);void refresh();
+    return()=>{disposed=true;clearInterval(timer);combat();if(scoutDialog.open)scoutDialog.close();scoutDialog.removeEventListener('click',click);scoutDialog.remove();root.removeEventListener('click',click);window.removeEventListener('storage',storage);};
   }
   window.RoderikMissions={MIN_LEVEL,SCOUT_BANDS,scoutTerms,TIERS,available,prepare,start,resolve,readScout,startScout,finishScout,scene,mount};
 })();
