@@ -356,7 +356,7 @@
       if(disposed||busy)return;busy=true;
       try{
         const hero=await locked(()=>{
-          const current=state.read();if(current.activeMission)throw new Error('Najpierw zakończ aktywny zwiad.');
+          const current=state.read();if(current.activeMission&&current.activeCombat?.source!=='roderik')throw new Error('Najpierw zakończ aktywny zwiad.');
           const prepareFight=state.prepareCombat||prepare,next=prepareFight(current);return next===current?current:state.update(latest=>prepareFight(latest));
         });
         if(disposed)return;busy=false;render(hero);if(!dialog.open)dialog.showModal();

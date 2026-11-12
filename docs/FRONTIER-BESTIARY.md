@@ -14,9 +14,9 @@ Podgląd: [bestiariusz](https://ennboy-sketch.github.io/Pustkowie/dist/bestiary-
 
 ## Nagrody i trudność
 
-Próg to EXP wymagany do następnego poziomu, odczytany z Progression.required, nie suma doświadczenia od początku gry. Wzór: floor(min(próg poziomu gracza, próg poziomu potwora) × 18%). Na równym poziomie potrzeba sześciu zwycięstw od pustego paska EXP. Słabszy przeciwnik nie zwiększa swojej nagrody, gdy gracz awansuje. Silniejszy nie daje więcej niż 18% bieżącego progu gracza. Dobór: ±3 poziomy, jak u Branda; jego pule pozostają nietknięte.
+Próg to EXP wymagany do następnego poziomu, odczytany z Progression.required, nie suma doświadczenia od początku gry. Wzór: floor(min(próg poziomu gracza, próg poziomu potwora) × 18%). Na równym poziomie potrzeba sześciu zwycięstw od pustego paska EXP. Słabszy przeciwnik nie zwiększa swojej nagrody, gdy gracz awansuje. Silniejszy nie daje więcej niż 18% bieżącego progu gracza. Dobór od poziomu 31: ±3 poziomy, a powyżej poziomu 50 zachowana pula 47–50; jego pule pozostają nietknięte.
 
-Złoto jest stałe dla gatunku: 300 + 25 × (poziom − 31) + 5 × floor((poziom − 31) / 4). Bez dodatkowych przedmiotów i odłamków. Przy przyjęciu misji Roderika zapisuje się konkretną nagrodę, poziom gracza i rewardVersion: 1; przy odbiorze nie przelicza się ich ponownie. Porażka nie wypłaca nagrody. Walka kosztuje bazowo 15 energii (z premią profesji zwiadowcy: 7,5). Łatwiejszy zwiad za bazowo 10 energii pozostaje wyłączony do późniejszego dodania.
+Złoto jest stałe dla gatunku: 300 + 25 × (poziom − 31) + 5 × floor((poziom − 31) / 4). Bez dodatkowych przedmiotów i odłamków. Przy przyjęciu misji Roderika zapisuje się konkretną nagrodę, poziom gracza i rewardVersion: 1; przy odbiorze nie przelicza się ich ponownie. Porażka nie wypłaca nagrody. Walka kosztuje bazowo 15 energii (z premią profesji zwiadowcy: 7,5). Łatwiejszy zwiad za bazowo 10 energii jest aktywny od poziomu 31 i działa niezależnie od walk oraz zadań pobocznych.
 
 HP rośnie od 960 do 2500 względem 900 HP Bazyliszka (30). Bazowy atak rośnie od 157–177 do 290–329. Zdolności korzystają wyłącznie z istniejących mechanik: mocniejszy cios, przebicie, jad, magiczna fala, pancerz, podatności i furia. Zachowano przygotowane parametry potworów; trudniejsze zlecenia wymagają rozwiniętej i wyposażonej postaci.
 
@@ -54,3 +54,5 @@ Grafiki: pięć atlasów frontier-monsters-*.webp z czterema przeciwnikami oraz 
 Wrota Piekieł na mapie wciąż wymagają poziomu 110. Przedpola 47–50 są nowym, odrębnym terenem zewnętrznym, a Strażnik Przedbramia nie jest władcą ani bossem właściwych Wrót.
 
 Walidacja: node --test tests/*.test.cjs; node tests/frontier-bestiary.browser.cjs przy lokalnym serwerze na porcie 8020. Obejmuje dokładność progów i limitów, przenoszenie EXP przy awansie, izolację pul i zapisów, wznowienie symulacji wszystkich potworów, ich zdolności, zwycięstwo i porażkę oraz podgląd na komputerze i telefonie.
+
+Zwiady Roderika: 31–40 → 30 minut, 2000 złota, EXP = floor(próg poziomu × 25%); 41–50 → 45 minut, 4000 złota, EXP = floor(próg poziomu × 35%). Wyżej pozostaje drugi przedział z progiem 50. Pełne zasady zapisu i zgodności: CONTINUITY.md.

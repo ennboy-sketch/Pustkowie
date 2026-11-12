@@ -939,6 +939,8 @@ Testy: `node tests/golden-pony-mercenaries.browser.cjs`, `node tests/golden-pony
 
 ### Zlecenia Roderika na Uboczu
 
-W rozmowie z Roderikiem wybierz „Zlecenia Roderika”. Trudniejsza walka kosztuje 15 energii i losuje jednego z 20 potworów poziomów 31–50 w zakresie ±3 poziomów postaci, na jednym z pięciu terenów pogranicza. Łatwiejszy zwiad czasowy za 10 energii jest zapowiedziany, ale pozostaje niedostępny do późniejszego dodania. Premia profesji zwiadowcy nadal zmniejsza koszty o połowę.
+W rozmowie z Roderikiem wybierz „Zlecenia Roderika”. Trudniejsza walka kosztuje 15 energii i losuje jednego z 20 potworów poziomów 31–50 w zakresie ±3 poziomów postaci, na jednym z pięciu terenów pogranicza. Obie misje są dostępne od 31. poziomu. Łatwiejszy zwiad kosztuje 10 energii: na poziomach 31–40 trwa 30 minut i daje 2000 złota oraz 25% progu EXP do awansu, a na poziomach 41–50 trwa 45 minut i daje 4000 złota oraz 35% progu EXP. Zwiad i zadania poboczne nie blokują walk. Premia profesji zwiadowcy nadal zmniejsza koszty o połowę.
 
-Przyjęcie zapisuje koszt, nagrodę i walkę w profilu. Wznowienie nie pobiera ponownej opłaty. Zwycięstwo wypłaca zapisane złoto i EXP dokładnie raz; porażka nie przyznaje nagrody. Oferty i misje Branda pozostają niezależne. Testy: `node --test tests/*.test.cjs` i `node tests/roderik-missions.browser.cjs` przy lokalnej stronie na porcie 8020.
+Przyjęcie zapisuje koszt, nagrodę i walkę w profilu. Wznowienie nie pobiera ponownej opłaty. Odbiór zwiadu oraz zwycięstwo wypłacają zapisane złoto i EXP dokładnie raz; porażka nie przyznaje nagrody. Oferty i misje Branda pozostają niezależne. Testy: `node --test tests/*.test.cjs` i `node tests/roderik-missions.browser.cjs` przy lokalnej stronie na porcie 8020.
+
+Powyżej poziomu 50 oba rodzaje zleceń pozostają dostępne w ostatnim przedziale zawartości. Panel Roderika używa ilustrowanych kart w stylu zleceń Branda, z podglądem nagrody, kosztu i czasu. `node tests/roderik-scout.browser.cjs` sprawdza progi poziomów, równoległość misji, nagrody, odliczanie, import/eksport i dwie karty.

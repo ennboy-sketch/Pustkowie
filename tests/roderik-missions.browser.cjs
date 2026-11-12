@@ -6,7 +6,7 @@ async function openInn(page){await page.evaluate(()=>HubNavigation.open('ubocze-
  for(const[width,height]of[[1280,900],[390,844],[360,640]]){
   const context=await browser.newContext({viewport:{width,height}}),p=await context.newPage(),errors=[];p.on('pageerror',e=>errors.push(e.message));await p.route('https://fonts.googleapis.com/**',r=>r.abort());
   await p.goto(base);await p.evaluate(h=>localStorage.setItem('pustkowie.hero.v2',JSON.stringify(h)),fixture);await p.reload();await require('./profile-fixture.cjs')(p);await openInn(p);
-  assert.equal(await p.locator('.roderik-card').count(),2);assert.equal(await p.locator('.roderik-card button').first().isDisabled(),true);assert.match(await p.locator('.roderik-card').first().innerText(),/10 energii/);assert.match(await p.locator('[data-roderik-start]').innerText(),/15 energii/);
+  assert.equal(await p.locator('.roderik-card').count(),2);assert.equal(await p.locator('.roderik-card button').first().isDisabled(),false);assert.match(await p.locator('.roderik-card').first().innerText(),/10 energii/);assert.match(await p.locator('[data-roderik-start]').innerText(),/15 energii/);
   const offer=await p.evaluate(()=>LocalProfiles.read().roderikOffer);await p.locator('[data-close-pony-npc]').click();await p.locator('.golden-pony-people [data-pony-npc=roderik]').click();await p.locator('[data-open-roderik]').click();assert.deepEqual(await p.evaluate(()=>LocalProfiles.read().roderikOffer),offer);
   // A failed write must not consume energy or the assigned contract.
   await p.evaluate(()=>{window.savedSetItem=Storage.prototype.setItem;Storage.prototype.setItem=function(k,v){if(k==='pustkowie.hero.v2')throw new DOMException('Full','QuotaExceededError');return savedSetItem.call(this,k,v);};});
@@ -20,10 +20,10 @@ async function openInn(page){await page.evaluate(()=>HubNavigation.open('ubocze-
   await p.locator('.combat-actions button').click();await p.locator('.combat-dialog').waitFor({state:'hidden'});await p.waitForFunction(()=>document.querySelector('.roderik-message').textContent.includes('Zwycięstwo'));
   let won=await p.evaluate(()=>LocalProfiles.read());assert.equal(won.gold,321+reward.gold);assert.equal(won.xp,1234+reward.xp);assert.equal(won.energy,85);assert.equal(won.activeCombat,null);assert.ok(won.roderikOffer);assert.equal(won.lastRoderikCombat.id,id);
   assert.equal(await p.evaluate(()=>{const h=LocalProfiles.read();try{BrandCombat.finish(h,h.lastRoderikCombat.id);return false;}catch{return true;}}),true);
-  // Insufficient energy and an active mission both block the new contract.
+  // Insufficient energy blocks combat; a parallel side mission does not.
   await p.evaluate(()=>{LocalProfiles.write({...LocalProfiles.read(),energy:14});dispatchEvent(new StorageEvent('storage',{key:'pustkowie.hero.v2'}));});await p.waitForFunction(()=>document.querySelector('[data-roderik-start]').disabled);assert.equal(await p.evaluate(()=>LocalProfiles.read().energy),14);
-  await p.evaluate(()=>{LocalProfiles.write({...LocalProfiles.read(),energy:100,activeMission:{id:'other'}});dispatchEvent(new StorageEvent('storage',{key:'pustkowie.hero.v2'}));});await p.waitForFunction(()=>document.querySelector('.roderik-mission-list').textContent.includes('Najpierw zakończ'));assert.equal(await p.locator('[data-roderik-start]').isDisabled(),true);
-  assert.deepEqual(errors,[]);console.log(`PASS ${width}x${height}: cost 15, timed 10 disabled, sticky offer, failed save, resume/reload, victory reward once, low energy and shared mission blocker`);await context.close();
+  await p.evaluate(()=>{LocalProfiles.write({...LocalProfiles.read(),energy:100,activeMission:{id:'other'}});dispatchEvent(new StorageEvent('storage',{key:'pustkowie.hero.v2'}));});await p.waitForFunction(()=>!document.querySelector('[data-roderik-start]').disabled);assert.equal(await p.locator('[data-roderik-scout]').isDisabled(),false);
+  assert.deepEqual(errors,[]);console.log(`PASS ${width}x${height}: cost 15, timed 10 available, sticky offer, failed save, resume/reload, victory reward once, low energy and side missions do not block combat`);await context.close();
  }
  // Two tabs must pay and resolve only once; all atlas crops and locations render.
  const context=await browser.newContext({viewport:{width:1280,height:900}}),a=await context.newPage();await a.route('https://fonts.googleapis.com/**',r=>r.abort());await a.goto(base);await a.evaluate(h=>localStorage.setItem('pustkowie.hero.v2',JSON.stringify(h)),fixture);await a.reload();await require('./profile-fixture.cjs')(a);await openInn(a);
