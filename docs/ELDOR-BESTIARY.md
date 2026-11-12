@@ -1,8 +1,8 @@
-# Szlak Eldoru — przygotowany bestiariusz 51–75
+# Szlak Eldoru — zlecenia Faelara 51–75
 
 25 nowych istot, po jednej na każdy poziom od 51 do 75. Pięć krain łączy Zamek Elfów w Eldorze z przedgórzem Lodowych Wzgórz i podnóżem zamku krasnoludów. Użytkownik potwierdził, że chodzi o Lodowe Wzgórza.
 
-**Zawartość przygotowana, bez aktywacji w grze.** `dist/index.html` nie ładuje katalogu, nie dodano przeciwników do Branda, Roderika, kampanii ani lochów, nie zmieniono aktywnej mapy i zapisów postaci. Eldor nadal wymaga poziomu 50, a Lodowe Wzgórza 75.
+**Potwory są aktywne w zleceniach Faelara Ostrza Liścia.** Wejście: Polana → Eldor → Faelar → Zlecenia Faelara. Zamek i zlecenia wymagają poziomu 50. Pula jest niezależna od Branda, Roderika, kampanii i lochów; bez nowych wejść na mapie. Lodowe Wzgórza nadal wymagają poziomu 75. Walka kosztuje bazowo 15 energii, z dotychczasową zniżką profesji Zwiadowcy. Dobór obejmuje potwory ±3 poziomy względem gracza, z ograniczeniem poziomu doboru do 75. Zwiady i zadania poboczne nie blokują walk.
 
 Podgląd: [bestiariusz 51–75](https://ennboy-sketch.github.io/Pustkowie/dist/bestiary-51-75.html). Jest niezależny od magazynu profili, bez przycisków walk i wypłat.
 
@@ -14,7 +14,7 @@ Podgląd: [bestiariusz 51–75](https://ennboy-sketch.github.io/Pustkowie/dist/b
 - **Moreny Ślepej Zorzy (66–70)** — Przedgórze Lodowych Wzgórz. Na przedgórzu Lodowych Wzgórz zielona zorza odbija się w lodowych grzbietach i myli wędrowcom kierunki. W morenach leżą zatopione krasnoludzkie słupy graniczne. To otoczenie gór, a nie nowe wejście do zamku.
 - **Niecka Korony Lodu (71–75)** — Podnóże zamku krasnoludów · Lodowe Wzgórza. Pod skalną koroną, na której wznosi się zamek krasnoludów, lodowiec wyrzeźbił wielki amfiteatr. Dawne morze pozostawiło w nim osobliwą faunę. Złote monolity łączą runy gór z pieśnią przyniesioną z Eldoru; dostęp do właściwych Lodowych Wzgórz nadal wymaga poziomu 75.
 
-## Potwory i planowane nagrody
+## Potwory i nagrody
 
 | Poziom | Potwór | Kraina | HP | Atak | EXP na równym poziomie | Złoto |
 | ---: | --- | --- | ---: | --- | ---: | ---: |
@@ -44,7 +44,7 @@ Podgląd: [bestiariusz 51–75](https://ennboy-sketch.github.io/Pustkowie/dist/b
 | 74 | Rozgwiazda Zamarłego Kręgu | Niecka Korony Lodu | 7707 | 576–637 | 21780000 | 2620 |
 | 75 | Mamut Korony Lodu | Niecka Korony Lodu | 7988 | 588–650 | 24660000 | 2690 |
 
-Planowany EXP: floor(min(próg EXP poziomu gracza, próg EXP poziomu potwora) × 18%). Progi pochodzą z rzeczywistego `Progression.required`, a nie z sumy doświadczenia od początku gry. Na równym poziomie potrzeba około sześciu zwycięstw na awans. Złoto: 850 + 70 × (poziom − 51) + 40 × floor((poziom − 51) / 5). Nie ma przedmiotów ani odłamków. Te wartości nie są aktywnymi wypłatami; przy przyszłej integracji wymagają zapisania konkretnej nagrody i wersji przy rozpoczęciu misji.
+EXP: floor(min(próg EXP poziomu gracza, próg EXP poziomu potwora) × 18%). Progi pochodzą z rzeczywistego `Progression.required`, a nie z sumy doświadczenia od początku gry. Na równym poziomie potrzeba około sześciu zwycięstw na awans. Złoto: 850 + 70 × (poziom − 51) + 40 × floor((poziom − 51) / 5). Nie ma przedmiotów ani odłamków. Konkretna nagroda i `rewardVersion: 1` są zapisywane przy rozpoczęciu walki. EXP uwzględnia poziom gracza ograniczony do 75. Porażka daje 0 złota i 0 EXP.
 
 HP, atak i zdolności to początkowe parametry treści, bez obietnicy końcowego balansu postaci. Wykorzystano wyłącznie obsługiwane mechaniki walki: mocniejsze trafienie, przebicie, obrażenia okresowe, magiczna fala, pancerz, odporności, podatności i furia. Nie wprowadzono nieobsługiwanych efektów zamrożenia, uciszenia czy nowych reguł tur.
 
@@ -200,12 +200,14 @@ Czterokły mamut pamięta zimy sprzed budowy obu zamków. Zamarznięta sierść 
 
 Pochłania 25 obrażeń fizycznych. Co piąty własny atak zadaje 150% bazowych obrażeń; poniżej 25% HP bazowe obrażenia rosną o 15%.
 
-## Pliki i przyszła integracja
+## Pliki i obsługa walk
 
-Katalog: `dist/eldor-bestiary.js`, globalny obiekt `EldorBestiary`, `STATUS: prepared`, `MISSION_POOL_ENABLED: false`. Dane są głęboko zamrożone, funkcje nagród zwracają nowe obiekty. Katalog nie ma funkcji rozpoczęcia misji, zapisu ani odbioru nagrody.
+Katalog: `dist/eldor-bestiary.js`, globalny obiekt `EldorBestiary`, `STATUS: available-at-faelar`, `MISSION_POOL_ENABLED: true`. Dane są głęboko zamrożone, funkcje nagród zwracają nowe obiekty. Katalog nie ma funkcji rozpoczęcia misji, zapisu ani odbioru nagrody.
 
 Pięć atlasów `eldor-monsters-*.webp`: każdy ma 3 kolumny i 2 rzędy, pięć stworzeń w polach 0–4 i pusty widok krainy w polu 5. `eldor-locations.webp` zawiera pięć krajobrazów w polach 0–4 oraz panoramę szlaku w polu 5. Oryginały wygenerowanych PNG pozostają w `/workspace/generated_images`; trwałe zoptymalizowane WebP są w repozytorium.
 
-Nie włączać potworów do żadnych ofert ani nowych wejść na mapie bez kolejnego polecenia użytkownika. Przy przyszłym podłączaniu trzeba dodać niezależny dobór, obsługę atlasów 3×2 i terenów, zapis nagrody oraz testy transakcji i wznowienia. Nie dopisywać ich automatycznie do Roderika ani Branda.
+`dist/faelar-missions.js` obsługuje stabilną ofertę `hero.faelarOffer`, płatność i walkę `activeCombat.source: faelar`. Zapisuje wynik w `lastFaelarCombat`; współdzielony `combat.js` zachowuje arenę, dziennik, przewijanie, zgłoszenie wyniku i wznowienie. Po skutecznym zapisie wyniku otwiera osobne podsumowanie ze złotem, EXP i awansem. Zamknięcie podsumowania nie wypłaca ponownie nagrody. Blokada zapisu jest wspólna z dotychczasowymi walkami i chroni przed podwójną opłatą lub nagrodą między kartami. Galeria pozostaje tylko do odczytu.
 
-Sprawdzenie: `node --test tests/*.test.cjs`; przy lokalnej stronie na porcie 8020: `node tests/eldor-bestiary.browser.cjs`, opcjonalnie `GAME_URL` dla publicznego podglądu. Testy porównują ID i nazwy z obecnymi potworami, dokładne poziomy, unikalne gatunki, nagrody, obsługiwane zdolności, symulację i odczyt stanu walki, izolację pul oraz zerowy dostęp galerii do zapisów postaci.
+Sprawdzenie: `node --test tests/*.test.cjs`; przy lokalnej stronie na porcie 8020: `node tests/eldor-bestiary.browser.cjs`, `node tests/faelar-missions.browser.cjs`, opcjonalnie `GAME_URL` dla publicznego podglądu. Testy porównują ID i nazwy z obecnymi potworami, dokładne poziomy, unikalne gatunki, nagrody, obsługiwane zdolności, symulację i odczyt stanu walki, izolację pul oraz zerowy dostęp galerii do zapisów postaci.
+
+Test Faelara obejmuje wszystkie 25 portretów i pięć terenów, trzy rozmiary ekranu, koszt i błąd zapisu, wznowienie po odświeżeniu, eksport/import, zwycięstwo i porażkę, awans, zachowanie aktywnych zadań oraz dwie karty.

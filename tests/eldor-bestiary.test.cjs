@@ -1,9 +1,9 @@
 const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm'),crypto=require('node:crypto');
 const plain=value=>JSON.parse(JSON.stringify(value));
-function runtime(){const r=vm.createContext({crypto,localStorage:new Proxy({},{get(){throw Error('Prepared catalog must not access saves');}})});r.window=r;for(const name of ['progression','energy','gear-catalog','hero','combat','missions','choices','frontier-bestiary','roderik-missions','graveyard','gabriel-training','tauriel','campaign','eldor-bestiary'])vm.runInContext(fs.readFileSync('dist/'+name+'.js','utf8'),r);return r;}
+function runtime(){const r=vm.createContext({crypto,localStorage:new Proxy({},{get(){throw Error('Prepared catalog must not access saves');}})});r.window=r;for(const name of ['progression','energy','gear-catalog','hero','combat','missions','choices','frontier-bestiary','roderik-missions','graveyard','gabriel-training','tauriel','campaign','eldor-bestiary','faelar-missions'])vm.runInContext(fs.readFileSync('dist/'+name+'.js','utf8'),r);return r;}
 test('Exactly 25 unique species, one per level 51–75, five complete connected regions and original art',()=>{
  const r=runtime(),b=r.EldorBestiary;
- assert.equal(b.STATUS,'prepared');assert.equal(b.MISSION_POOL_ENABLED,false);assert.equal(b.MONSTERS.length,25);assert.equal(b.LOCATIONS.length,5);
+ assert.equal(b.STATUS,'available-at-faelar');assert.equal(b.MISSION_POOL_ENABLED,true);assert.equal(b.MONSTERS.length,25);assert.equal(b.LOCATIONS.length,5);
  assert.deepEqual(plain(b.MONSTERS.map(e=>e.level)),Array.from({length:25},(_,i)=>51+i));assert.equal(new Set(b.MONSTERS.map(e=>e.species)).size,25);
  const old=['forest','mine','undercity'].flatMap(id=>r.BrandCombat.opponents(id)).concat(r.FrontierBestiary.MONSTERS,r.Graveyard.BOSSES,r.TaurielQuest.BANDITS,r.OathCampaign.ACTIVITIES.filter(a=>a.kind==='fight').map(a=>a.enemy));
  for(const field of ['id','name']){const used=new Set(old.map(e=>e[field]));assert.equal(new Set(b.MONSTERS.map(e=>e[field])).size,25);for(const e of b.MONSTERS)assert.ok(!used.has(e[field]),e[field]);}
@@ -22,13 +22,15 @@ test('Planned EXP uses real progression thresholds, caps both sides and carries 
  }
  for(const level of [0,-1,51.5,'51',120,250,NaN])assert.throws(()=>b.rewardFor(b.atLevel(51).id,level));
 });
-test('Prepared content is isolated from active runtime, maps, providers, mission pools and saves',()=>{
+test('Eldor creatures belong to Faelar only, outside Brand/Roderik offers and the campaign',()=>{
  const r=runtime(),b=r.EldorBestiary,ids=new Set(b.MONSTERS.map(e=>e.id));
  for(let level=1;level<=250;level++){
   for(const scene of ['forest','mine','undercity'])assert.ok(r.BrandCombat.availableOpponents({level},scene).every(e=>!ids.has(e.id)));
   assert.ok(r.RoderikMissions.available({level}).every(e=>!ids.has(e.id)));
  }
- for(const file of ['index.html','hub.js','combat.js','missions.js','choices.js','roderik-missions.js','campaign.js'])assert.ok(!/eldor-bestiary|EldorBestiary/.test(fs.readFileSync('dist/'+file,'utf8')),file);
+ for(const file of ['hub.js','combat.js','missions.js','choices.js','roderik-missions.js','campaign.js'])assert.ok(!/eldor-bestiary|EldorBestiary/.test(fs.readFileSync('dist/'+file,'utf8')),file);
+ assert.match(fs.readFileSync('dist/index.html','utf8'),/eldor-bestiary/);assert.match(fs.readFileSync('dist/index.html','utf8'),/faelar-missions/);
+ for(const e of b.MONSTERS)assert.ok(r.FaelarMissions.available({level:e.level}).some(enemy=>enemy.id===e.id));
  for(const place of b.LOCATIONS)assert.throws(()=>r.BrandCombat.opponents(place.id));
  assert.equal(b.start,undefined);assert.equal(b.resolve,undefined);assert.equal(b.finish,undefined);
 });

@@ -947,9 +947,9 @@ Powyżej poziomu 50 oba rodzaje zleceń pozostają dostępne w ostatnim przedzia
 
 Zwiad Roderika otwiera teraz osobne okno na cały ekran, z ilustracją wybranej lokacji, opisem i paskiem czasu u dołu, takim jak u Branda. Po zamknięciu widoku wrócisz do niego przyciskiem „Wróć do zwiadu”. Po upływie czasu w tym oknie pojawia się przycisk zgłoszenia powrotu. Termin, koszty i nagrody trwającej misji zostają zachowane.
 
-### Przygotowany bestiariusz 51–75
+### Bestiariusz 51–75 — zlecenia Faelara
 
-Osobny [podgląd 25 nowych potworów i pięciu krain](https://ennboy-sketch.github.io/Pustkowie/dist/bestiary-51-75.html) łączy Zamek Elfów w Eldorze z Lodowymi Wzgórzami. Każdy poziom 51–75 ma inną istotę, ilustrację, opis, statystyki, zdolność i planowaną nagrodę. Zawartość pozostaje poza aktywnymi misjami i mapą. Galeria nie odczytuje i nie zmienia zapisów postaci. Pełne opracowanie: [docs/ELDOR-BESTIARY.md](docs/ELDOR-BESTIARY.md).
+Osobny [podgląd 25 nowych potworów i pięciu krain](https://ennboy-sketch.github.io/Pustkowie/dist/bestiary-51-75.html) łączy Zamek Elfów w Eldorze z Lodowymi Wzgórzami. Każdy poziom 51–75 ma inną istotę, ilustrację, opis, statystyki, zdolność i nagrodę. Potwory są dostępne w zleceniach Faelara w Zamku Elfów. Galeria nie odczytuje i nie zmienia zapisów postaci. Pełne opracowanie: [docs/ELDOR-BESTIARY.md](docs/ELDOR-BESTIARY.md).
 
 Po walce u Roderika w Pod Złotym Kucem wyświetla się osobne podsumowanie z otrzymanym złotem, EXP i ewentualnym awansem. Przy porażce oba pola pokazują zero. Okno pojawia się po skutecznym zapisaniu wyniku i nie przyznaje nagrody ponownie.
 
@@ -957,6 +957,8 @@ Po walce u Roderika w Pod Złotym Kucem wyświetla się osobne podsumowanie z ot
 
 Polana → Eldor od poziomu 50 otwiera zamieszkały Zamek Elfów z autorską panoramą dziedzińca i arkad. Widok przesuwa się swobodnie w obu osiach jak karczma: myszą lub palcem, z bezwładnością i przybliżaniem kółkiem, gestem dwóch palców oraz klawiszami +/−. Profil zapamiętuje lokację, kadr i skalę; lista profili pokazuje „Zamek Elfów · Eldor”.
 
-Cztery nowe postacie to Aelwen Srebrna Korona (królowa), Faelar Ostrze Liścia (dowódca straży), Isilwen Pamięć Gwiazd (kronikarka) i Thalan Źródło Świtu (opiekun źródła). Każda ma portret, znacznik w panoramie, skrót nad widokiem i dwa tematy rozmów. Rozmowy są bezpłatne. Przyciskiem „Pieśń złamanej pieczęci” wrócisz do istniejącego rozdziału kampanii. Postacie wszystkich klas mają ten sam dostęp; szkolenie profesji Elfów pozostaje u Lyrien w Zamku Czarnej Stali. Bestiariusz 51–75 pozostaje przygotowany, bez włączania potworów do misji.
+Cztery nowe postacie to Aelwen Srebrna Korona (królowa), Faelar Ostrze Liścia (dowódca straży), Isilwen Pamięć Gwiazd (kronikarka) i Thalan Źródło Świtu (opiekun źródła). Każda ma portret, znacznik w panoramie, skrót nad widokiem i dwa tematy rozmów. Rozmowy są bezpłatne. Przyciskiem „Pieśń złamanej pieczęci” wrócisz do istniejącego rozdziału kampanii. Postacie wszystkich klas mają ten sam dostęp; szkolenie profesji Elfów pozostaje u Lyrien w Zamku Czarnej Stali. U Faelara przycisk „Zlecenia Faelara” otwiera walki z potworami poziomów 51–75.
 
 Testy: `node tests/eldor-castle.browser.cjs`, `node tests/glade-levels.browser.cjs`, `node tests/campaign.browser.cjs`, `node tests/golden-pony.browser.cjs` przy lokalnej grze na porcie 8020; test Zamku Elfów przyjmuje też `GAME_URL` dla wersji online.
+
+Zlecenie Faelara kosztuje bazowo 15 energii i dobiera przeciwnika w granicach ±3 poziomy gracza. Powyżej 75. poziomu pozostaje pula 72–75. Zwiady i zadania poboczne mogą trwać równocześnie. Zachowano pełne okno areny, dziennik, przewijanie i wznowienie po zamknięciu lub odświeżeniu, bez ponownej opłaty. Po walce osobne okno pokazuje przyznane złoto, EXP i ewentualny awans; porażka daje zero. Oferta, walka i wynik są zapisywane w profilu. Test: `node tests/faelar-missions.browser.cjs` (opcjonalnie `GAME_URL`), plus `node --test tests/*.test.cjs`.

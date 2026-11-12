@@ -194,7 +194,7 @@
     const dungeonLocked=id==='dungeon'&&level()<DUNGEON_LEVEL;
     const dungeonTrainingLocked=id==='dungeon'&&!window.GabrielTraining.unlocked(hero)&&hero.activeCombat?.source!=='graveyard';
     if(['tavern','hero','inventory','market','skin-house','journal','guild'].includes(id)){try{readCurrentHero();}catch{}}
-    stopActiveScout();stopHeroSheet();stopDungeons();stopCastle();stopGoldenPony();stopEldorCastle();stopSkinHouse();stopCampaign();
+    stopActiveScout();stopHeroSheet();stopDungeons();stopCastle();stopGoldenPony();stopEldorCastle();window.FaelarMissions.cancelResult();stopSkinHouse();stopCampaign();
     window.FateWheel.cancel();
     window.TavernPanel.cancel();
     window.AlchemistPanel.cancel();
@@ -265,7 +265,7 @@
     if(id==='journal')stopCampaign=window.CampaignPanel.mount($('#place-content'),{read:readCurrentHero,update:updateCurrentHero,navigate:travelCampaign});
     if(level()>=place.requiredLevel&&id==='glade-path-1')markCampaignVisit('ice-hills');
     if(level()>=place.requiredLevel&&id==='glade-path-2')markCampaignVisit('eldor');
-    if(id==='glade-path-2'&&level()>=place.requiredLevel)stopEldorCastle=window.EldorCastle.mount($('#place-content'),{read:readCurrentHero});
+    if(id==='glade-path-2'&&level()>=place.requiredLevel)stopEldorCastle=window.EldorCastle.mount($('#place-content'),{read:readCurrentHero,update:updateCurrentHero});
     if(id==='ubocze-tavern'&&level()>=place.requiredLevel)stopGoldenPony=window.GoldenPony.mount($('#place-content'),{read:readCurrentHero,update:updateCurrentHero});
     if (id === 'guild') stopCastle=window.CastlePanel.mount($('#place-content'),{read:readCurrentHero,update:updateCurrentHero,onTitle:title=>{$('#place-title').textContent=title;},professionMarkup:()=>barracksPanel('elven')});
     if (id === 'hero') stopHeroSheet=window.HeroSheet.mount($('.hero-sheet-root'),{read:readCurrentHero,update:updateCurrentHero});
@@ -327,7 +327,7 @@
     }catch{const status=$('#profession-status');if(status)status.textContent='Nie udało się zapisać profesji. Spróbuj ponownie.';}
     finally{professionBusy=false;}
   });
-  $('#place-dialog').addEventListener('close', () => {if($('#place-dialog').open)return;openPlaceId=null;stopHeroSheet();stopActiveScout();stopDungeons();stopCastle();stopGoldenPony();stopEldorCastle();stopSkinHouse();stopCampaign();window.FateWheel.cancel();window.TavernPanel.cancel();window.AlchemistPanel.cancel();window.ForgePanel.cancel();window.BarracksPanel.cancel();window.MarketPanel.cancel();});
+  $('#place-dialog').addEventListener('close', () => {if($('#place-dialog').open)return;openPlaceId=null;stopHeroSheet();stopActiveScout();stopDungeons();stopCastle();stopGoldenPony();stopEldorCastle();window.FaelarMissions.cancelResult();stopSkinHouse();stopCampaign();window.FateWheel.cancel();window.TavernPanel.cancel();window.AlchemistPanel.cancel();window.ForgePanel.cancel();window.BarracksPanel.cancel();window.MarketPanel.cancel();});
   $('#place-content').addEventListener('click',e=>{const story=e.target.closest('[data-open-campaign]');if(story){const id=story.dataset.openCampaign;openPlace('journal');if(id)window.CampaignPanel.select(id);return;}if(e.target.closest('#go-gabriel')){openPlace('barracks');window.BarracksPanel.openTraining();}});
   $('#close-place').addEventListener('click',()=>$('#place-dialog').close());
   $('#place-dialog').addEventListener('click',e=>{if(e.target===$('#place-dialog')){const r=e.target.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)e.target.close();}});

@@ -1,5 +1,5 @@
 'use strict';
-// Prepared catalog only: loaded by its independent gallery, never by the active game.
+// Level 51–75 contracts belong exclusively to Faelar in the Elven Castle.
 (() => {
   const XP_BASIS_POINTS=1800;
   function freeze(value){if(value&&typeof value==='object'){Object.values(value).forEach(freeze);Object.freeze(value);}return value;}
@@ -44,5 +44,5 @@
   }));
   function get(id){const enemy=MONSTERS.find(enemy=>enemy.id===id);if(!enemy)throw Error('Nieznany potwór szlaku Eldoru.');return enemy;}
   function rewardFor(id,playerLevel=get(id).level){const enemy=get(id);return{gold:enemy.reward.gold,xp:Math.floor(Math.min(threshold(playerLevel),threshold(enemy.level))*XP_BASIS_POINTS/10000)};}
-  window.EldorBestiary=freeze({VERSION:1,STATUS:'prepared',MISSION_POOL_ENABLED:false,MIN_LEVEL:51,MAX_LEVEL:75,XP_BASIS_POINTS,LOCATIONS,MONSTERS,get,rewardFor,atLevel:level=>MONSTERS.find(enemy=>enemy.level===level)??null});
+  window.EldorBestiary=freeze({VERSION:1,STATUS:'available-at-faelar',MISSION_POOL_ENABLED:true,MIN_LEVEL:51,MAX_LEVEL:75,XP_BASIS_POINTS,LOCATIONS,MONSTERS,get,rewardFor,atLevel:level=>MONSTERS.find(enemy=>enemy.level===level)??null});
 })();
