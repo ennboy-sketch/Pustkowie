@@ -1,0 +1,47 @@
+'use strict';
+(() => {
+  const MIN_LEVEL=50;
+  const PEOPLE=Object.freeze([
+    {id:'aelwen',name:'Aelwen Srebrna Korona',shortName:'Aelwen',role:'Królowa Eldoru',tile:0,x:39,y:61,description:'Dorosła elfia władczyni o srebrnych włosach, w szmaragdowej sukni haftowanej srebrem i delikatnej koronie z liści.',line:'Witaj w Eldorze. Pod tymi sklepieniami słuchamy najpierw przybysza, a dopiero potem wieści, które przynosi.',topics:[
+      {label:'Zapytaj o Zamek Elfów',reply:'Kamień pod naszymi stopami ułożono wokół żywego drzewa. Każde pokolenie opiekowało się jego korzeniami, zanim dobudowało kolejną wieżę. Zamek ma dawać schronienie, nie oddzielać nas od lasu.'},
+      {label:'Zapytaj o ochronną pieśń',reply:'Pieśń Eldoru łączy ogród, archiwa i leśne pieczęcie. Każdy głos jest potrzebny, nawet ten najcichszy. Świadectwo strażników i dalsze kroki znajdziesz w swoim dzienniku.'}
+    ]},
+    {id:'faelar',name:'Faelar Ostrze Liścia',shortName:'Faelar',role:'Dowódca straży',tile:1,x:14,y:83,description:'Dorosły elf o związanych ciemnych włosach, w granatowym rynsztunku ze srebrnymi naramiennikami. Przy boku nosi miecz, a na plecach długi łuk.',line:'Brama pozostaje otwarta dla gości każdej krainy. Broń możesz zachować przy sobie; proszę jedynie, by odpoczywała w pochwie.',topics:[
+      {label:'Zapytaj o straż Eldoru',reply:'Pilnujemy murów, lecz równie uważnie słuchamy ogrodników i posłańców. To oni pierwsi zauważają ciszę na szlaku albo zmianę w świetle sadzawek.'},
+      {label:'Zapytaj o dawny trakt',reply:'Za archiwami zaczyna się Przesmyk Dzwoniących Traw. Mijając elfickie drogowskazy, trafisz na kamienne znaki krasnoludów. Szlak łączy Eldor z przedgórzem Lodowych Wzgórz.'}
+    ]},
+    {id:'isilwen',name:'Isilwen Pamięć Gwiazd',shortName:'Isilwen',role:'Kronikarka zamku',tile:2,x:82,y:56,description:'Dorosła elfka o kasztanowym warkoczu, w fioletowych szatach ze złotym obszyciem. W dłoniach trzyma zamkniętą księgę o błękitnym blasku.',line:'Nie każda kronika mówi prawdę, lecz każda zdradza, czego bał się jej autor. Jeśli przynosisz opowieść, znajdziemy dla niej czystą kartę.',topics:[
+      {label:'Zapytaj o archiwa',reply:'Pod dziedzińcem leżą najstarsze cysterny i sale kronik. Woda zasilała ogrody, a bibliotekarze zapisywali rytm jej przepływu tak starannie jak dzieje naszych władców.'},
+      {label:'Zapytaj o oba zamki',reply:'Elfowie i krasnoludy wymieniali mapy długo przed postawieniem ostatnich murów. Dlatego na górskim trakcie spotkasz nasze smukłe znaki obok ich ciężkich run. Historia obu zamków jest jedną długą podróżą.'}
+    ]},
+    {id:'thalan',name:'Thalan Źródło Świtu',shortName:'Thalan',role:'Opiekun źródła',tile:3,x:77,y:90,description:'Dorosły elf o złotych włosach, w turkusowo-kremowych szatach. Opiera dłoń na jasnej drewnianej lasce zwieńczonej niewielkim błękitnym kryształem.',line:'Przysiądź na chwilę przy wodzie. Źródło nie spieszy się z odpowiedzią, ale cierpliwym pozwala usłyszeć więcej niż echo własnych kroków.',topics:[
+      {label:'Zapytaj o źródło',reply:'Woda spływa z gór, odpoczywa w podziemnych cysternach i dopiero potem trafia do ogrodów. Każdy kamień tej drogi ma swojego opiekuna. Ja pilnuję ostatniego odcinka.'},
+      {label:'Zapytaj o Lodowe Wzgórza',reply:'Moreny potrafią odbić zorzę tak, że wędrowiec gubi kierunek. Poniżej zamku krasnoludów leży lodowa niecka ze starymi monolitami. Gdy tam dotrzesz, ufaj znakom wykutym w skale, a nie światłu na śniegu.'}
+    ]}
+  ].map(person=>Object.freeze({...person,topics:Object.freeze(person.topics.map(Object.freeze))})));
+  function markup(hero){return `<section class="eldor-castle-panel" aria-label="Zamek Elfów w Eldorze"><div class="eldor-castle-toolbar"><div class="eldor-castle-people" aria-label="Mieszkańcy Zamku Elfów">${PEOPLE.map(person=>`<button type="button" class="eldor-person-shortcut" data-eldor-person="${person.id}" aria-label="Porozmawiaj: ${person.name}" aria-haspopup="dialog" aria-pressed="false">${person.shortName}<small>${person.role}</small></button>`).join('')}</div><div class="eldor-castle-links"><span>Twój poziom: ${window.Progression.level(hero)} · Wymagany poziom: ${MIN_LEVEL}</span><button type="button" class="secondary campaign-chapter-link" data-open-campaign="eldor-seal">Pieśń złamanej pieczęci</button></div></div><div class="eldor-castle-viewport" tabindex="0" role="region" aria-label="Swobodnie przesuwany widok Zamku Elfów" aria-describedby="eldor-castle-hint"><div class="eldor-castle-panorama"><img class="eldor-castle-art" src="eldor-castle-panorama.webp" alt="Rozległy dziedziniec Zamku Elfów w Eldorze: jasne arkady pośród drzew, tron królowej Aelwen, brama dowódcy Faelara, archiwum Isilwen i źródło Thalana." draggable="false"><div class="eldor-castle-vignette" aria-hidden="true"></div>${PEOPLE.map(person=>`<button type="button" class="eldor-person-marker" data-eldor-person="${person.id}" style="left:${person.x}%;top:${person.y}%" aria-label="Porozmawiaj: ${person.name}" aria-haspopup="dialog" aria-pressed="false"><span>${person.name}</span><small>${person.role}</small></button>`).join('')}</div></div><p class="sr-only" id="eldor-castle-hint">Przesuwaj widok myszą lub palcem w dowolnym kierunku. Przybliżaj kółkiem, gestem dwóch palców albo klawiszami plus i minus. Rozmowę otworzysz znacznikiem w zamku albo imieniem nad panoramą. X w prawym górnym rogu wraca na Polanę.</p><dialog class="eldor-person-dialog" aria-labelledby="eldor-person-title"><h3 id="eldor-person-title" tabindex="-1"></h3><div class="eldor-person-profile"><div class="eldor-person-portrait" role="img"></div><div><p class="eldor-person-role"></p><p class="eldor-person-description"></p></div></div><p class="eldor-person-line"></p><div class="eldor-person-topics"></div><p class="eldor-person-reply" role="status" aria-live="polite"></p><button type="button" class="secondary" data-close-eldor-person>Wróć na dziedziniec</button></dialog></section>`;}
+  function mount(root,state){
+    const panel=root.querySelector('.eldor-castle-panel'),view=panel.querySelector('.eldor-castle-viewport'),scene=view.firstElementChild,art=scene.querySelector('img'),dialog=panel.querySelector('.eldor-person-dialog');
+    let disposed=false,centered=false,speaker=null;
+    function fit(){
+      if(disposed||!view.clientWidth)return;
+      const ratio=art.naturalWidth?art.naturalWidth/art.naturalHeight:1.5,height=Math.max(860,view.clientHeight*1.25,view.clientWidth*1.65/ratio);
+      scene.style.width=`${height*ratio}px`;scene.style.height=`${height}px`;
+      if(!centered&&art.complete&&art.naturalWidth){view.scrollLeft=Math.max(0,scene.clientWidth*.4-view.clientWidth/2);view.scrollTop=Math.max(0,scene.clientHeight*.58-view.clientHeight/2);centered=true;}
+    }
+    function open(id){
+      if(disposed)return;const person=PEOPLE.find(person=>person.id===id);if(!person)return;speaker=person;
+      dialog.querySelector('h3').textContent=person.name;dialog.querySelector('.eldor-person-role').textContent=person.role;dialog.querySelector('.eldor-person-description').textContent=person.description;
+      const portrait=dialog.querySelector('.eldor-person-portrait');portrait.setAttribute('aria-label',person.description);portrait.style.backgroundPosition=`${person.tile%2*100}% ${Math.floor(person.tile/2)*100}%`;
+      let line=person.line;if(person.id==='aelwen'){try{if(window.OathCampaign.read(state.read()).completed.includes('eldor-seal'))line='Pieśń ochronna znów płynie nad Eldorem. Pamiętamy Twoją pomoc. Odpocznij pod koronami drzew — jesteś tu mile widzianym gościem.';}catch{}}
+      dialog.querySelector('.eldor-person-line').textContent=line;dialog.querySelector('.eldor-person-reply').textContent='';dialog.querySelector('.eldor-person-topics').innerHTML=person.topics.map((topic,index)=>`<button type="button" class="secondary" data-eldor-topic="${index}">${topic.label}</button>`).join('');
+      panel.querySelectorAll('[data-eldor-person]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.eldorPerson===id)));
+      if(!dialog.open)dialog.showModal();dialog.scrollTop=0;dialog.querySelector('h3').focus({preventScroll:true});
+    }
+    function click(event){if(disposed)return;const person=event.target.closest('[data-eldor-person]');if(person){open(person.dataset.eldorPerson);return;}if(event.target.closest('[data-close-eldor-person]')){dialog.close();return;}const topic=event.target.closest('[data-eldor-topic]');if(topic&&speaker&&dialog.open){const answer=speaker.topics[Number(topic.dataset.eldorTopic)];if(answer)dialog.querySelector('.eldor-person-reply').textContent=answer.reply;}}
+    function closed(){if(dialog.open)return;speaker=null;panel.querySelectorAll('[data-eldor-person]').forEach(button=>button.setAttribute('aria-pressed','false'));}
+    panel.addEventListener('click',click);dialog.addEventListener('close',closed);art.addEventListener('load',fit);const observer=new ResizeObserver(fit);observer.observe(view);fit();
+    return()=>{if(disposed)return;disposed=true;speaker=null;observer.disconnect();panel.removeEventListener('click',click);dialog.removeEventListener('close',closed);art.removeEventListener('load',fit);if(dialog.open)dialog.close();};
+  }
+  window.EldorCastle={MIN_LEVEL,PEOPLE,markup,mount};
+})();

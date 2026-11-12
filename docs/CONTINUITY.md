@@ -75,3 +75,13 @@ Katalog `dist/eldor-bestiary.js` (`EldorBestiary`) jest wyłącznie przygotowany
 ## Podsumowanie walk Roderika
 
 Po zapisaniu wyniku walki (przewiniętej lub zgłoszonej po ostatnim ciosie) w Pod Złotym Kucem otwiera się osobny dialog podsumowania. Pokazuje zapisane `lastRoderikCombat.reward.gold` i `.xp`, nazwę przeciwnika, wynik oraz ewentualny awans. Porażka pokazuje 0 złota i 0 EXP. Dialog wyłącznie prezentuje już rozliczony wynik; jego otwieranie i zamykanie nie zapisuje postaci ani nie wypłaca nagrody ponownie. Błąd zapisu wyniku pozostawia walkę otwartą, bez fałszywego potwierdzenia nagrody. X, Escape lub „Wróć do zleceń” zamyka okno; zmiana lokacji sprząta dialog. Test: `node tests/roderik-result.browser.cjs`, opcjonalnie `GAME_URL`.
+
+## Zamek Elfów w Eldorze
+
+Istniejące wejście `glade-path-2` od poziomu 50 otwiera teraz Zamek Elfów, zamiast statycznej informacji o rozdziale. Identyfikator wejścia i próg pozostają zgodne ze starymi zapisami. Moduł i styl: `dist/eldor-castle.js`, `dist/eldor-castle.css`. Nowe grafiki: `eldor-castle-panorama.webp` (1774×887, jedna spójna panorama 2:1 z czterema postaciami) i `eldor-castle-people.webp` (1024×1536, cztery portrety w siatce 2×2). Oryginały PNG zachowano w `/workspace/generated_images`.
+
+Postacie mają stałe ID: `aelwen` — Aelwen Srebrna Korona, królowa; `faelar` — Faelar Ostrze Liścia, dowódca straży; `isilwen` — Isilwen Pamięć Gwiazd, kronikarka; `thalan` — Thalan Źródło Świtu, opiekun źródła. Każda ma dwa tematy rozmów oraz przyciski w scenie i nad panoramą. Powitanie Aelwen uwzględnia ukończenie `eldor-seal`. Rozmowy nie zmieniają zasobów, profesji ani postaci.
+
+`.eldor-castle-viewport` korzysta z istniejącego SceneZoom: swobodne przesuwanie, bezwładność, pinch, kółko i klawiatura. LocationSave zapamiętuje pozycję i skalę pod dotychczasowym `place: glade-path-2`; profil pokazuje nazwę zamku. Nie ma migracji pól bohatera. Zamknięcie i opuszczenie miejsca sprzątają obserwatory i dialog postaci. Wizyta nadal zalicza istniejący cel `visit:eldor`, a odnośnik „Pieśń złamanej pieczęci” prowadzi do `eldor-seal`, bez nowych misji i nagród. Zamek jest dostępny dla każdej klasy od poziomu 50; Lyrien i jej szkolenie zostają w głównym zamku. Katalog 51–75 nadal pozostaje poza aktywną grą.
+
+Sprawdzenie: `node --test tests/*.test.cjs`; `node tests/eldor-castle.browser.cjs` (opcjonalnie `GAME_URL`), `node tests/glade-levels.browser.cjs`, `node tests/campaign.browser.cjs`, `node tests/golden-pony.browser.cjs`. Nowy test obejmuje cztery portrety, osiem rozmów, oba wejścia do rozmów, pan i pinch/mouse/keyboard, kadry po wznowieniu, eksport/import, kampanię, sprzątanie i próg 49/50 bez zmiany zapisów.
