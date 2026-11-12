@@ -950,3 +950,5 @@ Zwiad Roderika otwiera teraz osobne okno na cały ekran, z ilustracją wybranej 
 ### Przygotowany bestiariusz 51–75
 
 Osobny [podgląd 25 nowych potworów i pięciu krain](https://ennboy-sketch.github.io/Pustkowie/dist/bestiary-51-75.html) łączy Zamek Elfów w Eldorze z Lodowymi Wzgórzami. Każdy poziom 51–75 ma inną istotę, ilustrację, opis, statystyki, zdolność i planowaną nagrodę. Zawartość pozostaje poza aktywnymi misjami i mapą. Galeria nie odczytuje i nie zmienia zapisów postaci. Pełne opracowanie: [docs/ELDOR-BESTIARY.md](docs/ELDOR-BESTIARY.md).
+
+Po walce u Roderika w Pod Złotym Kucem wyświetla się osobne podsumowanie z otrzymanym złotem, EXP i ewentualnym awansem. Przy porażce oba pola pokazują zero. Okno pojawia się po skutecznym zapisaniu wyniku i nie przyznaje nagrody ponownie.

@@ -20,6 +20,7 @@ async function openInn(page){await page.evaluate(()=>HubNavigation.open('ubocze-
   await p.locator('.combat-actions button').click();await p.locator('.combat-dialog').waitFor({state:'hidden'});await p.waitForFunction(()=>document.querySelector('.roderik-message').textContent.includes('Zwycięstwo'));
   let won=await p.evaluate(()=>LocalProfiles.read());assert.equal(won.gold,321+reward.gold);assert.equal(won.xp,1234+reward.xp);assert.equal(won.energy,85);assert.equal(won.activeCombat,null);assert.ok(won.roderikOffer);assert.equal(won.lastRoderikCombat.id,id);
   assert.equal(await p.evaluate(()=>{const h=LocalProfiles.read();try{BrandCombat.finish(h,h.lastRoderikCombat.id);return false;}catch{return true;}}),true);
+  await p.locator('.roderik-result-dialog .primary').click();
   // Insufficient energy blocks combat; a parallel side mission does not.
   await p.evaluate(()=>{LocalProfiles.write({...LocalProfiles.read(),energy:14});dispatchEvent(new StorageEvent('storage',{key:'pustkowie.hero.v2'}));});await p.waitForFunction(()=>document.querySelector('[data-roderik-start]').disabled);assert.equal(await p.evaluate(()=>LocalProfiles.read().energy),14);
   await p.evaluate(()=>{LocalProfiles.write({...LocalProfiles.read(),energy:100,activeMission:{id:'other'}});dispatchEvent(new StorageEvent('storage',{key:'pustkowie.hero.v2'}));});await p.waitForFunction(()=>!document.querySelector('[data-roderik-start]').disabled);assert.equal(await p.locator('[data-roderik-scout]').isDisabled(),false);
@@ -28,7 +29,7 @@ async function openInn(page){await page.evaluate(()=>HubNavigation.open('ubocze-
  // Two tabs must pay and resolve only once; all atlas crops and locations render.
  const context=await browser.newContext({viewport:{width:1280,height:900}}),a=await context.newPage();await a.route('https://fonts.googleapis.com/**',r=>r.abort());await a.goto(base);await a.evaluate(h=>localStorage.setItem('pustkowie.hero.v2',JSON.stringify(h)),fixture);await a.reload();await require('./profile-fixture.cjs')(a);await openInn(a);
  const b=await context.newPage();await b.goto(base);await Promise.all([b.waitForNavigation({waitUntil:'load'}),b.locator('[data-play-profile=legacy]').click()]);await b.locator('#ready').waitFor({state:'visible'});await b.evaluate(()=>GameLocation.ready);await openInn(b);
- await Promise.all([a,b].map(p=>p.locator('[data-roderik-start]').evaluate(button=>button.click())));await a.waitForFunction(()=>!!LocalProfiles.read().activeCombat);assert.equal(await a.evaluate(()=>LocalProfiles.read().energy),85);
+ await Promise.all([a,b].map(p=>p.evaluate(()=>document.querySelector('[data-roderik-start]')?.click())));await a.waitForFunction(()=>!!LocalProfiles.read().activeCombat);assert.equal(await a.evaluate(()=>LocalProfiles.read().energy),85);
  const results=await a.evaluate(()=>{let h=LocalProfiles.read();h.activeCombat.battle.winner='hero';LocalProfiles.write(h);return {id:h.activeCombat.id,reward:h.activeCombat.reward};});
  await Promise.all([a,b].map(p=>p.evaluate(id=>navigator.locks.request('pustkowie-hero-v2',()=>{try{LocalProfiles.write(BrandCombat.finish(LocalProfiles.read(),id));return true;}catch{return false;}}),results.id)));
  assert.equal(await a.evaluate(()=>LocalProfiles.read().gold),321+results.reward.gold);

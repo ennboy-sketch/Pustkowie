@@ -77,9 +77,25 @@
     const scoutDialog=document.createElement('dialog');scoutDialog.className='roderik-scout-dialog';scoutDialog.setAttribute('aria-labelledby','roderik-scout-title');
     scoutDialog.innerHTML='<section class="scout-active-view roderik-scout-screen"><div class="scout-scene"><div class="roderik-scout-landscape" role="img"></div><div class="scout-heading"><h3 id="roderik-scout-title"></h3></div><button type="button" data-close-roderik-scout aria-label="Wróć do zleceń Roderika">×</button><p class="mission-message" role="status" aria-live="polite"></p><p class="scout-narrative"></p><button type="button" class="primary roderik-scout-report" data-roderik-claim disabled hidden>Zgłoś powrót</button><div class="scout-progress"><div><strong class="scout-clock" data-roderik-clock role="timer" aria-label="Pozostały czas zwiadu Roderika"></strong></div><progress aria-label="Postęp zwiadu Roderika" max="1" value="0"></progress></div></div></section>';document.body.append(scoutDialog);
     const scoutScreen=scoutDialog.querySelector('.roderik-scout-screen');let shownScoutId=null;
+    const resultDialog=document.createElement('dialog');resultDialog.className='roderik-result-dialog';resultDialog.setAttribute('aria-labelledby','roderik-result-title');
+    resultDialog.innerHTML='<button type="button" class="roderik-result-close" data-close-roderik-result aria-label="Zamknij podsumowanie walki">×</button><p class="roderik-result-eyebrow">Pod Złotym Kucem · Podsumowanie walki</p><span class="roderik-result-ornament" aria-hidden="true">◆</span><h3 id="roderik-result-title"></h3><p class="roderik-result-enemy"></p><p class="roderik-result-description"></p><dl class="roderik-result-rewards"><div><dt><span class="rpg-icon icon-coin" aria-hidden="true"></span>Złoto</dt><dd data-roderik-result-gold></dd></div><div><dt><span class="rpg-icon icon-exp" aria-hidden="true"></span>EXP</dt><dd data-roderik-result-xp></dd></div></dl><p class="roderik-result-level" hidden></p><button type="button" class="primary" data-close-roderik-result>Wróć do zleceń</button>';document.body.append(resultDialog);
+    function closeResult(event){if(event.target.closest('[data-close-roderik-result]'))resultDialog.close();}resultDialog.addEventListener('click',closeResult);
+
     let disposed=false,busy=false,renderKey='';
     const locked=fn=>navigator.locks?navigator.locks.request('pustkowie-hero-v2',fn):fn();
-    const combat=window.BrandCombat.mount(root.querySelector('.roderik-combat'),{...state,prepareCombat:hero=>hero,onQuestResolved:hero=>{if(disposed)return;const last=hero.lastRoderikCombat;message.textContent=last.won?`Zwycięstwo! Nagroda: ${last.reward.gold} złota · ${last.reward.xp} EXP${last.levelsGained?` · Awans o ${last.levelsGained} poziom(y)`:''}.`:'Porażka. Nie otrzymujesz nagrody. Energia została zużyta przy rozpoczęciu.';void refresh();}});
+    const combat=window.BrandCombat.mount(root.querySelector('.roderik-combat'),{...state,prepareCombat:hero=>hero,onQuestResolved:hero=>{if(disposed)return;const last=hero.lastRoderikCombat;message.textContent=last.won?`Zwycięstwo! Nagroda: ${last.reward.gold} złota · ${last.reward.xp} EXP${last.levelsGained?` · Awans o ${last.levelsGained} poziom(y)`:''}.`:'Porażka. Nie otrzymujesz nagrody. Energia została zużyta przy rozpoczęciu.';showResult(hero);void refresh();}});
+    function showResult(hero){
+      if(disposed)return;const last=hero.lastRoderikCombat;if(!last)return;
+      const format=value=>new Intl.NumberFormat('pl-PL').format(value),enemy=window.FrontierBestiary.MONSTERS.find(enemy=>enemy.id===last.enemyId);
+      resultDialog.dataset.fightId=last.id;resultDialog.dataset.won=String(last.won);
+      resultDialog.querySelector('h3').textContent=last.won?'Zwycięstwo!':'Porażka';
+      resultDialog.querySelector('.roderik-result-enemy').textContent=enemy?.name||'Walka z potworem';
+      resultDialog.querySelector('.roderik-result-description').textContent=last.won?'Otrzymujesz nagrodę za pokonanego przeciwnika.':'Tym razem nie otrzymujesz nagrody. Możesz podjąć kolejne zlecenie.';
+      resultDialog.querySelector('[data-roderik-result-gold]').textContent=format(last.reward.gold);
+      resultDialog.querySelector('[data-roderik-result-xp]').textContent=format(last.reward.xp);
+      const advancement=resultDialog.querySelector('.roderik-result-level');advancement.hidden=!(last.levelsGained>0);advancement.textContent=last.levelsGained>0?`Awans! Osiągasz poziom ${level(hero)}.`:'';
+      if(!resultDialog.open)resultDialog.showModal();resultDialog.querySelector('.primary').focus({preventScroll:true});
+    }
     function clock(hero){
       const scout=readScout(hero),resume=list.querySelector('[data-roderik-open-scout]');
       if(!scout){if(scoutDialog.open)scoutDialog.close();shownScoutId=null;return;}
@@ -133,7 +149,7 @@
     }
     function storage(event){if(event.key==='pustkowie.hero.v2'||event.key===null)void refresh();}
     root.addEventListener('click',click);scoutDialog.addEventListener('click',click);window.addEventListener('storage',storage);const timer=setInterval(refresh,1000);void refresh();
-    return()=>{disposed=true;clearInterval(timer);combat();if(scoutDialog.open)scoutDialog.close();scoutDialog.removeEventListener('click',click);scoutDialog.remove();root.removeEventListener('click',click);window.removeEventListener('storage',storage);};
+    return()=>{disposed=true;clearInterval(timer);combat();if(resultDialog.open)resultDialog.close();resultDialog.removeEventListener('click',closeResult);resultDialog.remove();if(scoutDialog.open)scoutDialog.close();scoutDialog.removeEventListener('click',click);scoutDialog.remove();root.removeEventListener('click',click);window.removeEventListener('storage',storage);};
   }
   window.RoderikMissions={MIN_LEVEL,SCOUT_BANDS,scoutTerms,TIERS,available,prepare,start,resolve,readScout,startScout,finishScout,scene,mount};
 })();
