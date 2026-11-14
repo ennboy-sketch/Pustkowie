@@ -1,5 +1,7 @@
 # Pustkowie
 
+U Faelara i Roderika przycisk „Ostatnia walka · Pokaż podsumowanie” pozwala wrócić do zapisanego wyniku także po odświeżeniu gry. Podgląd pokazuje otrzymane złoto, EXP i awans z tej walki, bez ponownej wypłaty nagrody.
+
 Nowy ekran tworzenia postaci w mrocznym klimacie fantasy.
 
 1. Wybór jednej z czterech klas: wojownik, mag, elf, krasnolud.

@@ -25,7 +25,7 @@
     if(fight?.source!=='faelar'||fight.id!==id||!['hero','enemy'].includes(fight.battle.winner))throw Error('Walka trwa lub została już rozliczona.');
     const won=fight.battle.winner==='hero',reward=won?{...fight.reward}:{gold:0,xp:0},next=window.Progression.award(hero,reward.xp),gold=(hero.gold??25)+reward.gold;
     if(!Number.isSafeInteger(gold)||!Number.isSafeInteger(reward.gold)||reward.gold<0)throw Error('Nieprawidłowa ilość złota.');
-    return {...next,gold,activeCombat:null,lastFaelarCombat:{id,sceneId:fight.sceneId,enemyId:fight.battle.enemy.id,enemyName:fight.battle.enemy.name,won,reward,levelsGained:level(next)-level(hero)}};
+    return {...next,gold,activeCombat:null,lastFaelarCombat:{id,sceneId:fight.sceneId,enemyId:fight.battle.enemy.id,enemyName:fight.battle.enemy.name,won,reward,levelsGained:level(next)-level(hero),levelAfter:level(next)}};
   }
   function scene(fight){const place=window.EldorBestiary.LOCATIONS.find(place=>place.id===fight.sceneId);if(!place)throw Error('Nieznany teren zlecenia Faelara.');return {...place,short:place.name};}
   let resultDialog=null;
@@ -34,18 +34,18 @@
     const last=hero.lastFaelarCombat;if(!last)return;cancelResult();
     const dialog=document.createElement('dialog');resultDialog=dialog;dialog.className='roderik-result-dialog faelar-result-dialog';dialog.setAttribute('aria-labelledby','faelar-result-title');dialog.dataset.fightId=last.id;dialog.dataset.won=String(last.won);
     dialog.innerHTML='<button type="button" class="roderik-result-close" data-close-faelar-result aria-label="Zamknij podsumowanie walki">×</button><p class="roderik-result-eyebrow">Zamek Elfów · Podsumowanie walki</p><span class="roderik-result-ornament" aria-hidden="true">◆</span><h3 id="faelar-result-title"></h3><p class="roderik-result-enemy"></p><p class="roderik-result-description"></p><dl class="roderik-result-rewards"><div><dt><span class="rpg-icon icon-coin" aria-hidden="true"></span>Złoto</dt><dd data-faelar-result-gold></dd></div><div><dt><span class="rpg-icon icon-exp" aria-hidden="true"></span>EXP</dt><dd data-faelar-result-xp></dd></div></dl><p class="roderik-result-level" hidden></p><button type="button" class="primary" data-close-faelar-result>Wróć do zleceń</button>';
-    dialog.querySelector('h3').textContent=last.won?'Zwycięstwo!':'Porażka';dialog.querySelector('.roderik-result-enemy').textContent=last.enemyName||window.EldorBestiary.get(last.enemyId).name;dialog.querySelector('.roderik-result-description').textContent=last.won?'Otrzymujesz nagrodę za pokonanego przeciwnika.':'Tym razem nie otrzymujesz nagrody. Możesz podjąć kolejne zlecenie.';
+    dialog.querySelector('h3').textContent=last.won?'Zwycięstwo!':'Porażka';dialog.querySelector('.roderik-result-enemy').textContent=last.enemyName||window.EldorBestiary.get(last.enemyId).name;dialog.querySelector('.roderik-result-description').textContent=last.won?'Nagroda za pokonanego przeciwnika została już przyznana.':'Tym razem nie otrzymujesz nagrody. Możesz podjąć kolejne zlecenie.';
     const format=value=>new Intl.NumberFormat('pl-PL').format(value);dialog.querySelector('[data-faelar-result-gold]').textContent=format(last.reward.gold);dialog.querySelector('[data-faelar-result-xp]').textContent=format(last.reward.xp);
-    const advancement=dialog.querySelector('.roderik-result-level');advancement.hidden=!(last.levelsGained>0);advancement.textContent=last.levelsGained>0?`Awans! Osiągasz poziom ${level(hero)}.`:'';
+    const advancement=dialog.querySelector('.roderik-result-level');advancement.hidden=!(last.levelsGained>0);advancement.textContent=last.levelsGained>0?(last.levelAfter?`Awans! Osiągasz poziom ${last.levelAfter}.`:`Zdobyte poziomy: ${last.levelsGained}.`):'';
     dialog.addEventListener('click',event=>{if(event.target.closest('[data-close-faelar-result]'))cancelResult();});dialog.addEventListener('close',()=>{if(resultDialog===dialog)cancelResult();});document.body.append(dialog);dialog.showModal();dialog.querySelector('.primary').focus({preventScroll:true});
   }
   function mount(root,state){
-    root.innerHTML='<div class="faelar-offers brand-choice-list"></div><p class="faelar-message brand-choice-message" role="status" aria-live="polite"></p><div class="faelar-combat" hidden></div>';
+    root.innerHTML='<div class="faelar-offers brand-choice-list"></div><button type="button" class="secondary" data-faelar-last-result aria-haspopup="dialog" hidden>Ostatnia walka · Pokaż podsumowanie</button><p class="faelar-message brand-choice-message" role="status" aria-live="polite"></p><div class="faelar-combat" hidden></div>';
     const list=root.querySelector('.faelar-offers'),message=root.querySelector('.faelar-message');let disposed=false,busy=false,renderKey='';
     const locked=fn=>navigator.locks?navigator.locks.request('pustkowie-hero-v2',fn):fn();
     const combat=window.BrandCombat.mount(root.querySelector('.faelar-combat'),{...state,prepareCombat:hero=>hero,onFaelarResolved:hero=>{if(disposed)return;const last=hero.lastFaelarCombat;message.textContent=last.won?`Zwycięstwo! ${last.reward.gold} złota · ${last.reward.xp} EXP.`:'Porażka. Nie otrzymujesz nagrody.';void refresh();}});
     function render(hero){
-      if(disposed)return;const active=hero.activeCombat?.source==='faelar',blocked=!!hero.activeCombat,energy=window.EnergyCycle.info(hero).energy,cost=window.EnergyCycle.cost(hero,COST),unlocked=level(hero)>=MIN_LEVEL;
+      if(disposed)return;root.querySelector('[data-faelar-last-result]').hidden=!hero.lastFaelarCombat;const active=hero.activeCombat?.source==='faelar',blocked=!!hero.activeCombat,energy=window.EnergyCycle.info(hero).energy,cost=window.EnergyCycle.cost(hero,COST),unlocked=level(hero)>=MIN_LEVEL;
       const enemy=active?hero.activeCombat.battle.enemy:validOffer(hero)?window.EldorBestiary.get(hero.faelarOffer.enemyId):null,place=scene({sceneId:enemy?.sceneId||window.EldorBestiary.LOCATIONS[0].id}),reward=enemy?(active?hero.activeCombat.reward:rewardFor(enemy,hero)):null;
       const key=JSON.stringify([level(hero),energy,hero.faelarOffer?.id,hero.activeCombat?.id,busy]);if(key===renderKey)return;renderKey=key;
       const target=Math.min(level(hero),75),range=level(hero)>75?'Najsilniejsze zlecenia: poziomy 72–75.':`Potwory: poziomy ${Math.max(51,target-3)}–${Math.min(75,target+3)}.`;
@@ -53,7 +53,7 @@
     }
     async function refresh(){if(disposed||busy)return;try{const hero=await locked(()=>{if(disposed)return null;const h=state.read(),next=prepare(h);return h===next?h:state.update(current=>prepare(current));});if(hero)render(hero);}catch(error){if(!disposed)message.textContent=error.message;}}
     async function click(event){
-      if(disposed||busy)return;if(event.target.closest('[data-faelar-resume]')){await combat.open();return;}
+      if(disposed||busy)return;if(event.target.closest('[data-faelar-last-result]')){showResult(state.read());return;}if(event.target.closest('[data-faelar-resume]')){await combat.open();return;}
       const button=event.target.closest('[data-faelar-start]');if(!button)return;const id=button.dataset.faelarStart;busy=true;button.disabled=true;message.textContent='';
       try{const next=await locked(()=>{if(disposed)return null;return state.update(hero=>start(hero,id));});if(next&&!disposed){render(next);await combat.open();}}
       catch(error){if(!disposed)message.textContent=['QuotaExceededError','SecurityError'].includes(error.name)?'Nie udało się zapisać misji. Energia nie została pobrana.':error.message;}

@@ -34,7 +34,7 @@ test('Every monster resumes deterministically and rewards victory exactly once; 
   assert.equal(m.prepare(active).activeCombat,active.activeCombat);assert.throws(()=>m.resolve(active,f.id));
   const winning=plain(active);winning.activeCombat.battle.hero.attack=[100000,100000];
   const won=c.skip(winning,f.id),reward=f.reward;assert.equal(won.energy,85);assert.equal(won.gold,h.gold+reward.gold);assert.equal(won.level,enemy.level+1);assert.equal(won.xp,reward.xp-1);
-  assert.equal(won.lastRoderikCombat.won,true);assert.equal(won.activeCombat,null);assert.equal(r.PlayerStats.totals(won).missions,1);assert.equal(r.PlayerStats.totals(won).wins,1);
+  assert.equal(won.lastRoderikCombat.won,true);assert.equal(won.lastRoderikCombat.enemyName,enemy.name);assert.equal(won.lastRoderikCombat.levelAfter,enemy.level+1);assert.deepEqual(plain(m.prepare({...won,level:90}).lastRoderikCombat),plain(won.lastRoderikCombat));assert.equal(won.activeCombat,null);assert.equal(r.PlayerStats.totals(won).missions,1);assert.equal(r.PlayerStats.totals(won).wins,1);
   assert.deepEqual(plain(won.combatOffer),plain(h.combatOffer));assert.throws(()=>c.finish(won,f.id));
   const losing=plain(active);losing.activeCombat.battle.winner='enemy';const lost=c.finish(losing,f.id);
   assert.equal(lost.gold,h.gold);assert.equal(lost.xp,h.xp);assert.equal(lost.level,h.level);assert.equal(lost.energy,85);assert.equal(r.PlayerStats.totals(lost).losses,1);assert.equal(r.PlayerStats.totals(lost).missions,0);

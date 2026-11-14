@@ -41,7 +41,7 @@
     const won=fight.battle.winner==='hero',reward=won?{...fight.reward}:{gold:0,xp:0};
     const next=window.Progression.award(hero,reward.xp),gold=(hero.gold??25)+reward.gold;
     if(!Number.isSafeInteger(gold))throw Error('Nieprawidłowa ilość złota.');
-    return {...next,gold,activeCombat:null,lastRoderikCombat:{id,sceneId:fight.sceneId,enemyId:fight.battle.enemy.id,won,reward,levelsGained:level(next)-level(hero)}};
+    return {...next,gold,activeCombat:null,lastRoderikCombat:{id,sceneId:fight.sceneId,enemyId:fight.battle.enemy.id,enemyName:fight.battle.enemy.name,won,reward,levelsGained:level(next)-level(hero),levelAfter:level(next)}};
   }
   function readScout(hero){
     const scout=hero.roderikScout;if(!scout)return null;
@@ -72,7 +72,7 @@
   function scene(fight){const place=places().find(p=>p.id===fight.sceneId);if(!place)throw Error('Nieznany teren zlecenia.');return {...place,short:place.name};}
   function atlasStyle(art){return `background-image:url('${art.image}');background-size:${art.columns*100}% ${art.rows*100}%;background-position:${art.tile%art.columns/(art.columns-1)*100}% ${Math.floor(art.tile/art.columns)/(art.rows-1)*100}%`;}
   function mount(root,state){
-    root.innerHTML='<div class="roderik-mission-list brand-choice-list"></div><p class="roderik-message brand-choice-message" role="status" aria-live="polite"></p><div class="roderik-combat" hidden></div>';
+    root.innerHTML='<div class="roderik-mission-list brand-choice-list"></div><button type="button" class="secondary" data-roderik-last-result aria-haspopup="dialog" hidden>Ostatnia walka · Pokaż podsumowanie</button><p class="roderik-message brand-choice-message" role="status" aria-live="polite"></p><div class="roderik-combat" hidden></div>';
     const list=root.querySelector('.roderik-mission-list'),message=root.querySelector('.roderik-message');
     const scoutDialog=document.createElement('dialog');scoutDialog.className='roderik-scout-dialog';scoutDialog.setAttribute('aria-labelledby','roderik-scout-title');
     scoutDialog.innerHTML='<section class="scout-active-view roderik-scout-screen"><div class="scout-scene"><div class="roderik-scout-landscape" role="img"></div><div class="scout-heading"><h3 id="roderik-scout-title"></h3></div><button type="button" data-close-roderik-scout aria-label="Wróć do zleceń Roderika">×</button><p class="mission-message" role="status" aria-live="polite"></p><p class="scout-narrative"></p><button type="button" class="primary roderik-scout-report" data-roderik-claim disabled hidden>Zgłoś powrót</button><div class="scout-progress"><div><strong class="scout-clock" data-roderik-clock role="timer" aria-label="Pozostały czas zwiadu Roderika"></strong></div><progress aria-label="Postęp zwiadu Roderika" max="1" value="0"></progress></div></div></section>';document.body.append(scoutDialog);
@@ -89,11 +89,11 @@
       const format=value=>new Intl.NumberFormat('pl-PL').format(value),enemy=window.FrontierBestiary.MONSTERS.find(enemy=>enemy.id===last.enemyId);
       resultDialog.dataset.fightId=last.id;resultDialog.dataset.won=String(last.won);
       resultDialog.querySelector('h3').textContent=last.won?'Zwycięstwo!':'Porażka';
-      resultDialog.querySelector('.roderik-result-enemy').textContent=enemy?.name||'Walka z potworem';
-      resultDialog.querySelector('.roderik-result-description').textContent=last.won?'Otrzymujesz nagrodę za pokonanego przeciwnika.':'Tym razem nie otrzymujesz nagrody. Możesz podjąć kolejne zlecenie.';
+      resultDialog.querySelector('.roderik-result-enemy').textContent=last.enemyName||enemy?.name||'Walka z potworem';
+      resultDialog.querySelector('.roderik-result-description').textContent=last.won?'Nagroda za pokonanego przeciwnika została już przyznana.':'Tym razem nie otrzymujesz nagrody. Możesz podjąć kolejne zlecenie.';
       resultDialog.querySelector('[data-roderik-result-gold]').textContent=format(last.reward.gold);
       resultDialog.querySelector('[data-roderik-result-xp]').textContent=format(last.reward.xp);
-      const advancement=resultDialog.querySelector('.roderik-result-level');advancement.hidden=!(last.levelsGained>0);advancement.textContent=last.levelsGained>0?`Awans! Osiągasz poziom ${level(hero)}.`:'';
+      const advancement=resultDialog.querySelector('.roderik-result-level');advancement.hidden=!(last.levelsGained>0);advancement.textContent=last.levelsGained>0?(last.levelAfter?`Awans! Osiągasz poziom ${last.levelAfter}.`:`Zdobyte poziomy: ${last.levelsGained}.`):'';
       if(!resultDialog.open)resultDialog.showModal();resultDialog.querySelector('.primary').focus({preventScroll:true});
     }
     function clock(hero){
@@ -117,7 +117,7 @@
     }
     function reportError(text){message.textContent=text;if(scoutDialog.open){scoutDialog.querySelector('.mission-message').textContent=text;scoutScreen.classList.add('scout-has-error');}}
     function render(hero){
-      if(disposed)return;
+      if(disposed)return;root.querySelector('[data-roderik-last-result]').hidden=!hero.lastRoderikCombat;
       const scout=readScout(hero),terms=scoutTerms(hero),scoutReward=scout?.reward||terms.reward,energy=window.EnergyCycle.info(hero).energy,cost=window.EnergyCycle.cost(hero,TIERS.hard.cost),easyCost=window.EnergyCycle.cost(hero,TIERS.easy.cost),unlocked=level(hero)>=MIN_LEVEL;
       const active=hero.activeCombat?.source==='roderik',blocked=!!hero.activeCombat;
       const enemy=active?hero.activeCombat.battle.enemy:validOffer(hero)?window.FrontierBestiary.get(hero.roderikOffer.enemyId):null;
@@ -135,6 +135,7 @@
     async function refresh(){if(disposed||busy)return;try{const hero=await locked(()=>{if(disposed)return null;const h=state.read(),next=prepare(h);return next===h?h:state.update(current=>prepare(current));});if(hero)render(hero);}catch(error){if(!disposed)reportError(error.message||'Nie udało się odczytać zleceń.');}}
     async function click(event){
       if(disposed||busy)return;
+      if(event.target.closest('[data-roderik-last-result]')){showResult(state.read());return;}
       if(event.target.closest('[data-close-roderik-scout]')){scoutDialog.close();return;}
       if(event.target.closest('[data-roderik-open-scout]')){openScout(state.read());return;}
       if(event.target.closest('[data-roderik-resume]')){await combat.open();return;}
